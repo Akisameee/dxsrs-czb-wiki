@@ -1,13 +1,11 @@
-const UINT_MAX = 0xffffffff;
 const MT_SEED = 1812433253;
 
 function uint(value) {
   return value >>> 0;
 }
 
-function seedStep(previous, index) {
-  const mixed = uint(previous ^ (previous >>> 30));
-  return uint(Math.imul(MT_SEED, mixed) + index);
+function seedStep(previous) {
+  return uint(Math.imul(MT_SEED, previous) + 1);
 }
 
 export class UnityRandom {
@@ -17,9 +15,9 @@ export class UnityRandom {
 
   initState(seed) {
     const x = uint(seed);
-    const y = seedStep(x, 1);
-    const z = seedStep(y, 2);
-    const w = seedStep(z, 3);
+    const y = seedStep(x);
+    const z = seedStep(y);
+    const w = seedStep(z);
     this.state = [x, y, z, w];
     return this;
   }
@@ -36,7 +34,7 @@ export class UnityRandom {
   }
 
   value() {
-    return this.nextUint() / UINT_MAX;
+    return (this.nextUint() & 0x7fffff) / 0x7fffff;
   }
 
   rangeInt(minInclusive, maxExclusive) {
@@ -45,14 +43,14 @@ export class UnityRandom {
     if (max <= min) return min;
 
     const span = max - min;
-    const value = min + Math.floor(this.value() * span);
-    return value >= max ? max - 1 : value;
+    return min + (this.nextUint() % span);
   }
 
   rangeFloat(minInclusive, maxInclusive) {
     const min = Number(minInclusive);
     const max = Number(maxInclusive);
-    return min + (max - min) * this.value();
+    const value = this.value();
+    return value * min + (1 - value) * max;
   }
 
   snapshot() {

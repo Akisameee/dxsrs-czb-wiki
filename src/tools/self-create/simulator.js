@@ -16,6 +16,10 @@ function roundToInt(value) {
   return Math.round(Number(value));
 }
 
+function roundTo2(value) {
+  return Math.round(Number(value) * 100) / 100;
+}
+
 function uniqueBy(items, getter) {
   const seen = new Set();
   const result = [];
@@ -138,7 +142,7 @@ export function countWeili(zichuang, gWuGong, detail, ziChuangWeiLiRows, ziChuan
 
   const buff = buffRows[0];
   detail.b1value = buff ? Number(buff.value) : 0;
-  detail.power = roundToInt(basePower * (buff ? Number(buff.percent) : 1));
+  detail.power = roundTo2(basePower * (buff ? Number(buff.percent) : 1));
   return detail;
 }
 
@@ -158,99 +162,139 @@ function pickInitialTemplate(rng, weaponType, wugongRows, options = {}) {
   return clone(candidates[rng.rangeInt(0, candidates.length)]);
 }
 
-export function createZiChuang(input, data, options = {}) {
-  const normalized = defaultData(data);
-  const seed = makeZiChuangSeed(input);
-  const rng = new UnityRandom(seed);
-  const template = pickInitialTemplate(rng, input.weaponType, normalized.wugongRows, options);
-
-  const gWuGong = {
-    ...template,
-    chnname: input.name || "自创武功",
-    type: Number(input.weaponType),
-    liansuo_fg1: randomFengGe(rng, normalized.chainRows),
-    liansuo_fg2: 0,
-    buff2: DEFAULT_BUFF_TYPE,
-    bufftarget2: DEFAULT_BUFF_TARGET,
-    huodefangfa: "自创武功",
-    iszichuang: true,
-  };
-
-  const percentTarget = rng.rangeFloat(80, 100);
-  const percent = rng.rangeFloat(20, 40);
-  const zichuang = {
-    seed,
-    percent,
-    percentTarget,
-    gailiangkongjian: roundToInt((percentTarget - percent) / GAILIANG_PERCENT_STEP),
-    fenggelock: false,
-    arealock: false,
-    bufflock: false,
-    rare: Number(gWuGong.rare),
-  };
-  const detail = { power: 0, b1value: 0 };
-
-  countRare(zichuang, gWuGong, normalized.ziChuangWeiLiRows);
-  randomBuff(rng, zichuang, gWuGong, normalized.ziChuangBuffRows);
-  countWeili(zichuang, gWuGong, detail, normalized.ziChuangWeiLiRows, normalized.ziChuangBuffRows);
-
-  return {
-    rng,
-    data: normalized,
-    zichuang,
-    gWuGong,
-    detail,
-    history: [{ action: "create", zichuang: clone(zichuang), gWuGong: clone(gWuGong), detail: clone(detail) }],
-  };
-}
-
-export function improveZiChuang(simulation, locks = {}) {
-  const { rng, data, zichuang, gWuGong, detail } = simulation;
-  zichuang.fenggelock = Boolean(locks.fenggelock ?? locks.styleLock ?? zichuang.fenggelock);
-  zichuang.arealock = Boolean(locks.arealock ?? locks.areaLock ?? zichuang.arealock);
-  zichuang.bufflock = Boolean(locks.bufflock ?? locks.effectLock ?? zichuang.bufflock);
-
-  zichuang.percent += GAILIANG_PERCENT_STEP * rng.rangeFloat(1, 1.25);
-  zichuang.gailiangkongjian -= 1;
-
-  const changed = {
-    rare: countRare(zichuang, gWuGong, data.ziChuangWeiLiRows),
-    style: false,
-    area: false,
-    effect: false,
-  };
-
-  if (!zichuang.fenggelock) {
-    const nextStyle = randomFengGe(rng, data.chainRows);
-    changed.style = Number(gWuGong.liansuo_fg1) !== Number(nextStyle);
-    gWuGong.liansuo_fg1 = nextStyle;
+export class SelfCreateSimulation {
+  constructor(input, data, options = {}) {
+    this.input = clone(input);
+    this.data = defaultData(data);
+    this.rng = new UnityRandom(makeZiChuangSeed(input));
+    this.zichuang = null;
+    this.gWuGong = null;
+    this.detail = { power: 0, b1value: 0 };
+    this.history = [];
+    this.#create(input, options);
   }
 
-  if (!zichuang.arealock) {
-    changed.area = randomAttackArea(rng, zichuang, gWuGong, data.wugongRows);
+  get seed() {
+    return this.zichuang.seed;
   }
 
-  if (!zichuang.bufflock) {
-    changed.effect = randomBuff(rng, zichuang, gWuGong, data.ziChuangBuffRows);
+  get remainingImproveCount() {
+    return Number(this.zichuang.gailiangkongjian) || 0;
   }
 
-  countWeili(zichuang, gWuGong, detail, data.ziChuangWeiLiRows, data.ziChuangBuffRows);
-  simulation.history.push({
-    action: "improve",
-    locks: clone(locks),
-    changed,
-    zichuang: clone(zichuang),
-    gWuGong: clone(gWuGong),
-    detail: clone(detail),
-  });
-  return simulation;
-}
+  get canImprove() {
+    return this.remainingImproveCount > 0;
+  }
 
-export function simulateZiChuang(input, data, options = {}) {
-  const simulation = createZiChuang(input, data, options);
-  const steps = Array.isArray(input.improvements) ? input.improvements : [];
-  for (const locks of steps) improveZiChuang(simulation, locks);
-  return simulation;
+  #create(input, options = {}) {
+    const template = pickInitialTemplate(this.rng, input.weaponType, this.data.wugongRows, options);
+
+    this.gWuGong = {
+      ...template,
+      chnname: input.name || "自创武功",
+      type: Number(input.weaponType),
+      liansuo_fg1: randomFengGe(this.rng, this.data.chainRows),
+      liansuo_fg2: 0,
+      buff2: DEFAULT_BUFF_TYPE,
+      bufftarget2: DEFAULT_BUFF_TARGET,
+      huodefangfa: "自创武功",
+      iszichuang: true,
+    };
+
+    const percentTarget = this.rng.rangeFloat(80, 100);
+    const percent = this.rng.rangeFloat(20, 40);
+    this.zichuang = {
+      seed: makeZiChuangSeed(input),
+      percent,
+      percentTarget,
+      gailiangkongjian: roundToInt((percentTarget - percent) / GAILIANG_PERCENT_STEP),
+      fenggelock: false,
+      arealock: false,
+      bufflock: false,
+      rare: Number(this.gWuGong.rare),
+    };
+
+    countRare(this.zichuang, this.gWuGong, this.data.ziChuangWeiLiRows);
+    randomBuff(this.rng, this.zichuang, this.gWuGong, this.data.ziChuangBuffRows);
+    countWeili(this.zichuang, this.gWuGong, this.detail, this.data.ziChuangWeiLiRows, this.data.ziChuangBuffRows);
+    this.#record("create");
+  }
+
+  #record(action, extra = {}) {
+    this.history.push({
+      action,
+      ...extra,
+      zichuang: clone(this.zichuang),
+      gWuGong: clone(this.gWuGong),
+      detail: clone(this.detail),
+    });
+  }
+
+  improve(locks = {}) {
+    if (!this.canImprove) return this;
+
+    this.zichuang.fenggelock = Boolean(locks.fenggelock ?? locks.styleLock ?? this.zichuang.fenggelock);
+    this.zichuang.arealock = Boolean(locks.arealock ?? locks.areaLock ?? this.zichuang.arealock);
+    this.zichuang.bufflock = Boolean(locks.bufflock ?? locks.effectLock ?? this.zichuang.bufflock);
+
+    this.zichuang.percent += GAILIANG_PERCENT_STEP * this.rng.rangeFloat(1, 1.25);
+    this.zichuang.gailiangkongjian -= 1;
+
+    const changed = {
+      rare: countRare(this.zichuang, this.gWuGong, this.data.ziChuangWeiLiRows),
+      style: false,
+      area: false,
+      effect: false,
+    };
+
+    if (!this.zichuang.fenggelock) {
+      const nextStyle = randomFengGe(this.rng, this.data.chainRows);
+      changed.style = Number(this.gWuGong.liansuo_fg1) !== Number(nextStyle);
+      this.gWuGong.liansuo_fg1 = nextStyle;
+    }
+
+    if (!this.zichuang.arealock) {
+      changed.area = randomAttackArea(this.rng, this.zichuang, this.gWuGong, this.data.wugongRows);
+    }
+
+    if (!this.zichuang.bufflock) {
+      changed.effect = randomBuff(this.rng, this.zichuang, this.gWuGong, this.data.ziChuangBuffRows);
+    }
+
+    countWeili(this.zichuang, this.gWuGong, this.detail, this.data.ziChuangWeiLiRows, this.data.ziChuangBuffRows);
+    this.#record("improve", { locks: clone(locks), changed });
+    return this;
+  }
+
+  currentSummary(styleNames = {}) {
+    return summarizeZiChuangStep(this.history.at(-1), styleNames);
+  }
+
+  summaries(styleNames = {}) {
+    return this.history.map((step) => summarizeZiChuangStep(step, styleNames));
+  }
+
+  toRoute(styleNames = {}) {
+    const summaries = this.summaries(styleNames);
+    const initial = summaries[0] || null;
+    const steps = summaries.slice(1).map((result, index) => ({
+      index: index + 1,
+      locks: result.locks || {},
+      result,
+    }));
+    const final = summaries.at(-1) || null;
+    return {
+      input: clone(this.input || {}),
+      seed: this.seed,
+      initialImproveLimit: Number(initial?.gailiangkongjian ?? 0),
+      remainingImproveCount: Number(final?.gailiangkongjian ?? 0),
+      initial,
+      steps,
+      final,
+      summaries,
+      simulation: this,
+    };
+  }
 }
 
 export function summarizeZiChuangStep(step, styleNames = {}) {
@@ -275,6 +319,35 @@ export function summarizeZiChuangStep(step, styleNames = {}) {
       bufftarget: step.gWuGong.bufftarget1,
       value: step.detail.b1value,
     },
+    cost: step.gWuGong.cost,
     power: step.detail.power,
   };
+}
+
+export function runSelfCreateRoute(input, data, options = {}) {
+  const styleNames = options.styleNames || {};
+  const simulation = new SelfCreateSimulation(input, data, options);
+
+  const initialImproveLimit = simulation.remainingImproveCount;
+  const maxSteps = Math.max(0, Number(options.maxSteps ?? initialImproveLimit));
+  const fixedSteps = Array.isArray(input.improvements) ? input.improvements : [];
+  const getLocks = typeof options.getLocks === "function"
+    ? options.getLocks
+    : ({ index }) => fixedSteps[index] || null;
+
+  for (let index = 0; index < maxSteps; index += 1) {
+    if (!simulation.canImprove) break;
+    const before = simulation.currentSummary(styleNames);
+    const locks = getLocks({
+      index,
+      stepNumber: index + 1,
+      before,
+      route: simulation.toRoute(styleNames),
+      simulation,
+    });
+    if (!locks) break;
+    simulation.improve(locks);
+  }
+
+  return simulation.toRoute(styleNames);
 }

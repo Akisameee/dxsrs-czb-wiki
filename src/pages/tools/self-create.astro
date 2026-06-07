@@ -3,9 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="自创武功模拟器" active="self-create">
-  <main class="self-create-shell">
-    <section class="self-create-panel" aria-label="自创参数">
-      <header class="topbar">
+  <main class="self-create-workbench resizable-split" data-split-id="self-create" data-split-default="36" data-split-min-left="320" data-split-min-right="360">
+    <section class="self-create-simulator" aria-label="自创模拟">
+      <header class="self-create-head">
         <div>
           <h1>自创武功模拟器</h1>
           <p id="self-create-status" class="status-text">读取数据中</p>
@@ -13,9 +13,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       </header>
 
       <form id="self-create-form" class="self-create-form">
-        <section class="form-card">
-          <h2>初始四维</h2>
-          <div class="number-grid">
+        <section class="sim-controls">
+          <div class="initial-summary">
+            <span id="attribute-total">四维 20 / 20</span>
+          </div>
+          <div class="initial-grid">
             <label>
               <span>意念</span>
               <input name="yi" type="number" min="0" max="10" value="5" />
@@ -32,47 +34,68 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
               <span>神韵</span>
               <input name="shen" type="number" min="0" max="10" value="5" />
             </label>
-          </div>
-        </section>
-
-        <section class="form-card">
-          <h2>武功</h2>
-          <div class="number-grid two">
-            <label>
-              <span>名称</span>
-              <input name="name" type="text" value="自创武功" />
-            </label>
             <label>
               <span>武器类型</span>
               <select id="weapon-type" name="weaponType"></select>
             </label>
-            <label>
-              <span>改良次数</span>
-              <input id="improve-steps" name="steps" type="number" min="0" max="20" value="5" />
-            </label>
           </div>
         </section>
 
-        <section class="form-card lock-card">
-          <h2>改良锁定</h2>
-          <div id="lock-rows" class="lock-rows"></div>
+        <section id="self-create-preview" class="form-card current-result-card" aria-label="当前模拟结果">
+          <div class="empty-state">读取数据中。</div>
         </section>
 
-        <button class="primary-button" type="submit">模拟</button>
+        <section class="sim-step-controls">
+          <div class="sim-button-row">
+            <button id="improve-button" class="primary-button" type="button">改良</button>
+            <button id="undo-button" class="secondary-button" type="button">回退</button>
+            <button id="reset-button" class="secondary-button" type="button">重置</button>
+          </div>
+        </section>
       </form>
     </section>
 
-    <section class="self-create-results" aria-label="模拟结果">
-      <div class="section-head">
-        <h2>结果时间线</h2>
-      </div>
-      <div id="self-create-result" class="timeline-list">
-        <div class="empty-state">读取数据中。</div>
-      </div>
+    <div class="split-resizer" data-split-resizer role="separator" aria-label="调整左右栏宽度" aria-orientation="vertical" tabindex="0"></div>
+
+    <section class="self-create-generator" aria-label="功法生成器">
+      <header class="topbar">
+        <div>
+          <h1>功法生成器</h1>
+          <p id="generator-status" class="status-text">选择目标词条后搜索可复现轨迹。</p>
+        </div>
+      </header>
+
+      <section class="generator-controls" aria-label="生成目标">
+        <div class="generator-target-grid">
+          <label>
+            <span>武器类型</span>
+            <select id="generator-weapon-type"></select>
+          </label>
+          <label>
+            <span>目标风格</span>
+            <select id="generator-style"></select>
+          </label>
+          <label>
+            <span>攻击范围</span>
+            <select id="generator-area"></select>
+          </label>
+          <label>
+            <span>特殊效果</span>
+            <select id="generator-effect"></select>
+          </label>
+        </div>
+
+        <button id="generator-search-button" class="primary-button" type="button">搜索轨迹</button>
+      </section>
+
+      <section id="generator-results" class="generator-results" aria-live="polite">
+        <div class="empty-state">还没有搜索结果。</div>
+      </section>
     </section>
   </main>
 
   <script>
+    import "../../shared/split-resizer.js";
     import "../../tools/self-create/page.js";
   </script>
 </BaseLayout>
