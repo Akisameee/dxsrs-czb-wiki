@@ -1,58 +1,61 @@
-# 大侠式人生重制版资料站
+# 大侠式人生重制版资料工具
 
-Astro 静态资料站和工具页。当前以资料页为主，工具逻辑仍保留原生浏览器 JS，方便继续快速迭代。
+## Features
 
-## 目录
+- 武学配装模拟器：选择武学后统计门派连锁、风格连锁，并支持装备词条和自创外功补充计数。
+- 自创武学模拟：输入四维和武器类型，模拟初始结果，以及贪心锁定后的风格、攻击范围、特殊效果和威力分布。
+- 自创武学初始搜索：按目标风格、攻击范围、特殊效果和效果等级搜索可能的初始四维，并按命中概率和威力结果排序。
 
-- `src/pages/`：Astro 页面入口。
-  - `index.astro`：站点首页。
-  - `tools/loadout.astro`：武学配装模拟器。
-  - `tools/self-create.astro`：自创武功模拟器。
-- `src/components/`：共享页面组件，例如导航。
-- `src/layouts/`：页面布局。
-- `src/styles/`：全局样式。
-- `src/shared/`：跨工具复用的常量和通用函数。
-- `src/tools/`：前端工具逻辑。
-  - `loadout/`：武学配装工具逻辑。
-  - `self-create/`：自创模拟器和 Unity 随机数复现。
-- `public/data/`：前端直接读取的数据，脚本也直接生成到这里。
-  - `enums.json`：统一枚举表，前端用它把 id 显示成中文。
-  - `martial_arts.json`、`sect_chains.json`、`style_chains.json`：展示数据尽量存 id，例如 `sectId`、`styleIds`、`typeId`、`effect.id`。
-- `public/data/self_create.json`：自创模拟器使用的精简数据。
-- `re/`：本地逆向资料目录，不上传。
-  - `re/raw/`：从游戏数据库解析出的原始表，本地研究和重新生成数据用。
-  - `re/dump/`、`re/jadx/`、`re/.tools/`：反编译和分析工具产物。
-- `scripts/`：数据解析和构建脚本。
-- `docs/`：需求记录和手工测试项。
-  - `ui-control-layout.md`：工具页横向控件布局约定和验收清单。
+## Algorithms
 
-## 本地运行
+自创武学相关的概率、品阶、真气消耗和威力计算，来自游戏解包数据和对游戏逻辑的逆向整理，依靠经验手工拟合。
 
-```powershell
-npm install
-npm run dev
-```
+### 自创武学初始化
 
-默认配置带 GitHub Pages 子路径，开发地址通常是：
+自创武学的初始状态由四维和武器类型共同决定。四维不会直接决定某一个词条，而是先映射成一个随机种子：
 
 ```text
-http://localhost:4321/dxsrs-czb-wiki/
+seed = 意念 + 气劲 * 11 + 形态 * 111 + 神韵 * 1111 + 武器类型 * 11111 + 11111
 ```
 
-构建：
+模拟器用这个 seed 初始化 Unity 风格随机序列，然后按游戏顺序生成初始模板、风格、成长进度、品阶、特殊效果和威力。
 
-```powershell
-npm run build
+```text
+percentTarget = Random.Range(80, 100)
+percent = Random.Range(20, 40)
+改良空间 = round((percentTarget - percent) / 4)
 ```
 
-生成结果在 `dist/`。
+品阶和真气消耗由 `GZiChuangWeiLi` 的武器类型和 `percent` 区间决定。威力在同一条记录的 `weilimin` 和 `weilimax` 之间按 `percent` 线性插值，再乘以当前特殊效果在 `GZiChuangBuff` 里的 `percent`。
 
-如果刚从原始表重新生成前端数据：
-
-```powershell
-npm run build:data
+```text
+rare = row.rare
+cost = row.cost
+progress = (percent - percentmin) / (percentmax - percentmin)
+basePower = weilimin + (weilimax - weilimin) * progress
+power = basePower * buff.percent
 ```
 
-## 逆向资料
+这里的威力是自创武学自身的招式基础威力，不包含配装连锁、门派加成、战斗伤害倍率等外部加成。
 
-`re/`、`Cpp2IL-*.exe` 属于本地研究材料，不是网站部署内容，已加入 `.gitignore`。前端只读取 `public/data/` 里的精简数据，不直接读取原始表。
+风格来自 `GLianSuo` 的加权随机池；攻击范围来自同武器、非自创、同候选品阶组的已有武学模板；特殊效果来自 `GZiChuangBuff`。品阶组规则是：
+
+```text
+rare < 4  -> 候选 rare 为 1、2、3
+rare >= 4 -> 候选 rare 为 4、5
+```
+
+### 自创武学改良
+
+改良过程不能被玩家完全控制。游戏每次改良都会沿用 Unity 全局随机序列，玩家只能决定风格、攻击范围、特殊效果是否锁定；未锁定的项目会继续随机。
+
+每次改良会推进成长进度并消耗一次改良空间：
+
+```text
+percent += 4 * Random.Range(1, 1.25)
+改良空间 -= 1
+```
+
+如果目标词条已经出现，模拟器会按贪心策略锁定它；没出现就保持不锁继续抽。因为后续随机序列会受每一步随机调用影响，所以无法只靠一次确定性计算得到命中率。
+
+因此当前工具用蒙特卡洛模拟：对同一个初始输入重复跑多条随机改良路径，统计目标风格、攻击范围、特殊效果等级、最终威力等结果的概率分布。
