@@ -16,6 +16,8 @@ Astro 静态资料站和工具页。当前以资料页为主，工具逻辑仍�
   - `loadout/`：武学配装工具逻辑。
   - `self-create/`：自创模拟器和 Unity 随机数复现。
 - `public/data/`：前端直接读取的数据，脚本也直接生成到这里。
+  - `enums.json`：统一枚举表，前端用它把 id 显示成中文。
+  - `martial_arts.json`、`sect_chains.json`、`style_chains.json`：展示数据尽量存 id，例如 `sectId`、`styleIds`、`typeId`、`effect.id`。
 - `public/data/self_create.json`：自创模拟器使用的精简数据。
 - `re/`：本地逆向资料目录，不上传。
   - `re/raw/`：从游戏数据库解析出的原始表，本地研究和重新生成数据用。

@@ -1,5 +1,5 @@
 import { state } from "./state.js";
-import { escapeHtml, fieldValue, formatEffectText, getRareMeta, listValue, typeMark } from "../../shared/utils.js";
+import { enumLabel, escapeHtml, fieldValue, formatEffectText, getRareMeta, listValue, martialTypeLabel } from "../../shared/utils.js";
 
 export const hoverTooltip = document.createElement("div");
 hoverTooltip.className = "martial-tooltip";
@@ -16,18 +16,20 @@ function renderInfoRow(label, value) {
 }
 
 function renderMartialTooltip(item) {
-  const rare = getRareMeta(item.rare);
-  const styleText = listValue(item.styles).join("、");
+  const rare = getRareMeta(item.rare, state.enums);
+  const typeName = enumLabel(state.enums, "BingQiType", item.typeId);
+  const sectName = enumLabel(state.enums, "LianSuo_MP", item.sectId);
+  const styleText = listValue((item.styleIds || []).map((id) => enumLabel(state.enums, "LianSuo_FG", id))).join("、");
   const common = `
     <header>
-      <strong>(${escapeHtml(typeMark(item.type))}) ${escapeHtml(item.name)}</strong>
+      <strong>(${escapeHtml(martialTypeLabel(state.enums, item.typeId))}) ${escapeHtml(item.name)}</strong>
       <span class="tooltip-rarity ${rare.className}">${escapeHtml(rare.label)}</span>
     </header>
-    ${renderInfoRow("门派", item.sect)}
+    ${renderInfoRow("门派", sectName)}
     ${renderInfoRow("风格", styleText)}
   `;
 
-  if (item.type === "内功") {
+  if (Number(item.typeId) === 6) {
     const passives = listValue(item.passives)
       .map((passive) => `<li>${escapeHtml(passive)}</li>`)
       .join("");
@@ -44,6 +46,7 @@ function renderMartialTooltip(item) {
 
   return `
     ${common}
+    ${renderInfoRow("类型", typeName)}
     ${renderInfoRow("威力", item.power ?? "未知")}
     ${renderInfoRow("真气", item.cost ?? "未知")}
     ${renderInfoRow("效果", formatEffectText(item.effect, state.effects))}

@@ -1,11 +1,11 @@
 export const MAX_SELECTION = 12;
-export const PENGLAI_SECT = "蓬莱帮";
-export const JIANGHU_SECT = "江湖";
-export const BASIC_STYLE = "基础";
+export const PENGLAI_SECT_ID = 7;
+export const JIANGHU_SECT_ID = 12;
+export const BASIC_STYLE_ID = 19;
 
-export const JOINABLE_SECTS = ["菩提门", "真武教", "十方寨", "长生门", "玄女斋", "幽冥教", "百花门"];
+export const JOINABLE_SECT_IDS = [0, 1, 2, 5, 6, 8, 9];
 
-export const EQUIPMENT_STYLE_OPTIONS = ["刚猛", "阴柔", "灵动", "千变", "致命", "擒拿", "剧毒"];
+export const EQUIPMENT_STYLE_OPTION_IDS = [1, 2, 3, 4, 6, 10, 11];
 
 export const EQUIPMENT_STYLE_SLOTS = [
   { key: "weapon1", label: "武器 1" },
@@ -14,9 +14,10 @@ export const EQUIPMENT_STYLE_SLOTS = [
 ];
 
 export const rareMeta = {
-  1: { label: "灰色", className: "rarity-gray" },
-  2: { label: "绿色", className: "rarity-green" },
-  3: { label: "蓝色", className: "rarity-blue" },
-  4: { label: "紫色", className: "rarity-purple" },
-  5: { label: "金色", className: "rarity-gold" },
+  0: { label: "基础", className: "rarity-gray" },
+  1: { label: "入门", className: "rarity-gray" },
+  2: { label: "进阶", className: "rarity-green" },
+  3: { label: "上乘", className: "rarity-blue" },
+  4: { label: "绝门", className: "rarity-purple" },
+  5: { label: "绝世", className: "rarity-gold" },
 };

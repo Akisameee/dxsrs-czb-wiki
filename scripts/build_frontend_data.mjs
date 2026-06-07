@@ -1,21 +1,17 @@
 #!/usr/bin/env node
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DATA_DIR, RAW_DIR, readJson, writeJson } from "./lib/bgdatabase.mjs";
+import { DATA_DIR, RAW_DIR, ROOT, readJson, writeJson } from "./lib/bgdatabase.mjs";
 
 function cleanText(value) {
   if (value === null || value === undefined) return null;
   return String(value).replace(/<\/?color(?:=[^>]*)?>/gi, "").trim() || null;
 }
 
-function typeFromRow(row) {
-  return row.type === 6 ? "内功" : "外功";
-}
-
-function stylesFromRow(row, enumTypes) {
+function styleIdsFromRow(row) {
   return [row.liansuo_fg1, row.liansuo_fg2]
-    .map((id) => enumTypes.LianSuo_FG[String(id)])
-    .filter(Boolean);
+    .map(Number)
+    .filter((id) => id > 0);
 }
 
 function readExistingMartialArts(path) {
@@ -28,33 +24,80 @@ function roundNumber(value, digits = 2) {
   return Math.round(value * factor) / factor;
 }
 
-function powerFromDetailRows(detailRows, martialIndex) {
+function maxLevelDetailRow(detailRows, martialIndex) {
   const rows = detailRows.slice(martialIndex * 10, martialIndex * 10 + 10);
-  const maxLevelRow = rows
+  return rows
     .filter((row) => Number(row.weili) > 0)
     .sort((a, b) => b.lv - a.lv)[0];
+}
+
+function powerFromDetailRow(maxLevelRow) {
   return maxLevelRow ? roundNumber(maxLevelRow.weili) : null;
 }
 
+function invertEnum(enumMap) {
+  return new Map(Object.entries(enumMap || {}).map(([id, name]) => [name, Number(id)]));
+}
+
+function normalizeEffect(effect, buffNameToId) {
+  if (!Array.isArray(effect)) return [];
+  return effect
+    .map((item) => {
+      const id = item.id ?? buffNameToId.get(item.name);
+      const level = Number(item.level);
+      if (id === null || id === undefined || !Number.isFinite(level) || level < 0) return null;
+      return { id: Number(id), level };
+    })
+    .filter(Boolean);
+}
+
+function effectsFromRawRow(row, detailRow, previous, buffNameToId) {
+  const rawEffects = [1, 2, 3]
+    .map((slot) => {
+      const id = Number(row[`buff${slot}`]);
+      if (!Number.isFinite(id) || id === 99) return null;
+      const level = Number(detailRow?.[`b${slot}value`] ?? 0);
+      if (!Number.isFinite(level) || level < 0) return null;
+      return { id, level };
+    })
+    .filter(Boolean);
+
+  return rawEffects.length > 0 ? rawEffects : normalizeEffect(previous.effect, buffNameToId);
+}
+
+function passivesFromRawDetail(detailRow) {
+  const passives = [];
+  const hp = Number(detailRow?.hp);
+  const zhenqiup = Number(detailRow?.zhenqiup);
+  if (Number.isFinite(hp) && hp > 0) passives.push(`体力值+${roundNumber(hp, 0)}`);
+  if (Number.isFinite(zhenqiup) && zhenqiup > 0) passives.push(`真气增加速度+${roundNumber(zhenqiup)}%`);
+  return passives;
+}
+
 function buildMartialArts(wugongRows, detailRows, existingByName, enumTypes) {
+  const buffNameToId = invertEnum(enumTypes.BuffType);
   return wugongRows.map((row, index) => {
-    const type = typeFromRow(row);
+    const typeId = Number(row.type);
     const previous = existingByName.get(row.chnname) || {};
     const obtainMethod = cleanText(row.huodefangfa);
+    const maxDetailRow = maxLevelDetailRow(detailRows, index);
     const base = {
       name: row.chnname,
-      sect: enumTypes.LianSuo_MP[String(row.liansuo_mp)] || previous.sect || "未知",
-      styles: stylesFromRow(row, enumTypes),
-      type,
+      sectId: Number(row.liansuo_mp),
+      styleIds: styleIdsFromRow(row),
+      typeId,
       rare: row.rare,
     };
 
-    if (type === "外功") {
-      base.power = powerFromDetailRows(detailRows, index);
+    if (typeId !== 6) {
+      base.power = powerFromDetailRow(maxDetailRow);
       base.cost = row.cost;
-      base.effect = Array.isArray(previous.effect) ? previous.effect : [];
+      base.effect = effectsFromRawRow(row, maxDetailRow, previous, buffNameToId);
     } else {
-      base.passives = Array.isArray(previous.passives) ? previous.passives : [];
+      const rawPassives = passivesFromRawDetail(detailRows.slice(index * 10, index * 10 + 10).sort((a, b) => b.lv - a.lv)[0]);
+      base.passives = Array.isArray(previous.passives) && previous.passives.length > 0
+        ? previous.passives
+        : rawPassives;
       base.special = previous.special ?? null;
     }
 
@@ -64,37 +107,37 @@ function buildMartialArts(wugongRows, detailRows, existingByName, enumTypes) {
   });
 }
 
-function pushChain(grouped, groupName, count, effect) {
-  if (!groupName || !count || !effect) return;
-  if (!grouped.has(groupName)) grouped.set(groupName, []);
-  grouped.get(groupName).push({ count, effect });
+function pushChain(grouped, groupId, count, effect) {
+  if (groupId === null || groupId === undefined || !count || !effect) return;
+  if (!grouped.has(groupId)) grouped.set(groupId, []);
+  grouped.get(groupId).push({ count, effect });
 }
 
-function buildChainOutputs(chainRows, enumTypes) {
+function buildChainOutputs(chainRows) {
   const sectGroups = new Map();
   const styleGroups = new Map();
 
   for (const row of chainRows) {
     const count = row.qty;
     const effect = row.desc;
-    const sect = enumTypes.LianSuo_MP[String(row.menpai)];
-    const style = enumTypes.LianSuo_FG[String(row.fengge)];
+    const sectId = Number(row.menpai);
+    const styleId = Number(row.fengge);
 
-    if (row.fengge === 0 && row.menpai !== 15) {
-      pushChain(sectGroups, sect, count, effect);
-    } else if (row.fengge !== 0) {
-      pushChain(styleGroups, style, count, effect);
+    if (styleId === 0 && sectId !== 15) {
+      pushChain(sectGroups, sectId, count, effect);
+    } else if (styleId !== 0) {
+      pushChain(styleGroups, styleId, count, effect);
     }
   }
 
-  const toRows = (groups, key) => [...groups.entries()].map(([name, chains]) => ({
-    [key]: name,
+  const toRows = (groups, key) => [...groups.entries()].map(([id, chains]) => ({
+    [key]: Number(id),
     chains: chains.sort((a, b) => a.count - b.count),
   }));
 
   return {
-    sectChains: toRows(sectGroups, "sect"),
-    styleChains: toRows(styleGroups, "style"),
+    sectChains: toRows(sectGroups, "sectId"),
+    styleChains: toRows(styleGroups, "styleId"),
   };
 }
 
@@ -133,7 +176,6 @@ function buildSelfCreateData(wugongRows, chainRows, weiLiRows, buffRows, enumTyp
       "value",
       "percent",
     ])),
-    styleNames: enumTypes.LianSuo_FG,
   };
 }
 
@@ -158,7 +200,7 @@ export function buildFrontendData({
 
   const existingByName = readExistingMartialArts(martialArtsOutput);
   const martialArts = buildMartialArts(wugong.rows, wugongDetail.rows, existingByName, enums.enumTypes);
-  const { sectChains, styleChains } = buildChainOutputs(chain.rows, enums.enumTypes);
+  const { sectChains, styleChains } = buildChainOutputs(chain.rows);
   const selfCreate = buildSelfCreateData(
     wugong.rows,
     chain.rows,
@@ -173,12 +215,12 @@ export function buildFrontendData({
   writeJson(selfCreateOutput, selfCreate);
 
   return {
-    rawDir,
-    dataDir,
-    martialArtsOutput,
-    sectChainsOutput,
-    styleChainsOutput,
-    selfCreateOutput,
+    rawDir: relative(ROOT, rawDir).replaceAll("\\", "/"),
+    dataDir: relative(ROOT, dataDir).replaceAll("\\", "/"),
+    martialArtsOutput: relative(ROOT, martialArtsOutput).replaceAll("\\", "/"),
+    sectChainsOutput: relative(ROOT, sectChainsOutput).replaceAll("\\", "/"),
+    styleChainsOutput: relative(ROOT, styleChainsOutput).replaceAll("\\", "/"),
+    selfCreateOutput: relative(ROOT, selfCreateOutput).replaceAll("\\", "/"),
     martialArts: martialArts.length,
     sectChains: sectChains.length,
     styleChains: styleChains.length,

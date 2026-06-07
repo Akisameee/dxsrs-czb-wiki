@@ -1,5 +1,6 @@
 export const state = {
   wuxue: [],
+  enums: {},
   effects: [],
   sectChains: [],
   styleChains: [],
@@ -11,8 +12,8 @@ export const state = {
   },
   customMartial: {
     enabled: false,
-    sect: "",
-    style: "",
+    sectId: "",
+    styleId: "",
   },
   filters: {
     sect: "all",

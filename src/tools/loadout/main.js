@@ -19,8 +19,8 @@ function render() {
 
   const martialItems = getMartialCountItems(state);
   const styleItems = getStyleCountItems(state);
-  const sectCounts = countBy(martialItems, (item) => item.sect);
-  const styleCounts = countBy(styleItems, (item) => item.styles || []);
+  const sectCounts = countBy(martialItems, (item) => Number(item.sectId));
+  const styleCounts = countBy(styleItems, (item) => item.styleIds || []);
   const penglaiModifier = getPenglaiModifier(sectCounts);
   const basicUnlocked = isBasicChainUnlocked(state.styleChains, styleCounts, penglaiModifier);
   const visibleChainRecords = buildVisibleChainRecords(
@@ -35,8 +35,8 @@ function render() {
   renderSelected(martialItems);
   renderLoadoutControls();
   renderMartialList();
-  renderSummary(els.sectSummary, sectCounts);
-  renderSummary(els.styleSummary, styleCounts);
+  renderSummary(els.sectSummary, sectCounts, "LianSuo_MP");
+  renderSummary(els.styleSummary, styleCounts, "LianSuo_FG");
   renderChainGroups(els.chainList, visibleChainRecords);
 }
 
@@ -56,20 +56,20 @@ function toggleSelection(name) {
 
 function clearCustomMartial() {
   state.customMartial.enabled = false;
-  state.customMartial.sect = "";
-  state.customMartial.style = "";
+  state.customMartial.sectId = "";
+  state.customMartial.styleId = "";
 }
 
 function bindEvents() {
   els.sectFilter.addEventListener("change", (event) => {
     if (event.target.type !== "radio") return;
-    state.filters.sect = event.target.value;
+    state.filters.sect = event.target.value === "all" ? "all" : Number(event.target.value);
     renderMartialList();
   });
 
   els.styleFilter.addEventListener("change", (event) => {
     if (event.target.type !== "radio") return;
-    state.filters.style = event.target.value;
+    state.filters.style = event.target.value === "all" ? "all" : Number(event.target.value);
     renderMartialList();
   });
 
@@ -82,7 +82,7 @@ function bindEvents() {
   els.equipmentStyleControls.addEventListener("change", (event) => {
     const select = event.target.closest("[data-equipment-style]");
     if (!select) return;
-    state.equipmentStyles[select.dataset.equipmentStyle] = select.value;
+    state.equipmentStyles[select.dataset.equipmentStyle] = select.value === "" ? "" : Number(select.value);
     render();
   });
 
@@ -98,12 +98,12 @@ function bindEvents() {
   });
 
   els.customSect.addEventListener("change", (event) => {
-    state.customMartial.sect = event.target.value;
+    state.customMartial.sectId = event.target.value === "" ? "" : Number(event.target.value);
     render();
   });
 
   els.customStyle.addEventListener("change", (event) => {
-    state.customMartial.style = event.target.value;
+    state.customMartial.styleId = event.target.value === "" ? "" : Number(event.target.value);
     render();
   });
 
@@ -166,17 +166,19 @@ function bindEvents() {
 }
 
 async function loadData() {
-  const [wuxue, effects, sectChains, styleChains] = await Promise.all([
+  const [wuxue, effects, sectChains, styleChains, enums] = await Promise.all([
     fetch(dataUrl("martial_arts.json")).then((response) => response.json()),
     fetch(dataUrl("status_effects.json")).then((response) => response.json()),
     fetch(dataUrl("sect_chains.json")).then((response) => response.json()),
     fetch(dataUrl("style_chains.json")).then((response) => response.json()),
+    fetch(dataUrl("enums.json")).then((response) => response.json()),
   ]);
 
   state.wuxue = wuxue;
   state.effects = effects;
   state.sectChains = sectChains;
   state.styleChains = styleChains;
+  state.enums = enums.enumTypes || {};
   els.status.textContent = `${wuxue.length} 个武功，${sectChains.length} 个门派连锁，${styleChains.length} 个风格连锁`;
 }
 

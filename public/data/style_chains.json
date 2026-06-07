@@ -1,6 +1,6 @@
 [
   {
-    "style": "刚猛",
+    "styleId": 1,
     "chains": [
       {
         "count": 3,
@@ -17,7 +17,7 @@
     ]
   },
   {
-    "style": "阴柔",
+    "styleId": 2,
     "chains": [
       {
         "count": 3,
@@ -34,7 +34,7 @@
     ]
   },
   {
-    "style": "灵动",
+    "styleId": 3,
     "chains": [
       {
         "count": 3,
@@ -51,7 +51,7 @@
     ]
   },
   {
-    "style": "千变",
+    "styleId": 4,
     "chains": [
       {
         "count": 3,
@@ -64,7 +64,7 @@
     ]
   },
   {
-    "style": "御气",
+    "styleId": 5,
     "chains": [
       {
         "count": 2,
@@ -77,7 +77,7 @@
     ]
   },
   {
-    "style": "致命",
+    "styleId": 6,
     "chains": [
       {
         "count": 3,
@@ -90,7 +90,7 @@
     ]
   },
   {
-    "style": "反击",
+    "styleId": 7,
     "chains": [
       {
         "count": 2,
@@ -103,7 +103,7 @@
     ]
   },
   {
-    "style": "纯阳",
+    "styleId": 8,
     "chains": [
       {
         "count": 1,
@@ -116,7 +116,7 @@
     ]
   },
   {
-    "style": "玄阴",
+    "styleId": 9,
     "chains": [
       {
         "count": 1,
@@ -129,7 +129,7 @@
     ]
   },
   {
-    "style": "擒拿",
+    "styleId": 10,
     "chains": [
       {
         "count": 3,
@@ -142,7 +142,7 @@
     ]
   },
   {
-    "style": "剧毒",
+    "styleId": 11,
     "chains": [
       {
         "count": 3,
@@ -159,7 +159,7 @@
     ]
   },
   {
-    "style": "寒冰",
+    "styleId": 12,
     "chains": [
       {
         "count": 2,
@@ -172,7 +172,7 @@
     ]
   },
   {
-    "style": "烈焰",
+    "styleId": 13,
     "chains": [
       {
         "count": 2,
@@ -185,7 +185,7 @@
     ]
   },
   {
-    "style": "破招",
+    "styleId": 14,
     "chains": [
       {
         "count": 2,
@@ -194,7 +194,7 @@
     ]
   },
   {
-    "style": "化劲",
+    "styleId": 15,
     "chains": [
       {
         "count": 2,
@@ -203,7 +203,7 @@
     ]
   },
   {
-    "style": "调息",
+    "styleId": 16,
     "chains": [
       {
         "count": 2,
@@ -220,7 +220,7 @@
     ]
   },
   {
-    "style": "护体",
+    "styleId": 17,
     "chains": [
       {
         "count": 2,
@@ -229,7 +229,7 @@
     ]
   },
   {
-    "style": "突袭",
+    "styleId": 18,
     "chains": [
       {
         "count": 2,
@@ -238,7 +238,7 @@
     ]
   },
   {
-    "style": "基础",
+    "styleId": 19,
     "chains": [
       {
         "count": 2,

@@ -1,6 +1,6 @@
 [
   {
-    "sect": "菩提门",
+    "sectId": 0,
     "chains": [
       {
         "count": 3,
@@ -17,7 +17,7 @@
     ]
   },
   {
-    "sect": "真武教",
+    "sectId": 1,
     "chains": [
       {
         "count": 4,
@@ -30,7 +30,7 @@
     ]
   },
   {
-    "sect": "十方寨",
+    "sectId": 2,
     "chains": [
       {
         "count": 2,
@@ -47,7 +47,7 @@
     ]
   },
   {
-    "sect": "七星观",
+    "sectId": 3,
     "chains": [
       {
         "count": 2,
@@ -60,7 +60,7 @@
     ]
   },
   {
-    "sect": "潇湘剑派",
+    "sectId": 4,
     "chains": [
       {
         "count": 3,
@@ -73,7 +73,7 @@
     ]
   },
   {
-    "sect": "长生门",
+    "sectId": 5,
     "chains": [
       {
         "count": 4,
@@ -86,7 +86,7 @@
     ]
   },
   {
-    "sect": "玄女斋",
+    "sectId": 6,
     "chains": [
       {
         "count": 3,
@@ -99,7 +99,7 @@
     ]
   },
   {
-    "sect": "蓬莱帮",
+    "sectId": 7,
     "chains": [
       {
         "count": 2,
@@ -112,7 +112,7 @@
     ]
   },
   {
-    "sect": "幽冥教",
+    "sectId": 8,
     "chains": [
       {
         "count": 2,
@@ -129,7 +129,7 @@
     ]
   },
   {
-    "sect": "百花门",
+    "sectId": 9,
     "chains": [
       {
         "count": 2,
@@ -146,7 +146,7 @@
     ]
   },
   {
-    "sect": "罗刹教",
+    "sectId": 10,
     "chains": [
       {
         "count": 2,
@@ -155,7 +155,7 @@
     ]
   },
   {
-    "sect": "断魂庄",
+    "sectId": 11,
     "chains": [
       {
         "count": 1,
@@ -168,7 +168,7 @@
     ]
   },
   {
-    "sect": "江湖",
+    "sectId": 12,
     "chains": [
       {
         "count": 1,
@@ -177,7 +177,7 @@
     ]
   },
   {
-    "sect": "九曜会",
+    "sectId": 14,
     "chains": [
       {
         "count": 3,
@@ -190,7 +190,7 @@
     ]
   },
   {
-    "sect": "金光寺",
+    "sectId": 13,
     "chains": [
       {
         "count": 2,

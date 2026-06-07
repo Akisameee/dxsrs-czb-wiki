@@ -1,17 +1,17 @@
 [
   {
     "name": "罗汉拳",
-    "sect": "菩提门",
-    "styles": [
-      "刚猛"
+    "sectId": 0,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 1,
     "power": 130.87,
     "cost": 2,
     "effect": [
       {
-        "name": "坚守",
+        "id": 1,
         "level": 1
       }
     ],
@@ -20,11 +20,11 @@
   },
   {
     "name": "慈悲心法",
-    "sect": "菩提门",
-    "styles": [
-      "护体"
+    "sectId": 0,
+    "styleIds": [
+      17
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
     "passives": [
       "内丹：体力值+938",
@@ -36,11 +36,11 @@
   },
   {
     "name": "降魔棍法",
-    "sect": "菩提门",
-    "styles": [
-      "千变"
+    "sectId": 0,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 2,
     "power": 449.72,
     "cost": 3,
@@ -50,11 +50,11 @@
   },
   {
     "name": "般若掌",
-    "sect": "菩提门",
-    "styles": [
-      "刚猛"
+    "sectId": 0,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 2,
     "power": 380.37,
     "cost": 3,
@@ -64,18 +64,18 @@
   },
   {
     "name": "一气朝元指",
-    "sect": "菩提门",
-    "styles": [
-      "刚猛",
-      "擒拿"
+    "sectId": 0,
+    "styleIds": [
+      1,
+      10
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 3,
     "power": 679.43,
     "cost": 5,
     "effect": [
       {
-        "name": "脱臼",
+        "id": 7,
         "level": 1
       }
     ],
@@ -84,45 +84,55 @@
   },
   {
     "name": "大光明刀法",
-    "sect": "菩提门",
-    "styles": [
-      "烈焰"
+    "sectId": 0,
+    "styleIds": [
+      13
     ],
-    "type": "外功",
+    "typeId": 1,
     "rare": 3,
     "power": 727.69,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 14,
+        "level": 4
+      }
+    ],
     "obtainMethod": "帮助至德了却心愿",
     "sectRestricted": false
   },
   {
     "name": "不动明王杖",
-    "sect": "菩提门",
-    "styles": [
-      "灵动"
+    "sectId": 0,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 4,
     "power": 890.3,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 5,
+        "level": 3
+      }
+    ],
     "obtainMethod": "帮助至道了却心愿",
     "sectRestricted": false
   },
   {
     "name": "大日如来掌",
-    "sect": "菩提门",
-    "styles": [
-      "刚猛"
+    "sectId": 0,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 772.86,
     "cost": 5,
     "effect": [
       {
-        "name": "猛攻",
+        "id": 0,
         "level": 2
       }
     ],
@@ -131,11 +141,11 @@
   },
   {
     "name": "菩提心经",
-    "sect": "菩提门",
-    "styles": [
-      "护体"
+    "sectId": 0,
+    "styleIds": [
+      17
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4830",
@@ -147,11 +157,11 @@
   },
   {
     "name": "大藏心法",
-    "sect": "菩提门",
-    "styles": [
-      "调息"
+    "sectId": 0,
+    "styleIds": [
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
     "passives": [
       "体力值+5040",
@@ -163,11 +173,11 @@
   },
   {
     "name": "紫阳剑法",
-    "sect": "真武教",
-    "styles": [
-      "阴柔"
+    "sectId": 1,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 1,
     "power": 141.94,
     "cost": 2,
@@ -177,11 +187,11 @@
   },
   {
     "name": "两仪功",
-    "sect": "真武教",
-    "styles": [
-      "阴柔"
+    "sectId": 1,
+    "styleIds": [
+      2
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
     "passives": [
       "体力值+870",
@@ -193,11 +203,11 @@
   },
   {
     "name": "乾坤八卦剑",
-    "sect": "真武教",
-    "styles": [
-      "阴柔"
+    "sectId": 1,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 2,
     "power": 393.17,
     "cost": 3,
@@ -207,45 +217,55 @@
   },
   {
     "name": "无忧剑法",
-    "sect": "真武教",
-    "styles": [
-      "阴柔"
+    "sectId": 1,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 3,
     "power": 574.08,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 2,
+        "level": 3
+      }
+    ],
     "obtainMethod": "找真武教鲁顺陌学习武艺",
     "sectRestricted": false
   },
   {
     "name": "八脉手",
-    "sect": "真武教",
-    "styles": [
-      "致命"
+    "sectId": 1,
+    "styleIds": [
+      6
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 3,
     "power": 596.36,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 12,
+        "level": 2
+      }
+    ],
     "obtainMethod": "帮助鲁顺陌了却心愿",
     "sectRestricted": false
   },
   {
     "name": "太虚神悟掌",
-    "sect": "真武教",
-    "styles": [
-      "反击"
+    "sectId": 1,
+    "styleIds": [
+      7
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 758.75,
     "cost": 5,
     "effect": [
       {
-        "name": "坚守",
+        "id": 1,
         "level": 3
       }
     ],
@@ -254,25 +274,30 @@
   },
   {
     "name": "太元无极剑",
-    "sect": "真武教",
-    "styles": [
-      "反击"
+    "sectId": 1,
+    "styleIds": [
+      7
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 4,
     "power": 802.23,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 1,
+        "level": 3
+      }
+    ],
     "obtainMethod": "真武教秘传武学",
     "sectRestricted": false
   },
   {
     "name": "禹余诀",
-    "sect": "真武教",
-    "styles": [
-      "纯阳"
+    "sectId": 1,
+    "styleIds": [
+      8
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4798",
@@ -284,11 +309,11 @@
   },
   {
     "name": "十方杖法",
-    "sect": "十方寨",
-    "styles": [
-      "刚猛"
+    "sectId": 2,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 1,
     "power": 170.1,
     "cost": 2,
@@ -298,38 +323,46 @@
   },
   {
     "name": "震山功",
-    "sect": "十方寨",
-    "styles": [
-      "擒拿"
+    "sectId": 2,
+    "styleIds": [
+      10
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
-    "passives": [],
+    "passives": [
+      "体力值+885",
+      "真气增加速度+38.14%"
+    ],
     "special": null,
     "obtainMethod": "十方寨秘传武学",
     "sectRestricted": false
   },
   {
     "name": "鸳鸯连环棍",
-    "sect": "十方寨",
-    "styles": [
-      "千变"
+    "sectId": 2,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 3,
     "power": 696.32,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 3,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找十方寨聂鹰学习武艺",
     "sectRestricted": false
   },
   {
     "name": "天罡神拳",
-    "sect": "十方寨",
-    "styles": [
-      "刚猛"
+    "sectId": 2,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 1235.53,
     "cost": 6,
@@ -339,11 +372,11 @@
   },
   {
     "name": "山河八极棍",
-    "sect": "十方寨",
-    "styles": [
-      "千变"
+    "sectId": 2,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 4,
     "power": 1180.78,
     "cost": 5,
@@ -353,11 +386,11 @@
   },
   {
     "name": "九鼎神功",
-    "sect": "十方寨",
-    "styles": [
-      "擒拿"
+    "sectId": 2,
+    "styleIds": [
+      10
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4416",
@@ -369,25 +402,30 @@
   },
   {
     "name": "如意珠",
-    "sect": "长生门",
-    "styles": [
-      "寒冰"
+    "sectId": 5,
+    "styleIds": [
+      12
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 1,
     "power": 161.76,
     "cost": 2,
-    "effect": [],
+    "effect": [
+      {
+        "id": 13,
+        "level": 1
+      }
+    ],
     "obtainMethod": "长生门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "长春心诀",
-    "sect": "长生门",
-    "styles": [
-      "调息"
+    "sectId": 5,
+    "styleIds": [
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
     "passives": [
       "体力值+600",
@@ -399,25 +437,30 @@
   },
   {
     "name": "天机刺",
-    "sect": "长生门",
-    "styles": [
-      "剧毒"
+    "sectId": 5,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 2,
     "power": 295.27,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找长生门周洛歌学习武艺",
     "sectRestricted": false
   },
   {
     "name": "摧魄神功",
-    "sect": "长生门",
-    "styles": [
-      "化劲"
+    "sectId": 5,
+    "styleIds": [
+      15
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 3,
     "passives": [
       "体力值+2025",
@@ -429,11 +472,11 @@
   },
   {
     "name": "归墟大法",
-    "sect": "长生门",
-    "styles": [
-      "千变"
+    "sectId": 5,
+    "styleIds": [
+      4
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4747",
@@ -445,26 +488,31 @@
   },
   {
     "name": "寒光神针",
-    "sect": "长生门",
-    "styles": [
-      "寒冰"
+    "sectId": 5,
+    "styleIds": [
+      12
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 4,
     "power": 1114.97,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 13,
+        "level": 3
+      }
+    ],
     "obtainMethod": "长生门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "离尘神功",
-    "sect": "长生门",
-    "styles": [
-      "化劲",
-      "调息"
+    "sectId": 5,
+    "styleIds": [
+      15,
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4370",
@@ -476,17 +524,17 @@
   },
   {
     "name": "拂云逍遥掌",
-    "sect": "长生门",
-    "styles": [
-      "擒拿"
+    "sectId": 5,
+    "styleIds": [
+      10
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 5,
     "power": 957.98,
     "cost": 6,
     "effect": [
       {
-        "name": "脱臼",
+        "id": 7,
         "level": 3
       }
     ],
@@ -495,25 +543,30 @@
   },
   {
     "name": "黄泉剑法",
-    "sect": "幽冥教",
-    "styles": [
-      "灵动"
+    "sectId": 8,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 1,
     "power": 139.95,
     "cost": 2,
-    "effect": [],
+    "effect": [
+      {
+        "id": 3,
+        "level": 0
+      }
+    ],
     "obtainMethod": "幽冥教秘传武学",
     "sectRestricted": false
   },
   {
     "name": "七煞心法",
-    "sect": "幽冥教",
-    "styles": [
-      "千变"
+    "sectId": 8,
+    "styleIds": [
+      4
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
     "passives": [
       "体力值+660",
@@ -525,40 +578,50 @@
   },
   {
     "name": "飞沙走石",
-    "sect": "幽冥教",
-    "styles": [
-      "突袭",
-      "剧毒"
+    "sectId": 8,
+    "styleIds": [
+      18,
+      11
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 3,
     "power": 592.63,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 6
+      }
+    ],
     "obtainMethod": "找幽冥教武鸿柯学习武艺",
     "sectRestricted": false
   },
   {
     "name": "青蟒诡影剑",
-    "sect": "幽冥教",
-    "styles": [
-      "灵动"
+    "sectId": 8,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 4,
     "power": 973.88,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 2,
+        "level": 3
+      }
+    ],
     "obtainMethod": "幽冥教秘传武学",
     "sectRestricted": false
   },
   {
     "name": "摄魂大法",
-    "sect": "幽冥教",
-    "styles": [
-      "化劲"
+    "sectId": 8,
+    "styleIds": [
+      15
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4425",
@@ -570,17 +633,17 @@
   },
   {
     "name": "阎魔神针",
-    "sect": "幽冥教",
-    "styles": [
-      "灵动"
+    "sectId": 8,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 5,
     "power": 1409.14,
     "cost": 6,
     "effect": [
       {
-        "name": "目盲",
+        "id": 9,
         "level": 3
       }
     ],
@@ -589,52 +652,65 @@
   },
   {
     "name": "五彩丹砂",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 1,
     "power": 118.94,
     "cost": 2,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 1
+      }
+    ],
     "obtainMethod": "百花门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "百花心经",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
-    "passives": [],
+    "passives": [
+      "体力值+863",
+      "真气增加速度+39.13%"
+    ],
     "special": null,
     "obtainMethod": "百花门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "血海棠",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 2,
     "power": 364.63,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 3
+      }
+    ],
     "obtainMethod": "找百花门叶海棠学习武艺",
     "sectRestricted": false
   },
   {
     "name": "九弦百花杀",
-    "sect": "百花门",
-    "styles": [
-      "阴柔"
+    "sectId": 9,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 4,
     "power": 1072.91,
     "cost": 5,
@@ -644,38 +720,46 @@
   },
   {
     "name": "百花销骨香",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 4,
     "power": 987.24,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 12
+      }
+    ],
     "obtainMethod": "百花门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "曼陀罗经",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
-    "passives": [],
+    "passives": [
+      "体力值+4664",
+      "真气增加速度+177.51%"
+    ],
     "special": null,
     "obtainMethod": "百花门秘传武学",
     "sectRestricted": false
   },
   {
     "name": "奔月拳",
-    "sect": "玄女斋",
-    "styles": [
-      "灵动"
+    "sectId": 6,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 1,
     "power": 139.38,
     "cost": 2,
@@ -685,11 +769,11 @@
   },
   {
     "name": "瑶池心经",
-    "sect": "玄女斋",
-    "styles": [
-      "灵动"
+    "sectId": 6,
+    "styleIds": [
+      3
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 1,
     "passives": [
       "体力值+645",
@@ -701,25 +785,30 @@
   },
   {
     "name": "镜花水月",
-    "sect": "玄女斋",
-    "styles": [
-      "寒冰"
+    "sectId": 6,
+    "styleIds": [
+      12
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 3,
     "power": 512.15,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 13,
+        "level": 2
+      }
+    ],
     "obtainMethod": "帮助巫向兰了却心愿",
     "sectRestricted": false
   },
   {
     "name": "姑射剑法",
-    "sect": "玄女斋",
-    "styles": [
-      "致命"
+    "sectId": 6,
+    "styleIds": [
+      6
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 3,
     "power": 842.85,
     "cost": 5,
@@ -729,26 +818,31 @@
   },
   {
     "name": "巫山辉月掌",
-    "sect": "玄女斋",
-    "styles": [
-      "致命"
+    "sectId": 6,
+    "styleIds": [
+      6
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 705,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 11,
+        "level": 1
+      }
+    ],
     "obtainMethod": "玄女斋秘传武学",
     "sectRestricted": false
   },
   {
     "name": "九天玄女功",
-    "sect": "玄女斋",
-    "styles": [
-      "灵动",
-      "玄阴"
+    "sectId": 6,
+    "styleIds": [
+      3,
+      9
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4554",
@@ -760,17 +854,17 @@
   },
   {
     "name": "惊鸿一剑",
-    "sect": "玄女斋",
-    "styles": [
-      "刚猛"
+    "sectId": 6,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 5,
     "power": 966.8,
     "cost": 6,
     "effect": [
       {
-        "name": "猛攻",
+        "id": 0,
         "level": 4
       }
     ],
@@ -779,25 +873,30 @@
   },
   {
     "name": "疯魔爪",
-    "sect": "罗刹教",
-    "styles": [
-      "擒拿"
+    "sectId": 10,
+    "styleIds": [
+      10
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 3,
     "power": 534.52,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 7,
+        "level": 1
+      }
+    ],
     "obtainMethod": "找罗刹教吕公南学习武艺",
     "sectRestricted": false
   },
   {
     "name": "九转魔功",
-    "sect": "罗刹教",
-    "styles": [
-      "反击"
+    "sectId": 10,
+    "styleIds": [
+      7
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4775",
@@ -809,12 +908,12 @@
   },
   {
     "name": "开阳心法",
-    "sect": "七星观",
-    "styles": [
-      "灵动",
-      "调息"
+    "sectId": 3,
+    "styleIds": [
+      3,
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 2,
     "passives": [
       "体力值+1785",
@@ -826,31 +925,36 @@
   },
   {
     "name": "瑶光剑诀",
-    "sect": "七星观",
-    "styles": [
-      "千变"
+    "sectId": 3,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 3,
     "power": 543.34,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 5,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找七星观谭酉成学习武艺",
     "sectRestricted": false
   },
   {
     "name": "玉衡七式",
-    "sect": "七星观",
-    "styles": [
-      "阴柔"
+    "sectId": 3,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 796.36,
     "cost": 5,
     "effect": [
       {
-        "name": "内伤",
+        "id": 6,
         "level": 3
       }
     ],
@@ -859,11 +963,11 @@
   },
   {
     "name": "天玑诀",
-    "sect": "七星观",
-    "styles": [
-      "调息"
+    "sectId": 3,
+    "styleIds": [
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4462",
@@ -875,25 +979,30 @@
   },
   {
     "name": "白眉剑法",
-    "sect": "金光寺",
-    "styles": [
-      "灵动"
+    "sectId": 13,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 2,
     "power": 340.11,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 5,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找金光寺尘空长老学习武艺",
     "sectRestricted": false
   },
   {
     "name": "涅盘禅功",
-    "sect": "金光寺",
-    "styles": [
-      "御气"
+    "sectId": 13,
+    "styleIds": [
+      5
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 3,
     "passives": [
       "体力值+2725",
@@ -905,18 +1014,18 @@
   },
   {
     "name": "无上一指禅",
-    "sect": "金光寺",
-    "styles": [
-      "御气",
-      "擒拿"
+    "sectId": 13,
+    "styleIds": [
+      5,
+      10
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 810.72,
     "cost": 5,
     "effect": [
       {
-        "name": "封穴",
+        "id": 8,
         "level": 1
       }
     ],
@@ -925,11 +1034,11 @@
   },
   {
     "name": "万佛指",
-    "sect": "金光寺",
-    "styles": [
-      "御气"
+    "sectId": 13,
+    "styleIds": [
+      5
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 5,
     "power": 1495.41,
     "cost": 6,
@@ -939,11 +1048,11 @@
   },
   {
     "name": "光相功",
-    "sect": "潇湘剑派",
-    "styles": [
-      "调息"
+    "sectId": 4,
+    "styleIds": [
+      16
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 2,
     "passives": [
       "体力值+1764",
@@ -955,11 +1064,11 @@
   },
   {
     "name": "云环剑法",
-    "sect": "潇湘剑派",
-    "styles": [
-      "阴柔"
+    "sectId": 4,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 2,
     "power": 255.33,
     "cost": 2,
@@ -969,25 +1078,30 @@
   },
   {
     "name": "紫薇荡魔剑",
-    "sect": "潇湘剑派",
-    "styles": [
-      "致命"
+    "sectId": 4,
+    "styleIds": [
+      6
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 3,
     "power": 558.99,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 9,
+        "level": 1
+      }
+    ],
     "obtainMethod": "帮助吕望了却心愿",
     "sectRestricted": false
   },
   {
     "name": "潇湘玄功",
-    "sect": "潇湘剑派",
-    "styles": [
-      "御气"
+    "sectId": 4,
+    "styleIds": [
+      5
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 4,
     "passives": [
       "体力值+4388",
@@ -999,11 +1113,11 @@
   },
   {
     "name": "问天神剑决",
-    "sect": "潇湘剑派",
-    "styles": [
-      "破招"
+    "sectId": 4,
+    "styleIds": [
+      14
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 5,
     "power": 1593.98,
     "cost": 6,
@@ -1013,11 +1127,11 @@
   },
   {
     "name": "迷踪剑法",
-    "sect": "蓬莱帮",
-    "styles": [
-      "灵动"
+    "sectId": 7,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 2,
     "rare": 2,
     "power": 531.01,
     "cost": 4,
@@ -1027,39 +1141,49 @@
   },
   {
     "name": "芙蓉掌",
-    "sect": "蓬莱帮",
-    "styles": [
-      "千变"
+    "sectId": 7,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 3,
     "power": 549.25,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 11,
+        "level": 1
+      }
+    ],
     "obtainMethod": "找蓬莱帮程岱羿学习武艺",
     "sectRestricted": false
   },
   {
     "name": "摘叶飞花",
-    "sect": "蓬莱帮",
-    "styles": [
-      "突袭"
+    "sectId": 7,
+    "styleIds": [
+      18
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 3,
     "power": 768.26,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 12,
+        "level": 2
+      }
+    ],
     "obtainMethod": "帮助夜海凤了却心愿",
     "sectRestricted": false
   },
   {
     "name": "飞星大法",
-    "sect": "蓬莱帮",
-    "styles": [
-      "刚猛"
+    "sectId": 7,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 4,
     "power": 1281.03,
     "cost": 5,
@@ -1069,81 +1193,106 @@
   },
   {
     "name": "万毒化髓掌",
-    "sect": "断魂庄",
-    "styles": [
-      "剧毒"
+    "sectId": 11,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 2,
     "power": 259.45,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 2
+      }
+    ],
     "obtainMethod": "帮助闫意了却心愿",
     "sectRestricted": false
   },
   {
     "name": "陨玉爪",
-    "sect": "断魂庄",
-    "styles": [
-      "剧毒"
+    "sectId": 11,
+    "styleIds": [
+      11
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 4,
     "power": 952.18,
     "cost": 6,
-    "effect": [],
+    "effect": [
+      {
+        "id": 10,
+        "level": 15
+      }
+    ],
     "obtainMethod": "帮助闫崇了却心愿",
     "sectRestricted": false
   },
   {
     "name": "神火珠",
-    "sect": "九曜会",
-    "styles": [
-      "烈焰"
+    "sectId": 14,
+    "styleIds": [
+      13
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 2,
     "power": 351.51,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 14,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找神火堂百里锦学习武艺",
     "sectRestricted": false
   },
   {
     "name": "千钧指法",
-    "sect": "九曜会",
-    "styles": [
-      "破招"
+    "sectId": 14,
+    "styleIds": [
+      14
     ],
-    "type": "外功",
+    "typeId": 0,
     "rare": 3,
     "power": 582.27,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 8,
+        "level": 1
+      }
+    ],
     "obtainMethod": "找锦衣卫丁怀安学习武艺",
     "sectRestricted": false
   },
   {
     "name": "修罗刀法",
-    "sect": "九曜会",
-    "styles": [
-      "阴柔"
+    "sectId": 14,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 1,
     "rare": 3,
     "power": 767.74,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 3,
+        "level": 2
+      }
+    ],
     "obtainMethod": "找追魂阁聂隐学习武艺",
     "sectRestricted": false
   },
   {
     "name": "万象归龙枪",
-    "sect": "九曜会",
-    "styles": [
-      "刚猛"
+    "sectId": 14,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 3,
     "rare": 4,
     "power": 1343.34,
     "cost": 5,
@@ -1153,21 +1302,21 @@
   },
   {
     "name": "灵刀大法",
-    "sect": "九曜会",
-    "styles": [
-      "灵动"
+    "sectId": 14,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 1,
     "rare": 5,
     "power": 1586.05,
     "cost": 6,
     "effect": [
       {
-        "name": "神速",
+        "id": 2,
         "level": 5
       },
       {
-        "name": "神行",
+        "id": 3,
         "level": 5
       }
     ],
@@ -1176,25 +1325,30 @@
   },
   {
     "name": "盘蛇七探棍",
-    "sect": "九曜会",
-    "styles": [
-      "千变"
+    "sectId": 14,
+    "styleIds": [
+      4
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 5,
     "power": 1226.89,
     "cost": 6,
-    "effect": [],
+    "effect": [
+      {
+        "id": 6,
+        "level": 4
+      }
+    ],
     "obtainMethod": "找锦衣卫丁怀安学习武艺",
     "sectRestricted": false
   },
   {
     "name": "行者棍法",
-    "sect": "江湖",
-    "styles": [
-      "基础"
+    "sectId": 12,
+    "styleIds": [
+      19
     ],
-    "type": "外功",
+    "typeId": 4,
     "rare": 1,
     "power": 247.99,
     "cost": 3,
@@ -1204,11 +1358,11 @@
   },
   {
     "name": "六合枪法",
-    "sect": "江湖",
-    "styles": [
-      "基础"
+    "sectId": 12,
+    "styleIds": [
+      19
     ],
-    "type": "外功",
+    "typeId": 3,
     "rare": 1,
     "power": 302.41,
     "cost": 3,
@@ -1218,66 +1372,84 @@
   },
   {
     "name": "连山无影刀",
-    "sect": "江湖",
-    "styles": [
-      "灵动"
+    "sectId": 12,
+    "styleIds": [
+      3
     ],
-    "type": "外功",
+    "typeId": 1,
     "rare": 2,
     "power": 448.65,
     "cost": 3,
-    "effect": [],
+    "effect": [
+      {
+        "id": 2,
+        "level": 2
+      }
+    ],
     "obtainMethod": "帮助贾柳了却心愿",
     "sectRestricted": false
   },
   {
     "name": "残月枪法",
-    "sect": "江湖",
-    "styles": [
-      "刚猛"
+    "sectId": 12,
+    "styleIds": [
+      1
     ],
-    "type": "外功",
+    "typeId": 3,
     "rare": 3,
     "power": 724.06,
     "cost": 4,
-    "effect": [],
+    "effect": [
+      {
+        "id": 9,
+        "level": 1
+      }
+    ],
     "obtainMethod": "找厉风镖局西门叶青学习武艺",
     "sectRestricted": false
   },
   {
     "name": "离合功",
-    "sect": "江湖",
-    "styles": [
-      "反击"
+    "sectId": 12,
+    "styleIds": [
+      7
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 3,
-    "passives": [],
+    "passives": [
+      "体力值+2800",
+      "真气增加速度+107.14%"
+    ],
     "special": null,
     "obtainMethod": "帮助姬俊甫了却心愿",
     "sectRestricted": false
   },
   {
     "name": "落魂天枢刀",
-    "sect": "江湖",
-    "styles": [
-      "致命"
+    "sectId": 12,
+    "styleIds": [
+      6
     ],
-    "type": "外功",
+    "typeId": 1,
     "rare": 4,
     "power": 1238.29,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 12,
+        "level": 3
+      }
+    ],
     "obtainMethod": "帮助落魂刀客了却心愿",
     "sectRestricted": false
   },
   {
     "name": "天元神功",
-    "sect": "江湖",
-    "styles": [
-      "纯阳"
+    "sectId": 12,
+    "styleIds": [
+      8
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
     "passives": [
       "体力值+4896",
@@ -1289,11 +1461,11 @@
   },
   {
     "name": "玉虚真经",
-    "sect": "江湖",
-    "styles": [
-      "玄阴"
+    "sectId": 12,
+    "styleIds": [
+      9
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
     "passives": [
       "体力值+4838",
@@ -1305,17 +1477,17 @@
   },
   {
     "name": "百鸟朝凰枪",
-    "sect": "江湖",
-    "styles": [
-      "烈焰"
+    "sectId": 12,
+    "styleIds": [
+      13
     ],
-    "type": "外功",
+    "typeId": 3,
     "rare": 5,
     "power": 1709.06,
     "cost": 6,
     "effect": [
       {
-        "name": "烈火",
+        "id": 14,
         "level": 12
       }
     ],
@@ -1324,11 +1496,11 @@
   },
   {
     "name": "女娲补天式",
-    "sect": "江湖",
-    "styles": [
-      "阴柔"
+    "sectId": 12,
+    "styleIds": [
+      2
     ],
-    "type": "外功",
+    "typeId": 5,
     "rare": 5,
     "power": 2199.66,
     "cost": 6,
@@ -1338,100 +1510,123 @@
   },
   {
     "name": "圣火刀法",
-    "sect": "神火堂",
-    "styles": [],
-    "type": "外功",
+    "sectId": 15,
+    "styleIds": [],
+    "typeId": 1,
     "rare": 4,
     "power": 1115.25,
     "cost": 5,
-    "effect": [],
+    "effect": [
+      {
+        "id": 14,
+        "level": 8
+      }
+    ],
     "obtainMethod": null,
     "sectRestricted": false
   },
   {
     "name": "大荒心法",
-    "sect": "神火堂",
-    "styles": [],
-    "type": "内功",
+    "sectId": 15,
+    "styleIds": [],
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4800",
+      "真气增加速度+200%"
+    ],
     "special": null,
     "obtainMethod": null,
     "sectRestricted": false
   },
   {
     "name": "金刚般若功",
-    "sect": "菩提门",
-    "styles": [
-      "护体"
+    "sectId": 0,
+    "styleIds": [
+      17
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4800",
+      "真气增加速度+190%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(菩提门限定)",
     "sectRestricted": true
   },
   {
     "name": "真武归藏决",
-    "sect": "真武教",
-    "styles": [
-      "刚猛",
-      "阴柔"
+    "sectId": 1,
+    "styleIds": [
+      1,
+      2
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4680",
+      "真气增加速度+195%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(真武教限定)",
     "sectRestricted": true
   },
   {
     "name": "葬花真经",
-    "sect": "百花门",
-    "styles": [
-      "剧毒"
+    "sectId": 9,
+    "styleIds": [
+      11
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4752",
+      "真气增加速度+192%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(百花门限定)",
     "sectRestricted": true
   },
   {
     "name": "轩辕宝典",
-    "sect": "十方寨",
-    "styles": [
-      "擒拿"
+    "sectId": 2,
+    "styleIds": [
+      10
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4704",
+      "真气增加速度+194%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(十方寨限定)",
     "sectRestricted": true
   },
   {
     "name": "化影追魂术",
-    "sect": "幽冥教",
-    "styles": [
-      "千变"
+    "sectId": 8,
+    "styleIds": [
+      4
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4608",
+      "真气增加速度+198%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(幽冥教限定)",
     "sectRestricted": true
   },
   {
     "name": "寒魄功",
-    "sect": "长生门",
-    "styles": [
-      "寒冰"
+    "sectId": 5,
+    "styleIds": [
+      12
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
     "passives": [
       "体力值+4560",
@@ -1443,13 +1638,16 @@
   },
   {
     "name": "琉璃素心经",
-    "sect": "玄女斋",
-    "styles": [
-      "致命"
+    "sectId": 6,
+    "styleIds": [
+      6
     ],
-    "type": "内功",
+    "typeId": 6,
     "rare": 5,
-    "passives": [],
+    "passives": [
+      "体力值+4728",
+      "真气增加速度+193%"
+    ],
     "special": null,
     "obtainMethod": "武林大会奖品(玄女斋限定)",
     "sectRestricted": true

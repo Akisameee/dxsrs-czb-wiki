@@ -1,11 +1,11 @@
-import { JOINABLE_SECTS } from "../../shared/constants.js";
+import { JOINABLE_SECT_IDS } from "../../shared/constants.js";
 
 export function getTournamentPrizeSect(item) {
-  return item?.sectRestricted && JOINABLE_SECTS.includes(item.sect) ? item.sect : "";
+  return item?.sectRestricted && JOINABLE_SECT_IDS.includes(Number(item.sectId)) ? Number(item.sectId) : "";
 }
 
 export function getJoinableSects() {
-  return [...JOINABLE_SECTS];
+  return [...JOINABLE_SECT_IDS];
 }
 
 export function getSelectedMartialItems(state) {
@@ -13,13 +13,13 @@ export function getSelectedMartialItems(state) {
 }
 
 export function getCustomMartial(state) {
-  const { enabled, sect, style } = state.customMartial;
-  if (!enabled || !sect || !style) return null;
+  const { enabled, sectId, styleId } = state.customMartial;
+  if (!enabled || sectId === "" || styleId === "") return null;
   return {
     name: "自创武功",
-    type: "外功",
-    sect,
-    styles: [style],
+    typeId: 0,
+    sectId: Number(sectId),
+    styleIds: [Number(styleId)],
     isCustom: true,
   };
 }
@@ -27,39 +27,40 @@ export function getCustomMartial(state) {
 export function getSelectedTournamentPrizeSect(state) {
   return getSelectedMartialItems(state)
     .map(getTournamentPrizeSect)
-    .find(Boolean) || "";
+    .find((sectId) => sectId !== "") ?? "";
 }
 
 export function getCustomMartialSect(state) {
-  return state.customMartial.enabled ? state.customMartial.sect : "";
+  return state.customMartial.enabled ? state.customMartial.sectId : "";
 }
 
 export function getLockedSect(state) {
-  return getSelectedTournamentPrizeSect(state) || getCustomMartialSect(state);
+  const tournamentPrizeSect = getSelectedTournamentPrizeSect(state);
+  return tournamentPrizeSect !== "" ? tournamentPrizeSect : getCustomMartialSect(state);
 }
 
 export function getCustomMartialConflictSect(state) {
   const lockedByPrizeSect = getSelectedTournamentPrizeSect(state);
-  const customSect = state.customMartial.sect;
-  return lockedByPrizeSect && customSect && lockedByPrizeSect !== customSect ? lockedByPrizeSect : "";
+  const customSect = state.customMartial.sectId;
+  return lockedByPrizeSect !== "" && customSect !== "" && Number(lockedByPrizeSect) !== Number(customSect) ? lockedByPrizeSect : "";
 }
 
 export function canEnableCustomMartial(state, maxSelection) {
-  if (!state.customMartial.sect || !state.customMartial.style) return false;
-  if (getCustomMartialConflictSect(state)) return false;
+  if (state.customMartial.sectId === "" || state.customMartial.styleId === "") return false;
+  if (getCustomMartialConflictSect(state) !== "") return false;
   if (!state.customMartial.enabled && getSelectedMartialItems(state).length >= maxSelection) return false;
   return true;
 }
 
 export function getMartialConflictSect(state, item) {
   const itemSect = getTournamentPrizeSect(item);
-  if (!itemSect) return "";
+  if (itemSect === "") return "";
   const lockedSect = getLockedSect(state);
-  return lockedSect && lockedSect !== itemSect ? lockedSect : "";
+  return lockedSect !== "" && Number(lockedSect) !== Number(itemSect) ? lockedSect : "";
 }
 
 export function canSelectMartialItem(state, item) {
-  return !getMartialConflictSect(state, item);
+  return getMartialConflictSect(state, item) === "";
 }
 
 export function getMartialCountItems(state) {
@@ -74,7 +75,7 @@ export function getEquipmentStyleItems(state) {
     .filter(([, style]) => Boolean(style))
     .map(([slot, style]) => ({
       slot,
-      styles: [style],
+      styleIds: [Number(style)],
       isEquipmentStyle: true,
     }));
 }

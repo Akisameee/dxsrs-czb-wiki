@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "build:data": "node scripts/build_frontend_data.mjs",
+    "build:enums": "node scripts/build_enums.mjs",
+    "build:data": "npm run build:enums && node scripts/build_frontend_data.mjs",
     "extract:data": "node scripts/build_data.mjs"
   },
   "dependencies": {

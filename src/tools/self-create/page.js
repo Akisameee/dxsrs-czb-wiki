@@ -1,13 +1,7 @@
 import { simulateZiChuang, summarizeZiChuangStep } from "./simulator.js";
+import { enumLabel, getRareMeta } from "../../shared/utils.js";
 
-const WEAPON_TYPES = [
-  { value: 0, label: "拳掌" },
-  { value: 1, label: "刀法" },
-  { value: 2, label: "剑法" },
-  { value: 3, label: "枪法" },
-  { value: 4, label: "棍法" },
-  { value: 5, label: "暗器" },
-];
+const WEAPON_TYPE_IDS = [0, 1, 2, 3, 4, 5];
 
 const els = {
   form: document.getElementById("self-create-form"),
@@ -20,7 +14,8 @@ const els = {
 
 const state = {
   data: null,
-  effectNames: [],
+  enums: {},
+  effectNames: new Map(),
 };
 
 const DATA_ROOT = document.body.dataset.dataRoot || "data/";
@@ -44,14 +39,21 @@ function toNumber(formData, key) {
 
 function effectText(effect) {
   if (Number(effect.bufftype) === 99) return "无特殊效果";
-  const name = state.effectNames[Number(effect.bufftype)] || `效果 ${effect.bufftype}`;
+  const name = state.effectNames.get(Number(effect.bufftype)) || `效果 ${effect.bufftype}`;
   return `${name}(${effect.value})`;
 }
 
+function rareText(rare) {
+  const meta = getRareMeta(rare, state.enums);
+  return enumLabel(state.enums, "WuGongRare", rare, meta.label);
+}
+
 function renderWeaponOptions() {
-  els.weaponType.innerHTML = WEAPON_TYPES
-    .map((item) => `<option value="${item.value}">${escapeHtml(item.label)}</option>`)
+  const selected = els.weaponType.value;
+  els.weaponType.innerHTML = WEAPON_TYPE_IDS
+    .map((id) => `<option value="${id}">${escapeHtml(enumLabel(state.enums, "BingQiType", id, String(id)))}</option>`)
     .join("");
+  if (selected !== "") els.weaponType.value = selected;
 }
 
 function renderLockRows() {
@@ -109,7 +111,7 @@ function renderSummary(summary) {
       <article class="timeline-card">
         <header>
           <strong>${escapeHtml(title)}</strong>
-          <span>rare ${escapeHtml(step.rare)}</span>
+          <span>${escapeHtml(rareText(step.rare))}</span>
         </header>
         <div class="result-grid">
           <div>
@@ -144,13 +146,16 @@ function renderSummary(summary) {
 }
 
 async function loadData() {
-  const [selfCreate, effects] = await Promise.all([
+  const [selfCreate, effects, enums] = await Promise.all([
     fetch(dataUrl("self_create.json")).then((response) => response.json()),
     fetch(dataUrl("status_effects.json")).then((response) => response.json()),
+    fetch(dataUrl("enums.json")).then((response) => response.json()),
   ]);
 
   state.data = selfCreate;
-  state.effectNames = effects.map((item) => item.name);
+  state.enums = enums.enumTypes || {};
+  state.effectNames = new Map(effects.map((item, index) => [Number(item.id ?? index), item.name]));
+  renderWeaponOptions();
   els.status.textContent = "数据已读取";
 }
 
@@ -169,7 +174,7 @@ function runSimulation() {
 
   const simulation = simulateZiChuang(input, state.data);
   const summary = simulation.history.map((step) => (
-    summarizeZiChuangStep(step, state.data.styleNames)
+    summarizeZiChuangStep(step, state.enums.LianSuo_FG)
   ));
   els.status.textContent = `seed ${simulation.zichuang.seed}`;
   renderSummary(summary);
