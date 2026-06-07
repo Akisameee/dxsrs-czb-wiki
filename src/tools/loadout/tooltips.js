@@ -1,5 +1,5 @@
-import { state } from "./state.js?v=20260607-01";
-import { escapeHtml, fieldValue, formatEffectText, getRareMeta, listValue, typeMark } from "../../shared/utils.js?v=20260607-01";
+import { state } from "./state.js";
+import { escapeHtml, fieldValue, formatEffectText, getRareMeta, listValue, typeMark } from "../../shared/utils.js";
 
 export const hoverTooltip = document.createElement("div");
 hoverTooltip.className = "martial-tooltip";

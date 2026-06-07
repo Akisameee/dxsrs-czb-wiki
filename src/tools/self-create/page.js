@@ -1,4 +1,3 @@
-import "../../app/nav.js?v=20260607-01";
 import { simulateZiChuang, summarizeZiChuangStep } from "./simulator.js";
 
 const WEAPON_TYPES = [
@@ -145,22 +144,12 @@ function renderSummary(summary) {
 }
 
 async function loadData() {
-  const [wugong, chains, weiLi, buffs, enums, effects] = await Promise.all([
-    fetch(dataUrl("raw/GWuGong.json")).then((response) => response.json()),
-    fetch(dataUrl("raw/GLianSuo.json")).then((response) => response.json()),
-    fetch(dataUrl("raw/GZiChuangWeiLi.json")).then((response) => response.json()),
-    fetch(dataUrl("raw/GZiChuangBuff.json")).then((response) => response.json()),
-    fetch(dataUrl("raw/_enums.json")).then((response) => response.json()),
+  const [selfCreate, effects] = await Promise.all([
+    fetch(dataUrl("self_create.json")).then((response) => response.json()),
     fetch(dataUrl("status_effects.json")).then((response) => response.json()),
   ]);
 
-  state.data = {
-    GWuGong: wugong,
-    GLianSuo: chains,
-    GZiChuangWeiLi: weiLi,
-    GZiChuangBuff: buffs,
-    enumTypes: enums.enumTypes,
-  };
+  state.data = selfCreate;
   state.effectNames = effects.map((item) => item.name);
   els.status.textContent = "数据已读取";
 }
@@ -180,7 +169,7 @@ function runSimulation() {
 
   const simulation = simulateZiChuang(input, state.data);
   const summary = simulation.history.map((step) => (
-    summarizeZiChuangStep(step, state.data.enumTypes.LianSuo_FG)
+    summarizeZiChuangStep(step, state.data.styleNames)
   ));
   els.status.textContent = `seed ${simulation.zichuang.seed}`;
   renderSummary(summary);

@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 export const DEFAULT_SOURCE = join(ROOT, "resource/assets/bin/Data/8c496bdddc14441489a3cf750a42c690");
-export const DATA_DIR = join(ROOT, "data");
-export const RAW_DIR = join(DATA_DIR, "raw");
+export const DATA_DIR = join(ROOT, "public/data");
+export const RAW_DIR = join(ROOT, "research/raw");
 
 const FIELD_RE = /([A-Za-z0-9_]+)([abcde])\x00\x00\x00BansheeGz\.BGDatabase\.BGField([A-Za-z]+),/g;
 const CLASS_END = Buffer.from("PublicKeyToken=null", "utf8");

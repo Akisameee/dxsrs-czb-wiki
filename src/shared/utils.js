@@ -1,4 +1,4 @@
-import { rareMeta } from "./constants.js?v=20260607-01";
+import { rareMeta } from "./constants.js";
 
 export function escapeHtml(value) {
   return String(value ?? "")

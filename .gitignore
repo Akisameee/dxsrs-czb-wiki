@@ -2,14 +2,12 @@
 server*.log
 
 # Reverse-engineering workspace artifacts, not website assets.
-dump/
-jadx/
-resource/
-research/
-Cpp2IL-*.exe
+re/
 
 # Local caches and editor noise.
 .tools/
 .vscode/
 .idea/
 node_modules/
+dist/
+.astro/

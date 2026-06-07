@@ -1,7 +1,7 @@
-import { EQUIPMENT_STYLE_OPTIONS, EQUIPMENT_STYLE_SLOTS, MAX_SELECTION } from "../../shared/constants.js?v=20260607-01";
-import { canEnableCustomMartial, canSelectMartialItem, getCustomMartialConflictSect, getJoinableSects, getMartialConflictSect, getMartialSelectionCount, getSelectedMartialItems } from "./loadout.js?v=20260607-01";
-import { els, state } from "./state.js?v=20260607-01";
-import { escapeHtml, getRareMeta, sortedCounts, typeMark } from "../../shared/utils.js?v=20260607-01";
+import { EQUIPMENT_STYLE_OPTIONS, EQUIPMENT_STYLE_SLOTS, MAX_SELECTION } from "../../shared/constants.js";
+import { canEnableCustomMartial, canSelectMartialItem, getCustomMartialConflictSect, getJoinableSects, getMartialConflictSect, getMartialSelectionCount, getSelectedMartialItems } from "./loadout.js";
+import { els, state } from "./state.js";
+import { escapeHtml, getRareMeta, sortedCounts, typeMark } from "../../shared/utils.js";
 
 function createRadioOptions(container, name, values, allLabel) {
   const options = [{ value: "all", label: allLabel }, ...values.map((value) => ({ value, label: value }))];

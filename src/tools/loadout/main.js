@@ -1,11 +1,10 @@
-import { MAX_SELECTION } from "../../shared/constants.js?v=20260607-01";
-import "../../app/nav.js?v=20260607-01";
-import { els, state } from "./state.js?v=20260607-01";
-import { buildVisibleChainRecords, getPenglaiModifier, isBasicChainUnlocked } from "./rules.js?v=20260607-01";
-import { canEnableCustomMartial, canSelectMartialItem, getMartialCountItems, getMartialSelectionCount, getStyleCountItems } from "./loadout.js?v=20260607-01";
-import { countBy, escapeHtml } from "../../shared/utils.js?v=20260607-01";
-import { hideTooltip, hoverTooltip, positionTooltip, showChainTooltip, showMartialTooltip } from "./tooltips.js?v=20260607-01";
-import { renderChainGroups, renderFilters, renderLoadoutControls, renderMartialList, renderSelected, renderSummary } from "./render.js?v=20260607-01";
+import { MAX_SELECTION } from "../../shared/constants.js";
+import { els, state } from "./state.js";
+import { buildVisibleChainRecords, getPenglaiModifier, isBasicChainUnlocked } from "./rules.js";
+import { canEnableCustomMartial, canSelectMartialItem, getMartialCountItems, getMartialSelectionCount, getStyleCountItems } from "./loadout.js";
+import { countBy, escapeHtml } from "../../shared/utils.js";
+import { hideTooltip, hoverTooltip, positionTooltip, showChainTooltip, showMartialTooltip } from "./tooltips.js";
+import { renderChainGroups, renderFilters, renderLoadoutControls, renderMartialList, renderSelected, renderSummary } from "./render.js";
 
 const DATA_ROOT = document.body.dataset.dataRoot || "data/";
 

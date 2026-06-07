@@ -1,4 +1,4 @@
-import { JOINABLE_SECTS } from "../../shared/constants.js?v=20260607-01";
+import { JOINABLE_SECTS } from "../../shared/constants.js";
 
 export function getTournamentPrizeSect(item) {
   return item?.sectRestricted && JOINABLE_SECTS.includes(item.sect) ? item.sect : "";

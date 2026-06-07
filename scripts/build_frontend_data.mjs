@@ -98,6 +98,45 @@ function buildChainOutputs(chainRows, enumTypes) {
   };
 }
 
+function pickFields(row, fields) {
+  return Object.fromEntries(fields.map((field) => [field, row[field]]));
+}
+
+function buildSelfCreateData(wugongRows, chainRows, weiLiRows, buffRows, enumTypes) {
+  return {
+    wugongRows: wugongRows.map((row) => pickFields(row, [
+      "chnname",
+      "type",
+      "rare",
+      "cost",
+      "slashfx",
+      "hitfx",
+      "buff1",
+      "bufftarget1",
+      "attackareaname",
+      "iszichuang",
+    ])),
+    chainRows: chainRows.map((row) => pickFields(row, ["fengge", "qty"])),
+    ziChuangWeiLiRows: weiLiRows.map((row) => pickFields(row, [
+      "bingqitype",
+      "rare",
+      "cost",
+      "weilimin",
+      "weilimax",
+      "percentmin",
+      "percentmax",
+    ])),
+    ziChuangBuffRows: buffRows.map((row) => pickFields(row, [
+      "rare",
+      "bufftype",
+      "bufftarget",
+      "value",
+      "percent",
+    ])),
+    styleNames: enumTypes.LianSuo_FG,
+  };
+}
+
 export function buildFrontendData({
   rawDir = RAW_DIR,
   dataDir = DATA_DIR,
@@ -105,22 +144,33 @@ export function buildFrontendData({
   const wugong = readJson(join(rawDir, "GWuGong.json"));
   const wugongDetail = readJson(join(rawDir, "GWuGongDetail.json"));
   const chain = readJson(join(rawDir, "GLianSuo.json"));
+  const ziChuangWeiLi = readJson(join(rawDir, "GZiChuangWeiLi.json"));
+  const ziChuangBuff = readJson(join(rawDir, "GZiChuangBuff.json"));
   const enums = readJson(join(rawDir, "_enums.json"));
-  if (!wugong || !wugongDetail || !chain || !enums) {
+  if (!wugong || !wugongDetail || !chain || !ziChuangWeiLi || !ziChuangBuff || !enums) {
     throw new Error("raw 数据不完整，请先运行 scripts/extract_raw_database.mjs");
   }
 
   const martialArtsOutput = join(dataDir, "martial_arts.json");
   const sectChainsOutput = join(dataDir, "sect_chains.json");
   const styleChainsOutput = join(dataDir, "style_chains.json");
+  const selfCreateOutput = join(dataDir, "self_create.json");
 
   const existingByName = readExistingMartialArts(martialArtsOutput);
   const martialArts = buildMartialArts(wugong.rows, wugongDetail.rows, existingByName, enums.enumTypes);
   const { sectChains, styleChains } = buildChainOutputs(chain.rows, enums.enumTypes);
+  const selfCreate = buildSelfCreateData(
+    wugong.rows,
+    chain.rows,
+    ziChuangWeiLi.rows,
+    ziChuangBuff.rows,
+    enums.enumTypes,
+  );
 
   writeJson(martialArtsOutput, martialArts);
   writeJson(sectChainsOutput, sectChains);
   writeJson(styleChainsOutput, styleChains);
+  writeJson(selfCreateOutput, selfCreate);
 
   return {
     rawDir,
@@ -128,6 +178,7 @@ export function buildFrontendData({
     martialArtsOutput,
     sectChainsOutput,
     styleChainsOutput,
+    selfCreateOutput,
     martialArts: martialArts.length,
     sectChains: sectChains.length,
     styleChains: styleChains.length,

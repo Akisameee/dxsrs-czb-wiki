@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+const path = (href) => `${base}${href.replace(/^\/+/, "")}`;
+---
+
+<BaseLayout title="大侠式人生重制版资料站" active="home">
+  <main class="home-shell">
+    <section class="home-hero">
+      <h1>大侠式人生重制版资料站</h1>
+      <p>整理武学、人物、事件与实用工具。现在先从配装和自创武功模拟开始。</p>
+    </section>
+
+    <section class="home-grid" aria-label="站点入口">
+      <a class="home-card" href={path("tools/loadout/")}>
+        <strong>武学配装</strong>
+        <span>选择功法、装备风格词条和自创外功，计算门派与风格连锁。</span>
+      </a>
+      <a class="home-card" href={path("tools/self-create/")}>
+        <strong>自创模拟</strong>
+        <span>输入意念、气劲、形态、神韵和改良锁定策略，模拟自创结果。</span>
+      </a>
+      <a class="home-card is-disabled" href="#" aria-disabled="true">
+        <strong>功法图鉴</strong>
+        <span>后续从已解析数据库生成可检索的武学资料页。</span>
+      </a>
+      <a class="home-card is-disabled" href="#" aria-disabled="true">
+        <strong>人物与事件</strong>
+        <span>预留给人物地点、事件触发和流程资料。</span>
+      </a>
+    </section>
+  </main>
+</BaseLayout>

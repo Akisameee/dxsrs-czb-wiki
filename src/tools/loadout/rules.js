@@ -1,4 +1,4 @@
-import { BASIC_STYLE, JIANGHU_SECT, PENGLAI_SECT } from "../../shared/constants.js?v=20260607-01";
+import { BASIC_STYLE, JIANGHU_SECT, PENGLAI_SECT } from "../../shared/constants.js";
 
 export function getPenglaiModifier(sectCounts) {
   const count = sectCounts.get(PENGLAI_SECT) || 0;
