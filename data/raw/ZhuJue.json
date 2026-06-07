@@ -1,0 +1,637 @@
+{
+  "tableIndex": 0,
+  "meta": "ZhuJue",
+  "range": {
+    "start": 5888,
+    "end": 18442
+  },
+  "fieldCount": 70,
+  "fields": [
+    "xing",
+    "ming",
+    "sex",
+    "menpai",
+    "diwei",
+    "old",
+    "maxold",
+    "gongli",
+    "gongli1",
+    "gongli2",
+    "dengji",
+    "gold",
+    "xingdongli",
+    "maxxingdongli",
+    "wxexp",
+    "lvli",
+    "gengu",
+    "tipo",
+    "shenfa",
+    "wuxuexiuwei",
+    "quanzhang",
+    "daojian",
+    "qiangbang",
+    "anqi",
+    "neigong",
+    "wakuang",
+    "caiyao",
+    "dalie",
+    "duanzao",
+    "liandan",
+    "caifeng",
+    "qianfa",
+    "houfa",
+    "maozi",
+    "meimao",
+    "lianshi",
+    "yifu",
+    "houbei",
+    "huzi",
+    "wuqiid",
+    "wuqiid2",
+    "wuqiswap",
+    "fangjuid",
+    "mingsheng",
+    "xiayi",
+    "maxwugongqty",
+    "gongxian",
+    "wakuang_exp",
+    "caiyao_exp",
+    "dalie_exp",
+    "duanzao_exp",
+    "liandan_exp",
+    "caifeng_exp",
+    "event_percent",
+    "chenghao",
+    "lvli_plus",
+    "genfu_plus",
+    "tipo_plus",
+    "shenfa_plus",
+    "lvli_max_plus",
+    "gengu_max_plus",
+    "tipo_max_plus",
+    "shenfa_max_plus",
+    "zhuxian_point",
+    "xiakedaotimes",
+    "xiuxingqty",
+    "xiuxingarea",
+    "wq1_uid",
+    "wq2_uid",
+    "fj_uid"
+  ],
+  "fieldMeta": {
+    "xing": {
+      "fieldType": "String",
+      "offset": 6244,
+      "lengthOffset": 6379,
+      "totalLength": 15,
+      "count": 1
+    },
+    "ming": {
+      "fieldType": "String",
+      "offset": 6422,
+      "lengthOffset": 6557,
+      "totalLength": 18,
+      "count": 1
+    },
+    "qianfa": {
+      "fieldType": "String",
+      "offset": 11490,
+      "lengthOffset": 11627,
+      "totalLength": 17,
+      "count": 1
+    },
+    "houfa": {
+      "fieldType": "String",
+      "offset": 11672,
+      "lengthOffset": 11808,
+      "totalLength": 17,
+      "count": 1
+    },
+    "maozi": {
+      "fieldType": "String",
+      "offset": 11853,
+      "lengthOffset": 11989,
+      "totalLength": 18,
+      "count": 1
+    },
+    "meimao": {
+      "fieldType": "String",
+      "offset": 12035,
+      "lengthOffset": 12172,
+      "totalLength": 18,
+      "count": 1
+    },
+    "lianshi": {
+      "fieldType": "String",
+      "offset": 12218,
+      "lengthOffset": 12356,
+      "totalLength": 18,
+      "count": 1
+    },
+    "yifu": {
+      "fieldType": "String",
+      "offset": 12402,
+      "lengthOffset": 12537,
+      "totalLength": 18,
+      "count": 1
+    },
+    "houbei": {
+      "fieldType": "String",
+      "offset": 12583,
+      "lengthOffset": 12720,
+      "totalLength": 18,
+      "count": 1
+    },
+    "huzi": {
+      "fieldType": "String",
+      "offset": 12766,
+      "lengthOffset": 12901,
+      "totalLength": 17,
+      "count": 1
+    },
+    "chenghao": {
+      "fieldType": "String",
+      "offset": 15677,
+      "error": "Cannot parse string field near 15790"
+    },
+    "wq1_uid": {
+      "fieldType": "String",
+      "offset": 17929,
+      "error": "Cannot parse string field near 18041"
+    },
+    "wq2_uid": {
+      "fieldType": "String",
+      "offset": 18099,
+      "error": "Cannot parse string field near 18211"
+    },
+    "fj_uid": {
+      "fieldType": "String",
+      "offset": 18269,
+      "error": "Cannot parse string field near 18380"
+    },
+    "sex": {
+      "fieldType": "Enum",
+      "offset": 6603,
+      "lengthOffset": 6746,
+      "totalLength": 4,
+      "count": 1
+    },
+    "menpai": {
+      "fieldType": "Enum",
+      "offset": 6778,
+      "lengthOffset": 6927,
+      "totalLength": 4,
+      "count": 1
+    },
+    "diwei": {
+      "fieldType": "Enum",
+      "offset": 6959,
+      "lengthOffset": 7106,
+      "totalLength": 4,
+      "count": 1
+    },
+    "old": {
+      "fieldType": "Int",
+      "offset": 7138,
+      "lengthOffset": 7271,
+      "totalLength": 4,
+      "count": 1
+    },
+    "maxold": {
+      "fieldType": "Int",
+      "offset": 7303,
+      "lengthOffset": 7439,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gongli": {
+      "fieldType": "Int",
+      "offset": 7471,
+      "lengthOffset": 7605,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gongli1": {
+      "fieldType": "Int",
+      "offset": 7637,
+      "lengthOffset": 7772,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gongli2": {
+      "fieldType": "Int",
+      "offset": 7804,
+      "lengthOffset": 7939,
+      "totalLength": 4,
+      "count": 1
+    },
+    "dengji": {
+      "fieldType": "Enum",
+      "offset": 7971,
+      "lengthOffset": 8120,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gold": {
+      "fieldType": "Int",
+      "offset": 8152,
+      "lengthOffset": 8285,
+      "totalLength": 4,
+      "count": 1
+    },
+    "xingdongli": {
+      "fieldType": "Int",
+      "offset": 8317,
+      "lengthOffset": 8455,
+      "totalLength": 4,
+      "count": 1
+    },
+    "maxxingdongli": {
+      "fieldType": "Int",
+      "offset": 8487,
+      "lengthOffset": 8628,
+      "totalLength": 4,
+      "count": 1
+    },
+    "wxexp": {
+      "fieldType": "Int",
+      "offset": 8660,
+      "lengthOffset": 8793,
+      "totalLength": 4,
+      "count": 1
+    },
+    "lvli": {
+      "fieldType": "Int",
+      "offset": 8825,
+      "lengthOffset": 8957,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gengu": {
+      "fieldType": "Int",
+      "offset": 8989,
+      "lengthOffset": 9122,
+      "totalLength": 4,
+      "count": 1
+    },
+    "tipo": {
+      "fieldType": "Int",
+      "offset": 9154,
+      "lengthOffset": 9286,
+      "totalLength": 4,
+      "count": 1
+    },
+    "shenfa": {
+      "fieldType": "Int",
+      "offset": 9318,
+      "lengthOffset": 9452,
+      "totalLength": 4,
+      "count": 1
+    },
+    "wuxuexiuwei": {
+      "fieldType": "Int",
+      "offset": 9484,
+      "lengthOffset": 9623,
+      "totalLength": 4,
+      "count": 1
+    },
+    "quanzhang": {
+      "fieldType": "Int",
+      "offset": 9655,
+      "lengthOffset": 9792,
+      "totalLength": 4,
+      "count": 1
+    },
+    "daojian": {
+      "fieldType": "Int",
+      "offset": 9824,
+      "lengthOffset": 9959,
+      "totalLength": 4,
+      "count": 1
+    },
+    "qiangbang": {
+      "fieldType": "Int",
+      "offset": 9991,
+      "lengthOffset": 10128,
+      "totalLength": 4,
+      "count": 1
+    },
+    "anqi": {
+      "fieldType": "Int",
+      "offset": 10160,
+      "lengthOffset": 10292,
+      "totalLength": 4,
+      "count": 1
+    },
+    "neigong": {
+      "fieldType": "Int",
+      "offset": 10324,
+      "lengthOffset": 10459,
+      "totalLength": 4,
+      "count": 1
+    },
+    "wakuang": {
+      "fieldType": "Int",
+      "offset": 10491,
+      "lengthOffset": 10626,
+      "totalLength": 4,
+      "count": 1
+    },
+    "caiyao": {
+      "fieldType": "Int",
+      "offset": 10658,
+      "lengthOffset": 10792,
+      "totalLength": 4,
+      "count": 1
+    },
+    "dalie": {
+      "fieldType": "Int",
+      "offset": 10824,
+      "lengthOffset": 10957,
+      "totalLength": 4,
+      "count": 1
+    },
+    "duanzao": {
+      "fieldType": "Int",
+      "offset": 10989,
+      "lengthOffset": 11124,
+      "totalLength": 4,
+      "count": 1
+    },
+    "liandan": {
+      "fieldType": "Int",
+      "offset": 11156,
+      "lengthOffset": 11291,
+      "totalLength": 4,
+      "count": 1
+    },
+    "caifeng": {
+      "fieldType": "Int",
+      "offset": 11323,
+      "lengthOffset": 11458,
+      "totalLength": 4,
+      "count": 1
+    },
+    "wuqiid": {
+      "fieldType": "Long",
+      "offset": 12946,
+      "lengthOffset": 13081,
+      "totalLength": 8,
+      "count": 1
+    },
+    "wuqiid2": {
+      "fieldType": "Long",
+      "offset": 13117,
+      "lengthOffset": 13253,
+      "totalLength": 8,
+      "count": 1
+    },
+    "wuqiswap": {
+      "fieldType": "Int",
+      "offset": 13289,
+      "lengthOffset": 13425,
+      "totalLength": 4,
+      "count": 1
+    },
+    "fangjuid": {
+      "fieldType": "Long",
+      "offset": 13457,
+      "lengthOffset": 13594,
+      "totalLength": 8,
+      "count": 1
+    },
+    "mingsheng": {
+      "fieldType": "Int",
+      "offset": 13630,
+      "lengthOffset": 13767,
+      "totalLength": 4,
+      "count": 1
+    },
+    "xiayi": {
+      "fieldType": "Int",
+      "offset": 13799,
+      "lengthOffset": 13932,
+      "totalLength": 4,
+      "count": 1
+    },
+    "maxwugongqty": {
+      "fieldType": "Int",
+      "offset": 13964,
+      "lengthOffset": 14104,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gongxian": {
+      "fieldType": "Int",
+      "offset": 14136,
+      "lengthOffset": 14272,
+      "totalLength": 4,
+      "count": 1
+    },
+    "wakuang_exp": {
+      "fieldType": "Int",
+      "offset": 14304,
+      "lengthOffset": 14443,
+      "totalLength": 4,
+      "count": 1
+    },
+    "caiyao_exp": {
+      "fieldType": "Int",
+      "offset": 14475,
+      "lengthOffset": 14613,
+      "totalLength": 4,
+      "count": 1
+    },
+    "dalie_exp": {
+      "fieldType": "Int",
+      "offset": 14645,
+      "lengthOffset": 14782,
+      "totalLength": 4,
+      "count": 1
+    },
+    "duanzao_exp": {
+      "fieldType": "Int",
+      "offset": 14814,
+      "lengthOffset": 14953,
+      "totalLength": 4,
+      "count": 1
+    },
+    "liandan_exp": {
+      "fieldType": "Int",
+      "offset": 14985,
+      "lengthOffset": 15124,
+      "totalLength": 4,
+      "count": 1
+    },
+    "caifeng_exp": {
+      "fieldType": "Int",
+      "offset": 15156,
+      "lengthOffset": 15295,
+      "totalLength": 4,
+      "count": 1
+    },
+    "event_percent": {
+      "fieldType": "Int",
+      "offset": 15327,
+      "lengthOffset": 15468,
+      "totalLength": 4,
+      "count": 1
+    },
+    "lvli_plus": {
+      "fieldType": "Int",
+      "offset": 15848,
+      "lengthOffset": 15985,
+      "totalLength": 4,
+      "count": 1
+    },
+    "genfu_plus": {
+      "fieldType": "Int",
+      "offset": 16017,
+      "lengthOffset": 16155,
+      "totalLength": 4,
+      "count": 1
+    },
+    "tipo_plus": {
+      "fieldType": "Int",
+      "offset": 16187,
+      "lengthOffset": 16324,
+      "totalLength": 4,
+      "count": 1
+    },
+    "shenfa_plus": {
+      "fieldType": "Int",
+      "offset": 16356,
+      "lengthOffset": 16495,
+      "totalLength": 4,
+      "count": 1
+    },
+    "lvli_max_plus": {
+      "fieldType": "Int",
+      "offset": 16527,
+      "lengthOffset": 16668,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gengu_max_plus": {
+      "fieldType": "Int",
+      "offset": 16700,
+      "lengthOffset": 16842,
+      "totalLength": 4,
+      "count": 1
+    },
+    "tipo_max_plus": {
+      "fieldType": "Int",
+      "offset": 16874,
+      "lengthOffset": 17015,
+      "totalLength": 4,
+      "count": 1
+    },
+    "shenfa_max_plus": {
+      "fieldType": "Int",
+      "offset": 17047,
+      "lengthOffset": 17190,
+      "totalLength": 4,
+      "count": 1
+    },
+    "zhuxian_point": {
+      "fieldType": "Int",
+      "offset": 17222,
+      "lengthOffset": 17363,
+      "totalLength": 4,
+      "count": 1
+    },
+    "xiakedaotimes": {
+      "fieldType": "Int",
+      "offset": 17395,
+      "lengthOffset": 17536,
+      "totalLength": 4,
+      "count": 1
+    },
+    "xiuxingqty": {
+      "fieldType": "Int",
+      "offset": 17568,
+      "lengthOffset": 17706,
+      "totalLength": 4,
+      "count": 1
+    },
+    "xiuxingarea": {
+      "fieldType": "Enum",
+      "offset": 17738,
+      "lengthOffset": 17897,
+      "totalLength": 4,
+      "count": 1
+    }
+  },
+  "rowCount": 1,
+  "rows": [
+    {
+      "index": 0,
+      "xing": "韦",
+      "ming": "小宝",
+      "qianfa": "qa_12",
+      "houfa": "ha_06",
+      "maozi": "mza_05",
+      "meimao": "mma_06",
+      "lianshi": "lsa_00",
+      "yifu": "yfa_01",
+      "houbei": "bha_00",
+      "huzi": "hz_00",
+      "sex": 0,
+      "menpai": 16,
+      "diwei": 0,
+      "old": 10,
+      "maxold": 70,
+      "gongli": 2,
+      "gongli1": 0,
+      "gongli2": 0,
+      "dengji": 0,
+      "gold": 0,
+      "xingdongli": 6,
+      "maxxingdongli": 6,
+      "wxexp": 0,
+      "lvli": 10,
+      "gengu": 10,
+      "tipo": 10,
+      "shenfa": 10,
+      "wuxuexiuwei": 0,
+      "quanzhang": 0,
+      "daojian": 0,
+      "qiangbang": 0,
+      "anqi": 0,
+      "neigong": 0,
+      "wakuang": 0,
+      "caiyao": 0,
+      "dalie": 0,
+      "duanzao": 0,
+      "liandan": 0,
+      "caifeng": 0,
+      "wuqiid": -1,
+      "wuqiid2": -1,
+      "wuqiswap": 0,
+      "fangjuid": -1,
+      "mingsheng": 0,
+      "xiayi": 0,
+      "maxwugongqty": 10,
+      "gongxian": 0,
+      "wakuang_exp": 0,
+      "caiyao_exp": 0,
+      "dalie_exp": 0,
+      "duanzao_exp": 0,
+      "liandan_exp": 0,
+      "caifeng_exp": 0,
+      "event_percent": 50,
+      "lvli_plus": 0,
+      "genfu_plus": 0,
+      "tipo_plus": 0,
+      "shenfa_plus": 0,
+      "lvli_max_plus": 0,
+      "gengu_max_plus": 0,
+      "tipo_max_plus": 0,
+      "shenfa_max_plus": 0,
+      "zhuxian_point": 0,
+      "xiakedaotimes": 3,
+      "xiuxingqty": 0,
+      "xiuxingarea": 0
+    }
+  ]
+}

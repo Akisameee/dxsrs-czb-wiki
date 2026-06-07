@@ -1,0 +1,118 @@
+{
+  "tableIndex": 45,
+  "meta": "Option",
+  "range": {
+    "start": 1955080,
+    "end": 1957346
+  },
+  "fieldCount": 11,
+  "fields": [
+    "diffcult",
+    "juben",
+    "gamestarted",
+    "alert_menpai",
+    "alert_xingdongli",
+    "click_dyad",
+    "mingke_tutor",
+    "biguan_tutor",
+    "zhujue",
+    "slotid",
+    "isgameover"
+  ],
+  "fieldMeta": {
+    "diffcult": {
+      "fieldType": "Enum",
+      "offset": 1955437,
+      "lengthOffset": 1955591,
+      "totalLength": 4,
+      "count": 1
+    },
+    "juben": {
+      "fieldType": "Enum",
+      "offset": 1955623,
+      "lengthOffset": 1955770,
+      "totalLength": 4,
+      "count": 1
+    },
+    "gamestarted": {
+      "fieldType": "Bool",
+      "offset": 1955802,
+      "lengthOffset": 1955942,
+      "totalLength": 1,
+      "count": 1
+    },
+    "alert_menpai": {
+      "fieldType": "Bool",
+      "offset": 1955971,
+      "lengthOffset": 1956112,
+      "totalLength": 1,
+      "count": 1
+    },
+    "alert_xingdongli": {
+      "fieldType": "Bool",
+      "offset": 1956141,
+      "lengthOffset": 1956286,
+      "totalLength": 1,
+      "count": 1
+    },
+    "click_dyad": {
+      "fieldType": "Bool",
+      "offset": 1956315,
+      "lengthOffset": 1956454,
+      "totalLength": 1,
+      "count": 1
+    },
+    "mingke_tutor": {
+      "fieldType": "Bool",
+      "offset": 1956483,
+      "lengthOffset": 1956624,
+      "totalLength": 1,
+      "count": 1
+    },
+    "biguan_tutor": {
+      "fieldType": "Bool",
+      "offset": 1956653,
+      "lengthOffset": 1956794,
+      "totalLength": 1,
+      "count": 1
+    },
+    "zhujue": {
+      "fieldType": "Enum",
+      "offset": 1956823,
+      "lengthOffset": 1956976,
+      "totalLength": 4,
+      "count": 1
+    },
+    "slotid": {
+      "fieldType": "Int",
+      "offset": 1957008,
+      "lengthOffset": 1957142,
+      "totalLength": 4,
+      "count": 1
+    },
+    "isgameover": {
+      "fieldType": "Bool",
+      "offset": 1957174,
+      "lengthOffset": 1957313,
+      "totalLength": 1,
+      "count": 1
+    }
+  },
+  "rowCount": 1,
+  "rows": [
+    {
+      "index": 0,
+      "diffcult": 0,
+      "juben": 0,
+      "gamestarted": false,
+      "alert_menpai": true,
+      "alert_xingdongli": true,
+      "click_dyad": false,
+      "mingke_tutor": false,
+      "biguan_tutor": false,
+      "zhujue": 0,
+      "slotid": 0,
+      "isgameover": false
+    }
+  ]
+}

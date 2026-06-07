@@ -1,0 +1,264 @@
+{
+  "tableIndex": 60,
+  "meta": "PiLiangSelect",
+  "range": {
+    "start": 1999609,
+    "end": 2002264
+  },
+  "fieldCount": 5,
+  "fields": [
+    "type",
+    "itemrare",
+    "itemtype",
+    "batchtype",
+    "selected"
+  ],
+  "fieldMeta": {
+    "type": {
+      "fieldType": "Enum",
+      "offset": 2000946,
+      "lengthOffset": 2001098,
+      "totalLength": 104,
+      "count": 26
+    },
+    "itemrare": {
+      "fieldType": "Enum",
+      "offset": 2001230,
+      "lengthOffset": 2001383,
+      "totalLength": 104,
+      "count": 26
+    },
+    "itemtype": {
+      "fieldType": "Enum",
+      "offset": 2001515,
+      "lengthOffset": 2001668,
+      "totalLength": 104,
+      "count": 26
+    },
+    "batchtype": {
+      "fieldType": "Int",
+      "offset": 2001800,
+      "lengthOffset": 2001937,
+      "totalLength": 104,
+      "count": 26
+    },
+    "selected": {
+      "fieldType": "Bool",
+      "offset": 2002069,
+      "lengthOffset": 2002206,
+      "totalLength": 26,
+      "count": 26
+    }
+  },
+  "rowCount": 26,
+  "rows": [
+    {
+      "index": 0,
+      "type": 0,
+      "itemrare": 0,
+      "itemtype": 0,
+      "batchtype": 1,
+      "selected": false
+    },
+    {
+      "index": 1,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 9,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 2,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 11,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 3,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 10,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 4,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 12,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 5,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 13,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 6,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 14,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 7,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 15,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 8,
+      "type": 0,
+      "itemrare": 0,
+      "itemtype": 0,
+      "batchtype": 2,
+      "selected": false
+    },
+    {
+      "index": 9,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 16,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 10,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 17,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 11,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 18,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 12,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 19,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 13,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 8,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 14,
+      "type": 0,
+      "itemrare": 0,
+      "itemtype": 0,
+      "batchtype": 3,
+      "selected": false
+    },
+    {
+      "index": 15,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 16,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 1,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 17,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 2,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 18,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 3,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 19,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 4,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 20,
+      "type": 1,
+      "itemrare": 0,
+      "itemtype": 5,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 21,
+      "type": 2,
+      "itemrare": 0,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 22,
+      "type": 2,
+      "itemrare": 1,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 23,
+      "type": 2,
+      "itemrare": 2,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 24,
+      "type": 2,
+      "itemrare": 3,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    },
+    {
+      "index": 25,
+      "type": 2,
+      "itemrare": 4,
+      "itemtype": 0,
+      "batchtype": 0,
+      "selected": false
+    }
+  ]
+}

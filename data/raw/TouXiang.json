@@ -1,0 +1,63 @@
+{
+  "tableIndex": 33,
+  "meta": "TouXiang",
+  "range": {
+    "start": 1271342,
+    "end": 1273037
+  },
+  "fieldCount": 8,
+  "fields": [
+    "qianfa",
+    "houfa",
+    "meimao",
+    "maozi",
+    "lianshi",
+    "huzi",
+    "sex",
+    "type"
+  ],
+  "fieldMeta": {
+    "qianfa": {
+      "fieldType": "String",
+      "offset": 1271670,
+      "error": "Cannot parse string field near 1271781"
+    },
+    "houfa": {
+      "fieldType": "String",
+      "offset": 1271839,
+      "error": "Cannot parse string field near 1271949"
+    },
+    "meimao": {
+      "fieldType": "String",
+      "offset": 1272007,
+      "error": "Cannot parse string field near 1272118"
+    },
+    "maozi": {
+      "fieldType": "String",
+      "offset": 1272176,
+      "error": "Cannot parse string field near 1272286"
+    },
+    "lianshi": {
+      "fieldType": "String",
+      "offset": 1272344,
+      "error": "Cannot parse string field near 1272456"
+    },
+    "huzi": {
+      "fieldType": "String",
+      "offset": 1272514,
+      "error": "Cannot parse string field near 1272623"
+    },
+    "sex": {
+      "fieldType": "Enum",
+      "offset": 1272681,
+      "error": "Cannot parse int/enum field near 1272787"
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 1272852,
+      "error": "Cannot parse int/enum field near 1272959"
+    }
+  },
+  "rowCount": 0,
+  "rows": []
+}

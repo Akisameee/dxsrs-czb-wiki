@@ -1,0 +1,220 @@
+{
+  "tableIndex": 61,
+  "meta": "CunDangs",
+  "range": {
+    "start": 2002264,
+    "end": 2006195
+  },
+  "fieldCount": 19,
+  "fields": [
+    "slotid",
+    "isnormalmode",
+    "playername",
+    "menpai",
+    "old",
+    "qianfa",
+    "houfa",
+    "maozi",
+    "meimao",
+    "lianshi",
+    "yifu",
+    "houbei",
+    "huzi",
+    "isplaying",
+    "savepath",
+    "zhujue",
+    "gongli",
+    "difficult",
+    "sex"
+  ],
+  "fieldMeta": {
+    "playername": {
+      "fieldType": "String",
+      "offset": 2003151,
+      "error": "Cannot parse string field near 2003266"
+    },
+    "qianfa": {
+      "fieldType": "String",
+      "offset": 2003708,
+      "error": "Cannot parse string field near 2003819"
+    },
+    "houfa": {
+      "fieldType": "String",
+      "offset": 2003877,
+      "error": "Cannot parse string field near 2003987"
+    },
+    "maozi": {
+      "fieldType": "String",
+      "offset": 2004045,
+      "error": "Cannot parse string field near 2004155"
+    },
+    "meimao": {
+      "fieldType": "String",
+      "offset": 2004213,
+      "error": "Cannot parse string field near 2004324"
+    },
+    "lianshi": {
+      "fieldType": "String",
+      "offset": 2004382,
+      "error": "Cannot parse string field near 2004494"
+    },
+    "yifu": {
+      "fieldType": "String",
+      "offset": 2004552,
+      "error": "Cannot parse string field near 2004661"
+    },
+    "houbei": {
+      "fieldType": "String",
+      "offset": 2004719,
+      "error": "Cannot parse string field near 2004830"
+    },
+    "huzi": {
+      "fieldType": "String",
+      "offset": 2004888,
+      "error": "Cannot parse string field near 2004997"
+    },
+    "savepath": {
+      "fieldType": "String",
+      "offset": 2005227,
+      "error": "Cannot parse string field near 2005340"
+    },
+    "slotid": {
+      "fieldType": "Int",
+      "offset": 2002790,
+      "lengthOffset": 2002924,
+      "totalLength": 24,
+      "count": 6
+    },
+    "isnormalmode": {
+      "fieldType": "Bool",
+      "offset": 2002976,
+      "lengthOffset": 2003117,
+      "totalLength": 6,
+      "count": 6
+    },
+    "menpai": {
+      "fieldType": "Enum",
+      "offset": 2003324,
+      "lengthOffset": 2003473,
+      "totalLength": 24,
+      "count": 6
+    },
+    "old": {
+      "fieldType": "Int",
+      "offset": 2003525,
+      "lengthOffset": 2003656,
+      "totalLength": 24,
+      "count": 6
+    },
+    "isplaying": {
+      "fieldType": "Bool",
+      "offset": 2005055,
+      "lengthOffset": 2005193,
+      "totalLength": 6,
+      "count": 6
+    },
+    "zhujue": {
+      "fieldType": "Enum",
+      "offset": 2005398,
+      "lengthOffset": 2005551,
+      "totalLength": 24,
+      "count": 6
+    },
+    "gongli": {
+      "fieldType": "Int",
+      "offset": 2005603,
+      "lengthOffset": 2005737,
+      "totalLength": 24,
+      "count": 6
+    },
+    "difficult": {
+      "fieldType": "Enum",
+      "offset": 2005789,
+      "lengthOffset": 2005944,
+      "totalLength": 24,
+      "count": 6
+    },
+    "sex": {
+      "fieldType": "Enum",
+      "offset": 2005996,
+      "lengthOffset": 2006139,
+      "totalLength": 24,
+      "count": 6
+    }
+  },
+  "rowCount": 6,
+  "rows": [
+    {
+      "index": 0,
+      "slotid": 0,
+      "isnormalmode": true,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    },
+    {
+      "index": 1,
+      "slotid": 1,
+      "isnormalmode": true,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    },
+    {
+      "index": 2,
+      "slotid": 2,
+      "isnormalmode": true,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    },
+    {
+      "index": 3,
+      "slotid": 0,
+      "isnormalmode": false,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    },
+    {
+      "index": 4,
+      "slotid": 1,
+      "isnormalmode": false,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    },
+    {
+      "index": 5,
+      "slotid": 2,
+      "isnormalmode": false,
+      "menpai": 16,
+      "old": 0,
+      "isplaying": false,
+      "zhujue": 0,
+      "gongli": 0,
+      "difficult": 0,
+      "sex": 0
+    }
+  ]
+}

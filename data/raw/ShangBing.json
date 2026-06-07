@@ -1,0 +1,63 @@
+{
+  "tableIndex": 2,
+  "meta": "ShangBing",
+  "range": {
+    "start": 189826,
+    "end": 191536
+  },
+  "fieldCount": 8,
+  "fields": [
+    "mingcheng",
+    "nianxian",
+    "type",
+    "iscure",
+    "buwei",
+    "chengdu",
+    "value1",
+    "value2"
+  ],
+  "fieldMeta": {
+    "mingcheng": {
+      "fieldType": "String",
+      "offset": 190155,
+      "error": "Cannot parse string field near 190269"
+    },
+    "nianxian": {
+      "fieldType": "Int",
+      "offset": 190327,
+      "error": "Cannot parse int/enum field near 190437"
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 190491,
+      "error": "Cannot parse int/enum field near 190598"
+    },
+    "iscure": {
+      "fieldType": "Bool",
+      "offset": 190673,
+      "error": "Cannot parse bool field near 190782"
+    },
+    "buwei": {
+      "fieldType": "Enum",
+      "offset": 190836,
+      "error": "Cannot parse int/enum field near 190944"
+    },
+    "chengdu": {
+      "fieldType": "Enum",
+      "offset": 191020,
+      "error": "Cannot parse int/enum field near 191130"
+    },
+    "value1": {
+      "fieldType": "Int",
+      "offset": 191208,
+      "error": "Cannot parse int/enum field near 191316"
+    },
+    "value2": {
+      "fieldType": "Int",
+      "offset": 191370,
+      "error": "Cannot parse int/enum field near 191478"
+    }
+  },
+  "rowCount": 0,
+  "rows": []
+}

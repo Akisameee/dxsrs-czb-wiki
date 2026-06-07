@@ -1,0 +1,77 @@
+{
+  "tableIndex": 46,
+  "meta": "NPC_Word",
+  "range": {
+    "start": 1957346,
+    "end": 1959239
+  },
+  "fieldCount": 2,
+  "fields": [
+    "juesename",
+    "word"
+  ],
+  "fieldMeta": {
+    "juesename": {
+      "fieldType": "String",
+      "offset": 1957956,
+      "lengthOffset": 1958096,
+      "totalLength": 142,
+      "count": 9
+    },
+    "word": {
+      "fieldType": "String",
+      "offset": 1958266,
+      "lengthOffset": 1958401,
+      "totalLength": 806,
+      "count": 9
+    }
+  },
+  "rowCount": 9,
+  "rows": [
+    {
+      "index": 0,
+      "juesename": "阿箐",
+      "word": "内实精神，外示安佚。见之如妇，夺之似虎。布形候气，与神俱往。捷若腾兔，追形还影，纵横往来，目不及瞬。得吾道者，一人当百，百人当万。"
+    },
+    {
+      "index": 1,
+      "juesename": "石开天",
+      "word": "易者大易也，大易未见气也。视之不见，听之不闻，循之不得，故曰易。"
+    },
+    {
+      "index": 2,
+      "juesename": "斗酒仙",
+      "word": "顺天道者，常存其身之元阳真一太和纯粹之气，则坐致长生。"
+    },
+    {
+      "index": 3,
+      "juesename": "达摩",
+      "word": "酒肉穿肠过，佛祖心中留。世人若学我，一定入魔道!"
+    },
+    {
+      "index": 4,
+      "juesename": "南贤",
+      "word": "仁者不忧，知者不惑，勇者不惧。"
+    },
+    {
+      "index": 5,
+      "juesename": "北丑",
+      "word": "宁可我负天下人，休教天下人负我！"
+    },
+    {
+      "index": 6,
+      "juesename": "黄常",
+      "word": "醉里挑灯看剑，梦回吹角连营。"
+    },
+    {
+      "index": 7,
+      "juesename": "汪剑髯",
+      "word": "你天资卓绝，定能在武学上有非凡成就。但切记要胸怀天下，以天下苍生为己任。"
+    },
+    {
+      "index": 8,
+      "juesename": "岳君理",
+      "word": "事到如今，你还有何颜面来见我。"
+    }
+  ]
+}

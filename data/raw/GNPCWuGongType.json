@@ -1,0 +1,2967 @@
+{
+  "tableIndex": 35,
+  "meta": "GNPCWuGongType",
+  "range": {
+    "start": 1279296,
+    "end": 1313156
+  },
+  "fieldCount": 2,
+  "fields": [
+    "type",
+    "wugongname"
+  ],
+  "fieldMeta": {
+    "wugongname": {
+      "fieldType": "String",
+      "offset": 1301563,
+      "lengthOffset": 1301704,
+      "totalLength": 11420,
+      "count": 587
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 1299032,
+      "lengthOffset": 1299187,
+      "totalLength": 2348,
+      "count": 587
+    }
+  },
+  "rowCount": 587,
+  "rows": [
+    {
+      "index": 0,
+      "wugongname": "少林长拳",
+      "type": 0
+    },
+    {
+      "index": 1,
+      "wugongname": "铁布衫",
+      "type": 0
+    },
+    {
+      "index": 2,
+      "wugongname": "韦陀棍",
+      "type": 0
+    },
+    {
+      "index": 3,
+      "wugongname": "大力金刚手",
+      "type": 0
+    },
+    {
+      "index": 4,
+      "wugongname": "无相劫指",
+      "type": 0
+    },
+    {
+      "index": 5,
+      "wugongname": "燃木刀法",
+      "type": 0
+    },
+    {
+      "index": 6,
+      "wugongname": "达摩神禅杖",
+      "type": 0
+    },
+    {
+      "index": 7,
+      "wugongname": "如来神掌",
+      "type": 0
+    },
+    {
+      "index": 8,
+      "wugongname": "金钟罩",
+      "type": 0
+    },
+    {
+      "index": 9,
+      "wugongname": "武当剑法",
+      "type": 1
+    },
+    {
+      "index": 10,
+      "wugongname": "武当心法",
+      "type": 1
+    },
+    {
+      "index": 11,
+      "wugongname": "柔云剑",
+      "type": 1
+    },
+    {
+      "index": 12,
+      "wugongname": "绕指柔剑",
+      "type": 1
+    },
+    {
+      "index": 13,
+      "wugongname": "虎爪绝户手",
+      "type": 1
+    },
+    {
+      "index": 14,
+      "wugongname": "太极拳",
+      "type": 1
+    },
+    {
+      "index": 15,
+      "wugongname": "太极剑",
+      "type": 1
+    },
+    {
+      "index": 16,
+      "wugongname": "纯阳无极功",
+      "type": 1
+    },
+    {
+      "index": 17,
+      "wugongname": "混元功",
+      "type": 1
+    },
+    {
+      "index": 18,
+      "wugongname": "铁帚功",
+      "type": 2
+    },
+    {
+      "index": 19,
+      "wugongname": "莲花落",
+      "type": 2
+    },
+    {
+      "index": 20,
+      "wugongname": "醉八仙棍法",
+      "type": 2
+    },
+    {
+      "index": 21,
+      "wugongname": "降龙十八掌",
+      "type": 2
+    },
+    {
+      "index": 22,
+      "wugongname": "打狗棍法",
+      "type": 2
+    },
+    {
+      "index": 23,
+      "wugongname": "擒龙功",
+      "type": 2
+    },
+    {
+      "index": 24,
+      "wugongname": "中平枪法",
+      "type": 2
+    },
+    {
+      "index": 25,
+      "wugongname": "鹰爪功",
+      "type": 2
+    },
+    {
+      "index": 26,
+      "wugongname": "韦陀棍",
+      "type": 2
+    },
+    {
+      "index": 27,
+      "wugongname": "穿心钉",
+      "type": 3
+    },
+    {
+      "index": 28,
+      "wugongname": "龟息功",
+      "type": 3
+    },
+    {
+      "index": 29,
+      "wugongname": "极乐刺",
+      "type": 3
+    },
+    {
+      "index": 30,
+      "wugongname": "化功大法",
+      "type": 3
+    },
+    {
+      "index": 31,
+      "wugongname": "小无相功",
+      "type": 3
+    },
+    {
+      "index": 32,
+      "wugongname": "生死符",
+      "type": 3
+    },
+    {
+      "index": 33,
+      "wugongname": "北冥神功",
+      "type": 3
+    },
+    {
+      "index": 34,
+      "wugongname": "天山折梅手",
+      "type": 3
+    },
+    {
+      "index": 35,
+      "wugongname": "鹰爪功",
+      "type": 3
+    },
+    {
+      "index": 36,
+      "wugongname": "美女拳",
+      "type": 4
+    },
+    {
+      "index": 37,
+      "wugongname": "玉女功",
+      "type": 4
+    },
+    {
+      "index": 38,
+      "wugongname": "冰魄银针",
+      "type": 4
+    },
+    {
+      "index": 39,
+      "wugongname": "玉女素心剑",
+      "type": 4
+    },
+    {
+      "index": 40,
+      "wugongname": "黯然销魂掌",
+      "type": 4
+    },
+    {
+      "index": 41,
+      "wugongname": "玉女心经",
+      "type": 4
+    },
+    {
+      "index": 42,
+      "wugongname": "连环三仙剑",
+      "type": 4
+    },
+    {
+      "index": 43,
+      "wugongname": "金雁功",
+      "type": 4
+    },
+    {
+      "index": 44,
+      "wugongname": "玄铁剑法",
+      "type": 4
+    },
+    {
+      "index": 45,
+      "wugongname": "日月剑法",
+      "type": 5
+    },
+    {
+      "index": 46,
+      "wugongname": "玄天心法",
+      "type": 5
+    },
+    {
+      "index": 47,
+      "wugongname": "含沙射影",
+      "type": 5
+    },
+    {
+      "index": 48,
+      "wugongname": "辟邪剑法",
+      "type": 5
+    },
+    {
+      "index": 49,
+      "wugongname": "吸星大法",
+      "type": 5
+    },
+    {
+      "index": 50,
+      "wugongname": "葵花宝典",
+      "type": 5
+    },
+    {
+      "index": 51,
+      "wugongname": "漫天花雨",
+      "type": 5
+    },
+    {
+      "index": 52,
+      "wugongname": "化功大法",
+      "type": 5
+    },
+    {
+      "index": 53,
+      "wugongname": "狂风刀法",
+      "type": 5
+    },
+    {
+      "index": 54,
+      "wugongname": "毒蟾砂",
+      "type": 6
+    },
+    {
+      "index": 55,
+      "wugongname": "五毒经",
+      "type": 6
+    },
+    {
+      "index": 56,
+      "wugongname": "五毒神砂",
+      "type": 6
+    },
+    {
+      "index": 57,
+      "wugongname": "金蛇剑法",
+      "type": 6
+    },
+    {
+      "index": 58,
+      "wugongname": "金蛇锥",
+      "type": 6
+    },
+    {
+      "index": 59,
+      "wugongname": "五毒神功",
+      "type": 6
+    },
+    {
+      "index": 60,
+      "wugongname": "含沙射影",
+      "type": 6
+    },
+    {
+      "index": 61,
+      "wugongname": "绕指柔剑",
+      "type": 6
+    },
+    {
+      "index": 62,
+      "wugongname": "希夷剑",
+      "type": 6
+    },
+    {
+      "index": 63,
+      "wugongname": "混元功",
+      "type": 7
+    },
+    {
+      "index": 64,
+      "wugongname": "希夷剑",
+      "type": 7
+    },
+    {
+      "index": 65,
+      "wugongname": "连环三仙剑",
+      "type": 7
+    },
+    {
+      "index": 66,
+      "wugongname": "紫霞神功",
+      "type": 7
+    },
+    {
+      "index": 67,
+      "wugongname": "独孤九剑",
+      "type": 7
+    },
+    {
+      "index": 68,
+      "wugongname": "金雁功",
+      "type": 7
+    },
+    {
+      "index": 69,
+      "wugongname": "灵犀指法",
+      "type": 7
+    },
+    {
+      "index": 70,
+      "wugongname": "柔云剑",
+      "type": 7
+    },
+    {
+      "index": 71,
+      "wugongname": "回风拂柳刀",
+      "type": 7
+    },
+    {
+      "index": 72,
+      "wugongname": "玉箫剑法",
+      "type": 8
+    },
+    {
+      "index": 73,
+      "wugongname": "落英神剑掌",
+      "type": 8
+    },
+    {
+      "index": 74,
+      "wugongname": "漫天花雨",
+      "type": 8
+    },
+    {
+      "index": 75,
+      "wugongname": "弹指神通",
+      "type": 8
+    },
+    {
+      "index": 76,
+      "wugongname": "小无相功",
+      "type": 8
+    },
+    {
+      "index": 77,
+      "wugongname": "大力金刚手",
+      "type": 8
+    },
+    {
+      "index": 78,
+      "wugongname": "金雁功",
+      "type": 8
+    },
+    {
+      "index": 79,
+      "wugongname": "虎爪绝户手",
+      "type": 8
+    },
+    {
+      "index": 80,
+      "wugongname": "连环三仙剑",
+      "type": 8
+    },
+    {
+      "index": 81,
+      "wugongname": "天龙剑法",
+      "type": 9
+    },
+    {
+      "index": 82,
+      "wugongname": "枯荣禅功",
+      "type": 9
+    },
+    {
+      "index": 83,
+      "wugongname": "一阳指",
+      "type": 9
+    },
+    {
+      "index": 84,
+      "wugongname": "六脉神剑",
+      "type": 9
+    },
+    {
+      "index": 85,
+      "wugongname": "铁布衫",
+      "type": 9
+    },
+    {
+      "index": 86,
+      "wugongname": "无相劫指",
+      "type": 9
+    },
+    {
+      "index": 87,
+      "wugongname": "金钟罩",
+      "type": 9
+    },
+    {
+      "index": 88,
+      "wugongname": "紫霞神功",
+      "type": 9
+    },
+    {
+      "index": 89,
+      "wugongname": "一炁化三清",
+      "type": 9
+    },
+    {
+      "index": 90,
+      "wugongname": "鹰爪功",
+      "type": 10
+    },
+    {
+      "index": 91,
+      "wugongname": "乾坤大挪移",
+      "type": 10
+    },
+    {
+      "index": 92,
+      "wugongname": "斗转星移",
+      "type": 10
+    },
+    {
+      "index": 93,
+      "wugongname": "玉女素心剑",
+      "type": 10
+    },
+    {
+      "index": 94,
+      "wugongname": "连环三仙剑",
+      "type": 10
+    },
+    {
+      "index": 95,
+      "wugongname": "血杀刀",
+      "type": 10
+    },
+    {
+      "index": 96,
+      "wugongname": "虎爪绝户手",
+      "type": 10
+    },
+    {
+      "index": 97,
+      "wugongname": "霹雳弹",
+      "type": 10
+    },
+    {
+      "index": 98,
+      "wugongname": "燃木刀法",
+      "type": 10
+    },
+    {
+      "index": 99,
+      "wugongname": "金雁功",
+      "type": 11
+    },
+    {
+      "index": 100,
+      "wugongname": "一炁化三清",
+      "type": 11
+    },
+    {
+      "index": 101,
+      "wugongname": "空明拳",
+      "type": 11
+    },
+    {
+      "index": 102,
+      "wugongname": "先天气功",
+      "type": 11
+    },
+    {
+      "index": 103,
+      "wugongname": "龟息功",
+      "type": 11
+    },
+    {
+      "index": 104,
+      "wugongname": "混元功",
+      "type": 11
+    },
+    {
+      "index": 105,
+      "wugongname": "希夷剑",
+      "type": 11
+    },
+    {
+      "index": 106,
+      "wugongname": "柔云剑",
+      "type": 11
+    },
+    {
+      "index": 107,
+      "wugongname": "鹰爪功",
+      "type": 11
+    },
+    {
+      "index": 108,
+      "wugongname": "霹雳弹",
+      "type": 12
+    },
+    {
+      "index": 109,
+      "wugongname": "灵犀指法",
+      "type": 12
+    },
+    {
+      "index": 110,
+      "wugongname": "回风拂柳刀",
+      "type": 12
+    },
+    {
+      "index": 111,
+      "wugongname": "天机棍法",
+      "type": 12
+    },
+    {
+      "index": 112,
+      "wugongname": "韦陀棍",
+      "type": 12
+    },
+    {
+      "index": 113,
+      "wugongname": "醉八仙棍法",
+      "type": 12
+    },
+    {
+      "index": 114,
+      "wugongname": "小无相功",
+      "type": 12
+    },
+    {
+      "index": 115,
+      "wugongname": "玄天心法",
+      "type": 12
+    },
+    {
+      "index": 116,
+      "wugongname": "一炁化三清",
+      "type": 12
+    },
+    {
+      "index": 117,
+      "wugongname": "中平枪法",
+      "type": 13
+    },
+    {
+      "index": 118,
+      "wugongname": "燎原百击",
+      "type": 13
+    },
+    {
+      "index": 119,
+      "wugongname": "杨家枪法",
+      "type": 13
+    },
+    {
+      "index": 120,
+      "wugongname": "太祖长棍",
+      "type": 13
+    },
+    {
+      "index": 121,
+      "wugongname": "斗转星移",
+      "type": 13
+    },
+    {
+      "index": 122,
+      "wugongname": "燃木刀法",
+      "type": 13
+    },
+    {
+      "index": 123,
+      "wugongname": "霹雳弹",
+      "type": 13
+    },
+    {
+      "index": 124,
+      "wugongname": "混元功",
+      "type": 13
+    },
+    {
+      "index": 125,
+      "wugongname": "龟息功",
+      "type": 13
+    },
+    {
+      "index": 126,
+      "wugongname": "霹雳弹",
+      "type": 14
+    },
+    {
+      "index": 127,
+      "wugongname": "灵犀指法",
+      "type": 14
+    },
+    {
+      "index": 128,
+      "wugongname": "回风拂柳刀",
+      "type": 14
+    },
+    {
+      "index": 129,
+      "wugongname": "神刀斩",
+      "type": 14
+    },
+    {
+      "index": 130,
+      "wugongname": "狂风刀法",
+      "type": 14
+    },
+    {
+      "index": 131,
+      "wugongname": "金雁功",
+      "type": 14
+    },
+    {
+      "index": 132,
+      "wugongname": "玉女功",
+      "type": 14
+    },
+    {
+      "index": 133,
+      "wugongname": "玉女心经",
+      "type": 14
+    },
+    {
+      "index": 134,
+      "wugongname": "玉箫剑法",
+      "type": 14
+    },
+    {
+      "index": 135,
+      "wugongname": "少林长拳",
+      "type": 15
+    },
+    {
+      "index": 136,
+      "wugongname": "无相劫指",
+      "type": 15
+    },
+    {
+      "index": 137,
+      "wugongname": "大力金刚手",
+      "type": 15
+    },
+    {
+      "index": 138,
+      "wugongname": "铁帚功",
+      "type": 15
+    },
+    {
+      "index": 139,
+      "wugongname": "如来神掌",
+      "type": 15
+    },
+    {
+      "index": 140,
+      "wugongname": "中平枪法",
+      "type": 15
+    },
+    {
+      "index": 141,
+      "wugongname": "莲花落",
+      "type": 15
+    },
+    {
+      "index": 142,
+      "wugongname": "擒龙功",
+      "type": 15
+    },
+    {
+      "index": 143,
+      "wugongname": "鹰爪功",
+      "type": 15
+    },
+    {
+      "index": 144,
+      "wugongname": "希夷剑",
+      "type": 16
+    },
+    {
+      "index": 145,
+      "wugongname": "武当剑法",
+      "type": 16
+    },
+    {
+      "index": 146,
+      "wugongname": "柔云剑",
+      "type": 16
+    },
+    {
+      "index": 147,
+      "wugongname": "绕指柔剑",
+      "type": 16
+    },
+    {
+      "index": 148,
+      "wugongname": "金蛇剑法",
+      "type": 16
+    },
+    {
+      "index": 149,
+      "wugongname": "武当心法",
+      "type": 16
+    },
+    {
+      "index": 150,
+      "wugongname": "混元功",
+      "type": 16
+    },
+    {
+      "index": 151,
+      "wugongname": "连环三仙剑",
+      "type": 16
+    },
+    {
+      "index": 152,
+      "wugongname": "先天气功",
+      "type": 16
+    },
+    {
+      "index": 153,
+      "wugongname": "血杀刀",
+      "type": 17
+    },
+    {
+      "index": 154,
+      "wugongname": "虎爪绝户手",
+      "type": 17
+    },
+    {
+      "index": 155,
+      "wugongname": "黯然销魂掌",
+      "type": 17
+    },
+    {
+      "index": 156,
+      "wugongname": "玉女素心剑",
+      "type": 17
+    },
+    {
+      "index": 157,
+      "wugongname": "连环三仙剑",
+      "type": 17
+    },
+    {
+      "index": 158,
+      "wugongname": "燃木刀法",
+      "type": 17
+    },
+    {
+      "index": 159,
+      "wugongname": "铁布衫",
+      "type": 17
+    },
+    {
+      "index": 160,
+      "wugongname": "金钟罩",
+      "type": 17
+    },
+    {
+      "index": 161,
+      "wugongname": "狂风刀法",
+      "type": 17
+    },
+    {
+      "index": 162,
+      "wugongname": "霸王十三式",
+      "type": 18
+    },
+    {
+      "index": 163,
+      "wugongname": "杨家枪法",
+      "type": 18
+    },
+    {
+      "index": 164,
+      "wugongname": "中平枪法",
+      "type": 18
+    },
+    {
+      "index": 165,
+      "wugongname": "太祖长棍",
+      "type": 18
+    },
+    {
+      "index": 166,
+      "wugongname": "小无相功",
+      "type": 18
+    },
+    {
+      "index": 167,
+      "wugongname": "玄天心法",
+      "type": 18
+    },
+    {
+      "index": 168,
+      "wugongname": "醉八仙棍法",
+      "type": 18
+    },
+    {
+      "index": 169,
+      "wugongname": "铁帚功",
+      "type": 18
+    },
+    {
+      "index": 170,
+      "wugongname": "金雁功",
+      "type": 18
+    },
+    {
+      "index": 171,
+      "wugongname": "韦陀棍",
+      "type": 19
+    },
+    {
+      "index": 172,
+      "wugongname": "醉八仙棍法",
+      "type": 19
+    },
+    {
+      "index": 173,
+      "wugongname": "打狗棍法",
+      "type": 19
+    },
+    {
+      "index": 174,
+      "wugongname": "小无相功",
+      "type": 19
+    },
+    {
+      "index": 175,
+      "wugongname": "玄天心法",
+      "type": 19
+    },
+    {
+      "index": 176,
+      "wugongname": "落英神剑掌",
+      "type": 19
+    },
+    {
+      "index": 177,
+      "wugongname": "太祖长棍",
+      "type": 19
+    },
+    {
+      "index": 178,
+      "wugongname": "杨家枪法",
+      "type": 19
+    },
+    {
+      "index": 179,
+      "wugongname": "斗转星移",
+      "type": 19
+    },
+    {
+      "index": 180,
+      "wugongname": "金蛇锥",
+      "type": 20
+    },
+    {
+      "index": 181,
+      "wugongname": "五毒神砂",
+      "type": 20
+    },
+    {
+      "index": 182,
+      "wugongname": "五毒神功",
+      "type": 20
+    },
+    {
+      "index": 183,
+      "wugongname": "五毒经",
+      "type": 20
+    },
+    {
+      "index": 184,
+      "wugongname": "极乐刺",
+      "type": 20
+    },
+    {
+      "index": 185,
+      "wugongname": "含沙射影",
+      "type": 20
+    },
+    {
+      "index": 186,
+      "wugongname": "冰魄银针",
+      "type": 20
+    },
+    {
+      "index": 187,
+      "wugongname": "穿心钉",
+      "type": 20
+    },
+    {
+      "index": 188,
+      "wugongname": "漫天花雨",
+      "type": 20
+    },
+    {
+      "index": 189,
+      "wugongname": "金雁功",
+      "type": 21
+    },
+    {
+      "index": 190,
+      "wugongname": "九阴真经",
+      "type": 21
+    },
+    {
+      "index": 191,
+      "wugongname": "降龙十八掌",
+      "type": 21
+    },
+    {
+      "index": 192,
+      "wugongname": "擒龙功",
+      "type": 21
+    },
+    {
+      "index": 193,
+      "wugongname": "莲花落",
+      "type": 21
+    },
+    {
+      "index": 194,
+      "wugongname": "鹰爪功",
+      "type": 21
+    },
+    {
+      "index": 195,
+      "wugongname": "空明拳",
+      "type": 21
+    },
+    {
+      "index": 196,
+      "wugongname": "铁帚功",
+      "type": 21
+    },
+    {
+      "index": 197,
+      "wugongname": "大力金刚手",
+      "type": 21
+    },
+    {
+      "index": 198,
+      "wugongname": "少林长拳",
+      "type": 21
+    },
+    {
+      "index": 199,
+      "wugongname": "打狗棍法",
+      "type": 22
+    },
+    {
+      "index": 200,
+      "wugongname": "九阴真经",
+      "type": 22
+    },
+    {
+      "index": 201,
+      "wugongname": "弹指神通",
+      "type": 22
+    },
+    {
+      "index": 202,
+      "wugongname": "落英神剑掌",
+      "type": 22
+    },
+    {
+      "index": 203,
+      "wugongname": "漫天花雨",
+      "type": 22
+    },
+    {
+      "index": 204,
+      "wugongname": "玉箫剑法",
+      "type": 22
+    },
+    {
+      "index": 205,
+      "wugongname": "醉八仙棍法",
+      "type": 22
+    },
+    {
+      "index": 206,
+      "wugongname": "擒龙功",
+      "type": 22
+    },
+    {
+      "index": 207,
+      "wugongname": "玄天心法",
+      "type": 22
+    },
+    {
+      "index": 208,
+      "wugongname": "韦陀棍",
+      "type": 22
+    },
+    {
+      "index": 209,
+      "wugongname": "美女拳",
+      "type": 23
+    },
+    {
+      "index": 210,
+      "wugongname": "玉女功",
+      "type": 23
+    },
+    {
+      "index": 211,
+      "wugongname": "玉女素心剑",
+      "type": 23
+    },
+    {
+      "index": 212,
+      "wugongname": "黯然销魂掌",
+      "type": 23
+    },
+    {
+      "index": 213,
+      "wugongname": "玉女心经",
+      "type": 23
+    },
+    {
+      "index": 214,
+      "wugongname": "玄铁剑法",
+      "type": 23
+    },
+    {
+      "index": 215,
+      "wugongname": "玉箫剑法",
+      "type": 23
+    },
+    {
+      "index": 216,
+      "wugongname": "弹指神通",
+      "type": 23
+    },
+    {
+      "index": 217,
+      "wugongname": "九阴真经",
+      "type": 23
+    },
+    {
+      "index": 218,
+      "wugongname": "金雁功",
+      "type": 23
+    },
+    {
+      "index": 219,
+      "wugongname": "美女拳",
+      "type": 24
+    },
+    {
+      "index": 220,
+      "wugongname": "玉女功",
+      "type": 24
+    },
+    {
+      "index": 221,
+      "wugongname": "冰魄银针",
+      "type": 24
+    },
+    {
+      "index": 222,
+      "wugongname": "玉女素心剑",
+      "type": 24
+    },
+    {
+      "index": 223,
+      "wugongname": "九阴真经",
+      "type": 24
+    },
+    {
+      "index": 224,
+      "wugongname": "玉女心经",
+      "type": 24
+    },
+    {
+      "index": 225,
+      "wugongname": "金雁功",
+      "type": 24
+    },
+    {
+      "index": 226,
+      "wugongname": "先天气功",
+      "type": 24
+    },
+    {
+      "index": 227,
+      "wugongname": "日月剑法",
+      "type": 24
+    },
+    {
+      "index": 228,
+      "wugongname": "玉箫剑法",
+      "type": 24
+    },
+    {
+      "index": 229,
+      "wugongname": "乾坤大挪移",
+      "type": 25
+    },
+    {
+      "index": 230,
+      "wugongname": "鹰爪功",
+      "type": 25
+    },
+    {
+      "index": 231,
+      "wugongname": "九阳神功",
+      "type": 25
+    },
+    {
+      "index": 232,
+      "wugongname": "纯阳无极功",
+      "type": 25
+    },
+    {
+      "index": 233,
+      "wugongname": "太极拳",
+      "type": 25
+    },
+    {
+      "index": 234,
+      "wugongname": "太极剑",
+      "type": 25
+    },
+    {
+      "index": 235,
+      "wugongname": "武当心法",
+      "type": 25
+    },
+    {
+      "index": 236,
+      "wugongname": "武当剑法",
+      "type": 25
+    },
+    {
+      "index": 237,
+      "wugongname": "柔云剑",
+      "type": 25
+    },
+    {
+      "index": 238,
+      "wugongname": "绕指柔剑",
+      "type": 25
+    },
+    {
+      "index": 239,
+      "wugongname": "弹指神通",
+      "type": 26
+    },
+    {
+      "index": 240,
+      "wugongname": "落英神剑掌",
+      "type": 26
+    },
+    {
+      "index": 241,
+      "wugongname": "玉箫剑法",
+      "type": 26
+    },
+    {
+      "index": 242,
+      "wugongname": "漫天花雨",
+      "type": 26
+    },
+    {
+      "index": 243,
+      "wugongname": "九阳神功",
+      "type": 26
+    },
+    {
+      "index": 244,
+      "wugongname": "少林长拳",
+      "type": 26
+    },
+    {
+      "index": 245,
+      "wugongname": "如来神掌",
+      "type": 26
+    },
+    {
+      "index": 246,
+      "wugongname": "大力金刚手",
+      "type": 26
+    },
+    {
+      "index": 247,
+      "wugongname": "无相劫指",
+      "type": 26
+    },
+    {
+      "index": 248,
+      "wugongname": "玉女功",
+      "type": 26
+    },
+    {
+      "index": 249,
+      "wugongname": "铁帚功",
+      "type": 27
+    },
+    {
+      "index": 250,
+      "wugongname": "莲花落",
+      "type": 27
+    },
+    {
+      "index": 251,
+      "wugongname": "醉八仙棍法",
+      "type": 27
+    },
+    {
+      "index": 252,
+      "wugongname": "降龙十八掌",
+      "type": 27
+    },
+    {
+      "index": 253,
+      "wugongname": "打狗棍法",
+      "type": 27
+    },
+    {
+      "index": 254,
+      "wugongname": "擒龙功",
+      "type": 27
+    },
+    {
+      "index": 255,
+      "wugongname": "无相劫指",
+      "type": 27
+    },
+    {
+      "index": 256,
+      "wugongname": "少林长拳",
+      "type": 27
+    },
+    {
+      "index": 257,
+      "wugongname": "太祖长棍",
+      "type": 27
+    },
+    {
+      "index": 258,
+      "wugongname": "韦陀棍",
+      "type": 27
+    },
+    {
+      "index": 259,
+      "wugongname": "穿心钉",
+      "type": 28
+    },
+    {
+      "index": 260,
+      "wugongname": "龟息功",
+      "type": 28
+    },
+    {
+      "index": 261,
+      "wugongname": "极乐刺",
+      "type": 28
+    },
+    {
+      "index": 262,
+      "wugongname": "化功大法",
+      "type": 28
+    },
+    {
+      "index": 263,
+      "wugongname": "小无相功",
+      "type": 28
+    },
+    {
+      "index": 264,
+      "wugongname": "生死符",
+      "type": 28
+    },
+    {
+      "index": 265,
+      "wugongname": "北冥神功",
+      "type": 28
+    },
+    {
+      "index": 266,
+      "wugongname": "天山折梅手",
+      "type": 28
+    },
+    {
+      "index": 267,
+      "wugongname": "鹰爪功",
+      "type": 28
+    },
+    {
+      "index": 268,
+      "wugongname": "无相劫指",
+      "type": 28
+    },
+    {
+      "index": 269,
+      "wugongname": "天龙剑法",
+      "type": 29
+    },
+    {
+      "index": 270,
+      "wugongname": "枯荣禅功",
+      "type": 29
+    },
+    {
+      "index": 271,
+      "wugongname": "一阳指",
+      "type": 29
+    },
+    {
+      "index": 272,
+      "wugongname": "六脉神剑",
+      "type": 29
+    },
+    {
+      "index": 273,
+      "wugongname": "北冥神功",
+      "type": 29
+    },
+    {
+      "index": 274,
+      "wugongname": "穿心钉",
+      "type": 29
+    },
+    {
+      "index": 275,
+      "wugongname": "少林长拳",
+      "type": 29
+    },
+    {
+      "index": 276,
+      "wugongname": "化功大法",
+      "type": 29
+    },
+    {
+      "index": 277,
+      "wugongname": "龟息功",
+      "type": 29
+    },
+    {
+      "index": 278,
+      "wugongname": "无相劫指",
+      "type": 29
+    },
+    {
+      "index": 279,
+      "wugongname": "混元功",
+      "type": 30
+    },
+    {
+      "index": 280,
+      "wugongname": "希夷剑",
+      "type": 30
+    },
+    {
+      "index": 281,
+      "wugongname": "连环三仙剑",
+      "type": 30
+    },
+    {
+      "index": 282,
+      "wugongname": "紫霞神功",
+      "type": 30
+    },
+    {
+      "index": 283,
+      "wugongname": "独孤九剑",
+      "type": 30
+    },
+    {
+      "index": 284,
+      "wugongname": "易筋经",
+      "type": 30
+    },
+    {
+      "index": 285,
+      "wugongname": "吸星大法",
+      "type": 30
+    },
+    {
+      "index": 286,
+      "wugongname": "日月剑法",
+      "type": 30
+    },
+    {
+      "index": 287,
+      "wugongname": "灵犀指法",
+      "type": 30
+    },
+    {
+      "index": 288,
+      "wugongname": "狂风刀法",
+      "type": 30
+    },
+    {
+      "index": 289,
+      "wugongname": "金蛇剑法",
+      "type": 31
+    },
+    {
+      "index": 290,
+      "wugongname": "金蛇锥",
+      "type": 31
+    },
+    {
+      "index": 291,
+      "wugongname": "混元功",
+      "type": 31
+    },
+    {
+      "index": 292,
+      "wugongname": "希夷剑",
+      "type": 31
+    },
+    {
+      "index": 293,
+      "wugongname": "连环三仙剑",
+      "type": 31
+    },
+    {
+      "index": 294,
+      "wugongname": "紫霞神功",
+      "type": 31
+    },
+    {
+      "index": 295,
+      "wugongname": "回风拂柳刀",
+      "type": 31
+    },
+    {
+      "index": 296,
+      "wugongname": "金雁功",
+      "type": 31
+    },
+    {
+      "index": 297,
+      "wugongname": "龟息功",
+      "type": 31
+    },
+    {
+      "index": 298,
+      "wugongname": "杨家枪法",
+      "type": 31
+    },
+    {
+      "index": 299,
+      "wugongname": "易筋经",
+      "type": 33
+    },
+    {
+      "index": 300,
+      "wugongname": "五毒神功",
+      "type": 33
+    },
+    {
+      "index": 301,
+      "wugongname": "五毒经",
+      "type": 33
+    },
+    {
+      "index": 302,
+      "wugongname": "灵蛇拳",
+      "type": 33
+    },
+    {
+      "index": 303,
+      "wugongname": "蛤蟆功",
+      "type": 33
+    },
+    {
+      "index": 304,
+      "wugongname": "极乐刺",
+      "type": 33
+    },
+    {
+      "index": 305,
+      "wugongname": "毒蟾砂",
+      "type": 33
+    },
+    {
+      "index": 306,
+      "wugongname": "化功大法",
+      "type": 33
+    },
+    {
+      "index": 307,
+      "wugongname": "穿心钉",
+      "type": 33
+    },
+    {
+      "index": 308,
+      "wugongname": "龟息功",
+      "type": 33
+    },
+    {
+      "index": 309,
+      "wugongname": "辟邪剑法",
+      "type": 32
+    },
+    {
+      "index": 310,
+      "wugongname": "紫霞神功",
+      "type": 32
+    },
+    {
+      "index": 311,
+      "wugongname": "连环三仙剑",
+      "type": 32
+    },
+    {
+      "index": 312,
+      "wugongname": "混元功",
+      "type": 32
+    },
+    {
+      "index": 313,
+      "wugongname": "希夷剑",
+      "type": 32
+    },
+    {
+      "index": 314,
+      "wugongname": "日月剑法",
+      "type": 32
+    },
+    {
+      "index": 315,
+      "wugongname": "狂风刀法",
+      "type": 32
+    },
+    {
+      "index": 316,
+      "wugongname": "金雁功",
+      "type": 32
+    },
+    {
+      "index": 317,
+      "wugongname": "玉箫剑法",
+      "type": 32
+    },
+    {
+      "index": 318,
+      "wugongname": "天龙剑法",
+      "type": 32
+    },
+    {
+      "index": 319,
+      "wugongname": "武当剑法",
+      "type": 34
+    },
+    {
+      "index": 320,
+      "wugongname": "武当心法",
+      "type": 34
+    },
+    {
+      "index": 321,
+      "wugongname": "柔云剑",
+      "type": 34
+    },
+    {
+      "index": 322,
+      "wugongname": "绕指柔剑",
+      "type": 34
+    },
+    {
+      "index": 323,
+      "wugongname": "虎爪绝户手",
+      "type": 34
+    },
+    {
+      "index": 324,
+      "wugongname": "太极拳",
+      "type": 34
+    },
+    {
+      "index": 325,
+      "wugongname": "太极剑",
+      "type": 34
+    },
+    {
+      "index": 326,
+      "wugongname": "纯阳无极功",
+      "type": 34
+    },
+    {
+      "index": 327,
+      "wugongname": "九阳神功",
+      "type": 34
+    },
+    {
+      "index": 328,
+      "wugongname": "少林长拳",
+      "type": 34
+    },
+    {
+      "index": 329,
+      "wugongname": "少林长拳",
+      "type": 35
+    },
+    {
+      "index": 330,
+      "wugongname": "铁布衫",
+      "type": 35
+    },
+    {
+      "index": 331,
+      "wugongname": "韦陀棍",
+      "type": 35
+    },
+    {
+      "index": 332,
+      "wugongname": "大力金刚手",
+      "type": 35
+    },
+    {
+      "index": 333,
+      "wugongname": "无相劫指",
+      "type": 35
+    },
+    {
+      "index": 334,
+      "wugongname": "燃木刀法",
+      "type": 35
+    },
+    {
+      "index": 335,
+      "wugongname": "达摩神禅杖",
+      "type": 35
+    },
+    {
+      "index": 336,
+      "wugongname": "如来神掌",
+      "type": 35
+    },
+    {
+      "index": 337,
+      "wugongname": "金钟罩",
+      "type": 35
+    },
+    {
+      "index": 338,
+      "wugongname": "易筋经",
+      "type": 35
+    },
+    {
+      "index": 339,
+      "wugongname": "玄铁剑法",
+      "type": 36
+    },
+    {
+      "index": 340,
+      "wugongname": "少林长拳",
+      "type": 36
+    },
+    {
+      "index": 341,
+      "wugongname": "中平枪法",
+      "type": 36
+    },
+    {
+      "index": 342,
+      "wugongname": "无相劫指",
+      "type": 36
+    },
+    {
+      "index": 343,
+      "wugongname": "弹指神通",
+      "type": 36
+    },
+    {
+      "index": 344,
+      "wugongname": "如来神掌",
+      "type": 36
+    },
+    {
+      "index": 345,
+      "wugongname": "霸王十三式",
+      "type": 36
+    },
+    {
+      "index": 346,
+      "wugongname": "铁帚功",
+      "type": 36
+    },
+    {
+      "index": 347,
+      "wugongname": "大力金刚手",
+      "type": 36
+    },
+    {
+      "index": 348,
+      "wugongname": "小无相功",
+      "type": 36
+    },
+    {
+      "index": 349,
+      "wugongname": "葵花宝典",
+      "type": 37
+    },
+    {
+      "index": 350,
+      "wugongname": "辟邪剑法",
+      "type": 37
+    },
+    {
+      "index": 351,
+      "wugongname": "金雁功",
+      "type": 37
+    },
+    {
+      "index": 352,
+      "wugongname": "狂风刀法",
+      "type": 37
+    },
+    {
+      "index": 353,
+      "wugongname": "日月剑法",
+      "type": 37
+    },
+    {
+      "index": 354,
+      "wugongname": "玉箫剑法",
+      "type": 37
+    },
+    {
+      "index": 355,
+      "wugongname": "玉女心经",
+      "type": 37
+    },
+    {
+      "index": 356,
+      "wugongname": "天龙剑法",
+      "type": 37
+    },
+    {
+      "index": 357,
+      "wugongname": "美女拳",
+      "type": 37
+    },
+    {
+      "index": 358,
+      "wugongname": "含沙射影",
+      "type": 37
+    },
+    {
+      "index": 359,
+      "wugongname": "混元功",
+      "type": 38
+    },
+    {
+      "index": 360,
+      "wugongname": "希夷剑",
+      "type": 38
+    },
+    {
+      "index": 361,
+      "wugongname": "连环三仙剑",
+      "type": 38
+    },
+    {
+      "index": 362,
+      "wugongname": "紫霞神功",
+      "type": 38
+    },
+    {
+      "index": 363,
+      "wugongname": "独孤九剑",
+      "type": 38
+    },
+    {
+      "index": 364,
+      "wugongname": "灵犀指法",
+      "type": 38
+    },
+    {
+      "index": 365,
+      "wugongname": "枯荣禅功",
+      "type": 38
+    },
+    {
+      "index": 366,
+      "wugongname": "金雁功",
+      "type": 38
+    },
+    {
+      "index": 367,
+      "wugongname": "回风拂柳刀",
+      "type": 38
+    },
+    {
+      "index": 368,
+      "wugongname": "柔云剑",
+      "type": 38
+    },
+    {
+      "index": 369,
+      "wugongname": "金雁功",
+      "type": 39
+    },
+    {
+      "index": 370,
+      "wugongname": "一炁化三清",
+      "type": 39
+    },
+    {
+      "index": 371,
+      "wugongname": "空明拳",
+      "type": 39
+    },
+    {
+      "index": 372,
+      "wugongname": "先天气功",
+      "type": 39
+    },
+    {
+      "index": 373,
+      "wugongname": "九阴真经",
+      "type": 39
+    },
+    {
+      "index": 374,
+      "wugongname": "一阳指",
+      "type": 39
+    },
+    {
+      "index": 375,
+      "wugongname": "龟息功",
+      "type": 39
+    },
+    {
+      "index": 376,
+      "wugongname": "鹰爪功",
+      "type": 39
+    },
+    {
+      "index": 377,
+      "wugongname": "擒龙功",
+      "type": 39
+    },
+    {
+      "index": 378,
+      "wugongname": "龟息功",
+      "type": 39
+    },
+    {
+      "index": 379,
+      "wugongname": "铁帚功",
+      "type": 40
+    },
+    {
+      "index": 380,
+      "wugongname": "莲花落",
+      "type": 40
+    },
+    {
+      "index": 381,
+      "wugongname": "醉八仙棍法",
+      "type": 40
+    },
+    {
+      "index": 382,
+      "wugongname": "降龙十八掌",
+      "type": 40
+    },
+    {
+      "index": 383,
+      "wugongname": "打狗棍法",
+      "type": 40
+    },
+    {
+      "index": 384,
+      "wugongname": "擒龙功",
+      "type": 40
+    },
+    {
+      "index": 385,
+      "wugongname": "九阴真经",
+      "type": 40
+    },
+    {
+      "index": 386,
+      "wugongname": "漫天花雨",
+      "type": 40
+    },
+    {
+      "index": 387,
+      "wugongname": "玉箫剑法",
+      "type": 40
+    },
+    {
+      "index": 388,
+      "wugongname": "天龙剑法",
+      "type": 40
+    },
+    {
+      "index": 389,
+      "wugongname": "灵蛇拳",
+      "type": 41
+    },
+    {
+      "index": 390,
+      "wugongname": "蛤蟆功",
+      "type": 41
+    },
+    {
+      "index": 391,
+      "wugongname": "九阴真经",
+      "type": 41
+    },
+    {
+      "index": 392,
+      "wugongname": "五毒神功",
+      "type": 41
+    },
+    {
+      "index": 393,
+      "wugongname": "五毒神砂",
+      "type": 41
+    },
+    {
+      "index": 394,
+      "wugongname": "含沙射影",
+      "type": 41
+    },
+    {
+      "index": 395,
+      "wugongname": "极乐刺",
+      "type": 41
+    },
+    {
+      "index": 396,
+      "wugongname": "五毒经",
+      "type": 41
+    },
+    {
+      "index": 397,
+      "wugongname": "毒蟾砂",
+      "type": 41
+    },
+    {
+      "index": 398,
+      "wugongname": "混元功",
+      "type": 41
+    },
+    {
+      "index": 399,
+      "wugongname": "天龙剑法",
+      "type": 42
+    },
+    {
+      "index": 400,
+      "wugongname": "枯荣禅功",
+      "type": 42
+    },
+    {
+      "index": 401,
+      "wugongname": "一阳指",
+      "type": 42
+    },
+    {
+      "index": 402,
+      "wugongname": "先天气功",
+      "type": 42
+    },
+    {
+      "index": 403,
+      "wugongname": "金雁功",
+      "type": 42
+    },
+    {
+      "index": 404,
+      "wugongname": "龟息功",
+      "type": 42
+    },
+    {
+      "index": 405,
+      "wugongname": "混元功",
+      "type": 42
+    },
+    {
+      "index": 406,
+      "wugongname": "九阴真经",
+      "type": 42
+    },
+    {
+      "index": 407,
+      "wugongname": "无相劫指",
+      "type": 42
+    },
+    {
+      "index": 408,
+      "wugongname": "鹰爪功",
+      "type": 42
+    },
+    {
+      "index": 409,
+      "wugongname": "玉箫剑法",
+      "type": 43
+    },
+    {
+      "index": 410,
+      "wugongname": "落英神剑掌",
+      "type": 43
+    },
+    {
+      "index": 411,
+      "wugongname": "漫天花雨",
+      "type": 43
+    },
+    {
+      "index": 412,
+      "wugongname": "弹指神通",
+      "type": 43
+    },
+    {
+      "index": 413,
+      "wugongname": "九阴真经",
+      "type": 43
+    },
+    {
+      "index": 414,
+      "wugongname": "金雁功",
+      "type": 43
+    },
+    {
+      "index": 415,
+      "wugongname": "一炁化三清",
+      "type": 43
+    },
+    {
+      "index": 416,
+      "wugongname": "大力金刚手",
+      "type": 43
+    },
+    {
+      "index": 417,
+      "wugongname": "回风拂柳刀",
+      "type": 43
+    },
+    {
+      "index": 418,
+      "wugongname": "小无相功",
+      "type": 43
+    },
+    {
+      "index": 419,
+      "wugongname": "金雁功",
+      "type": 44
+    },
+    {
+      "index": 420,
+      "wugongname": "一炁化三清",
+      "type": 44
+    },
+    {
+      "index": 421,
+      "wugongname": "空明拳",
+      "type": 44
+    },
+    {
+      "index": 422,
+      "wugongname": "先天气功",
+      "type": 44
+    },
+    {
+      "index": 423,
+      "wugongname": "九阴真经",
+      "type": 44
+    },
+    {
+      "index": 424,
+      "wugongname": "玉箫剑法",
+      "type": 44
+    },
+    {
+      "index": 425,
+      "wugongname": "落英神剑掌",
+      "type": 44
+    },
+    {
+      "index": 426,
+      "wugongname": "绕指柔剑",
+      "type": 44
+    },
+    {
+      "index": 427,
+      "wugongname": "混元功",
+      "type": 44
+    },
+    {
+      "index": 428,
+      "wugongname": "醉八仙棍法",
+      "type": 44
+    },
+    {
+      "index": 429,
+      "wugongname": "希夷剑",
+      "type": 45
+    },
+    {
+      "index": 430,
+      "wugongname": "武当剑法",
+      "type": 45
+    },
+    {
+      "index": 431,
+      "wugongname": "柔云剑",
+      "type": 45
+    },
+    {
+      "index": 432,
+      "wugongname": "绕指柔剑",
+      "type": 45
+    },
+    {
+      "index": 433,
+      "wugongname": "回风拂柳刀",
+      "type": 45
+    },
+    {
+      "index": 434,
+      "wugongname": "武当心法",
+      "type": 45
+    },
+    {
+      "index": 435,
+      "wugongname": "混元功",
+      "type": 45
+    },
+    {
+      "index": 436,
+      "wugongname": "斗转星移",
+      "type": 45
+    },
+    {
+      "index": 437,
+      "wugongname": "先天气功",
+      "type": 45
+    },
+    {
+      "index": 438,
+      "wugongname": "灵蛇拳",
+      "type": 46
+    },
+    {
+      "index": 439,
+      "wugongname": "蛤蟆功",
+      "type": 46
+    },
+    {
+      "index": 440,
+      "wugongname": "五毒神功",
+      "type": 46
+    },
+    {
+      "index": 441,
+      "wugongname": "五毒神砂",
+      "type": 46
+    },
+    {
+      "index": 442,
+      "wugongname": "含沙射影",
+      "type": 46
+    },
+    {
+      "index": 443,
+      "wugongname": "极乐刺",
+      "type": 46
+    },
+    {
+      "index": 444,
+      "wugongname": "五毒经",
+      "type": 46
+    },
+    {
+      "index": 445,
+      "wugongname": "毒蟾砂",
+      "type": 46
+    },
+    {
+      "index": 446,
+      "wugongname": "混元功",
+      "type": 46
+    },
+    {
+      "index": 447,
+      "wugongname": "穿心钉",
+      "type": 47
+    },
+    {
+      "index": 448,
+      "wugongname": "龟息功",
+      "type": 47
+    },
+    {
+      "index": 449,
+      "wugongname": "极乐刺",
+      "type": 47
+    },
+    {
+      "index": 450,
+      "wugongname": "化功大法",
+      "type": 47
+    },
+    {
+      "index": 451,
+      "wugongname": "小无相功",
+      "type": 47
+    },
+    {
+      "index": 452,
+      "wugongname": "生死符",
+      "type": 47
+    },
+    {
+      "index": 453,
+      "wugongname": "北冥神功",
+      "type": 47
+    },
+    {
+      "index": 454,
+      "wugongname": "天山折梅手",
+      "type": 47
+    },
+    {
+      "index": 455,
+      "wugongname": "擒龙功",
+      "type": 47
+    },
+    {
+      "index": 456,
+      "wugongname": "鹰爪功",
+      "type": 47
+    },
+    {
+      "index": 457,
+      "wugongname": "火焰刀",
+      "type": 48
+    },
+    {
+      "index": 458,
+      "wugongname": "般若龙象功",
+      "type": 48
+    },
+    {
+      "index": 459,
+      "wugongname": "燃木刀法",
+      "type": 48
+    },
+    {
+      "index": 460,
+      "wugongname": "霹雳弹",
+      "type": 48
+    },
+    {
+      "index": 461,
+      "wugongname": "大力金刚手",
+      "type": 48
+    },
+    {
+      "index": 462,
+      "wugongname": "无相劫指",
+      "type": 48
+    },
+    {
+      "index": 463,
+      "wugongname": "金钟罩",
+      "type": 48
+    },
+    {
+      "index": 464,
+      "wugongname": "韦陀棍",
+      "type": 48
+    },
+    {
+      "index": 465,
+      "wugongname": "达摩神禅杖",
+      "type": 48
+    },
+    {
+      "index": 466,
+      "wugongname": "中平枪法",
+      "type": 48
+    },
+    {
+      "index": 467,
+      "wugongname": "霹雳弹",
+      "type": 49
+    },
+    {
+      "index": 468,
+      "wugongname": "灵犀指法",
+      "type": 49
+    },
+    {
+      "index": 469,
+      "wugongname": "回风拂柳刀",
+      "type": 49
+    },
+    {
+      "index": 470,
+      "wugongname": "霸王十三式",
+      "type": 49
+    },
+    {
+      "index": 471,
+      "wugongname": "神刀斩",
+      "type": 49
+    },
+    {
+      "index": 472,
+      "wugongname": "天机棍法",
+      "type": 49
+    },
+    {
+      "index": 473,
+      "wugongname": "醉八仙棍法",
+      "type": 49
+    },
+    {
+      "index": 474,
+      "wugongname": "小无相功",
+      "type": 49
+    },
+    {
+      "index": 475,
+      "wugongname": "金雁功",
+      "type": 49
+    },
+    {
+      "index": 476,
+      "wugongname": "混元功",
+      "type": 49
+    },
+    {
+      "index": 477,
+      "wugongname": "神刀斩",
+      "type": 50
+    },
+    {
+      "index": 478,
+      "wugongname": "狂风刀法",
+      "type": 50
+    },
+    {
+      "index": 479,
+      "wugongname": "金雁功",
+      "type": 50
+    },
+    {
+      "index": 480,
+      "wugongname": "日月剑法",
+      "type": 50
+    },
+    {
+      "index": 481,
+      "wugongname": "玉女心经",
+      "type": 50
+    },
+    {
+      "index": 482,
+      "wugongname": "辟邪剑法",
+      "type": 50
+    },
+    {
+      "index": 483,
+      "wugongname": "连环三仙剑",
+      "type": 50
+    },
+    {
+      "index": 484,
+      "wugongname": "虎爪绝户手",
+      "type": 50
+    },
+    {
+      "index": 485,
+      "wugongname": "血杀刀",
+      "type": 50
+    },
+    {
+      "index": 486,
+      "wugongname": "九阴真经",
+      "type": 50
+    },
+    {
+      "index": 487,
+      "wugongname": "霹雳弹",
+      "type": 51
+    },
+    {
+      "index": 488,
+      "wugongname": "灵犀指法",
+      "type": 51
+    },
+    {
+      "index": 489,
+      "wugongname": "回风拂柳刀",
+      "type": 51
+    },
+    {
+      "index": 490,
+      "wugongname": "霸王十三式",
+      "type": 51
+    },
+    {
+      "index": 491,
+      "wugongname": "神刀斩",
+      "type": 51
+    },
+    {
+      "index": 492,
+      "wugongname": "天机棍法",
+      "type": 51
+    },
+    {
+      "index": 493,
+      "wugongname": "醉八仙棍法",
+      "type": 51
+    },
+    {
+      "index": 494,
+      "wugongname": "小无相功",
+      "type": 51
+    },
+    {
+      "index": 495,
+      "wugongname": "大力金刚手",
+      "type": 51
+    },
+    {
+      "index": 496,
+      "wugongname": "中平枪法",
+      "type": 51
+    },
+    {
+      "index": 497,
+      "wugongname": "独孤九剑",
+      "type": 52
+    },
+    {
+      "index": 498,
+      "wugongname": "九阴真经",
+      "type": 52
+    },
+    {
+      "index": 499,
+      "wugongname": "玉女心经",
+      "type": 52
+    },
+    {
+      "index": 500,
+      "wugongname": "美女拳",
+      "type": 52
+    },
+    {
+      "index": 501,
+      "wugongname": "玉女功",
+      "type": 52
+    },
+    {
+      "index": 502,
+      "wugongname": "玉箫剑法",
+      "type": 52
+    },
+    {
+      "index": 503,
+      "wugongname": "天龙剑法",
+      "type": 52
+    },
+    {
+      "index": 504,
+      "wugongname": "金雁功",
+      "type": 52
+    },
+    {
+      "index": 505,
+      "wugongname": "灵犀指法",
+      "type": 52
+    },
+    {
+      "index": 506,
+      "wugongname": "一炁化三清",
+      "type": 52
+    },
+    {
+      "index": 507,
+      "wugongname": "易筋经",
+      "type": 53
+    },
+    {
+      "index": 508,
+      "wugongname": "天山折梅手",
+      "type": 53
+    },
+    {
+      "index": 509,
+      "wugongname": "莲花落",
+      "type": 53
+    },
+    {
+      "index": 510,
+      "wugongname": "无相劫指",
+      "type": 53
+    },
+    {
+      "index": 511,
+      "wugongname": "鹰爪功",
+      "type": 53
+    },
+    {
+      "index": 512,
+      "wugongname": "擒龙功",
+      "type": 53
+    },
+    {
+      "index": 513,
+      "wugongname": "一阳指",
+      "type": 53
+    },
+    {
+      "index": 514,
+      "wugongname": "铁布衫",
+      "type": 53
+    },
+    {
+      "index": 515,
+      "wugongname": "枯荣禅功",
+      "type": 53
+    },
+    {
+      "index": 516,
+      "wugongname": "金钟罩",
+      "type": 53
+    },
+    {
+      "index": 517,
+      "wugongname": "六脉神剑",
+      "type": 54
+    },
+    {
+      "index": 518,
+      "wugongname": "九阳神功",
+      "type": 54
+    },
+    {
+      "index": 519,
+      "wugongname": "纯阳无极功",
+      "type": 54
+    },
+    {
+      "index": 520,
+      "wugongname": "天龙剑法",
+      "type": 54
+    },
+    {
+      "index": 521,
+      "wugongname": "枯荣禅功",
+      "type": 54
+    },
+    {
+      "index": 522,
+      "wugongname": "一阳指",
+      "type": 54
+    },
+    {
+      "index": 523,
+      "wugongname": "紫霞神功",
+      "type": 54
+    },
+    {
+      "index": 524,
+      "wugongname": "少林长拳",
+      "type": 54
+    },
+    {
+      "index": 525,
+      "wugongname": "大力金刚手",
+      "type": 54
+    },
+    {
+      "index": 526,
+      "wugongname": "如来神掌",
+      "type": 54
+    },
+    {
+      "index": 527,
+      "wugongname": "少林长拳",
+      "type": 55
+    },
+    {
+      "index": 528,
+      "wugongname": "铁布衫",
+      "type": 55
+    },
+    {
+      "index": 529,
+      "wugongname": "韦陀棍",
+      "type": 55
+    },
+    {
+      "index": 530,
+      "wugongname": "大力金刚手",
+      "type": 55
+    },
+    {
+      "index": 531,
+      "wugongname": "无相劫指",
+      "type": 55
+    },
+    {
+      "index": 532,
+      "wugongname": "达摩神禅杖",
+      "type": 55
+    },
+    {
+      "index": 533,
+      "wugongname": "如来神掌",
+      "type": 55
+    },
+    {
+      "index": 534,
+      "wugongname": "金钟罩",
+      "type": 55
+    },
+    {
+      "index": 535,
+      "wugongname": "易筋经",
+      "type": 55
+    },
+    {
+      "index": 536,
+      "wugongname": "天机棍法",
+      "type": 55
+    },
+    {
+      "index": 537,
+      "wugongname": "九阴真经",
+      "type": 58
+    },
+    {
+      "index": 538,
+      "wugongname": "燎原百击",
+      "type": 58
+    },
+    {
+      "index": 539,
+      "wugongname": "杨家枪法",
+      "type": 58
+    },
+    {
+      "index": 540,
+      "wugongname": "太祖长棍",
+      "type": 58
+    },
+    {
+      "index": 541,
+      "wugongname": "霹雳弹",
+      "type": 58
+    },
+    {
+      "index": 542,
+      "wugongname": "燃木刀法",
+      "type": 58
+    },
+    {
+      "index": 543,
+      "wugongname": "鹰爪功",
+      "type": 58
+    },
+    {
+      "index": 544,
+      "wugongname": "乾坤大挪移",
+      "type": 58
+    },
+    {
+      "index": 545,
+      "wugongname": "霸王十三式",
+      "type": 58
+    },
+    {
+      "index": 546,
+      "wugongname": "回风拂柳刀",
+      "type": 58
+    },
+    {
+      "index": 547,
+      "wugongname": "神刀斩",
+      "type": 56
+    },
+    {
+      "index": 548,
+      "wugongname": "霹雳弹",
+      "type": 56
+    },
+    {
+      "index": 549,
+      "wugongname": "灵犀指法",
+      "type": 56
+    },
+    {
+      "index": 550,
+      "wugongname": "回风拂柳刀",
+      "type": 56
+    },
+    {
+      "index": 551,
+      "wugongname": "霸王十三式",
+      "type": 56
+    },
+    {
+      "index": 552,
+      "wugongname": "天机棍法",
+      "type": 56
+    },
+    {
+      "index": 553,
+      "wugongname": "小无相功",
+      "type": 56
+    },
+    {
+      "index": 554,
+      "wugongname": "落英神剑掌",
+      "type": 56
+    },
+    {
+      "index": 555,
+      "wugongname": "玉箫剑法",
+      "type": 56
+    },
+    {
+      "index": 556,
+      "wugongname": "天龙剑法",
+      "type": 56
+    },
+    {
+      "index": 557,
+      "wugongname": "天女散花",
+      "type": 57
+    },
+    {
+      "index": 558,
+      "wugongname": "霹雳弹",
+      "type": 57
+    },
+    {
+      "index": 559,
+      "wugongname": "灵犀指法",
+      "type": 57
+    },
+    {
+      "index": 560,
+      "wugongname": "回风拂柳刀",
+      "type": 57
+    },
+    {
+      "index": 561,
+      "wugongname": "含沙射影",
+      "type": 57
+    },
+    {
+      "index": 562,
+      "wugongname": "漫天花雨",
+      "type": 57
+    },
+    {
+      "index": 563,
+      "wugongname": "希夷剑",
+      "type": 57
+    },
+    {
+      "index": 564,
+      "wugongname": "吸星大法",
+      "type": 57
+    },
+    {
+      "index": 565,
+      "wugongname": "日月剑法",
+      "type": 57
+    },
+    {
+      "index": 566,
+      "wugongname": "玄天心法",
+      "type": 57
+    },
+    {
+      "index": 567,
+      "wugongname": "天女散花",
+      "type": 59
+    },
+    {
+      "index": 568,
+      "wugongname": "武当心法",
+      "type": 59
+    },
+    {
+      "index": 569,
+      "wugongname": "柔云剑",
+      "type": 59
+    },
+    {
+      "index": 570,
+      "wugongname": "绕指柔剑",
+      "type": 59
+    },
+    {
+      "index": 571,
+      "wugongname": "希夷剑",
+      "type": 59
+    },
+    {
+      "index": 572,
+      "wugongname": "含沙射影",
+      "type": 59
+    },
+    {
+      "index": 573,
+      "wugongname": "漫天花雨",
+      "type": 59
+    },
+    {
+      "index": 574,
+      "wugongname": "九阳神功",
+      "type": 59
+    },
+    {
+      "index": 575,
+      "wugongname": "弹指神通",
+      "type": 59
+    },
+    {
+      "index": 576,
+      "wugongname": "吸星大法",
+      "type": 59
+    },
+    {
+      "index": 577,
+      "wugongname": "霹雳弹",
+      "type": 60
+    },
+    {
+      "index": 578,
+      "wugongname": "灵犀指法",
+      "type": 60
+    },
+    {
+      "index": 579,
+      "wugongname": "回风拂柳刀",
+      "type": 60
+    },
+    {
+      "index": 580,
+      "wugongname": "霸王十三式",
+      "type": 60
+    },
+    {
+      "index": 581,
+      "wugongname": "神刀斩",
+      "type": 60
+    },
+    {
+      "index": 582,
+      "wugongname": "天机棍法",
+      "type": 60
+    },
+    {
+      "index": 583,
+      "wugongname": "血杀刀",
+      "type": 60
+    },
+    {
+      "index": 584,
+      "wugongname": "虎爪绝户手",
+      "type": 60
+    },
+    {
+      "index": 585,
+      "wugongname": "连环三仙剑",
+      "type": 60
+    },
+    {
+      "index": 586,
+      "wugongname": "先天气功",
+      "type": 60
+    }
+  ]
+}

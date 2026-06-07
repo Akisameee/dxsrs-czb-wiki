@@ -1,0 +1,265 @@
+{
+  "tableIndex": 70,
+  "meta": "GCDKeyDetail",
+  "range": {
+    "start": 3271209,
+    "end": 3273976
+  },
+  "fieldCount": 4,
+  "fields": [
+    "cdkey",
+    "type",
+    "rewardname",
+    "rewardqty"
+  ],
+  "fieldMeta": {
+    "cdkey": {
+      "fieldType": "String",
+      "offset": 3272338,
+      "lengthOffset": 3272474,
+      "totalLength": 514,
+      "count": 31
+    },
+    "rewardname": {
+      "fieldType": "String",
+      "offset": 3273324,
+      "lengthOffset": 3273465,
+      "totalLength": 214,
+      "count": 15
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 3273016,
+      "lengthOffset": 3273172,
+      "totalLength": 124,
+      "count": 31
+    },
+    "rewardqty": {
+      "fieldType": "Int",
+      "offset": 3273707,
+      "lengthOffset": 3273844,
+      "totalLength": 124,
+      "count": 31
+    }
+  },
+  "rowCount": 31,
+  "rows": [
+    {
+      "index": 0,
+      "cdkey": "dxwx888",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 1000
+    },
+    {
+      "index": 1,
+      "cdkey": "dxwx888",
+      "rewardname": "二阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 2,
+      "cdkey": "dxsrs666",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 1000
+    },
+    {
+      "index": 3,
+      "cdkey": "dxsrs666",
+      "rewardname": "二阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 4,
+      "cdkey": "n1n6ffsgnreaxtzw",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 1000
+    },
+    {
+      "index": 5,
+      "cdkey": "n1n6ffsgnreaxtzw",
+      "rewardname": "二阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 6,
+      "cdkey": "dx55fuztha7pei9i",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 1000
+    },
+    {
+      "index": 7,
+      "cdkey": "73bwtwufnszlmjjy",
+      "rewardname": "二阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 8,
+      "cdkey": "5u93mdezd1a4a6ld",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 3000
+    },
+    {
+      "index": 9,
+      "cdkey": "bvhpkv57gxjguteh",
+      "rewardname": "三阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 10,
+      "cdkey": "v9glgiun0de3939y",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 6000
+    },
+    {
+      "index": 11,
+      "cdkey": "231219",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 12,
+      "cdkey": "231219",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 13,
+      "cdkey": "231220",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 14,
+      "cdkey": "231220",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 15,
+      "cdkey": "231221",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 16,
+      "cdkey": "231221",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 17,
+      "cdkey": "231222",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 18,
+      "cdkey": "231222",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 19,
+      "cdkey": "231223",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 20,
+      "cdkey": "231223",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 21,
+      "cdkey": "231224",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 22,
+      "cdkey": "231224",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 23,
+      "cdkey": "231225",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 24,
+      "cdkey": "231225",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 25,
+      "cdkey": "231226",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 26,
+      "cdkey": "231226",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 27,
+      "cdkey": "231227",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 28,
+      "cdkey": "231227",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    },
+    {
+      "index": 29,
+      "cdkey": "231228",
+      "rewardname": null,
+      "type": 0,
+      "rewardqty": 5000
+    },
+    {
+      "index": 30,
+      "cdkey": "231228",
+      "rewardname": "四阶",
+      "type": 1,
+      "rewardqty": 1
+    }
+  ]
+}

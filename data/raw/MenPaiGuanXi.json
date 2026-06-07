@@ -1,0 +1,97 @@
+{
+  "tableIndex": 53,
+  "meta": "MenPaiGuanXi",
+  "range": {
+    "start": 1983524,
+    "end": 1984860
+  },
+  "fieldCount": 4,
+  "fields": [
+    "menpai",
+    "biwucishu",
+    "hasbiwu",
+    "isfanpai"
+  ],
+  "fieldMeta": {
+    "menpai": {
+      "fieldType": "Enum",
+      "offset": 1984115,
+      "lengthOffset": 1984264,
+      "totalLength": 28,
+      "count": 7
+    },
+    "biwucishu": {
+      "fieldType": "Int",
+      "offset": 1984320,
+      "lengthOffset": 1984457,
+      "totalLength": 28,
+      "count": 7
+    },
+    "hasbiwu": {
+      "fieldType": "Bool",
+      "offset": 1984513,
+      "lengthOffset": 1984649,
+      "totalLength": 7,
+      "count": 7
+    },
+    "isfanpai": {
+      "fieldType": "Bool",
+      "offset": 1984684,
+      "lengthOffset": 1984821,
+      "totalLength": 7,
+      "count": 7
+    }
+  },
+  "rowCount": 7,
+  "rows": [
+    {
+      "index": 0,
+      "menpai": 0,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": false
+    },
+    {
+      "index": 1,
+      "menpai": 1,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": false
+    },
+    {
+      "index": 2,
+      "menpai": 2,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": false
+    },
+    {
+      "index": 3,
+      "menpai": 6,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": false
+    },
+    {
+      "index": 4,
+      "menpai": 5,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": false
+    },
+    {
+      "index": 5,
+      "menpai": 8,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": true
+    },
+    {
+      "index": 6,
+      "menpai": 9,
+      "biwucishu": 0,
+      "hasbiwu": false,
+      "isfanpai": true
+    }
+  ]
+}

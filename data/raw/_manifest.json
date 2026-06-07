@@ -1,0 +1,507 @@
+{
+  "source": "resource/assets/bin/Data/8c496bdddc14441489a3cf750a42c690",
+  "sourceFile": "8c496bdddc14441489a3cf750a42c690",
+  "tableCount": 71,
+  "generatedFiles": {
+    "enums": "_enums.json"
+  },
+  "tables": [
+    {
+      "name": "ZhuJue",
+      "file": "ZhuJue.json",
+      "rows": 1,
+      "fields": 70,
+      "parseErrors": 4
+    },
+    {
+      "name": "XingNang",
+      "file": "XingNang.json",
+      "rows": 829,
+      "fields": 30,
+      "parseErrors": 2
+    },
+    {
+      "name": "ShangBing",
+      "file": "ShangBing.json",
+      "rows": 0,
+      "fields": 8,
+      "parseErrors": 8
+    },
+    {
+      "name": "JSWugong",
+      "file": "JSWugong.json",
+      "rows": 1764,
+      "fields": 10,
+      "parseErrors": 0
+    },
+    {
+      "name": "GWuGong",
+      "file": "GWuGong.json",
+      "rows": 97,
+      "fields": 23,
+      "parseErrors": 0
+    },
+    {
+      "name": "GWuGongDetail",
+      "file": "GWuGongDetail.json",
+      "rows": 970,
+      "fields": 15,
+      "parseErrors": 0
+    },
+    {
+      "name": "GItem",
+      "file": "GItem.json",
+      "rows": 614,
+      "fields": 18,
+      "parseErrors": 0
+    },
+    {
+      "name": "GArea",
+      "file": "GArea.json",
+      "rows": 0,
+      "fields": 6,
+      "parseErrors": 6
+    },
+    {
+      "name": "GNpc",
+      "file": "GNpc.json",
+      "rows": 4,
+      "fields": 20,
+      "parseErrors": 18
+    },
+    {
+      "name": "GNpcJiaRuTiaoJian",
+      "file": "GNpcJiaRuTiaoJian.json",
+      "rows": 1,
+      "fields": 4,
+      "parseErrors": 3
+    },
+    {
+      "name": "GNpcAttribute",
+      "file": "GNpcAttribute.json",
+      "rows": 105,
+      "fields": 25,
+      "parseErrors": 0
+    },
+    {
+      "name": "GNpcWuGong",
+      "file": "GNpcWuGong.json",
+      "rows": 591,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "GNpcXieDai",
+      "file": "GNpcXieDai.json",
+      "rows": 0,
+      "fields": 6,
+      "parseErrors": 6
+    },
+    {
+      "name": "RenWu",
+      "file": "RenWu.json",
+      "rows": 4,
+      "fields": 22,
+      "parseErrors": 17
+    },
+    {
+      "name": "Area",
+      "file": "Area.json",
+      "rows": 119,
+      "fields": 8,
+      "parseErrors": 0
+    },
+    {
+      "name": "QingYuan",
+      "file": "QingYuan.json",
+      "rows": 368,
+      "fields": 10,
+      "parseErrors": 1
+    },
+    {
+      "name": "Npc",
+      "file": "Npc.json",
+      "rows": 365,
+      "fields": 91,
+      "parseErrors": 1
+    },
+    {
+      "name": "JiGou",
+      "file": "JiGou.json",
+      "rows": 1,
+      "fields": 6,
+      "parseErrors": 0
+    },
+    {
+      "name": "Life",
+      "file": "Life.json",
+      "rows": 1,
+      "fields": 2,
+      "parseErrors": 1
+    },
+    {
+      "name": "GLianSuo",
+      "file": "GLianSuo.json",
+      "rows": 70,
+      "fields": 12,
+      "parseErrors": 0
+    },
+    {
+      "name": "GShangBing",
+      "file": "GShangBing.json",
+      "rows": 0,
+      "fields": 7,
+      "parseErrors": 7
+    },
+    {
+      "name": "PeiFang",
+      "file": "PeiFang.json",
+      "rows": 208,
+      "fields": 36,
+      "parseErrors": 0
+    },
+    {
+      "name": "GYaoQing",
+      "file": "GYaoQing.json",
+      "rows": 229,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "JiaoXue",
+      "file": "JiaoXue.json",
+      "rows": 33,
+      "fields": 14,
+      "parseErrors": 0
+    },
+    {
+      "name": "CaiJi",
+      "file": "CaiJi.json",
+      "rows": 58,
+      "fields": 9,
+      "parseErrors": 0
+    },
+    {
+      "name": "AttackArea",
+      "file": "AttackArea.json",
+      "rows": 24,
+      "fields": 8,
+      "parseErrors": 0
+    },
+    {
+      "name": "Xing",
+      "file": "Xing.json",
+      "rows": 0,
+      "fields": 0,
+      "parseErrors": 0
+    },
+    {
+      "name": "Ming",
+      "file": "Ming.json",
+      "rows": 1591,
+      "fields": 1,
+      "parseErrors": 0
+    },
+    {
+      "name": "ChuanShou",
+      "file": "ChuanShou.json",
+      "rows": 56,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "Shop",
+      "file": "Shop.json",
+      "rows": 220,
+      "fields": 7,
+      "parseErrors": 0
+    },
+    {
+      "name": "GWeiLi",
+      "file": "GWeiLi.json",
+      "rows": 50,
+      "fields": 8,
+      "parseErrors": 0
+    },
+    {
+      "name": "GQingJiaoPeiFang",
+      "file": "GQingJiaoPeiFang.json",
+      "rows": 12,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "MingZi",
+      "file": "MingZi.json",
+      "rows": 1913,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "TouXiang",
+      "file": "TouXiang.json",
+      "rows": 0,
+      "fields": 8,
+      "parseErrors": 8
+    },
+    {
+      "name": "JingMai",
+      "file": "JingMai.json",
+      "rows": 49,
+      "fields": 11,
+      "parseErrors": 0
+    },
+    {
+      "name": "GNPCWuGongType",
+      "file": "GNPCWuGongType.json",
+      "rows": 587,
+      "fields": 2,
+      "parseErrors": 0
+    },
+    {
+      "name": "MuBiao",
+      "file": "MuBiao.json",
+      "rows": 70,
+      "fields": 12,
+      "parseErrors": 0
+    },
+    {
+      "name": "ChengHao",
+      "file": "ChengHao.json",
+      "rows": 299,
+      "fields": 5,
+      "parseErrors": 0
+    },
+    {
+      "name": "NpcGongLi",
+      "file": "NpcGongLi.json",
+      "rows": 1024,
+      "fields": 7,
+      "parseErrors": 3
+    },
+    {
+      "name": "XiaKeDao",
+      "file": "XiaKeDao.json",
+      "rows": 3000,
+      "fields": 7,
+      "parseErrors": 4
+    },
+    {
+      "name": "MenPaiInfo",
+      "file": "MenPaiInfo.json",
+      "rows": 1,
+      "fields": 12,
+      "parseErrors": 1
+    },
+    {
+      "name": "Ads",
+      "file": "Ads.json",
+      "rows": 12,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "QYTemp",
+      "file": "QYTemp.json",
+      "rows": 130,
+      "fields": 1,
+      "parseErrors": 0
+    },
+    {
+      "name": "GCdKey",
+      "file": "GCdKey.json",
+      "rows": 18,
+      "fields": 8,
+      "parseErrors": 2
+    },
+    {
+      "name": "ShiJian",
+      "file": "ShiJian.json",
+      "rows": 4,
+      "fields": 19,
+      "parseErrors": 14
+    },
+    {
+      "name": "Option",
+      "file": "Option.json",
+      "rows": 1,
+      "fields": 11,
+      "parseErrors": 0
+    },
+    {
+      "name": "NPC_Word",
+      "file": "NPC_Word.json",
+      "rows": 9,
+      "fields": 2,
+      "parseErrors": 0
+    },
+    {
+      "name": "GWuGongName",
+      "file": "GWuGongName.json",
+      "rows": 302,
+      "fields": 1,
+      "parseErrors": 0
+    },
+    {
+      "name": "ZiChuangWuGong",
+      "file": "ZiChuangWuGong.json",
+      "rows": 0,
+      "fields": 7,
+      "parseErrors": 7
+    },
+    {
+      "name": "GZiChuangWeiLi",
+      "file": "GZiChuangWeiLi.json",
+      "rows": 30,
+      "fields": 7,
+      "parseErrors": 0
+    },
+    {
+      "name": "GZiChuangBuff",
+      "file": "GZiChuangBuff.json",
+      "rows": 41,
+      "fields": 5,
+      "parseErrors": 0
+    },
+    {
+      "name": "MuRenXiang",
+      "file": "MuRenXiang.json",
+      "rows": 36,
+      "fields": 11,
+      "parseErrors": 3
+    },
+    {
+      "name": "NPCXiSui",
+      "file": "NPCXiSui.json",
+      "rows": 1,
+      "fields": 6,
+      "parseErrors": 5
+    },
+    {
+      "name": "MenPaiGuanXi",
+      "file": "MenPaiGuanXi.json",
+      "rows": 7,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "GCiTiao",
+      "file": "GCiTiao.json",
+      "rows": 1,
+      "fields": 15,
+      "parseErrors": 13
+    },
+    {
+      "name": "ShengChanRandom",
+      "file": "ShengChanRandom.json",
+      "rows": 1,
+      "fields": 3,
+      "parseErrors": 0
+    },
+    {
+      "name": "GMingKe",
+      "file": "GMingKe.json",
+      "rows": 7,
+      "fields": 15,
+      "parseErrors": 0
+    },
+    {
+      "name": "DanYaoCount",
+      "file": "DanYaoCount.json",
+      "rows": 12,
+      "fields": 3,
+      "parseErrors": 0
+    },
+    {
+      "name": "Mail",
+      "file": "Mail.json",
+      "rows": 0,
+      "fields": 12,
+      "parseErrors": 12
+    },
+    {
+      "name": "XiaKeJuBen",
+      "file": "XiaKeJuBen.json",
+      "rows": 3,
+      "fields": 15,
+      "parseErrors": 1
+    },
+    {
+      "name": "PiLiangSelect",
+      "file": "PiLiangSelect.json",
+      "rows": 26,
+      "fields": 5,
+      "parseErrors": 0
+    },
+    {
+      "name": "CunDangs",
+      "file": "CunDangs.json",
+      "rows": 6,
+      "fields": 19,
+      "parseErrors": 10
+    },
+    {
+      "name": "FuBen",
+      "file": "FuBen.json",
+      "rows": 1,
+      "fields": 10,
+      "parseErrors": 7
+    },
+    {
+      "name": "FuBenDetail",
+      "file": "FuBenDetail.json",
+      "rows": 4,
+      "fields": 9,
+      "parseErrors": 6
+    },
+    {
+      "name": "FuBenRecord",
+      "file": "FuBenRecord.json",
+      "rows": 1,
+      "fields": 10,
+      "parseErrors": 8
+    },
+    {
+      "name": "FuBenDataBase",
+      "file": "FuBenDataBase.json",
+      "rows": 98,
+      "fields": 7,
+      "parseErrors": 0
+    },
+    {
+      "name": "RemakeTouXiangParts",
+      "file": "RemakeTouXiangParts.json",
+      "rows": 600,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "RemakeTouXiangBuWei",
+      "file": "RemakeTouXiangBuWei.json",
+      "rows": 3354,
+      "fields": 9,
+      "parseErrors": 0
+    },
+    {
+      "name": "RemakeTouXiangWuQi",
+      "file": "RemakeTouXiangWuQi.json",
+      "rows": 72,
+      "fields": 4,
+      "parseErrors": 0
+    },
+    {
+      "name": "GCDKeyBatch",
+      "file": "GCDKeyBatch.json",
+      "rows": 1000,
+      "fields": 2,
+      "parseErrors": 0
+    },
+    {
+      "name": "GCDKeyDetail",
+      "file": "GCDKeyDetail.json",
+      "rows": 31,
+      "fields": 4,
+      "parseErrors": 0
+    }
+  ]
+}

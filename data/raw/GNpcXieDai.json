@@ -1,0 +1,51 @@
+{
+  "tableIndex": 12,
+  "meta": "GNpcXieDai",
+  "range": {
+    "start": 731659,
+    "end": 732996
+  },
+  "fieldCount": 6,
+  "fields": [
+    "juesename",
+    "itemname",
+    "type",
+    "qty",
+    "showlv",
+    "hidelv"
+  ],
+  "fieldMeta": {
+    "juesename": {
+      "fieldType": "String",
+      "offset": 731989,
+      "error": "Cannot parse string field near 732103"
+    },
+    "itemname": {
+      "fieldType": "String",
+      "offset": 732161,
+      "error": "Cannot parse string field near 732274"
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 732332,
+      "error": "Cannot parse int/enum field near 732439"
+    },
+    "qty": {
+      "fieldType": "Int",
+      "offset": 732509,
+      "error": "Cannot parse int/enum field near 732614"
+    },
+    "showlv": {
+      "fieldType": "Int",
+      "offset": 732668,
+      "error": "Cannot parse int/enum field near 732776"
+    },
+    "hidelv": {
+      "fieldType": "Int",
+      "offset": 732830,
+      "error": "Cannot parse int/enum field near 732938"
+    }
+  },
+  "rowCount": 0,
+  "rows": []
+}

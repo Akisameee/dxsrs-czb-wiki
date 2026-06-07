@@ -1,0 +1,1457 @@
+[
+  {
+    "name": "罗汉拳",
+    "sect": "菩提门",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 130.87,
+    "cost": 2,
+    "effect": [
+      {
+        "name": "坚守",
+        "level": 1
+      }
+    ],
+    "obtainMethod": "菩提门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "慈悲心法",
+    "sect": "菩提门",
+    "styles": [
+      "护体"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [
+      "内丹：体力值+938",
+      "行脉：真气增加速度+36%"
+    ],
+    "special": null,
+    "obtainMethod": "菩提门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "降魔棍法",
+    "sect": "菩提门",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 449.72,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找菩提门至道学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "般若掌",
+    "sect": "菩提门",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 380.37,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找菩提门至道学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "一气朝元指",
+    "sect": "菩提门",
+    "styles": [
+      "刚猛",
+      "擒拿"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 679.43,
+    "cost": 5,
+    "effect": [
+      {
+        "name": "脱臼",
+        "level": 1
+      }
+    ],
+    "obtainMethod": "找菩提门至道学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "大光明刀法",
+    "sect": "菩提门",
+    "styles": [
+      "烈焰"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 727.69,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "帮助至德了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "不动明王杖",
+    "sect": "菩提门",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 890.3,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "帮助至道了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "大日如来掌",
+    "sect": "菩提门",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 772.86,
+    "cost": 5,
+    "effect": [
+      {
+        "name": "猛攻",
+        "level": 2
+      }
+    ],
+    "obtainMethod": "菩提门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "菩提心经",
+    "sect": "菩提门",
+    "styles": [
+      "护体"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4830",
+      "真气增加速度+171.43%"
+    ],
+    "special": "受到攻击时，伤害降低90点",
+    "obtainMethod": "菩提门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "大藏心法",
+    "sect": "菩提门",
+    "styles": [
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [
+      "体力值+5040",
+      "真气增加速度+210%"
+    ],
+    "special": null,
+    "obtainMethod": "帮助至明了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "紫阳剑法",
+    "sect": "真武教",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 141.94,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "真武教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "两仪功",
+    "sect": "真武教",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [
+      "体力值+870",
+      "真气增加速度+38.79%"
+    ],
+    "special": null,
+    "obtainMethod": "真武教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "乾坤八卦剑",
+    "sect": "真武教",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 393.17,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找真武教鲁顺陌学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "无忧剑法",
+    "sect": "真武教",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 574.08,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找真武教鲁顺陌学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "八脉手",
+    "sect": "真武教",
+    "styles": [
+      "致命"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 596.36,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "帮助鲁顺陌了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "太虚神悟掌",
+    "sect": "真武教",
+    "styles": [
+      "反击"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 758.75,
+    "cost": 5,
+    "effect": [
+      {
+        "name": "坚守",
+        "level": 3
+      }
+    ],
+    "obtainMethod": "帮助施望修了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "太元无极剑",
+    "sect": "真武教",
+    "styles": [
+      "反击"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 802.23,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "真武教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "禹余诀",
+    "sect": "真武教",
+    "styles": [
+      "纯阳"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4798",
+      "真气增加速度+172.58%"
+    ],
+    "special": "行动结束后恢复120点体力",
+    "obtainMethod": "真武教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "十方杖法",
+    "sect": "十方寨",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 170.1,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "十方寨秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "震山功",
+    "sect": "十方寨",
+    "styles": [
+      "擒拿"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "十方寨秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "鸳鸯连环棍",
+    "sect": "十方寨",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 696.32,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找十方寨聂鹰学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "天罡神拳",
+    "sect": "十方寨",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1235.53,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "帮助萧虎河了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "山河八极棍",
+    "sect": "十方寨",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1180.78,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "十方寨秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "九鼎神功",
+    "sect": "十方寨",
+    "styles": [
+      "擒拿"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4416",
+      "真气增加速度+187.5%"
+    ],
+    "special": "攻击造成的「脱臼」状态层数+1",
+    "obtainMethod": "十方寨秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "如意珠",
+    "sect": "长生门",
+    "styles": [
+      "寒冰"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 161.76,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "长生门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "长春心诀",
+    "sect": "长生门",
+    "styles": [
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [
+      "体力值+600",
+      "真气增加速度+56.25%"
+    ],
+    "special": null,
+    "obtainMethod": "长生门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "天机刺",
+    "sect": "长生门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 295.27,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找长生门周洛歌学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "摧魄神功",
+    "sect": "长生门",
+    "styles": [
+      "化劲"
+    ],
+    "type": "内功",
+    "rare": 3,
+    "passives": [
+      "体力值+2025",
+      "真气增加速度+148.15%"
+    ],
+    "special": "攻击时有24%几率化去对方1点真气",
+    "obtainMethod": "帮助任千殇了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "归墟大法",
+    "sect": "长生门",
+    "styles": [
+      "千变"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4747",
+      "真气增加速度+174.42%"
+    ],
+    "special": "攻击时可以穿透对方15%防御",
+    "obtainMethod": "帮助梁清谣了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "寒光神针",
+    "sect": "长生门",
+    "styles": [
+      "寒冰"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1114.97,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "长生门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "离尘神功",
+    "sect": "长生门",
+    "styles": [
+      "化劲",
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4370",
+      "真气增加速度+189.47%"
+    ],
+    "special": "受到攻击时有40%几率获得1点真气",
+    "obtainMethod": "长生门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "拂云逍遥掌",
+    "sect": "长生门",
+    "styles": [
+      "擒拿"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 957.98,
+    "cost": 6,
+    "effect": [
+      {
+        "name": "脱臼",
+        "level": 3
+      }
+    ],
+    "obtainMethod": "帮助慎行了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "黄泉剑法",
+    "sect": "幽冥教",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 139.95,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "幽冥教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "七煞心法",
+    "sect": "幽冥教",
+    "styles": [
+      "千变"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [
+      "体力值+660",
+      "真气增加速度+51.14%"
+    ],
+    "special": null,
+    "obtainMethod": "幽冥教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "飞沙走石",
+    "sect": "幽冥教",
+    "styles": [
+      "突袭",
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 592.63,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找幽冥教武鸿柯学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "青蟒诡影剑",
+    "sect": "幽冥教",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 973.88,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "幽冥教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "摄魂大法",
+    "sect": "幽冥教",
+    "styles": [
+      "化劲"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4425",
+      "真气增加速度+187.11%"
+    ],
+    "special": "攻击时有25%几率获得1点真气",
+    "obtainMethod": "幽冥教秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "阎魔神针",
+    "sect": "幽冥教",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1409.14,
+    "cost": 6,
+    "effect": [
+      {
+        "name": "目盲",
+        "level": 3
+      }
+    ],
+    "obtainMethod": "帮助轩辕殿了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "五彩丹砂",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 118.94,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "百花门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "百花心经",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "百花门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "血海棠",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 364.63,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找百花门叶海棠学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "九弦百花杀",
+    "sect": "百花门",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1072.91,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "帮助杨云飞了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "百花销骨香",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 987.24,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "百花门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "曼陀罗经",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "百花门秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "奔月拳",
+    "sect": "玄女斋",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 139.38,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "玄女斋秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "瑶池心经",
+    "sect": "玄女斋",
+    "styles": [
+      "灵动"
+    ],
+    "type": "内功",
+    "rare": 1,
+    "passives": [
+      "体力值+645",
+      "真气增加速度+52.33%"
+    ],
+    "special": null,
+    "obtainMethod": "玄女斋秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "镜花水月",
+    "sect": "玄女斋",
+    "styles": [
+      "寒冰"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 512.15,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "帮助巫向兰了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "姑射剑法",
+    "sect": "玄女斋",
+    "styles": [
+      "致命"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 842.85,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "找玄女斋虞佩之学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "巫山辉月掌",
+    "sect": "玄女斋",
+    "styles": [
+      "致命"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 705,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "玄女斋秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "九天玄女功",
+    "sect": "玄女斋",
+    "styles": [
+      "灵动",
+      "玄阴"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4554",
+      "真气增加速度+181.82%"
+    ],
+    "special": "当生命值低于40%时，伤害提升25%",
+    "obtainMethod": "玄女斋秘传武学",
+    "sectRestricted": false
+  },
+  {
+    "name": "惊鸿一剑",
+    "sect": "玄女斋",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 966.8,
+    "cost": 6,
+    "effect": [
+      {
+        "name": "猛攻",
+        "level": 4
+      }
+    ],
+    "obtainMethod": "帮助林述唐了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "疯魔爪",
+    "sect": "罗刹教",
+    "styles": [
+      "擒拿"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 534.52,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找罗刹教吕公南学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "九转魔功",
+    "sect": "罗刹教",
+    "styles": [
+      "反击"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4775",
+      "真气增加速度+173.41%"
+    ],
+    "special": "闪避几率增加10%",
+    "obtainMethod": "帮助慕容雄廷了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "开阳心法",
+    "sect": "七星观",
+    "styles": [
+      "灵动",
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 2,
+    "passives": [
+      "体力值+1785",
+      "真气增加速度+70.59%"
+    ],
+    "special": "移动范围增加15%",
+    "obtainMethod": "找七星观谭酉成学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "瑶光剑诀",
+    "sect": "七星观",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 543.34,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找七星观谭酉成学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "玉衡七式",
+    "sect": "七星观",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 796.36,
+    "cost": 5,
+    "effect": [
+      {
+        "name": "内伤",
+        "level": 3
+      }
+    ],
+    "obtainMethod": "帮助东方伯了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "天玑诀",
+    "sect": "七星观",
+    "styles": [
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4462",
+      "真气增加速度+185.57%"
+    ],
+    "special": "力竭时有一次复活的机会，并恢复10%体力",
+    "obtainMethod": "帮助谭酉成了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "白眉剑法",
+    "sect": "金光寺",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 340.11,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找金光寺尘空长老学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "涅盘禅功",
+    "sect": "金光寺",
+    "styles": [
+      "御气"
+    ],
+    "type": "内功",
+    "rare": 3,
+    "passives": [
+      "体力值+2725",
+      "真气增加速度+110.09%"
+    ],
+    "special": "防御会随着体力的降低而提升，最高15%",
+    "obtainMethod": "帮助尘空长老了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "无上一指禅",
+    "sect": "金光寺",
+    "styles": [
+      "御气",
+      "擒拿"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 810.72,
+    "cost": 5,
+    "effect": [
+      {
+        "name": "封穴",
+        "level": 1
+      }
+    ],
+    "obtainMethod": "帮助元禅大师了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "万佛指",
+    "sect": "金光寺",
+    "styles": [
+      "御气"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1495.41,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "帮助韩萧羽了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "光相功",
+    "sect": "潇湘剑派",
+    "styles": [
+      "调息"
+    ],
+    "type": "内功",
+    "rare": 2,
+    "passives": [
+      "体力值+1764",
+      "真气增加速度+71.43%"
+    ],
+    "special": "战斗开始时获得1点额外真气",
+    "obtainMethod": "找潇湘剑派吕望学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "云环剑法",
+    "sect": "潇湘剑派",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 255.33,
+    "cost": 2,
+    "effect": [],
+    "obtainMethod": "找潇湘剑派吕望学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "紫薇荡魔剑",
+    "sect": "潇湘剑派",
+    "styles": [
+      "致命"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 558.99,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "帮助吕望了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "潇湘玄功",
+    "sect": "潇湘剑派",
+    "styles": [
+      "御气"
+    ],
+    "type": "内功",
+    "rare": 4,
+    "passives": [
+      "体力值+4388",
+      "真气增加速度+188.68%"
+    ],
+    "special": "每次使用招式后攻击提升4%，最多提升3次",
+    "obtainMethod": "帮助应道规了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "问天神剑决",
+    "sect": "潇湘剑派",
+    "styles": [
+      "破招"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1593.98,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "帮助闻剑枫了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "迷踪剑法",
+    "sect": "蓬莱帮",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 531.01,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找蓬莱帮程岱羿学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "芙蓉掌",
+    "sect": "蓬莱帮",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 549.25,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "找蓬莱帮程岱羿学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "摘叶飞花",
+    "sect": "蓬莱帮",
+    "styles": [
+      "突袭"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 768.26,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "帮助夜海凤了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "飞星大法",
+    "sect": "蓬莱帮",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1281.03,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "帮助诸葛兵山了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "万毒化髓掌",
+    "sect": "断魂庄",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 259.45,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "帮助闫意了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "陨玉爪",
+    "sect": "断魂庄",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 952.18,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "帮助闫崇了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "神火珠",
+    "sect": "九曜会",
+    "styles": [
+      "烈焰"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 351.51,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找神火堂百里锦学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "千钧指法",
+    "sect": "九曜会",
+    "styles": [
+      "破招"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 582.27,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "找锦衣卫丁怀安学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "修罗刀法",
+    "sect": "九曜会",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 767.74,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找追魂阁聂隐学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "万象归龙枪",
+    "sect": "九曜会",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1343.34,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "帮助赵世忠了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "灵刀大法",
+    "sect": "九曜会",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1586.05,
+    "cost": 6,
+    "effect": [
+      {
+        "name": "神速",
+        "level": 5
+      },
+      {
+        "name": "神行",
+        "level": 5
+      }
+    ],
+    "obtainMethod": "找追魂阁聂隐学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "盘蛇七探棍",
+    "sect": "九曜会",
+    "styles": [
+      "千变"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1226.89,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "找锦衣卫丁怀安学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "行者棍法",
+    "sect": "江湖",
+    "styles": [
+      "基础"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 247.99,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找京师武馆郭大勇学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "六合枪法",
+    "sect": "江湖",
+    "styles": [
+      "基础"
+    ],
+    "type": "外功",
+    "rare": 1,
+    "power": 302.41,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "找杨州武馆熊百川学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "连山无影刀",
+    "sect": "江湖",
+    "styles": [
+      "灵动"
+    ],
+    "type": "外功",
+    "rare": 2,
+    "power": 448.65,
+    "cost": 3,
+    "effect": [],
+    "obtainMethod": "帮助贾柳了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "残月枪法",
+    "sect": "江湖",
+    "styles": [
+      "刚猛"
+    ],
+    "type": "外功",
+    "rare": 3,
+    "power": 724.06,
+    "cost": 4,
+    "effect": [],
+    "obtainMethod": "找厉风镖局西门叶青学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "离合功",
+    "sect": "江湖",
+    "styles": [
+      "反击"
+    ],
+    "type": "内功",
+    "rare": 3,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "帮助姬俊甫了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "落魂天枢刀",
+    "sect": "江湖",
+    "styles": [
+      "致命"
+    ],
+    "type": "外功",
+    "rare": 4,
+    "power": 1238.29,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": "帮助落魂刀客了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "天元神功",
+    "sect": "江湖",
+    "styles": [
+      "纯阳"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [
+      "体力值+4896",
+      "真气增加速度+196.08%"
+    ],
+    "special": "当获得增益状态时，有50%几率令层数翻倍",
+    "obtainMethod": "帮助韩镜尘了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "玉虚真经",
+    "sect": "江湖",
+    "styles": [
+      "玄阴"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [
+      "体力值+4838",
+      "真气增加速度+198.41%"
+    ],
+    "special": "当获得减益状态时，有40%几率免疫该状态",
+    "obtainMethod": "帮助铁守坚了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "百鸟朝凰枪",
+    "sect": "江湖",
+    "styles": [
+      "烈焰"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 1709.06,
+    "cost": 6,
+    "effect": [
+      {
+        "name": "烈火",
+        "level": 12
+      }
+    ],
+    "obtainMethod": "找厉风镖局西门叶青学习武艺",
+    "sectRestricted": false
+  },
+  {
+    "name": "女娲补天式",
+    "sect": "江湖",
+    "styles": [
+      "阴柔"
+    ],
+    "type": "外功",
+    "rare": 5,
+    "power": 2199.66,
+    "cost": 6,
+    "effect": [],
+    "obtainMethod": "帮助丁雪如了却心愿",
+    "sectRestricted": false
+  },
+  {
+    "name": "圣火刀法",
+    "sect": "神火堂",
+    "styles": [],
+    "type": "外功",
+    "rare": 4,
+    "power": 1115.25,
+    "cost": 5,
+    "effect": [],
+    "obtainMethod": null,
+    "sectRestricted": false
+  },
+  {
+    "name": "大荒心法",
+    "sect": "神火堂",
+    "styles": [],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": null,
+    "sectRestricted": false
+  },
+  {
+    "name": "金刚般若功",
+    "sect": "菩提门",
+    "styles": [
+      "护体"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(菩提门限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "真武归藏决",
+    "sect": "真武教",
+    "styles": [
+      "刚猛",
+      "阴柔"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(真武教限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "葬花真经",
+    "sect": "百花门",
+    "styles": [
+      "剧毒"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(百花门限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "轩辕宝典",
+    "sect": "十方寨",
+    "styles": [
+      "擒拿"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(十方寨限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "化影追魂术",
+    "sect": "幽冥教",
+    "styles": [
+      "千变"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(幽冥教限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "寒魄功",
+    "sect": "长生门",
+    "styles": [
+      "寒冰"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [
+      "体力值+4560",
+      "真气恢复速度提升200%"
+    ],
+    "special": "武学招式七成附带寒气，速度减三成",
+    "obtainMethod": "武林大会奖品(长生门限定)",
+    "sectRestricted": true
+  },
+  {
+    "name": "琉璃素心经",
+    "sect": "玄女斋",
+    "styles": [
+      "致命"
+    ],
+    "type": "内功",
+    "rare": 5,
+    "passives": [],
+    "special": null,
+    "obtainMethod": "武林大会奖品(玄女斋限定)",
+    "sectRestricted": true
+  }
+]

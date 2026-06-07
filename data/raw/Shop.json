@@ -1,0 +1,2272 @@
+{
+  "tableIndex": 29,
+  "meta": "Shop",
+  "range": {
+    "start": 1125049,
+    "end": 1148305
+  },
+  "fieldCount": 7,
+  "fields": [
+    "juesename",
+    "daojuname",
+    "type",
+    "minqty",
+    "maxqty",
+    "rare",
+    "chuxianjilv"
+  ],
+  "fieldMeta": {
+    "juesename": {
+      "fieldType": "String",
+      "offset": 1133425,
+      "lengthOffset": 1133565,
+      "totalLength": 4757,
+      "count": 220
+    },
+    "daojuname": {
+      "fieldType": "String",
+      "offset": 1138350,
+      "lengthOffset": 1138490,
+      "totalLength": 4536,
+      "count": 220
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 1143054,
+      "lengthOffset": 1143203,
+      "totalLength": 880,
+      "count": 220
+    },
+    "minqty": {
+      "fieldType": "Int",
+      "offset": 1144111,
+      "lengthOffset": 1144245,
+      "totalLength": 880,
+      "count": 220
+    },
+    "maxqty": {
+      "fieldType": "Int",
+      "offset": 1145153,
+      "lengthOffset": 1145287,
+      "totalLength": 880,
+      "count": 220
+    },
+    "rare": {
+      "fieldType": "Enum",
+      "offset": 1146195,
+      "lengthOffset": 1146344,
+      "totalLength": 880,
+      "count": 220
+    },
+    "chuxianjilv": {
+      "fieldType": "Float",
+      "offset": 1147252,
+      "lengthOffset": 1147393,
+      "totalLength": 880,
+      "count": 220
+    }
+  },
+  "rowCount": 220,
+  "rows": [
+    {
+      "index": 0,
+      "juesename": "黄珍_shop",
+      "daojuname": "《渔樵问答》",
+      "type": 0,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 1,
+      "juesename": "黄珍_shop",
+      "daojuname": "《夕阳箫鼓》",
+      "type": 0,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 2,
+      "juesename": "黄珍_shop",
+      "daojuname": "《梅花三弄》",
+      "type": 0,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 3,
+      "juesename": "黄珍_shop",
+      "daojuname": "《高山流水》",
+      "type": 0,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 4,
+      "juesename": "黄珍_shop",
+      "daojuname": "《汉宫秋月》",
+      "type": 0,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 5,
+      "juesename": "黄珍_shop",
+      "daojuname": "《十面埋伏》",
+      "type": 0,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 6,
+      "juesename": "黄珍_shop",
+      "daojuname": "《平沙落雁》",
+      "type": 0,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 7,
+      "juesename": "黄珍_shop",
+      "daojuname": "《关山月》",
+      "type": 0,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 8,
+      "juesename": "黄珍_shop",
+      "daojuname": "《广陵散》",
+      "type": 0,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 9,
+      "juesename": "黄珍_shop",
+      "daojuname": "《胡笳十八拍》",
+      "type": 0,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 10,
+      "juesename": "黄珍_shop",
+      "daojuname": "《寒梅映雪》",
+      "type": 0,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 11,
+      "juesename": "黄珍_shop",
+      "daojuname": "《离骚》",
+      "type": 0,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 12,
+      "juesename": "黄珍_shop",
+      "daojuname": "《潇湘水云》",
+      "type": 0,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 13,
+      "juesename": "黄珍_shop",
+      "daojuname": "《仙机武库》",
+      "type": 1,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 14,
+      "juesename": "黄珍_shop",
+      "daojuname": "《弈悟》",
+      "type": 1,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 15,
+      "juesename": "黄珍_shop",
+      "daojuname": "《弈墨》",
+      "type": 1,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 16,
+      "juesename": "黄珍_shop",
+      "daojuname": "《授子谱》",
+      "type": 1,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 17,
+      "juesename": "黄珍_shop",
+      "daojuname": "《当湖十局》",
+      "type": 1,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 18,
+      "juesename": "黄珍_shop",
+      "daojuname": "《官子谱》",
+      "type": 1,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 19,
+      "juesename": "黄珍_shop",
+      "daojuname": "《遇仙图》",
+      "type": 1,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 20,
+      "juesename": "黄珍_shop",
+      "daojuname": "《沧桑谱》",
+      "type": 1,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 21,
+      "juesename": "黄珍_shop",
+      "daojuname": "《烂柯谱》",
+      "type": 1,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 22,
+      "juesename": "黄珍_shop",
+      "daojuname": "《草木谱》",
+      "type": 1,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 23,
+      "juesename": "黄珍_shop",
+      "daojuname": "《媪妇谱》",
+      "type": 1,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 24,
+      "juesename": "黄珍_shop",
+      "daojuname": "《呕血谱》",
+      "type": 1,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 25,
+      "juesename": "黄珍_shop",
+      "daojuname": "《血泪谱》",
+      "type": 1,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 26,
+      "juesename": "黄珍_shop",
+      "daojuname": "《淳化阁帖》",
+      "type": 2,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 27,
+      "juesename": "黄珍_shop",
+      "daojuname": "《初月帖》",
+      "type": 2,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 28,
+      "juesename": "黄珍_shop",
+      "daojuname": "《祭侄文稿》",
+      "type": 2,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 29,
+      "juesename": "黄珍_shop",
+      "daojuname": "《诸上座帖》",
+      "type": 2,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 30,
+      "juesename": "黄珍_shop",
+      "daojuname": "《快雪时晴帖》",
+      "type": 2,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 31,
+      "juesename": "黄珍_shop",
+      "daojuname": "《松风阁诗帖》",
+      "type": 2,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 32,
+      "juesename": "黄珍_shop",
+      "daojuname": "《金刚经碑》",
+      "type": 2,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 33,
+      "juesename": "黄珍_shop",
+      "daojuname": "《黄庭经》",
+      "type": 2,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 34,
+      "juesename": "黄珍_shop",
+      "daojuname": "《肚痛帖》",
+      "type": 2,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 35,
+      "juesename": "黄珍_shop",
+      "daojuname": "《自叙帖》",
+      "type": 2,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 36,
+      "juesename": "黄珍_shop",
+      "daojuname": "《兰亭集序》",
+      "type": 2,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 37,
+      "juesename": "黄珍_shop",
+      "daojuname": "《玄秘塔碑》",
+      "type": 2,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 38,
+      "juesename": "黄珍_shop",
+      "daojuname": "《平复帖》",
+      "type": 2,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 39,
+      "juesename": "黄珍_shop",
+      "daojuname": "《多宝塔碑》",
+      "type": 2,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 40,
+      "juesename": "黄珍_shop",
+      "daojuname": "《九成宫醴泉铭》",
+      "type": 2,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 41,
+      "juesename": "黄珍_shop",
+      "daojuname": "《踏歌图卷》",
+      "type": 3,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 42,
+      "juesename": "黄珍_shop",
+      "daojuname": "《五牛图》",
+      "type": 3,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 43,
+      "juesename": "黄珍_shop",
+      "daojuname": "《泼墨仙人》",
+      "type": 3,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 44,
+      "juesename": "黄珍_shop",
+      "daojuname": "《墨竹》",
+      "type": 3,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 45,
+      "juesename": "黄珍_shop",
+      "daojuname": "《八十七神仙图》",
+      "type": 3,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 46,
+      "juesename": "黄珍_shop",
+      "daojuname": "《溪山行旅图》",
+      "type": 3,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 47,
+      "juesename": "黄珍_shop",
+      "daojuname": "《步辇图》",
+      "type": 3,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 48,
+      "juesename": "黄珍_shop",
+      "daojuname": "《匡庐图》",
+      "type": 3,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 49,
+      "juesename": "黄珍_shop",
+      "daojuname": "《高逸图》",
+      "type": 3,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 50,
+      "juesename": "黄珍_shop",
+      "daojuname": "《清明上河图》",
+      "type": 3,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 51,
+      "juesename": "黄珍_shop",
+      "daojuname": "《百骏图》",
+      "type": 3,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 52,
+      "juesename": "黄珍_shop",
+      "daojuname": "《千里江山图》",
+      "type": 3,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 53,
+      "juesename": "黄珍_shop",
+      "daojuname": "《洛神赋图》",
+      "type": 3,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 54,
+      "juesename": "黄珍_shop",
+      "daojuname": "《雨后空林图》",
+      "type": 3,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 55,
+      "juesename": "黄珍_shop",
+      "daojuname": "《韩熙载夜宴图》",
+      "type": 3,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 56,
+      "juesename": "黄珍_shop",
+      "daojuname": "《万壑松风图》",
+      "type": 3,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 57,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "乳酒",
+      "type": 5,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 58,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "老白汾酒",
+      "type": 5,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 59,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "双沟大曲",
+      "type": 5,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 60,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "新丰酒",
+      "type": 5,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 61,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "西凤酒",
+      "type": 5,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 62,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "即墨老酒",
+      "type": 5,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 63,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "普洱茶",
+      "type": 4,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 64,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "铁观音",
+      "type": 4,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 65,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "六安瓜片",
+      "type": 4,
+      "minqty": 6,
+      "maxqty": 8,
+      "rare": 1,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 66,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "滇红",
+      "type": 4,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 67,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "川青",
+      "type": 4,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 68,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "佛手",
+      "type": 4,
+      "minqty": 5,
+      "maxqty": 7,
+      "rare": 2,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 69,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "女儿红",
+      "type": 5,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 70,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "四特酒",
+      "type": 5,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 71,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "状元红",
+      "type": 5,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 72,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "杜康酒",
+      "type": 5,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 73,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "古井贡",
+      "type": 5,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 74,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "葡萄酒",
+      "type": 5,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 75,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "竹叶青酒",
+      "type": 5,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 76,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "龙井",
+      "type": 4,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 77,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "黄金桂",
+      "type": 4,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 78,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "金凤凰",
+      "type": 4,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 79,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "黄山毛峰",
+      "type": 4,
+      "minqty": 3,
+      "maxqty": 5,
+      "rare": 3,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 80,
+      "juesename": "河洛掌柜_shop",
+      "daojuname": "玉露茶",
+      "type": 4,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 81,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "沱茶",
+      "type": 4,
+      "minqty": 8,
+      "maxqty": 12,
+      "rare": 0,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 82,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "君山银针",
+      "type": 4,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 83,
+      "juesename": "悦来掌柜_shop",
+      "daojuname": "大红袍",
+      "type": 4,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 84,
+      "juesename": "龙门掌柜_shop",
+      "daojuname": "蒙顶黄芽",
+      "type": 4,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 4,
+      "chuxianjilv": 0
+    },
+    {
+      "index": 85,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜拳套",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 86,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁拳套",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 87,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢拳套",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 88,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻拳套",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 89,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁拳套",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 90,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 91,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 92,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 93,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 94,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 95,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 96,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 97,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 98,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 99,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 100,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 101,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 102,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 103,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 104,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 105,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 106,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 107,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 108,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 109,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 110,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜钉",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 111,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁钉",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 112,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢钉",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 113,
+      "juesename": "欧冶子_shop",
+      "daojuname": "百锻钉",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 114,
+      "juesename": "欧冶子_shop",
+      "daojuname": "寒铁钉",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 115,
+      "juesename": "欧冶子_shop",
+      "daojuname": "木棉甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 116,
+      "juesename": "欧冶子_shop",
+      "daojuname": "乌藤甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 117,
+      "juesename": "欧冶子_shop",
+      "daojuname": "护心甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 118,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黄金甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 3,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 119,
+      "juesename": "欧冶子_shop",
+      "daojuname": "琉璃甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 120,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 121,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 122,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 123,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 124,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 125,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 126,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 127,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 128,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 129,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜刺拳",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 130,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁刺拳",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 131,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢刺拳",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 132,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜指虎",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 133,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁指虎",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 134,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢指虎",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 135,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜刃爪",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 136,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁刃爪",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 137,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢刃爪",
+      "type": 9,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 138,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 139,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 140,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢长剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 141,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 142,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 143,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢短剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 144,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 145,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 146,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢重剑",
+      "type": 10,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 147,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜长刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 148,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁长刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 149,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢长刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 150,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜腰刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 151,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁腰刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 152,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢腰刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 153,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜朴刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 154,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁朴刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 155,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢朴刀",
+      "type": 11,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 156,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜花枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 157,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁花枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 158,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢花枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 159,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜大枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 160,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁大枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 161,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢大枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 162,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜钩镰枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 163,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁钩镰枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 164,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢钩镰枪",
+      "type": 12,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 165,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜长棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 166,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁长棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 167,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢长棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 168,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜齐眉棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 169,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁齐眉棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 170,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢齐眉棍",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 171,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜禅杖",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 172,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁禅杖",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 173,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢禅杖",
+      "type": 13,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 174,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜镖",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 175,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁镖",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 176,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢镖",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 177,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜珠",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 178,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁珠",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 179,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢珠",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 180,
+      "juesename": "欧冶子_shop",
+      "daojuname": "青铜针",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 181,
+      "juesename": "欧冶子_shop",
+      "daojuname": "黑铁针",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 182,
+      "juesename": "欧冶子_shop",
+      "daojuname": "精钢针",
+      "type": 14,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 183,
+      "juesename": "欧冶子_shop",
+      "daojuname": "木棉软甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 184,
+      "juesename": "欧冶子_shop",
+      "daojuname": "乌藤软甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 185,
+      "juesename": "欧冶子_shop",
+      "daojuname": "护心软甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 186,
+      "juesename": "欧冶子_shop",
+      "daojuname": "木棉皮甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 187,
+      "juesename": "欧冶子_shop",
+      "daojuname": "乌藤皮甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 188,
+      "juesename": "欧冶子_shop",
+      "daojuname": "护心皮甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 189,
+      "juesename": "欧冶子_shop",
+      "daojuname": "木棉札甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 0,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 190,
+      "juesename": "欧冶子_shop",
+      "daojuname": "乌藤札甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 1,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 191,
+      "juesename": "欧冶子_shop",
+      "daojuname": "护心札甲",
+      "type": 15,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 2,
+      "chuxianjilv": 0.15000000596046448
+    },
+    {
+      "index": 192,
+      "juesename": "胡青藤_shop",
+      "daojuname": "金疮药",
+      "type": 8,
+      "minqty": 2,
+      "maxqty": 5,
+      "rare": 0,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 193,
+      "juesename": "胡青藤_shop",
+      "daojuname": "补心丹",
+      "type": 8,
+      "minqty": 2,
+      "maxqty": 5,
+      "rare": 1,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 194,
+      "juesename": "胡青藤_shop",
+      "daojuname": "健气丸",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 1,
+      "chuxianjilv": 0.4000000059604645
+    },
+    {
+      "index": 195,
+      "juesename": "胡青藤_shop",
+      "daojuname": "凝碧丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 2,
+      "chuxianjilv": 0.800000011920929
+    },
+    {
+      "index": 196,
+      "juesename": "胡青藤_shop",
+      "daojuname": "小还丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 2,
+      "chuxianjilv": 0.3499999940395355
+    },
+    {
+      "index": 197,
+      "juesename": "胡青藤_shop",
+      "daojuname": "天香断续胶",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 2,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 198,
+      "juesename": "胡青藤_shop",
+      "daojuname": "玉灵散",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 3,
+      "rare": 2,
+      "chuxianjilv": 0.30000001192092896
+    },
+    {
+      "index": 199,
+      "juesename": "胡青藤_shop",
+      "daojuname": "清虚丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.4000000059604645
+    },
+    {
+      "index": 200,
+      "juesename": "胡青藤_shop",
+      "daojuname": "白云熊胆丸",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 1
+    },
+    {
+      "index": 201,
+      "juesename": "胡青藤_shop",
+      "daojuname": "镇心理气丸",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.44999998807907104
+    },
+    {
+      "index": 202,
+      "juesename": "胡青藤_shop",
+      "daojuname": "雪参丸",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.20000000298023224
+    },
+    {
+      "index": 203,
+      "juesename": "胡青藤_shop",
+      "daojuname": "紫金丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.20000000298023224
+    },
+    {
+      "index": 204,
+      "juesename": "胡青藤_shop",
+      "daojuname": "大还丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 4,
+      "chuxianjilv": 0.25
+    },
+    {
+      "index": 205,
+      "juesename": "胡青藤_shop",
+      "daojuname": "黑玉断续膏",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 4,
+      "chuxianjilv": 0.25
+    },
+    {
+      "index": 206,
+      "juesename": "胡青藤_shop",
+      "daojuname": "九花玉露丸",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.25
+    },
+    {
+      "index": 207,
+      "juesename": "胡青藤_shop",
+      "daojuname": "生生造化丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.009999999776482582
+    },
+    {
+      "index": 208,
+      "juesename": "胡青藤_shop",
+      "daojuname": "白虎内丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 2,
+      "chuxianjilv": 0.10000000149011612
+    },
+    {
+      "index": 209,
+      "juesename": "胡青藤_shop",
+      "daojuname": "玄武内丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 2,
+      "chuxianjilv": 0.10000000149011612
+    },
+    {
+      "index": 210,
+      "juesename": "胡青藤_shop",
+      "daojuname": "朱雀内丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 2,
+      "chuxianjilv": 0.10000000149011612
+    },
+    {
+      "index": 211,
+      "juesename": "胡青藤_shop",
+      "daojuname": "青龙内丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 2,
+      "chuxianjilv": 0.10000000149011612
+    },
+    {
+      "index": 212,
+      "juesename": "胡青藤_shop",
+      "daojuname": "白虎真武丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.05000000074505806
+    },
+    {
+      "index": 213,
+      "juesename": "胡青藤_shop",
+      "daojuname": "玄武真武丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.05000000074505806
+    },
+    {
+      "index": 214,
+      "juesename": "胡青藤_shop",
+      "daojuname": "朱雀真武丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.05000000074505806
+    },
+    {
+      "index": 215,
+      "juesename": "胡青藤_shop",
+      "daojuname": "青龙真武丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 2,
+      "rare": 3,
+      "chuxianjilv": 0.05000000074505806
+    },
+    {
+      "index": 216,
+      "juesename": "胡青藤_shop",
+      "daojuname": "白虎元阳丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.02500000037252903
+    },
+    {
+      "index": 217,
+      "juesename": "胡青藤_shop",
+      "daojuname": "玄武元阳丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.02500000037252903
+    },
+    {
+      "index": 218,
+      "juesename": "胡青藤_shop",
+      "daojuname": "朱雀元阳丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.02500000037252903
+    },
+    {
+      "index": 219,
+      "juesename": "胡青藤_shop",
+      "daojuname": "青龙元阳丹",
+      "type": 8,
+      "minqty": 1,
+      "maxqty": 1,
+      "rare": 4,
+      "chuxianjilv": 0.02500000037252903
+    }
+  ]
+}

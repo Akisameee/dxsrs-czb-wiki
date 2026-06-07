@@ -1,0 +1,58 @@
+{
+  "tableIndex": 52,
+  "meta": "NPCXiSui",
+  "range": {
+    "start": 1982028,
+    "end": 1983524
+  },
+  "fieldCount": 6,
+  "fields": [
+    "juesename",
+    "lv",
+    "lvli_up",
+    "gengu_up",
+    "tipo_up",
+    "shenfa_up"
+  ],
+  "fieldMeta": {
+    "juesename": {
+      "fieldType": "String",
+      "offset": 1982356,
+      "error": "Cannot parse string field near 1982470"
+    },
+    "lv": {
+      "fieldType": "Int",
+      "offset": 1982528,
+      "error": "Cannot parse int/enum field near 1982632"
+    },
+    "lvli_up": {
+      "fieldType": "Float",
+      "offset": 1982686,
+      "error": "Cannot parse float field near 1982797"
+    },
+    "gengu_up": {
+      "fieldType": "Float",
+      "offset": 1982851,
+      "error": "Cannot parse float field near 1982963"
+    },
+    "tipo_up": {
+      "fieldType": "Float",
+      "offset": 1983017,
+      "error": "Cannot parse float field near 1983128"
+    },
+    "shenfa_up": {
+      "fieldType": "Float",
+      "offset": 1983182,
+      "lengthOffset": 1983488,
+      "totalLength": 4,
+      "count": 1
+    }
+  },
+  "rowCount": 1,
+  "rows": [
+    {
+      "index": 0,
+      "shenfa_up": 0
+    }
+  ]
+}

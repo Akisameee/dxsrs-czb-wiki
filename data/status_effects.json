@@ -1,0 +1,86 @@
+[
+  {
+    "name": "猛攻",
+    "valuePerLevel": 10,
+    "template": "伤害提升{value*n}%",
+    "notes": "现有武学文本：猛攻(2)伤害提升20%、猛攻(4)伤害提升40%。"
+  },
+  {
+    "name": "坚守",
+    "valuePerLevel": 10,
+    "template": "防御提升{value*n}%",
+    "notes": "现有武学文本：坚守(3)防御提升30%。"
+  },
+  {
+    "name": "内伤",
+    "valuePerLevel": 10,
+    "template": "防御降低{value*n}%",
+    "notes": "现有武学文本：内伤(3)防御降低30%。"
+  },
+  {
+    "name": "脱臼",
+    "valuePerLevel": 10,
+    "template": "伤害降低{value*n}%",
+    "notes": "现有武学文本：脱臼(3)伤害降低30%。"
+  },
+  {
+    "name": "目盲",
+    "valuePerLevel": 10,
+    "template": "命中率降低{value*n}%",
+    "notes": "现有武学文本：目盲(3)命中率降低30%。"
+  },
+  {
+    "name": "神速",
+    "valuePerLevel": 10,
+    "template": "速度提升{value*n}%",
+    "notes": "现有武学文本：神速(5)速度提升50%。"
+  },
+  {
+    "name": "神行",
+    "valuePerLevel": 20,
+    "template": "移动距离提升{value*n}%",
+    "notes": "现有武学文本：神行(5)移动距离提升100%。"
+  },
+  {
+    "name": "烈火",
+    "valuePerLevel": 12,
+    "template": "受伤时额外失去{value*n}点体力",
+    "notes": "现有武学文本：烈火(12)受伤时额外失去144点体力。"
+  },
+  {
+    "name": "封穴",
+    "valuePerLevel": null,
+    "template": "一段时间无法行动",
+    "notes": "封穴没有等级数值。"
+  },
+  {
+    "name": "缚足",
+    "valuePerLevel": 20,
+    "template": "移动距离降低{value*n}%",
+    "notes": "用户校对：移动距离降低 20 * n %。"
+  },
+  {
+    "name": "中毒",
+    "valuePerLevel": 3,
+    "template": "持续失去{value*n}点体力",
+    "notes": "用户校对：持续失去 3 * n 点体力。"
+  },
+  {
+    "name": "散攻",
+    "valuePerLevel": null,
+    "template": "一段时间无法恢复真气",
+    "notes": "用户校对：散攻没有等级数值。"
+  },
+  {
+    "name": "寒气",
+    "valuePerLevel": 10,
+    "template": "速度降低{value*n}%",
+    "notes": "用户校对：速度降低 10 * n %。"
+  },
+  {
+    "name": "聚气",
+    "valuePerLevel": 10,
+    "template": "真气恢复速度提升{value*n}%",
+    "notes": "用户校对：真气恢复速度提升 10 * n %。"
+  }
+]

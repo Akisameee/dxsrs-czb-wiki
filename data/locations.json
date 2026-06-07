@@ -1,0 +1,176 @@
+[
+  {
+    "id": "baihua_gu",
+    "name": "百花谷",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：百花谷-丛桂轩、百花谷-燕誉堂",
+      "TapTap 萌新速刷攻略偷师地点出现：百花比武台"
+    ],
+    "subLocations": [
+      "丛桂轩",
+      "燕誉堂",
+      "比武台"
+    ]
+  },
+  {
+    "id": "yangzhou",
+    "name": "扬州",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：扬州-城郊",
+      "TapTap 数据流攻略提到：旧版侠客岛在扬州瀛洲岛",
+      "TapTap 萌新速刷攻略偷师地点出现：扬州武馆"
+    ],
+    "subLocations": [
+      "城郊",
+      "瀛洲岛",
+      "武馆"
+    ]
+  },
+  {
+    "id": "penglai_xianjing",
+    "name": "蓬莱仙境",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：蓬莱仙境-知音阁",
+      "TapTap 萌新速刷攻略偷师地点出现：蓬莱绝诣馆"
+    ],
+    "subLocations": [
+      "知音阁",
+      "绝诣馆"
+    ]
+  },
+  {
+    "id": "mingsha_shan",
+    "name": "鸣沙山",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：鸣沙山-天龙堂",
+      "TapTap 萌新速刷攻略偷师地点出现：鸣沙试剑台"
+    ],
+    "subLocations": [
+      "天龙堂",
+      "试剑台"
+    ]
+  },
+  {
+    "id": "sanqing_shan",
+    "name": "三清山",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：三清山-真武殿",
+      "TapTap 萌新速刷攻略出现：三清山云华仙馆",
+      "TapTap 萌新速刷攻略偷师地点出现：三清真武殿"
+    ],
+    "subLocations": [
+      "真武殿",
+      "云华仙馆"
+    ]
+  },
+  {
+    "id": "yinma_chuan",
+    "name": "饮马川",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 掉落装备帖出现：饮马川-金龙庄",
+      "TapTap 萌新速刷攻略偷师地点出现：饮马练武场"
+    ],
+    "subLocations": [
+      "金龙庄",
+      "练武场"
+    ]
+  },
+  {
+    "id": "jiuyi_shan",
+    "name": "九嶷山",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 萌新速刷攻略提到：九嶷山望日台",
+      "TapTap 萌新速刷攻略偷师地点出现：九嶷演武堂"
+    ],
+    "subLocations": [
+      "望日台",
+      "演武堂"
+    ]
+  },
+  {
+    "id": "jing_shi",
+    "name": "京师",
+    "confidence": "confirmed",
+    "evidence": [
+      "TapTap 萌新速刷攻略提到：三次京师的英雄大会",
+      "TapTap 萌新速刷攻略偷师地点出现：京师武馆"
+    ],
+    "subLocations": [
+      "英雄大会",
+      "武馆"
+    ]
+  },
+  {
+    "id": "chengdu",
+    "name": "成都",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：成都神火堂"
+    ],
+    "subLocations": [
+      "神火堂"
+    ]
+  },
+  {
+    "id": "fengdu",
+    "name": "酆都",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：酆都试炼场"
+    ],
+    "subLocations": [
+      "试炼场"
+    ]
+  },
+  {
+    "id": "putuo",
+    "name": "普陀",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：普陀武宗堂"
+    ],
+    "subLocations": [
+      "武宗堂"
+    ]
+  },
+  {
+    "id": "yunmeng",
+    "name": "云梦",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：云梦练武堂"
+    ],
+    "subLocations": [
+      "练武堂"
+    ]
+  },
+  {
+    "id": "zixiao",
+    "name": "紫霄",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：紫霄武英殿"
+    ],
+    "subLocations": [
+      "武英殿"
+    ]
+  },
+  {
+    "id": "bulao",
+    "name": "不老",
+    "confidence": "inferred",
+    "evidence": [
+      "TapTap 萌新速刷攻略偷师地点出现：不老精武馆"
+    ],
+    "subLocations": [
+      "精武馆"
+    ]
+  }
+]

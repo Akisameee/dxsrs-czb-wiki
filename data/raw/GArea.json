@@ -1,0 +1,51 @@
+{
+  "tableIndex": 7,
+  "meta": "GArea",
+  "range": {
+    "start": 658434,
+    "end": 659795
+  },
+  "fieldCount": 6,
+  "fields": [
+    "chnname",
+    "didian",
+    "islock",
+    "unlocktype",
+    "unlockvalue",
+    "isdefault"
+  ],
+  "fieldMeta": {
+    "chnname": {
+      "fieldType": "String",
+      "offset": 658759,
+      "error": "Cannot parse string field near 658871"
+    },
+    "didian": {
+      "fieldType": "Enum",
+      "offset": 658929,
+      "error": "Cannot parse int/enum field near 659038"
+    },
+    "islock": {
+      "fieldType": "Bool",
+      "offset": 659106,
+      "error": "Cannot parse bool field near 659215"
+    },
+    "unlocktype": {
+      "fieldType": "Enum",
+      "offset": 659269,
+      "error": "Cannot parse int/enum field near 659382"
+    },
+    "unlockvalue": {
+      "fieldType": "Int",
+      "offset": 659458,
+      "error": "Cannot parse int/enum field near 659571"
+    },
+    "isdefault": {
+      "fieldType": "Bool",
+      "offset": 659625,
+      "error": "Cannot parse bool field near 659737"
+    }
+  },
+  "rowCount": 0,
+  "rows": []
+}

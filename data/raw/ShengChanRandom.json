@@ -1,0 +1,46 @@
+{
+  "tableIndex": 55,
+  "meta": "ShengChanRandom",
+  "range": {
+    "start": 1987756,
+    "end": 1988636
+  },
+  "fieldCount": 3,
+  "fields": [
+    "duanzao",
+    "liandan",
+    "caifeng"
+  ],
+  "fieldMeta": {
+    "duanzao": {
+      "fieldType": "Int",
+      "offset": 1988131,
+      "lengthOffset": 1988266,
+      "totalLength": 4,
+      "count": 1
+    },
+    "liandan": {
+      "fieldType": "Int",
+      "offset": 1988298,
+      "lengthOffset": 1988433,
+      "totalLength": 4,
+      "count": 1
+    },
+    "caifeng": {
+      "fieldType": "Int",
+      "offset": 1988465,
+      "lengthOffset": 1988600,
+      "totalLength": 4,
+      "count": 1
+    }
+  },
+  "rowCount": 1,
+  "rows": [
+    {
+      "index": 0,
+      "duanzao": 10,
+      "liandan": 10,
+      "caifeng": 10
+    }
+  ]
+}

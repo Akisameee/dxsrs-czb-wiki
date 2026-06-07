@@ -1,0 +1,57 @@
+{
+  "tableIndex": 48,
+  "meta": "ZiChuangWuGong",
+  "range": {
+    "start": 1969937,
+    "end": 1971449
+  },
+  "fieldCount": 7,
+  "fields": [
+    "wugongname",
+    "gailiangkongjian",
+    "fenggelock",
+    "arealock",
+    "bufflock",
+    "iszichuang",
+    "percent"
+  ],
+  "fieldMeta": {
+    "wugongname": {
+      "fieldType": "String",
+      "offset": 1970271,
+      "error": "Cannot parse string field near 1970386"
+    },
+    "gailiangkongjian": {
+      "fieldType": "Int",
+      "offset": 1970444,
+      "error": "Cannot parse int/enum field near 1970562"
+    },
+    "fenggelock": {
+      "fieldType": "Bool",
+      "offset": 1970616,
+      "error": "Cannot parse bool field near 1970729"
+    },
+    "arealock": {
+      "fieldType": "Bool",
+      "offset": 1970783,
+      "error": "Cannot parse bool field near 1970894"
+    },
+    "bufflock": {
+      "fieldType": "Bool",
+      "offset": 1970948,
+      "error": "Cannot parse bool field near 1971059"
+    },
+    "iszichuang": {
+      "fieldType": "Bool",
+      "offset": 1971113,
+      "error": "Cannot parse bool field near 1971226"
+    },
+    "percent": {
+      "fieldType": "Float",
+      "offset": 1971280,
+      "error": "Cannot parse float field near 1971391"
+    }
+  },
+  "rowCount": 0,
+  "rows": []
+}

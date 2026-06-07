@@ -1,0 +1,440 @@
+{
+  "tableIndex": 28,
+  "meta": "ChuanShou",
+  "range": {
+    "start": 1119236,
+    "end": 1125049
+  },
+  "fieldCount": 4,
+  "fields": [
+    "mijiname",
+    "menpai",
+    "diwei",
+    "biwucishu"
+  ],
+  "fieldMeta": {
+    "mijiname": {
+      "fieldType": "String",
+      "offset": 1122073,
+      "lengthOffset": 1122212,
+      "totalLength": 1616,
+      "count": 56
+    },
+    "menpai": {
+      "fieldType": "Enum",
+      "offset": 1123856,
+      "lengthOffset": 1124005,
+      "totalLength": 224,
+      "count": 56
+    },
+    "diwei": {
+      "fieldType": "Enum",
+      "offset": 1124257,
+      "lengthOffset": 1124404,
+      "totalLength": 224,
+      "count": 56
+    },
+    "biwucishu": {
+      "fieldType": "Int",
+      "offset": 1124656,
+      "lengthOffset": 1124793,
+      "totalLength": 224,
+      "count": 56
+    }
+  },
+  "rowCount": 56,
+  "rows": [
+    {
+      "index": 0,
+      "mijiname": "《少林长拳》",
+      "menpai": 0,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 1,
+      "mijiname": "《铁布衫》",
+      "menpai": 0,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 2,
+      "mijiname": "《金钟罩·上》",
+      "menpai": 0,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 3,
+      "mijiname": "《如来神掌·上》",
+      "menpai": 0,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 4,
+      "mijiname": "《如来神掌·中》",
+      "menpai": 0,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 5,
+      "mijiname": "《金钟罩·中》",
+      "menpai": 0,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 6,
+      "mijiname": "《金钟罩·下》",
+      "menpai": 0,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 7,
+      "mijiname": "《如来神掌·下》",
+      "menpai": 0,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 8,
+      "mijiname": "《武当剑法》",
+      "menpai": 1,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 9,
+      "mijiname": "《武当心法》",
+      "menpai": 1,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 10,
+      "mijiname": "《纯阳无极功·上》",
+      "menpai": 1,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 11,
+      "mijiname": "《太极剑·上》",
+      "menpai": 1,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 12,
+      "mijiname": "《太极剑·中》",
+      "menpai": 1,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 13,
+      "mijiname": "《纯阳无极功·中》",
+      "menpai": 1,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 14,
+      "mijiname": "《纯阳无极功·下》",
+      "menpai": 1,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 15,
+      "mijiname": "《太极剑·下》",
+      "menpai": 1,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 16,
+      "mijiname": "《铁帚功》",
+      "menpai": 2,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 17,
+      "mijiname": "《莲花落》",
+      "menpai": 2,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 18,
+      "mijiname": "《擒龙功·上》",
+      "menpai": 2,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 19,
+      "mijiname": "《打狗棍法·上》",
+      "menpai": 2,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 20,
+      "mijiname": "《打狗棍法·中》",
+      "menpai": 2,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 21,
+      "mijiname": "《擒龙功·中》",
+      "menpai": 2,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 22,
+      "mijiname": "《擒龙功·下》",
+      "menpai": 2,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 23,
+      "mijiname": "《打狗棍法·下》",
+      "menpai": 2,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 24,
+      "mijiname": "《美女拳》",
+      "menpai": 6,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 25,
+      "mijiname": "《玉女功》",
+      "menpai": 6,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 26,
+      "mijiname": "《玉女心经·上》",
+      "menpai": 6,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 27,
+      "mijiname": "《黯然销魂掌·上》",
+      "menpai": 6,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 28,
+      "mijiname": "《黯然销魂掌·中》",
+      "menpai": 6,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 29,
+      "mijiname": "《玉女心经·中》",
+      "menpai": 6,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 30,
+      "mijiname": "《玉女心经·下》",
+      "menpai": 6,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 31,
+      "mijiname": "《黯然销魂掌·下》",
+      "menpai": 6,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 32,
+      "mijiname": "《穿心钉》",
+      "menpai": 5,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 33,
+      "mijiname": "《龟息功》",
+      "menpai": 5,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 34,
+      "mijiname": "《北冥神功·上》",
+      "menpai": 5,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 35,
+      "mijiname": "《生死符·上》",
+      "menpai": 5,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 36,
+      "mijiname": "《生死符·中》",
+      "menpai": 5,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 37,
+      "mijiname": "《北冥神功·中》",
+      "menpai": 5,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 38,
+      "mijiname": "《北冥神功·下》",
+      "menpai": 5,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 39,
+      "mijiname": "《生死符·下》",
+      "menpai": 5,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 40,
+      "mijiname": "《日月剑法》",
+      "menpai": 8,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 41,
+      "mijiname": "《玄天心法》",
+      "menpai": 8,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 42,
+      "mijiname": "《吸星大法·上》",
+      "menpai": 8,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 43,
+      "mijiname": "《辟邪剑法·上》",
+      "menpai": 8,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 44,
+      "mijiname": "《辟邪剑法·中》",
+      "menpai": 8,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 45,
+      "mijiname": "《吸星大法·中》",
+      "menpai": 8,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 46,
+      "mijiname": "《吸星大法·下》",
+      "menpai": 8,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 47,
+      "mijiname": "《辟邪剑法·下》",
+      "menpai": 8,
+      "diwei": 5,
+      "biwucishu": 8
+    },
+    {
+      "index": 48,
+      "mijiname": "《毒蟾砂》",
+      "menpai": 9,
+      "diwei": 0,
+      "biwucishu": 1
+    },
+    {
+      "index": 49,
+      "mijiname": "《五毒经》",
+      "menpai": 9,
+      "diwei": 0,
+      "biwucishu": 2
+    },
+    {
+      "index": 50,
+      "mijiname": "《五毒神功·上》",
+      "menpai": 9,
+      "diwei": 1,
+      "biwucishu": 3
+    },
+    {
+      "index": 51,
+      "mijiname": "《金蛇锥·上》",
+      "menpai": 9,
+      "diwei": 2,
+      "biwucishu": 4
+    },
+    {
+      "index": 52,
+      "mijiname": "《金蛇锥·中》",
+      "menpai": 9,
+      "diwei": 3,
+      "biwucishu": 5
+    },
+    {
+      "index": 53,
+      "mijiname": "《五毒神功·中》",
+      "menpai": 9,
+      "diwei": 4,
+      "biwucishu": 6
+    },
+    {
+      "index": 54,
+      "mijiname": "《五毒神功·下》",
+      "menpai": 9,
+      "diwei": 5,
+      "biwucishu": 7
+    },
+    {
+      "index": 55,
+      "mijiname": "《金蛇锥·下》",
+      "menpai": 9,
+      "diwei": 5,
+      "biwucishu": 8
+    }
+  ]
+}

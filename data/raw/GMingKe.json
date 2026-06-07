@@ -1,0 +1,262 @@
+{
+  "tableIndex": 56,
+  "meta": "GMingKe",
+  "range": {
+    "start": 1988636,
+    "end": 1992451
+  },
+  "fieldCount": 15,
+  "fields": [
+    "chname",
+    "fengge",
+    "fujiaqty",
+    "fujiavaluemin",
+    "fujiavaluemax",
+    "guding_lv",
+    "guding_gengu",
+    "guding_tipo",
+    "guding_shenfa",
+    "cailiao1",
+    "cailiao1qty",
+    "cailiao2",
+    "cailiao2qty",
+    "cailiao3",
+    "cailiao3qty"
+  ],
+  "fieldMeta": {
+    "chname": {
+      "fieldType": "String",
+      "offset": 1989187,
+      "lengthOffset": 1989324,
+      "totalLength": 144,
+      "count": 7
+    },
+    "cailiao1": {
+      "fieldType": "String",
+      "offset": 1990992,
+      "lengthOffset": 1991131,
+      "totalLength": 123,
+      "count": 7
+    },
+    "cailiao2": {
+      "fieldType": "String",
+      "offset": 1991477,
+      "lengthOffset": 1991616,
+      "totalLength": 123,
+      "count": 7
+    },
+    "cailiao3": {
+      "fieldType": "String",
+      "offset": 1991962,
+      "lengthOffset": 1992101,
+      "totalLength": 123,
+      "count": 7
+    },
+    "fengge": {
+      "fieldType": "Enum",
+      "offset": 1989496,
+      "lengthOffset": 1989649,
+      "totalLength": 28,
+      "count": 7
+    },
+    "fujiaqty": {
+      "fieldType": "Int",
+      "offset": 1989705,
+      "lengthOffset": 1989841,
+      "totalLength": 28,
+      "count": 7
+    },
+    "fujiavaluemin": {
+      "fieldType": "Int",
+      "offset": 1989897,
+      "lengthOffset": 1990038,
+      "totalLength": 28,
+      "count": 7
+    },
+    "fujiavaluemax": {
+      "fieldType": "Int",
+      "offset": 1990094,
+      "lengthOffset": 1990235,
+      "totalLength": 28,
+      "count": 7
+    },
+    "guding_lv": {
+      "fieldType": "Bool",
+      "offset": 1990291,
+      "lengthOffset": 1990429,
+      "totalLength": 7,
+      "count": 7
+    },
+    "guding_gengu": {
+      "fieldType": "Bool",
+      "offset": 1990464,
+      "lengthOffset": 1990605,
+      "totalLength": 7,
+      "count": 7
+    },
+    "guding_tipo": {
+      "fieldType": "Bool",
+      "offset": 1990640,
+      "lengthOffset": 1990780,
+      "totalLength": 7,
+      "count": 7
+    },
+    "guding_shenfa": {
+      "fieldType": "Bool",
+      "offset": 1990815,
+      "lengthOffset": 1990957,
+      "totalLength": 7,
+      "count": 7
+    },
+    "cailiao1qty": {
+      "fieldType": "Int",
+      "offset": 1991282,
+      "lengthOffset": 1991421,
+      "totalLength": 28,
+      "count": 7
+    },
+    "cailiao2qty": {
+      "fieldType": "Int",
+      "offset": 1991767,
+      "lengthOffset": 1991906,
+      "totalLength": 28,
+      "count": 7
+    },
+    "cailiao3qty": {
+      "fieldType": "Int",
+      "offset": 1992252,
+      "lengthOffset": 1992391,
+      "totalLength": 28,
+      "count": 7
+    }
+  },
+  "rowCount": 7,
+  "rows": [
+    {
+      "index": 0,
+      "chname": "雷霆万钧",
+      "cailiao1": "金刚石",
+      "cailiao2": "神照石",
+      "cailiao3": "青金石",
+      "fengge": 1,
+      "fujiaqty": 1,
+      "fujiavaluemin": 40,
+      "fujiavaluemax": 80,
+      "guding_lv": true,
+      "guding_gengu": false,
+      "guding_tipo": false,
+      "guding_shenfa": false,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 1,
+      "chname": "以柔克刚",
+      "cailiao1": "月光石",
+      "cailiao2": "海魄石",
+      "cailiao3": "绿松石",
+      "fengge": 2,
+      "fujiaqty": 1,
+      "fujiavaluemin": 40,
+      "fujiavaluemax": 80,
+      "guding_lv": false,
+      "guding_gengu": true,
+      "guding_tipo": false,
+      "guding_shenfa": false,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 2,
+      "chname": "动若脱兔",
+      "cailiao1": "神照石",
+      "cailiao2": "金刚石",
+      "cailiao3": "鸡血石",
+      "fengge": 3,
+      "fujiaqty": 1,
+      "fujiavaluemin": 40,
+      "fujiavaluemax": 80,
+      "guding_lv": false,
+      "guding_gengu": false,
+      "guding_tipo": false,
+      "guding_shenfa": true,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 3,
+      "chname": "变幻莫测",
+      "cailiao1": "天工石",
+      "cailiao2": "月光石",
+      "cailiao3": "昆吾石",
+      "fengge": 4,
+      "fujiaqty": 1,
+      "fujiavaluemin": 30,
+      "fujiavaluemax": 60,
+      "guding_lv": false,
+      "guding_gengu": false,
+      "guding_tipo": false,
+      "guding_shenfa": true,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 4,
+      "chname": "破釜沉舟",
+      "cailiao1": "赤日石",
+      "cailiao2": "天工石",
+      "cailiao3": "先天石",
+      "fengge": 6,
+      "fujiaqty": 1,
+      "fujiavaluemin": 30,
+      "fujiavaluemax": 60,
+      "guding_lv": true,
+      "guding_gengu": false,
+      "guding_tipo": false,
+      "guding_shenfa": false,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 5,
+      "chname": "分筋错骨",
+      "cailiao1": "天工石",
+      "cailiao2": "赤日石",
+      "cailiao3": "七星石",
+      "fengge": 10,
+      "fujiaqty": 1,
+      "fujiavaluemin": 30,
+      "fujiavaluemax": 60,
+      "guding_lv": false,
+      "guding_gengu": true,
+      "guding_tipo": false,
+      "guding_shenfa": false,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    },
+    {
+      "index": 6,
+      "chname": "见血封喉",
+      "cailiao1": "海魄石",
+      "cailiao2": "神照石",
+      "cailiao3": "鸡血石",
+      "fengge": 11,
+      "fujiaqty": 1,
+      "fujiavaluemin": 40,
+      "fujiavaluemax": 80,
+      "guding_lv": false,
+      "guding_gengu": false,
+      "guding_tipo": true,
+      "guding_shenfa": false,
+      "cailiao1qty": 2,
+      "cailiao2qty": 1,
+      "cailiao3qty": 2
+    }
+  ]
+}

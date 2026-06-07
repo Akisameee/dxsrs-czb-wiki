@@ -1,0 +1,238 @@
+{
+  "tableIndex": 43,
+  "meta": "GCdKey",
+  "range": {
+    "start": 1948525,
+    "end": 1951528
+  },
+  "fieldCount": 8,
+  "fields": [
+    "gold",
+    "itemname1",
+    "itemqty1",
+    "itemname2",
+    "itemqty2",
+    "timeout",
+    "isencrypt",
+    "isbatch"
+  ],
+  "fieldMeta": {
+    "itemname1": {
+      "fieldType": "String",
+      "offset": 1949686,
+      "error": "Cannot parse string field near 1949800"
+    },
+    "itemname2": {
+      "fieldType": "String",
+      "offset": 1950094,
+      "error": "Cannot parse string field near 1950208"
+    },
+    "timeout": {
+      "fieldType": "String",
+      "offset": 1950502,
+      "lengthOffset": 1950640,
+      "totalLength": 490,
+      "count": 18
+    },
+    "gold": {
+      "fieldType": "Int",
+      "offset": 1949454,
+      "lengthOffset": 1949586,
+      "totalLength": 72,
+      "count": 18
+    },
+    "itemqty1": {
+      "fieldType": "Int",
+      "offset": 1949858,
+      "lengthOffset": 1949994,
+      "totalLength": 72,
+      "count": 18
+    },
+    "itemqty2": {
+      "fieldType": "Int",
+      "offset": 1950266,
+      "lengthOffset": 1950402,
+      "totalLength": 72,
+      "count": 18
+    },
+    "isencrypt": {
+      "fieldType": "Bool",
+      "offset": 1951158,
+      "lengthOffset": 1951296,
+      "totalLength": 18,
+      "count": 18
+    },
+    "isbatch": {
+      "fieldType": "Bool",
+      "offset": 1951342,
+      "lengthOffset": 1951478,
+      "totalLength": 18,
+      "count": 18
+    }
+  },
+  "rowCount": 18,
+  "rows": [
+    {
+      "index": 0,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": false
+    },
+    {
+      "index": 1,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": false
+    },
+    {
+      "index": 2,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 3,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 4,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 5,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 6,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 7,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": true,
+      "isbatch": false
+    },
+    {
+      "index": 8,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 9,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 10,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 11,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 12,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 13,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 14,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 15,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 16,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    },
+    {
+      "index": 17,
+      "timeout": "2122/10/01 23:59:59",
+      "gold": 0,
+      "itemqty1": 0,
+      "itemqty2": 0,
+      "isencrypt": false,
+      "isbatch": true
+    }
+  ]
+}

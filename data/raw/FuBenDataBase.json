@@ -1,0 +1,954 @@
+{
+  "tableIndex": 65,
+  "meta": "FuBenDataBase",
+  "range": {
+    "start": 2012518,
+    "end": 2027771
+  },
+  "fieldCount": 7,
+  "fields": [
+    "room",
+    "index",
+    "text",
+    "type",
+    "condition",
+    "command",
+    "checktili"
+  ],
+  "fieldMeta": {
+    "text": {
+      "fieldType": "String",
+      "offset": 2017466,
+      "lengthOffset": 2017601,
+      "totalLength": 6330,
+      "count": 83
+    },
+    "command": {
+      "fieldType": "String",
+      "offset": 2026316,
+      "lengthOffset": 2026454,
+      "totalLength": 295,
+      "count": 15
+    },
+    "room": {
+      "fieldType": "Enum",
+      "offset": 2016344,
+      "lengthOffset": 2016493,
+      "totalLength": 392,
+      "count": 98
+    },
+    "index": {
+      "fieldType": "Int",
+      "offset": 2016913,
+      "lengthOffset": 2017046,
+      "totalLength": 392,
+      "count": 98
+    },
+    "type": {
+      "fieldType": "Enum",
+      "offset": 2023959,
+      "lengthOffset": 2024115,
+      "totalLength": 392,
+      "count": 98
+    },
+    "condition": {
+      "fieldType": "Int",
+      "offset": 2024535,
+      "lengthOffset": 2024672,
+      "totalLength": 392,
+      "count": 98
+    },
+    "checktili": {
+      "fieldType": "Bool",
+      "offset": 2026777,
+      "lengthOffset": 2026915,
+      "totalLength": 98,
+      "count": 98
+    }
+  },
+  "rowCount": 98,
+  "rows": [
+    {
+      "index": 0,
+      "text": "这里是[var=fubenname]的大门，门外有几个[var=duishou]正在巡逻。",
+      "command": null,
+      "room": 0,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "自报家门",
+      "command": null,
+      "room": 0,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 2,
+      "text": "你刚报上了自己的名号，几个凶神恶煞地的[var=duishou]便马上一拥而上，将你团团围住。",
+      "command": null,
+      "room": 0,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "战斗",
+      "command": null,
+      "room": 0,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 4,
+      "text": null,
+      "command": null,
+      "room": 0,
+      "type": 2,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "你将[var=duishou]打倒后，便堂堂正正走进的[var=fubenname]的大门",
+      "command": "删除对手",
+      "room": 0,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "你被打到了，[var=duishou]将你如垃圾般丢到了大门外。",
+      "command": "删除对手",
+      "room": 0,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 7,
+      "text": "偷偷潜入",
+      "command": null,
+      "room": 0,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 8,
+      "text": "你施展起身法，准备翻过高墙，潜入[var=fubenname]。",
+      "command": null,
+      "room": 0,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "潜入",
+      "command": null,
+      "room": 0,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 10,
+      "text": null,
+      "command": null,
+      "room": 0,
+      "type": 3,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 11,
+      "text": "你几个起落，便般犹如凌虚飘行般，飘入[var=fubenname]墙内。",
+      "command": null,
+      "room": 0,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 12,
+      "text": "你在潜入之时不小心发出了响声，几名[var=duishou]便如狼似虎般向你扑来。",
+      "command": null,
+      "room": 0,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "这里是[var=fubenname]的[var=fangjianname]，几名正在屋内戒备的[var=duishou]发现了你的身影便马上抄起武器向你扑来。",
+      "command": null,
+      "room": 1,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "迎击",
+      "command": null,
+      "room": 1,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 2,
+      "text": null,
+      "command": null,
+      "room": 1,
+      "type": 2,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "躲避",
+      "command": "躲避结果",
+      "room": 1,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "你将那几人打倒后，便走入[var=fangjianname]仔细打量一番，这里似乎收藏了不少[var=wupinname]。",
+      "command": "删除对手",
+      "room": 1,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "搜寻",
+      "command": null,
+      "room": 1,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 6,
+      "text": null,
+      "command": null,
+      "room": 1,
+      "type": 4,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 7,
+      "text": "离开",
+      "command": null,
+      "room": 1,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 8,
+      "text": "你将找到的东西放入衣袖之后，便转身离开了[var=fangjianname]，前往下一处地方。",
+      "command": null,
+      "room": 1,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "你转身便离开了[var=fangjianname]，前往一下处地方。",
+      "command": null,
+      "room": 1,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 10,
+      "text": "你不愿在此久留，便纵身跃起往下一处地方飞奔而去。",
+      "command": null,
+      "room": 1,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 11,
+      "text": "那几人竟识破了你的意图，提前将你的去路拦住，你只好正面迎敌。",
+      "command": null,
+      "room": 1,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 12,
+      "text": "你被打到了，[var=duishou]将你如垃圾般丢到了大门外。",
+      "command": "删除对手",
+      "room": 1,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "这里是[var=fubenname]的[var=fangjianname]，虽然没人在这把守，但看得出这里机关重重，无法轻易进入。",
+      "command": null,
+      "room": 2,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "破解机关",
+      "command": null,
+      "room": 2,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 2,
+      "text": null,
+      "command": null,
+      "room": 2,
+      "type": 3,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "离开",
+      "command": null,
+      "room": 2,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "你费了九牛二虎之力，仍没能打开机关，反被机关所伤，只能悻悻然离开。",
+      "command": null,
+      "room": 2,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "你成功将机关破解后，便走入[var=fangjianname]仔细打量一番，这里似乎收藏了不少[var=wupinname]。",
+      "command": null,
+      "room": 2,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "搜寻",
+      "command": null,
+      "room": 2,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 7,
+      "text": null,
+      "command": null,
+      "room": 2,
+      "type": 4,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 8,
+      "text": "离开",
+      "command": null,
+      "room": 2,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "你将找到的东西放入衣袖之后，便转身离开了[var=fangjianname]，前往下一处地方。",
+      "command": null,
+      "room": 2,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 10,
+      "text": "你转身便离开了[var=fangjianname]，前往一下处地方。",
+      "command": null,
+      "room": 2,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "这里是[var=fubenname]的[var=fangjianname]，现在尽管空无一人，但门外设下了天罗地网，令人无法靠近。",
+      "command": null,
+      "room": 3,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "挑战陷阱",
+      "command": null,
+      "room": 3,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 2,
+      "text": null,
+      "command": null,
+      "room": 3,
+      "type": 3,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "离开",
+      "command": null,
+      "room": 3,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "这里的陷阱设置得极为巧妙。你险些身陷其中，令你不得不决定放弃此间的藏品。",
+      "command": null,
+      "room": 3,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "你算准时机，避开了所有陷阱，走入[var=fangjianname]并了打量一番，这里似乎收藏了不少[var=wupinname]。",
+      "command": null,
+      "room": 3,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "搜寻",
+      "command": null,
+      "room": 3,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 7,
+      "text": null,
+      "command": null,
+      "room": 3,
+      "type": 4,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 8,
+      "text": "离开",
+      "command": null,
+      "room": 3,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "你将找到的东西放入衣袖之后，便转身离开了[var=fangjianname]，前往下一处地方。",
+      "command": null,
+      "room": 3,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 10,
+      "text": "你转身便离开了[var=fangjianname]，前往一下处地方。",
+      "command": null,
+      "room": 3,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "这里是[var=fubenname]的正殿，几名[var=duishou]正把守着正门，只有打倒他们才能见得到[var=fubenname]掌门。",
+      "command": null,
+      "room": 5,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "战斗",
+      "command": null,
+      "room": 5,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 2,
+      "text": null,
+      "command": null,
+      "room": 5,
+      "type": 2,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "当你步入屋内，发现[var=fubenname]掌门[var=duishou2]及其手下左右护法和四大长老早已在屋内准备多时，看来一场大战在所难免。",
+      "command": "删除对手",
+      "room": 5,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "决战",
+      "command": null,
+      "room": 5,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 5,
+      "text": null,
+      "command": null,
+      "room": 5,
+      "type": 5,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "你被打到了，[var=duishou]将你如垃圾般丢到了大门外。",
+      "command": "删除对手",
+      "room": 5,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 7,
+      "text": "[var=fubenname]掌门和他手下已全部被你击倒，正横七竖八地躺在地上。",
+      "command": "删除对手",
+      "room": 5,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 8,
+      "text": "你稍加搜索，便在书案附近发现了密室的入口。",
+      "command": null,
+      "room": 5,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "你走进密室，发现[var=fubenname]从各地搜刮而来的奇珍异宝皆藏于此间。",
+      "command": null,
+      "room": 5,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 10,
+      "text": "搜寻",
+      "command": null,
+      "room": 5,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 11,
+      "text": null,
+      "command": null,
+      "room": 5,
+      "type": 4,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 12,
+      "text": "离开",
+      "command": null,
+      "room": 5,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 13,
+      "text": "你视这些珍宝如粪土，头也不回就离开了[var=fubenname]。[var=fubenname]从此便消失于江湖中。",
+      "command": null,
+      "room": 5,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 14,
+      "text": "你将找到的珍宝尽数收入囊中之后，便离开了[var=fubenname]。[var=fubenname]从此便消失于江湖中。",
+      "command": null,
+      "room": 5,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "你来到了一处洞天福地，只见这里芳草鲜美，落英缤纷，真是打坐修炼的好地方。",
+      "command": null,
+      "room": 4,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "修行",
+      "command": null,
+      "room": 4,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 2,
+      "text": "休息",
+      "command": null,
+      "room": 4,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 3,
+      "text": "离开",
+      "command": null,
+      "room": 4,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "你盘膝而坐打坐运功，片刻间真气便游走全身。你如此反复修炼了数个时辰后，便起身离去，往下个地方进发。",
+      "command": "修行",
+      "room": 4,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "你在此稍事休息，重新抖擞精神便往下个地方进发。",
+      "command": "休息",
+      "room": 4,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "你没有在此多做逗留便往下个地方进发。",
+      "command": null,
+      "room": 4,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "走廊深处就是[var=fubenname]指挥部大厅，但你察觉到，这短短数丈的距离，早已有数十名高手埋伏在两旁。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "为了避免在此纠缠，你决定施展轻功，直闯指挥部。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 2,
+      "text": "冲过走廊",
+      "command": null,
+      "room": 6,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 3,
+      "text": null,
+      "command": null,
+      "room": 6,
+      "type": 3,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "突然一支袖箭从暗处射出，幸好你手急眼快，才避过这一箭，但也不得不因此退回走廊入口，重新调整气息再重新挑战。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "只见[var=fubenname][var=touling][var=duishou2]正端坐于大厅之中，六名大内高手分站两边。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "在你步入大厅一刻，顿时感到煞气四起，令你不得不打醒十二分精神来应对接下来的这场大战。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 7,
+      "text": "决战",
+      "command": null,
+      "room": 6,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 8,
+      "text": null,
+      "command": null,
+      "room": 6,
+      "type": 5,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 9,
+      "text": "你被打到了，[var=duishou]将你如垃圾般丢到了大门外。",
+      "command": "删除对手1",
+      "room": 6,
+      "type": 0,
+      "condition": -1,
+      "checktili": false
+    },
+    {
+      "index": 10,
+      "text": null,
+      "command": "删除对手2",
+      "room": 6,
+      "type": 6,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 11,
+      "text": "你按照[var=touling]所说来到后花园，发现这里果然摆放着一箱箱的金银财宝。",
+      "command": "删除对手3",
+      "room": 6,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 12,
+      "text": "搜寻",
+      "command": null,
+      "room": 6,
+      "type": 1,
+      "condition": 0,
+      "checktili": true
+    },
+    {
+      "index": 13,
+      "text": null,
+      "command": null,
+      "room": 6,
+      "type": 4,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 14,
+      "text": "离开",
+      "command": null,
+      "room": 6,
+      "type": 1,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 15,
+      "text": "你将这些财宝视为粪土，头也不回地离开了[var=fubenname]大营。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 16,
+      "text": "你将找到的财宝尽数收入囊中之后，便离开了[var=fubenname]大营。",
+      "command": null,
+      "room": 6,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "你来到了黑虎寨正厅，只见聂成刚和向汉高分立两旁，一名彪形大汉坐在大厅正中，此人正是黑虎寨寨主崔入虎。",
+      "command": "离开锁定",
+      "room": 7,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "对话",
+      "command": null,
+      "room": 7,
+      "type": 6,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 2,
+      "text": "偌大的黑虎寨现在只剩下满地尸骸，周围火光冲天。你望着此番光景，心中却只有满腔恨意，头也不回地离开了黑虎寨。",
+      "command": null,
+      "room": 7,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 0,
+      "text": "你来到了万柳山庄中堂，只见除了正在站在厅堂中央的柳淳风外，两边还坐着多位正派高手。",
+      "command": "离开锁定",
+      "room": 8,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 1,
+      "text": "对话",
+      "command": null,
+      "room": 8,
+      "type": 6,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 2,
+      "text": "还没等你反应过来，柳淳风便转动机关，从屏风旁的一扇小门处钻了进去。",
+      "command": null,
+      "room": 8,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 3,
+      "text": "你以为柳淳风想要逃走，连忙追了上去。结果刚进门，门便就突然关闭了。你顾不上这么多，沿着门内的通道一直往前走，来到了一处密室之内。",
+      "command": null,
+      "room": 8,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 4,
+      "text": "只见柳淳风就站在密室内，手中拿着一个圆筒状的物品，望着你不怀好意地笑着。",
+      "command": null,
+      "room": 8,
+      "type": 0,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 5,
+      "text": "对话",
+      "command": null,
+      "room": 8,
+      "type": 6,
+      "condition": 0,
+      "checktili": false
+    },
+    {
+      "index": 6,
+      "text": "你在密室门边摸索了一阵，终于找到了开关将密室门打开，只见范鹤龄早已带着大批手下来到了中堂。",
+      "command": null,
+      "room": 8,
+      "type": 0,
+      "condition": 1,
+      "checktili": false
+    },
+    {
+      "index": 7,
+      "text": "对话",
+      "command": null,
+      "room": 8,
+      "type": 6,
+      "condition": 0,
+      "checktili": false
+    }
+  ]
+}

@@ -1,0 +1,1651 @@
+{
+  "tableIndex": 22,
+  "meta": "GYaoQing",
+  "range": {
+    "start": 1023893,
+    "end": 1038743
+  },
+  "fieldCount": 4,
+  "fields": [
+    "juesename",
+    "yaoqingtype",
+    "intvalue",
+    "stringvalue"
+  ],
+  "fieldMeta": {
+    "juesename": {
+      "fieldType": "String",
+      "offset": 1031903,
+      "lengthOffset": 1032043,
+      "totalLength": 3807,
+      "count": 229
+    },
+    "stringvalue": {
+      "fieldType": "String",
+      "offset": 1038061,
+      "lengthOffset": 1038203,
+      "totalLength": 508,
+      "count": 30
+    },
+    "yaoqingtype": {
+      "fieldType": "Enum",
+      "offset": 1035878,
+      "lengthOffset": 1036037,
+      "totalLength": 916,
+      "count": 229
+    },
+    "intvalue": {
+      "fieldType": "Int",
+      "offset": 1036981,
+      "lengthOffset": 1037117,
+      "totalLength": 916,
+      "count": 229
+    }
+  },
+  "rowCount": 229,
+  "rows": [
+    {
+      "index": 0,
+      "juesename": "赵绍敏",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 1,
+      "juesename": "赵绍敏",
+      "stringvalue": "张无极",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 2,
+      "juesename": "黄莺",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 3,
+      "juesename": "黄莺",
+      "stringvalue": "郭汗青",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 4,
+      "juesename": "郭汗青",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 5,
+      "juesename": "郭汗青",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 75
+    },
+    {
+      "index": 6,
+      "juesename": "绿杖翁",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 6000
+    },
+    {
+      "index": 7,
+      "juesename": "任纤纤",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 3000
+    },
+    {
+      "index": 8,
+      "juesename": "任纤纤",
+      "stringvalue": "令狐浪",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 9,
+      "juesename": "郭湘",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 10,
+      "juesename": "郭湘",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 40
+    },
+    {
+      "index": 11,
+      "juesename": "程樱",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 12,
+      "juesename": "程樱",
+      "stringvalue": null,
+      "yaoqingtype": 17,
+      "intvalue": 2
+    },
+    {
+      "index": 13,
+      "juesename": "清竹",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 14,
+      "juesename": "清竹",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 15,
+      "juesename": "杨改之",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 16,
+      "juesename": "杨改之",
+      "stringvalue": "龙湘芸",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 17,
+      "juesename": "龙湘芸",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 18,
+      "juesename": "龙湘芸",
+      "stringvalue": null,
+      "yaoqingtype": 8,
+      "intvalue": 400
+    },
+    {
+      "index": 19,
+      "juesename": "王雨烟",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 20,
+      "juesename": "王雨烟",
+      "stringvalue": "慕容延宗",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 21,
+      "juesename": "阮朱儿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 22,
+      "juesename": "阮朱儿",
+      "stringvalue": null,
+      "yaoqingtype": 17,
+      "intvalue": 2
+    },
+    {
+      "index": 23,
+      "juesename": "康碧儿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 24,
+      "juesename": "康碧儿",
+      "stringvalue": null,
+      "yaoqingtype": 9,
+      "intvalue": 4
+    },
+    {
+      "index": 25,
+      "juesename": "李赤练",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 26,
+      "juesename": "李赤练",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -40
+    },
+    {
+      "index": 27,
+      "juesename": "慕容延宗",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 28,
+      "juesename": "慕容延宗",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 29,
+      "juesename": "田不戒",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 30,
+      "juesename": "田不戒",
+      "stringvalue": null,
+      "yaoqingtype": 11,
+      "intvalue": 2
+    },
+    {
+      "index": 31,
+      "juesename": "令狐浪",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 3000
+    },
+    {
+      "index": 32,
+      "juesename": "令狐浪",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 50
+    },
+    {
+      "index": 33,
+      "juesename": "林子平",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 34,
+      "juesename": "林子平",
+      "stringvalue": null,
+      "yaoqingtype": 9,
+      "intvalue": 4
+    },
+    {
+      "index": 35,
+      "juesename": "唐寅",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 38000
+    },
+    {
+      "index": 36,
+      "juesename": "唐寅",
+      "stringvalue": null,
+      "yaoqingtype": 5,
+      "intvalue": 650
+    },
+    {
+      "index": 37,
+      "juesename": "段政淳",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 14000
+    },
+    {
+      "index": 38,
+      "juesename": "段政淳",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 39,
+      "juesename": "余苍隐",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 40,
+      "juesename": "余苍隐",
+      "stringvalue": null,
+      "yaoqingtype": 7,
+      "intvalue": 500
+    },
+    {
+      "index": 41,
+      "juesename": "钟山樵",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 42,
+      "juesename": "钟山樵",
+      "stringvalue": null,
+      "yaoqingtype": 5,
+      "intvalue": 500
+    },
+    {
+      "index": 43,
+      "juesename": "心灯大师",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 42000
+    },
+    {
+      "index": 44,
+      "juesename": "心灯大师",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 40
+    },
+    {
+      "index": 45,
+      "juesename": "枯树大师",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 46,
+      "juesename": "枯树大师",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 60
+    },
+    {
+      "index": 47,
+      "juesename": "武归农",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 48,
+      "juesename": "武归农",
+      "stringvalue": null,
+      "yaoqingtype": 6,
+      "intvalue": 500
+    },
+    {
+      "index": 49,
+      "juesename": "朱翰墨",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 50,
+      "juesename": "朱翰墨",
+      "stringvalue": null,
+      "yaoqingtype": 8,
+      "intvalue": 500
+    },
+    {
+      "index": 51,
+      "juesename": "段和誉",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 52,
+      "juesename": "段和誉",
+      "stringvalue": "王雨烟",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 53,
+      "juesename": "程素问",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 54,
+      "juesename": "程素问",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 30
+    },
+    {
+      "index": 55,
+      "juesename": "血刀老怪",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 36000
+    },
+    {
+      "index": 56,
+      "juesename": "血刀老怪",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -60
+    },
+    {
+      "index": 57,
+      "juesename": "游聚贤",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 58,
+      "juesename": "游聚贤",
+      "stringvalue": "阮紫衣",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 59,
+      "juesename": "阮紫衣",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 60,
+      "juesename": "阮紫衣",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -50
+    },
+    {
+      "index": 61,
+      "juesename": "欧阳庆",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 7000
+    },
+    {
+      "index": 62,
+      "juesename": "欧阳庆",
+      "stringvalue": null,
+      "yaoqingtype": 11,
+      "intvalue": 2
+    },
+    {
+      "index": 63,
+      "juesename": "陆修云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 64,
+      "juesename": "陆修云",
+      "stringvalue": "长老",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 65,
+      "juesename": "曲浩云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 66,
+      "juesename": "曲浩云",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 67,
+      "juesename": "陈鸿云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 68,
+      "juesename": "陈鸿云",
+      "stringvalue": null,
+      "yaoqingtype": 6,
+      "intvalue": 500
+    },
+    {
+      "index": 69,
+      "juesename": "梅寒云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 70,
+      "juesename": "梅寒云",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -40
+    },
+    {
+      "index": 71,
+      "juesename": "黄乐师",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 42000
+    },
+    {
+      "index": 72,
+      "juesename": "黄乐师",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 80
+    },
+    {
+      "index": 73,
+      "juesename": "周伯童",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 40000
+    },
+    {
+      "index": 74,
+      "juesename": "周伯童",
+      "stringvalue": null,
+      "yaoqingtype": 14,
+      "intvalue": 2
+    },
+    {
+      "index": 75,
+      "juesename": "陆冠杰",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 76,
+      "juesename": "任龙城",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 36000
+    },
+    {
+      "index": 77,
+      "juesename": "任龙城",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 60
+    },
+    {
+      "index": 78,
+      "juesename": "向天王",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 14000
+    },
+    {
+      "index": 79,
+      "juesename": "向天王",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 80,
+      "juesename": "东方日出",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 56000
+    },
+    {
+      "index": 81,
+      "juesename": "童化金",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 82,
+      "juesename": "童化金",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -60
+    },
+    {
+      "index": 83,
+      "juesename": "上官风",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 84,
+      "juesename": "上官风",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -50
+    },
+    {
+      "index": 85,
+      "juesename": "曲沽",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 14000
+    },
+    {
+      "index": 86,
+      "juesename": "曲沽",
+      "stringvalue": "长老",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 87,
+      "juesename": "林别鹤",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 88,
+      "juesename": "王丞",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 89,
+      "juesename": "秦奇玮",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 90,
+      "juesename": "林慕阳",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 34000
+    },
+    {
+      "index": 91,
+      "juesename": "林慕阳",
+      "stringvalue": "王明阳",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 92,
+      "juesename": "孙婆婆",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 9000
+    },
+    {
+      "index": 93,
+      "juesename": "孙婆婆",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 94,
+      "juesename": "林倩儿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 95,
+      "juesename": "林倩儿",
+      "stringvalue": "护法",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 96,
+      "juesename": "独孤一剑",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 56000
+    },
+    {
+      "index": 97,
+      "juesename": "独孤一剑",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 90
+    },
+    {
+      "index": 98,
+      "juesename": "杨语琴",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 99,
+      "juesename": "聂问丝",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 100,
+      "juesename": "洪香菱",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 101,
+      "juesename": "陆从霜",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 102,
+      "juesename": "岳君理",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 34000
+    },
+    {
+      "index": 103,
+      "juesename": "岳君理",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 70
+    },
+    {
+      "index": 104,
+      "juesename": "风轻云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 54000
+    },
+    {
+      "index": 105,
+      "juesename": "归力夫",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 106,
+      "juesename": "归力夫",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 30
+    },
+    {
+      "index": 107,
+      "juesename": "宁凡之",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 108,
+      "juesename": "宁凡之",
+      "stringvalue": null,
+      "yaoqingtype": 8,
+      "intvalue": 450
+    },
+    {
+      "index": 109,
+      "juesename": "袁承宗",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 110,
+      "juesename": "袁承宗",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 111,
+      "juesename": "陆良朋",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 112,
+      "juesename": "岳瑶箐",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 113,
+      "juesename": "岳瑶箐",
+      "stringvalue": "林子平",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 114,
+      "juesename": "洪天齐",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 42000
+    },
+    {
+      "index": 115,
+      "juesename": "洪天齐",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 70
+    },
+    {
+      "index": 116,
+      "juesename": "欧阳颠",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 42000
+    },
+    {
+      "index": 117,
+      "juesename": "欧阳颠",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -80
+    },
+    {
+      "index": 118,
+      "juesename": "圆慈",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 44000
+    },
+    {
+      "index": 119,
+      "juesename": "圆慈",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 70
+    },
+    {
+      "index": 120,
+      "juesename": "圆奘",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 18000
+    },
+    {
+      "index": 121,
+      "juesename": "圆奘",
+      "stringvalue": null,
+      "yaoqingtype": 7,
+      "intvalue": 550
+    },
+    {
+      "index": 122,
+      "juesename": "圆乘",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 9000
+    },
+    {
+      "index": 123,
+      "juesename": "圆乘",
+      "stringvalue": null,
+      "yaoqingtype": 5,
+      "intvalue": 500
+    },
+    {
+      "index": 124,
+      "juesename": "圆智",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 9000
+    },
+    {
+      "index": 125,
+      "juesename": "圆智",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 40
+    },
+    {
+      "index": 126,
+      "juesename": "普空",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 127,
+      "juesename": "普能",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 128,
+      "juesename": "普净",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 3000
+    },
+    {
+      "index": 129,
+      "juesename": "无名僧",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 60000
+    },
+    {
+      "index": 130,
+      "juesename": "清音",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 131,
+      "juesename": "清业",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 132,
+      "juesename": "王明阳",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 56000
+    },
+    {
+      "index": 133,
+      "juesename": "王明阳",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 60
+    },
+    {
+      "index": 134,
+      "juesename": "马丹阳",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 135,
+      "juesename": "马丹阳",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 136,
+      "juesename": "丘长春",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 137,
+      "juesename": "丘长春",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 138,
+      "juesename": "王玉阳",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 139,
+      "juesename": "王玉阳",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 30
+    },
+    {
+      "index": 140,
+      "juesename": "孙清静",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 141,
+      "juesename": "孙清静",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 30
+    },
+    {
+      "index": 142,
+      "juesename": "尹志丙",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 143,
+      "juesename": "赵志诚",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 144,
+      "juesename": "张志常",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 145,
+      "juesename": "李志光",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 146,
+      "juesename": "程思嘉",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 147,
+      "juesename": "张三丰",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 62000
+    },
+    {
+      "index": 148,
+      "juesename": "张三丰",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 90
+    },
+    {
+      "index": 149,
+      "juesename": "宋醉亭",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 150,
+      "juesename": "宋醉亭",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 60
+    },
+    {
+      "index": 151,
+      "juesename": "俞晚舟",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 14000
+    },
+    {
+      "index": 152,
+      "juesename": "俞晚舟",
+      "stringvalue": null,
+      "yaoqingtype": 5,
+      "intvalue": 550
+    },
+    {
+      "index": 153,
+      "juesename": "张轩松",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 154,
+      "juesename": "张轩松",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 155,
+      "juesename": "殷柳山",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 9000
+    },
+    {
+      "index": 156,
+      "juesename": "殷柳山",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 40
+    },
+    {
+      "index": 157,
+      "juesename": "宋玉书",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 158,
+      "juesename": "张正卿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 7000
+    },
+    {
+      "index": 159,
+      "juesename": "杨无悔",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 160,
+      "juesename": "杨无悔",
+      "stringvalue": null,
+      "yaoqingtype": 17,
+      "intvalue": 2
+    },
+    {
+      "index": 161,
+      "juesename": "谷虚",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 162,
+      "juesename": "清虚",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 163,
+      "juesename": "蓝凤仙",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 30000
+    },
+    {
+      "index": 164,
+      "juesename": "蓝凤仙",
+      "stringvalue": null,
+      "yaoqingtype": 10,
+      "intvalue": 4
+    },
+    {
+      "index": 165,
+      "juesename": "何鼎红",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 166,
+      "juesename": "何鼎红",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -60
+    },
+    {
+      "index": 167,
+      "juesename": "何钩问",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 168,
+      "juesename": "何钩问",
+      "stringvalue": "袁承宗",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 169,
+      "juesename": "齐文石",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 170,
+      "juesename": "齐文石",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -50
+    },
+    {
+      "index": 171,
+      "juesename": "岑子安",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 9000
+    },
+    {
+      "index": 172,
+      "juesename": "岑子安",
+      "stringvalue": "长老",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 173,
+      "juesename": "胡蔓",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 174,
+      "juesename": "白丹枫",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 175,
+      "juesename": "祝牵机",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 176,
+      "juesename": "唐绮玉",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 177,
+      "juesename": "阳立鼎",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 38000
+    },
+    {
+      "index": 178,
+      "juesename": "阳立鼎",
+      "stringvalue": "掌门",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 179,
+      "juesename": "黛莲娜",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 180,
+      "juesename": "黛莲娜",
+      "stringvalue": null,
+      "yaoqingtype": 13,
+      "intvalue": 2
+    },
+    {
+      "index": 181,
+      "juesename": "殷白眉",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 22000
+    },
+    {
+      "index": 182,
+      "juesename": "殷白眉",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 70
+    },
+    {
+      "index": 183,
+      "juesename": "谢鑫",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 22000
+    },
+    {
+      "index": 184,
+      "juesename": "谢鑫",
+      "stringvalue": "张无极",
+      "yaoqingtype": 20,
+      "intvalue": 0
+    },
+    {
+      "index": 185,
+      "juesename": "韦青烟",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 12000
+    },
+    {
+      "index": 186,
+      "juesename": "韦青烟",
+      "stringvalue": null,
+      "yaoqingtype": 8,
+      "intvalue": 500
+    },
+    {
+      "index": 187,
+      "juesename": "吴重云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 6000
+    },
+    {
+      "index": 188,
+      "juesename": "吴重云",
+      "stringvalue": null,
+      "yaoqingtype": 15,
+      "intvalue": 2
+    },
+    {
+      "index": 189,
+      "juesename": "殷潇潇",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 190,
+      "juesename": "殷潇潇",
+      "stringvalue": null,
+      "yaoqingtype": 13,
+      "intvalue": 2
+    },
+    {
+      "index": 191,
+      "juesename": "韩小昭",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 192,
+      "juesename": "韩小昭",
+      "stringvalue": null,
+      "yaoqingtype": 9,
+      "intvalue": 4
+    },
+    {
+      "index": 193,
+      "juesename": "张无极",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 2000
+    },
+    {
+      "index": 194,
+      "juesename": "张无极",
+      "stringvalue": null,
+      "yaoqingtype": 16,
+      "intvalue": 2
+    },
+    {
+      "index": 195,
+      "juesename": "庄逍遥",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 56000
+    },
+    {
+      "index": 196,
+      "juesename": "海无涯",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 36000
+    },
+    {
+      "index": 197,
+      "juesename": "海无涯",
+      "stringvalue": null,
+      "yaoqingtype": 6,
+      "intvalue": 550
+    },
+    {
+      "index": 198,
+      "juesename": "巫行云",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 199,
+      "juesename": "巫行云",
+      "stringvalue": null,
+      "yaoqingtype": 10,
+      "intvalue": 2
+    },
+    {
+      "index": 200,
+      "juesename": "李沧海",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 16000
+    },
+    {
+      "index": 201,
+      "juesename": "李沧海",
+      "stringvalue": null,
+      "yaoqingtype": 2,
+      "intvalue": 70
+    },
+    {
+      "index": 202,
+      "juesename": "苏天河",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 5000
+    },
+    {
+      "index": 203,
+      "juesename": "苏天河",
+      "stringvalue": "嫡传弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 204,
+      "juesename": "丁星宿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 8000
+    },
+    {
+      "index": 205,
+      "juesename": "丁星宿",
+      "stringvalue": null,
+      "yaoqingtype": 4,
+      "intvalue": -80
+    },
+    {
+      "index": 206,
+      "juesename": "康长卿",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 207,
+      "juesename": "薛杜若",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 208,
+      "juesename": "李清洛",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 209,
+      "juesename": "乔云龙",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 30000
+    },
+    {
+      "index": 210,
+      "juesename": "乔云龙",
+      "stringvalue": null,
+      "yaoqingtype": 5,
+      "intvalue": 600
+    },
+    {
+      "index": 211,
+      "juesename": "鲁烈",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 212,
+      "juesename": "鲁烈",
+      "stringvalue": null,
+      "yaoqingtype": 3,
+      "intvalue": 50
+    },
+    {
+      "index": 213,
+      "juesename": "马元义",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 10000
+    },
+    {
+      "index": 214,
+      "juesename": "马元义",
+      "stringvalue": "长老",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 215,
+      "juesename": "吴乐山",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 216,
+      "juesename": "白鹤轩",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 4000
+    },
+    {
+      "index": 217,
+      "juesename": "全圣杰",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 3000
+    },
+    {
+      "index": 218,
+      "juesename": "苏粲",
+      "stringvalue": "记名弟子",
+      "yaoqingtype": 0,
+      "intvalue": 0
+    },
+    {
+      "index": 219,
+      "juesename": "史红玉",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 220,
+      "juesename": "阿箐",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 85000
+    },
+    {
+      "index": 221,
+      "juesename": "石开天",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 85000
+    },
+    {
+      "index": 222,
+      "juesename": "斗酒仙",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 85000
+    },
+    {
+      "index": 223,
+      "juesename": "达摩",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 85000
+    },
+    {
+      "index": 224,
+      "juesename": "南贤",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 78000
+    },
+    {
+      "index": 225,
+      "juesename": "北丑",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 78000
+    },
+    {
+      "index": 226,
+      "juesename": "黄常",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 85000
+    },
+    {
+      "index": 227,
+      "juesename": "白湘",
+      "stringvalue": null,
+      "yaoqingtype": 1,
+      "intvalue": 1000
+    },
+    {
+      "index": 228,
+      "juesename": "白湘",
+      "stringvalue": null,
+      "yaoqingtype": 15,
+      "intvalue": 2
+    }
+  ]
+}

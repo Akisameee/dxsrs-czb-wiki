@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>武学配装模拟器</title>
+    <link rel="stylesheet" href="../style.css?v=20260607-04">
+  </head>
+  <body data-data-root="../data/">
+    <div data-site-nav data-nav-root="../" data-active="loadout"></div>
+    <main class="app-shell">
+      <section class="picker-pane" aria-label="武功选择">
+        <header class="topbar">
+          <div>
+            <h1>武学配装模拟器</h1>
+            <p id="data-status" class="status-text">读取数据中</p>
+          </div>
+          <div class="selection-meter" aria-live="polite">
+            <strong id="selected-count">0</strong>
+            <span>/ 12</span>
+          </div>
+        </header>
+
+        <div class="controls">
+          <fieldset class="filter-set">
+            <legend>门派</legend>
+            <div id="sect-filter" class="radio-group"></div>
+          </fieldset>
+          <fieldset class="filter-set">
+            <legend>风格</legend>
+            <div id="style-filter" class="radio-group"></div>
+          </fieldset>
+        </div>
+
+        <div class="selected-bar">
+          <div id="selected-list" class="selected-strip" aria-label="已选武功"></div>
+          <button id="clear-button" class="icon-button" type="button" title="清空选择" aria-label="清空选择">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <section class="extra-controls" aria-label="额外词条">
+          <div class="extra-card">
+            <div class="extra-card-head">
+              <strong>装备风格词条</strong>
+            </div>
+            <div id="equipment-style-controls" class="select-grid"></div>
+          </div>
+
+          <div class="extra-card">
+            <div class="extra-card-head">
+              <label class="toggle-line">
+                <input id="custom-enabled" type="checkbox">
+                <span>自创外功</span>
+              </label>
+            </div>
+            <div class="select-grid">
+              <label>
+                <span>门派</span>
+                <select id="custom-sect"></select>
+              </label>
+              <label>
+                <span>风格</span>
+                <select id="custom-style"></select>
+              </label>
+            </div>
+          </div>
+        </section>
+        <div id="martial-list" class="martial-grid" aria-label="武功列表"></div>
+      </section>
+
+      <aside class="results-pane" aria-label="连锁词条">
+        <section class="summary-band">
+          <div>
+            <span class="summary-label">门派</span>
+            <div id="sect-summary" class="summary-list"></div>
+          </div>
+          <div>
+            <span class="summary-label">风格</span>
+            <div id="style-summary" class="summary-list"></div>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-head">
+            <h2>连锁词条</h2>
+          </div>
+          <div id="chain-list" class="chain-list"></div>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="../src/tools/loadout/main.js?v=20260607-04"></script>
+  </body>
+</html>

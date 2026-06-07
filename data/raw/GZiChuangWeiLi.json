@@ -1,0 +1,372 @@
+{
+  "tableIndex": 49,
+  "meta": "GZiChuangWeiLi",
+  "range": {
+    "start": 1971449,
+    "end": 1974674
+  },
+  "fieldCount": 7,
+  "fields": [
+    "bingqitype",
+    "rare",
+    "cost",
+    "weilimin",
+    "weilimax",
+    "percentmin",
+    "percentmax"
+  ],
+  "fieldMeta": {
+    "bingqitype": {
+      "fieldType": "Enum",
+      "offset": 1972638,
+      "lengthOffset": 1972795,
+      "totalLength": 120,
+      "count": 30
+    },
+    "rare": {
+      "fieldType": "Enum",
+      "offset": 1972943,
+      "lengthOffset": 1973094,
+      "totalLength": 120,
+      "count": 30
+    },
+    "cost": {
+      "fieldType": "Int",
+      "offset": 1973242,
+      "lengthOffset": 1973374,
+      "totalLength": 120,
+      "count": 30
+    },
+    "weilimin": {
+      "fieldType": "Float",
+      "offset": 1973522,
+      "lengthOffset": 1973660,
+      "totalLength": 120,
+      "count": 30
+    },
+    "weilimax": {
+      "fieldType": "Float",
+      "offset": 1973808,
+      "lengthOffset": 1973946,
+      "totalLength": 120,
+      "count": 30
+    },
+    "percentmin": {
+      "fieldType": "Float",
+      "offset": 1974094,
+      "lengthOffset": 1974234,
+      "totalLength": 120,
+      "count": 30
+    },
+    "percentmax": {
+      "fieldType": "Float",
+      "offset": 1974382,
+      "lengthOffset": 1974522,
+      "totalLength": 120,
+      "count": 30
+    }
+  },
+  "rowCount": 30,
+  "rows": [
+    {
+      "index": 0,
+      "bingqitype": 0,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 130.87252807617188,
+      "weilimax": 198.0775604248047,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 1,
+      "bingqitype": 0,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 308.86376953125,
+      "weilimax": 389.6081237792969,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 2,
+      "bingqitype": 0,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 534.5206298828125,
+      "weilimax": 604.7244262695312,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 3,
+      "bingqitype": 0,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 772.8623046875,
+      "weilimax": 781.423095703125,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 4,
+      "bingqitype": 0,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 957.9835815429688,
+      "weilimax": 963.75,
+      "percentmin": 90,
+      "percentmax": 100
+    },
+    {
+      "index": 5,
+      "bingqitype": 1,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 182.02313232421875,
+      "weilimax": 276.7049255371094,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 6,
+      "bingqitype": 1,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 407.4913330078125,
+      "weilimax": 514.4644165039062,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 7,
+      "bingqitype": 1,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 688.1200561523438,
+      "weilimax": 780.3771362304688,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 8,
+      "bingqitype": 1,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 982.7713623046875,
+      "weilimax": 1029.1954345703125,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 9,
+      "bingqitype": 1,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 1247.5849609375,
+      "weilimax": 1271.7669677734375,
+      "percentmin": 90,
+      "percentmax": 100
+    },
+    {
+      "index": 10,
+      "bingqitype": 2,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 133.281005859375,
+      "weilimax": 207.328857421875,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 11,
+      "bingqitype": 2,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 319.2601013183594,
+      "weilimax": 409.7000427246094,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 12,
+      "bingqitype": 2,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 558.9894409179688,
+      "weilimax": 641.5443115234375,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 13,
+      "bingqitype": 2,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 817.1468505859375,
+      "weilimax": 835.2032470703125,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 14,
+      "bingqitype": 2,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 1021.1275024414062,
+      "weilimax": 1032.1070556640625,
+      "percentmin": 90,
+      "percentmax": 100
+    },
+    {
+      "index": 15,
+      "bingqitype": 3,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 203.5636444091797,
+      "weilimax": 298.75396728515625,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 16,
+      "bingqitype": 3,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 437.2301025390625,
+      "weilimax": 543.0844116210938,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 17,
+      "bingqitype": 3,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 724.0568237304688,
+      "weilimax": 813.9786987304688,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 18,
+      "bingqitype": 3,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 1023.1058959960938,
+      "weilimax": 1077.0096435546875,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 19,
+      "bingqitype": 3,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 1303.628173828125,
+      "weilimax": 1329.2330322265625,
+      "percentmin": 90,
+      "percentmax": 100
+    },
+    {
+      "index": 20,
+      "bingqitype": 4,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 159.71630859375,
+      "weilimax": 240.93801879882812,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 21,
+      "bingqitype": 4,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 365.17938232421875,
+      "weilimax": 460.78839111328125,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 22,
+      "bingqitype": 4,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 624.1109619140625,
+      "weilimax": 709.061767578125,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 23,
+      "bingqitype": 4,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 899.29638671875,
+      "weilimax": 931.0323486328125,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 24,
+      "bingqitype": 4,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 1134.32470703125,
+      "weilimax": 1149.8929443359375,
+      "percentmin": 90,
+      "percentmax": 100
+    },
+    {
+      "index": 25,
+      "bingqitype": 5,
+      "rare": 1,
+      "cost": 2,
+      "weilimin": 158.59030151367188,
+      "weilimax": 247.22824096679688,
+      "percentmin": 0,
+      "percentmax": 15
+    },
+    {
+      "index": 26,
+      "bingqitype": 5,
+      "rare": 2,
+      "cost": 3,
+      "weilimin": 351.50604248046875,
+      "weilimax": 476.5489196777344,
+      "percentmin": 15,
+      "percentmax": 35
+    },
+    {
+      "index": 27,
+      "bingqitype": 5,
+      "rare": 3,
+      "cost": 4,
+      "weilimin": 629.71923828125,
+      "weilimax": 779.3863525390625,
+      "percentmin": 35,
+      "percentmax": 60
+    },
+    {
+      "index": 28,
+      "bingqitype": 5,
+      "rare": 4,
+      "cost": 5,
+      "weilimin": 975.6477661132812,
+      "weilimax": 1167.744140625,
+      "percentmin": 60,
+      "percentmax": 90
+    },
+    {
+      "index": 29,
+      "bingqitype": 5,
+      "rare": 5,
+      "cost": 6,
+      "weilimin": 1409.13525390625,
+      "weilimax": 1440.0379638671875,
+      "percentmin": 90,
+      "percentmax": 100
+    }
+  ]
+}
