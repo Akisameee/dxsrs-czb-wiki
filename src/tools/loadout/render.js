@@ -49,14 +49,20 @@ function createSelectOptions(values, placeholder, selectedValue, enumType) {
 }
 
 export function renderLoadoutControls() {
-  els.equipmentStyleControls.innerHTML = EQUIPMENT_STYLE_SLOTS.map((slot) => `
-    <label>
+  const equipmentTitle = `
+    <div class="control-panel-title extra-card-head">
+      <strong>装备风格词条</strong>
+    </div>
+  `;
+  const equipmentControls = EQUIPMENT_STYLE_SLOTS.map((slot) => `
+    <label class="control-field">
       <span>${escapeHtml(slot.label)}</span>
       <select data-equipment-style="${escapeHtml(slot.key)}">
         ${createSelectOptions(EQUIPMENT_STYLE_OPTION_IDS, "无", state.equipmentStyles[slot.key], "LianSuo_FG")}
       </select>
     </label>
   `).join("");
+  els.equipmentStyleControls.innerHTML = `${equipmentTitle}${equipmentControls}`;
 
   const sects = getJoinableSects(state);
   const styles = state.styleChains

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { runSelfCreateRoute } from "../src/tools/self-create/simulator.js";
+import { SelfCreateSimulation } from "../src/tools/self-create/simulator.js";
 import { makeZiChuangSeed } from "../src/tools/self-create/unity-random.js";
 
 const data = JSON.parse(fs.readFileSync(new URL("../public/data/self_create.json", import.meta.url), "utf8"));
@@ -15,7 +15,8 @@ const forumSwordInput = {
   improvements: [],
 };
 
-const route = runSelfCreateRoute(forumSwordInput, data);
+const simulation = new SelfCreateSimulation(forumSwordInput, data);
+const route = simulation.toRoute();
 
 assert.equal(makeZiChuangSeed(forumSwordInput), 41793, "6/1/6/7 剑法 seed 应稳定为 41793");
 assert.equal(route.seed, 41793, "route seed 应和输入 seed 一致");

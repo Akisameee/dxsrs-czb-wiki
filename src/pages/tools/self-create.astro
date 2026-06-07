@@ -2,39 +2,39 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="自创武功模拟器" active="self-create">
+<BaseLayout title="自创武学模拟" active="self-create">
   <main class="self-create-workbench resizable-split" data-split-id="self-create" data-split-default="36" data-split-min-left="320" data-split-min-right="360">
     <section class="self-create-simulator" aria-label="自创模拟">
       <header class="self-create-head">
         <div>
-          <h1>自创武功模拟器</h1>
-          <p id="self-create-status" class="status-text">读取数据中</p>
+          <h1>自创武学模拟</h1>
+          <p id="self-create-status" class="status-text">输入初始四维和武器类型，模拟贪心锁定后的风格、攻击范围、特殊效果和威力分布。</p>
         </div>
       </header>
 
       <form id="self-create-form" class="self-create-form">
-        <section class="sim-controls">
-          <div class="initial-summary">
-            <span id="attribute-total">四维 20 / 20</span>
-          </div>
-          <div class="initial-grid">
-            <label>
+        <section class="control-row" aria-label="初始输入">
+          <div class="control-col control-panel control-panel--titled sim-controls">
+            <div class="control-panel-title initial-summary">
+              <span id="attribute-total">四维 20 / 20</span>
+            </div>
+            <label class="control-field control-field--attr">
               <span>意念</span>
               <input name="yi" type="number" min="0" max="10" value="5" />
             </label>
-            <label>
+            <label class="control-field control-field--attr">
               <span>气劲</span>
               <input name="qi" type="number" min="0" max="10" value="5" />
             </label>
-            <label>
+            <label class="control-field control-field--attr">
               <span>形态</span>
               <input name="xing" type="number" min="0" max="10" value="5" />
             </label>
-            <label>
+            <label class="control-field control-field--attr">
               <span>神韵</span>
               <input name="shen" type="number" min="0" max="10" value="5" />
             </label>
-            <label>
+            <label class="control-field control-field--weapon">
               <span>武器类型</span>
               <select id="weapon-type" name="weaponType"></select>
             </label>
@@ -45,50 +45,66 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
           <div class="empty-state">读取数据中。</div>
         </section>
 
-        <section class="sim-step-controls">
-          <div class="sim-button-row">
-            <button id="improve-button" class="primary-button" type="button">改良</button>
-            <button id="undo-button" class="secondary-button" type="button">回退</button>
-            <button id="reset-button" class="secondary-button" type="button">重置</button>
+        <section class="control-row" aria-label="模拟操作">
+          <div class="control-col control-panel sim-step-controls">
+            <label class="control-field control-field--count sim-count-field">
+              <span>模拟次数</span>
+              <input id="simulation-count" type="number" min="1" max="10000" step="100" value="1000" />
+            </label>
+            <button id="run-analysis-button" class="primary-button control-button" type="button">模拟</button>
           </div>
+        </section>
+
+        <section id="simulation-results" class="simulation-results" aria-live="polite">
+          <div class="empty-state">点击模拟查看当前初始输入的分布。</div>
         </section>
       </form>
     </section>
 
     <div class="split-resizer" data-split-resizer role="separator" aria-label="调整左右栏宽度" aria-orientation="vertical" tabindex="0"></div>
 
-    <section class="self-create-generator" aria-label="功法生成器">
+    <section class="self-create-searcher" aria-label="自创武学初始搜索">
       <header class="topbar">
         <div>
-          <h1>功法生成器</h1>
-          <p id="generator-status" class="status-text">选择目标词条后搜索可复现轨迹。</p>
+          <h1>自创武学初始搜索</h1>
+          <p id="searcher-status" class="status-text">选择目标词条后估算贪心锁定命中概率。</p>
         </div>
       </header>
 
-      <section class="generator-controls" aria-label="生成目标">
-        <div class="generator-target-grid">
-          <label>
+      <section class="control-row searcher-controls" aria-label="搜索目标">
+        <div class="control-col control-panel searcher-target-row">
+          <label class="control-field">
             <span>武器类型</span>
-            <select id="generator-weapon-type"></select>
+            <select id="searcher-weapon-type"></select>
           </label>
-          <label>
+          <label class="control-field">
             <span>目标风格</span>
-            <select id="generator-style"></select>
+            <select id="searcher-style"></select>
           </label>
-          <label>
+          <label class="control-field">
             <span>攻击范围</span>
-            <select id="generator-area"></select>
+            <select id="searcher-area"></select>
           </label>
-          <label>
+          <label class="control-field control-field--effect">
             <span>特殊效果</span>
-            <select id="generator-effect"></select>
+            <select id="searcher-effect"></select>
+          </label>
+          <label class="control-field control-field--level">
+            <span>效果等级</span>
+            <input id="searcher-effect-level" type="number" min="1" value="" />
           </label>
         </div>
 
-        <button id="generator-search-button" class="primary-button" type="button">搜索轨迹</button>
+        <div class="control-col control-panel searcher-action-row">
+          <label class="control-field control-field--count searcher-count-field">
+            <span>模拟次数</span>
+            <input id="searcher-simulation-count" type="number" min="1" max="10000" step="16" value="128" />
+          </label>
+          <button id="searcher-search-button" class="primary-button control-button" type="button">搜索</button>
+        </div>
       </section>
 
-      <section id="generator-results" class="generator-results" aria-live="polite">
+      <section id="searcher-results" class="searcher-results" aria-live="polite">
         <div class="empty-state">还没有搜索结果。</div>
       </section>
     </section>

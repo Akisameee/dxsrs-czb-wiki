@@ -323,31 +323,3 @@ export function summarizeZiChuangStep(step, styleNames = {}) {
     power: step.detail.power,
   };
 }
-
-export function runSelfCreateRoute(input, data, options = {}) {
-  const styleNames = options.styleNames || {};
-  const simulation = new SelfCreateSimulation(input, data, options);
-
-  const initialImproveLimit = simulation.remainingImproveCount;
-  const maxSteps = Math.max(0, Number(options.maxSteps ?? initialImproveLimit));
-  const fixedSteps = Array.isArray(input.improvements) ? input.improvements : [];
-  const getLocks = typeof options.getLocks === "function"
-    ? options.getLocks
-    : ({ index }) => fixedSteps[index] || null;
-
-  for (let index = 0; index < maxSteps; index += 1) {
-    if (!simulation.canImprove) break;
-    const before = simulation.currentSummary(styleNames);
-    const locks = getLocks({
-      index,
-      stepNumber: index + 1,
-      before,
-      route: simulation.toRoute(styleNames),
-      simulation,
-    });
-    if (!locks) break;
-    simulation.improve(locks);
-  }
-
-  return simulation.toRoute(styleNames);
-}

@@ -27,40 +27,37 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         </fieldset>
       </div>
 
+      <section class="control-row extra-controls" aria-label="额外词条">
+        <div id="equipment-style-controls" class="control-col control-panel control-panel--titled extra-card">
+          <div class="control-panel-title extra-card-head">
+            <strong>装备风格词条</strong>
+          </div>
+        </div>
+
+        <div class="control-col control-panel control-panel--titled extra-card">
+          <div class="control-panel-title extra-card-head">
+            <label class="toggle-line">
+              <input id="custom-enabled" type="checkbox" />
+              <span>自创外功</span>
+            </label>
+          </div>
+          <label class="control-field">
+            <span>门派</span>
+            <select id="custom-sect"></select>
+          </label>
+          <label class="control-field">
+            <span>风格</span>
+            <select id="custom-style"></select>
+          </label>
+        </div>
+      </section>
+
       <div class="selected-bar">
         <div id="selected-list" class="selected-strip" aria-label="已选武功"></div>
         <button id="clear-button" class="icon-button" type="button" title="清空选择" aria-label="清空选择">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-
-      <section class="extra-controls" aria-label="额外词条">
-        <div class="extra-card">
-          <div class="extra-card-head">
-            <strong>装备风格词条</strong>
-          </div>
-          <div id="equipment-style-controls" class="select-grid"></div>
-        </div>
-
-        <div class="extra-card">
-          <div class="extra-card-head">
-            <label class="toggle-line">
-              <input id="custom-enabled" type="checkbox" />
-              <span>自创外功</span>
-            </label>
-          </div>
-          <div class="select-grid">
-            <label>
-              <span>门派</span>
-              <select id="custom-sect"></select>
-            </label>
-            <label>
-              <span>风格</span>
-              <select id="custom-style"></select>
-            </label>
-          </div>
-        </div>
-      </section>
       <div id="martial-list" class="martial-grid" aria-label="武功列表"></div>
     </section>
 
