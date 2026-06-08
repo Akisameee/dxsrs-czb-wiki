@@ -1,12 +1,7 @@
 import { initSelfCreateSearcher } from "./searcher-page.js";
 import { initSelfCreateSimulator } from "./simulator-page.js";
+import { loadSelfCreateData } from "../../shared/wiki-db.js";
 import { escapeHtml } from "./view-utils.js";
-
-const DATA_ROOT = document.body.dataset.dataRoot || "data/";
-
-function dataUrl(path) {
-  return new URL(`${DATA_ROOT}${path}`, window.location.href);
-}
 
 function stepNumberInput(input, direction) {
   const step = Number(input.step) || 1;
@@ -28,18 +23,7 @@ function addWheelNumberSupport(input) {
 }
 
 async function loadData() {
-  const [selfCreate, effects, enums] = await Promise.all([
-    fetch(dataUrl("self_create.json")).then((response) => response.json()),
-    fetch(dataUrl("status_effects.json")).then((response) => response.json()),
-    fetch(dataUrl("enums.json")).then((response) => response.json()),
-  ]);
-
-  return {
-    data: selfCreate,
-    enums: enums.enumTypes || {},
-    effects,
-    effectNames: new Map(effects.map((item, index) => [Number(item.id ?? index), item.name])),
-  };
+  return loadSelfCreateData();
 }
 
 loadData()

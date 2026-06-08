@@ -1,9 +1,65 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
+import { DatabaseSync } from "node:sqlite";
 import { SelfCreateSimulation } from "../src/tools/self-create/simulator.js";
 import { makeZiChuangSeed } from "../src/tools/self-create/unity-random.js";
 
-const data = JSON.parse(fs.readFileSync(new URL("../public/data/self_create.json", import.meta.url), "utf8"));
+const db = new DatabaseSync(new URL("../public/data/wiki.sqlite", import.meta.url));
+
+function all(sql) {
+  return db.prepare(sql).all();
+}
+
+function loadSelfCreateData() {
+  const effectsByTemplate = new Map();
+  for (const row of all("SELECT * FROM custom_martial_art_effects ORDER BY custom_martial_art_id, slot")) {
+    if (!effectsByTemplate.has(row.custom_martial_art_id)) effectsByTemplate.set(row.custom_martial_art_id, []);
+    effectsByTemplate.get(row.custom_martial_art_id).push(row);
+  }
+
+  return {
+    wugongRows: all("SELECT * FROM custom_martial_arts ORDER BY id").map((row) => {
+      const effects = new Map((effectsByTemplate.get(row.id) || []).map((item) => [Number(item.slot), item]));
+      const output = {
+        chnname: row.name,
+        type: Number(row.type_id),
+        rare: Number(row.rarity_id),
+        cost: Number(row.cost),
+        slashfx: Number(row.slash_effect_id),
+        hitfx: Number(row.hit_effect_id),
+        attackareaname: row.attack_area_name,
+        iszichuang: Boolean(Number(row.is_custom)),
+      };
+      for (let slot = 1; slot <= 3; slot += 1) {
+        const effect = effects.get(slot);
+        output[`buff${slot}`] = effect ? Number(effect.effect_id) : 99;
+        output[`bufftarget${slot}`] = effect ? Number(effect.target_id) : 1;
+      }
+      return output;
+    }),
+    chainRows: all("SELECT * FROM custom_style_weights ORDER BY id").map((row) => ({
+      fengge: Number(row.style_id),
+      qty: Number(row.weight),
+    })),
+    ziChuangWeiLiRows: all("SELECT * FROM custom_martial_power_ranges ORDER BY id").map((row) => ({
+      bingqitype: Number(row.weapon_type_id),
+      rare: Number(row.rarity_id),
+      cost: Number(row.cost),
+      weilimin: Number(row.power_min),
+      weilimax: Number(row.power_max),
+      percentmin: Number(row.percent_min),
+      percentmax: Number(row.percent_max),
+    })),
+    ziChuangBuffRows: all("SELECT * FROM custom_martial_effect_rates ORDER BY id").map((row) => ({
+      rare: Number(row.rarity_id),
+      bufftype: Number(row.effect_id),
+      bufftarget: Number(row.target_id),
+      value: Number(row.level),
+      percent: Number(row.percent),
+    })),
+  };
+}
+
+const data = loadSelfCreateData();
 
 const forumSwordInput = {
   yi: 6,
@@ -28,4 +84,5 @@ assert.equal(route.initial.effect.value, 0, "无特殊效果时层数应为 0");
 assert.equal(route.initial.power, 429.12, "初始招式威力应稳定为 429.12");
 assert.equal(route.initial.cost, 3, "初始消耗真气应稳定为 3");
 
+db.close();
 console.log("self-create regression passed");

@@ -1,0 +1,169 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { loadCharacterFromWikiDb, loadCharacterIdsFromWikiDb, loadEnumTypesFromWikiDb } from "../../shared/wiki-db-node.js";
+
+export function getStaticPaths() {
+  const ids = loadCharacterIdsFromWikiDb();
+  return ids.map((id) => ({
+    params: { id: String(id) },
+    props: {
+      character: loadCharacterFromWikiDb(id),
+    },
+  }));
+}
+
+const enumTypes = loadEnumTypesFromWikiDb();
+const { character } = Astro.props;
+const identity = character.identity;
+const combat = character.combat;
+const attrs = combat.attributes;
+const growth = character.growth;
+const life = character.lifeSkills;
+
+function enumLabel(type, id, fallback = "未知") {
+  if (id === null || id === undefined || Number.isNaN(Number(id))) return fallback;
+  return enumTypes?.[type]?.[String(id)] ?? fallback;
+}
+
+function locationText() {
+  const location = character.location;
+  if (!location) return "无地点";
+  return `${enumLabel("DiDian", location.regionId)} / ${enumLabel("Area", location.locationId)}`;
+}
+
+function numberText(value, digits = 0) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "-";
+  return digits > 0 ? number.toFixed(digits) : String(Math.round(number));
+}
+
+function martialArtsByLevel() {
+  const byLevel = new Map();
+  for (const item of character.martialArts || []) {
+    if (!byLevel.has(item.level)) byLevel.set(item.level, []);
+    byLevel.get(item.level).push(item);
+  }
+  return [...byLevel.entries()].sort((a, b) => a[0] - b[0]);
+}
+
+const tags = [
+  enumLabel("LianSuo_MP", identity.sectId, "未知门派"),
+  enumLabel("NPC_Rare", identity.rare, "未知品质"),
+  enumLabel("BingQiType", combat.weaponTypeId, "未知武器"),
+  enumLabel("NPC_WuGongType", combat.martialTypeId, "未知路线"),
+  identity.isInstructor ? "教头" : null,
+  identity.isManager ? "管事人" : null,
+].filter(Boolean);
+---
+
+<BaseLayout title={`${character.name} - 人物 - 大侠式人生重制版`} active="characters">
+  <main class="characters-shell character-page">
+    <section class="characters-head character-profile-head">
+      <div>
+        <a class="back-link" href={`${import.meta.env.BASE_URL}characters/`}>返回人物索引</a>
+        <h1>{character.name}</h1>
+        <p class="status-text">{locationText()}</p>
+      </div>
+      <div class="tag-row">
+        {tags.map((item) => <span class="tag">{item}</span>)}
+      </div>
+    </section>
+
+    <section class="character-page-grid">
+      <section class="character-detail-section">
+        <h3>基础</h3>
+        <div class="character-stat-grid">
+          <div class="character-stat"><span>性别</span><strong>{enumLabel("Sex", identity.sex)}</strong></div>
+          <div class="character-stat"><span>江湖等级</span><strong>{enumLabel("Dengji", identity.rank)}</strong></div>
+          <div class="character-stat"><span>门派地位</span><strong>{enumLabel("DiWei", identity.position)}</strong></div>
+          <div class="character-stat"><span>人物等级</span><strong>{identity.level}</strong></div>
+          <div class="character-stat"><span>名声</span><strong>{identity.fame}</strong></div>
+          <div class="character-stat"><span>侠义</span><strong>{identity.chivalry}</strong></div>
+          <div class="character-stat"><span>喜好品质</span><strong>{identity.likeRare}</strong></div>
+          <div class="character-stat"><span>金钱</span><strong>{identity.gold}</strong></div>
+        </div>
+      </section>
+
+      <section class="character-detail-section">
+        <h3>战斗</h3>
+        <div class="character-stat-grid">
+          <div class="character-stat"><span>膂力</span><strong>{attrs.strength}</strong></div>
+          <div class="character-stat"><span>根骨</span><strong>{attrs.constitution}</strong></div>
+          <div class="character-stat"><span>体魄</span><strong>{attrs.physique}</strong></div>
+          <div class="character-stat"><span>身法</span><strong>{attrs.agility}</strong></div>
+          <div class="character-stat"><span>修为</span><strong>{combat.proficiencies.cultivation}</strong></div>
+          <div class="character-stat"><span>拳掌</span><strong>{combat.proficiencies.fist}</strong></div>
+          <div class="character-stat"><span>刀剑</span><strong>{combat.proficiencies.bladeSword}</strong></div>
+          <div class="character-stat"><span>枪棒</span><strong>{combat.proficiencies.spearStaff}</strong></div>
+          <div class="character-stat"><span>暗器</span><strong>{combat.proficiencies.hiddenWeapon}</strong></div>
+          <div class="character-stat"><span>内功</span><strong>{combat.proficiencies.internal}</strong></div>
+        </div>
+      </section>
+
+      <section class="character-detail-section">
+        <h3>成长</h3>
+        <div class="character-stat-grid">
+          <div class="character-stat"><span>成长类型</span><strong>{enumLabel("NPC_ChengZhangType", combat.growthTypeId)}</strong></div>
+          <div class="character-stat"><span>初始值</span><strong>{growth.initialValue}</strong></div>
+          <div class="character-stat"><span>最终值</span><strong>{growth.finalValue}</strong></div>
+          <div class="character-stat"><span>基础等级</span><strong>{growth.baseLevel}</strong></div>
+          <div class="character-stat"><span>膂力成长</span><strong>{numberText(growth.attributeGrowth.strength, 1)}</strong></div>
+          <div class="character-stat"><span>根骨成长</span><strong>{numberText(growth.attributeGrowth.constitution, 1)}</strong></div>
+          <div class="character-stat"><span>体魄成长</span><strong>{numberText(growth.attributeGrowth.physique, 1)}</strong></div>
+          <div class="character-stat"><span>身法成长</span><strong>{numberText(growth.attributeGrowth.agility, 1)}</strong></div>
+        </div>
+      </section>
+
+      <section class="character-detail-section">
+        <h3>装备与生活</h3>
+        <div class="character-stat-grid">
+          <div class="character-stat"><span>武器</span><strong>{combat.equipment.weapon || "-"}</strong></div>
+          <div class="character-stat"><span>防具</span><strong>{combat.equipment.armor || "-"}</strong></div>
+          <div class="character-stat"><span>备用武器</span><strong>{combat.equipment.otherWeapon || "-"}</strong></div>
+          <div class="character-stat"><span>挖矿</span><strong>{life.mining}</strong></div>
+          <div class="character-stat"><span>采药</span><strong>{life.herbGathering}</strong></div>
+          <div class="character-stat"><span>打猎</span><strong>{life.hunting}</strong></div>
+          <div class="character-stat"><span>锻造</span><strong>{life.forging}</strong></div>
+          <div class="character-stat"><span>炼丹</span><strong>{life.alchemy}</strong></div>
+          <div class="character-stat"><span>裁缝</span><strong>{life.sewing}</strong></div>
+        </div>
+      </section>
+
+      <section class="character-detail-section character-page-wide">
+        <h3>武功配置</h3>
+        <div class="character-skill-list">
+          {martialArtsByLevel().length ? martialArtsByLevel().map(([level, rows]) => (
+            <div class="character-skill-row">
+              <span>Lv {level}</span>
+              <div>
+                {rows.map((item) => <span class="tag is-skill">{item.name} {item.martialLevel}</span>)}
+              </div>
+            </div>
+          )) : <div class="empty-state compact">暂无武功配置</div>}
+        </div>
+      </section>
+
+      {(character.attributeSnapshots || []).length > 0 && (
+        <section class="character-detail-section character-page-wide">
+          <h3>成长快照</h3>
+          <div class="character-snapshot-list">
+            {character.attributeSnapshots.map((item) => (
+              <div class="character-snapshot">
+                <strong>Lv {item.lv}</strong>
+                <span>四维 {item.lvli} / {item.gengu} / {item.tipo} / {item.shenfa}</span>
+                <span>精通 {item.quanzhang} / {item.daojian} / {item.qiangbang} / {item.anqi} / {item.neigong}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {character.word && (
+        <section class="character-detail-section character-page-wide">
+          <h3>台词</h3>
+          <p class="character-word">{character.word}</p>
+        </section>
+      )}
+    </section>
+  </main>
+</BaseLayout>

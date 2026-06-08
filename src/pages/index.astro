@@ -25,9 +25,13 @@ const path = (href) => `${base}${href.replace(/^\/+/, "")}`;
         <strong>功法图鉴</strong>
         <span>后续从已解析数据库生成可检索的武学资料页。</span>
       </a>
+      <a class="home-card" href={path("characters/")}>
+        <strong>人物地点索引</strong>
+        <span>按 location 查看 NPC 所在位置、基础属性、成长和武功配置。</span>
+      </a>
       <a class="home-card is-disabled" href="#" aria-disabled="true">
-        <strong>人物与事件</strong>
-        <span>预留给人物地点、事件触发和流程资料。</span>
+        <strong>事件资料</strong>
+        <span>预留给事件触发和流程资料。</span>
       </a>
     </section>
   </main>

@@ -5,12 +5,7 @@ import { canEnableCustomMartial, canSelectMartialItem, getMartialCountItems, get
 import { countBy, escapeHtml } from "../../shared/utils.js";
 import { hideTooltip, hoverTooltip, positionTooltip, showChainTooltip, showMartialTooltip } from "./tooltips.js";
 import { renderChainGroups, renderFilters, renderLoadoutControls, renderMartialList, renderSelected, renderSummary } from "./render.js";
-
-const DATA_ROOT = document.body.dataset.dataRoot || "data/";
-
-function dataUrl(path) {
-  return new URL(`${DATA_ROOT}${path}`, window.location.href);
-}
+import { loadLoadoutData } from "../../shared/wiki-db.js";
 
 function render() {
   if (state.customMartial.enabled && !canEnableCustomMartial(state, MAX_SELECTION)) {
@@ -166,19 +161,13 @@ function bindEvents() {
 }
 
 async function loadData() {
-  const [wuxue, effects, sectChains, styleChains, enums] = await Promise.all([
-    fetch(dataUrl("martial_arts.json")).then((response) => response.json()),
-    fetch(dataUrl("status_effects.json")).then((response) => response.json()),
-    fetch(dataUrl("sect_chains.json")).then((response) => response.json()),
-    fetch(dataUrl("style_chains.json")).then((response) => response.json()),
-    fetch(dataUrl("enums.json")).then((response) => response.json()),
-  ]);
+  const { wuxue, effects, sectChains, styleChains, enums } = await loadLoadoutData();
 
   state.wuxue = wuxue;
   state.effects = effects;
   state.sectChains = sectChains;
   state.styleChains = styleChains;
-  state.enums = enums.enumTypes || {};
+  state.enums = enums;
   els.status.textContent = `${wuxue.length} 个武功，${sectChains.length} 个门派连锁，${styleChains.length} 个风格连锁`;
 }
 
