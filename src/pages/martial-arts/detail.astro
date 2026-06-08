@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="武学详情 - 大侠式人生重制版" active="martial">
+  <main id="martial-art-detail-root" class="characters-shell character-page">
+    <section class="characters-head">
+      <a class="back-link" href={`${import.meta.env.BASE_URL}martial-arts/`}>返回武学索引</a>
+      <h1>武学详情</h1>
+      <p class="status-text">读取中...</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import "../../martial-arts/detail-page.js";
+</script>

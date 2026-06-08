@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="人物详情 - 大侠式人生重制版" active="characters">
+  <main id="character-detail-root" class="characters-shell character-page">
+    <section class="characters-head">
+      <a class="back-link" href={`${import.meta.env.BASE_URL}characters/`}>返回人物索引</a>
+      <h1>人物详情</h1>
+      <p class="status-text">读取中...</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import "../../characters/detail-page.js";
+</script>

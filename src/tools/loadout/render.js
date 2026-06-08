@@ -1,7 +1,8 @@
 import { EQUIPMENT_STYLE_OPTION_IDS, EQUIPMENT_STYLE_SLOTS, MAX_SELECTION } from "../../shared/constants.js";
 import { canEnableCustomMartial, canSelectMartialItem, getCustomMartialConflictSect, getJoinableSects, getMartialConflictSect, getMartialSelectionCount, getSelectedMartialItems } from "./loadout.js";
 import { els, state } from "./state.js";
-import { enumLabel, escapeHtml, getRareMeta, martialTypeLabel, sortedCounts } from "../../shared/utils.js";
+import { enumLabel, escapeHtml, martialTypeLabel, sortedCounts } from "../../shared/utils.js";
+import { renderMartialCard } from "../../martial-arts/shared.js";
 
 function labelFor(type, id) {
   return enumLabel(state.enums, type, id);
@@ -131,32 +132,19 @@ export function renderMartialList() {
     const disabledByLimit = !selected && hasMaxSelection;
     const disabledByConflict = !selected && !canSelectMartialItem(state, item);
     const disabled = disabledByLimit || disabledByConflict;
-    const rare = getRareMeta(item.rare, state.enums);
     const disabledTitle = disabledByConflict
       ? `当前已加入${labelFor("LianSuo_MP", conflictSect)}，不能选择其它门派限定武学`
       : disabledByLimit
         ? `最多选择 ${MAX_SELECTION} 个武功`
         : item.name;
-    const tags = [
-      `<span class="tag sect">${escapeHtml(labelFor("LianSuo_MP", item.sectId))}</span>`,
-      ...(item.styleIds || []).map((styleId) => `<span class="tag">${escapeHtml(labelFor("LianSuo_FG", styleId))}</span>`),
-    ].join("");
-
-    return `
-      <button
-        type="button"
-        class="martial-card ${rare.className} ${selected ? "is-selected" : ""} ${disabled ? "is-disabled" : ""}"
-        data-name="${escapeHtml(item.name)}"
-        title="${escapeHtml(disabledTitle)}"
-        ${disabled ? "aria-disabled=\"true\"" : ""}
-      >
-        <span class="martial-title">
-          <span>(${escapeHtml(martialTypeLabel(state.enums, item.typeId))}) ${escapeHtml(item.name)}</span>
-          <span class="check-mark" aria-hidden="true">✓</span>
-        </span>
-        <span class="tag-row">${tags}</span>
-      </button>
-    `;
+    return renderMartialCard(item, state.enums, {
+      selected,
+      disabled,
+      title: disabledTitle,
+      dataName: item.name,
+      infoValue: item.id,
+      showCheckMark: true,
+    });
   }).join("");
 }
 

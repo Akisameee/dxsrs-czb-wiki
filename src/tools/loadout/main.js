@@ -3,9 +3,61 @@ import { els, state } from "./state.js";
 import { buildVisibleChainRecords, getPenglaiModifier, isBasicChainUnlocked } from "./rules.js";
 import { canEnableCustomMartial, canSelectMartialItem, getMartialCountItems, getMartialSelectionCount, getStyleCountItems } from "./loadout.js";
 import { countBy, escapeHtml } from "../../shared/utils.js";
-import { hideTooltip, hoverTooltip, positionTooltip, showChainTooltip, showMartialTooltip } from "./tooltips.js";
+import { hideTooltip, hoverTooltip, positionTooltip, showChainTooltip } from "./tooltips.js";
 import { renderChainGroups, renderFilters, renderLoadoutControls, renderMartialList, renderSelected, renderSummary } from "./render.js";
-import { loadLoadoutData } from "../../shared/wiki-db.js";
+import { enumMapFromRows, groupBy, queryRows } from "../../shared/wiki-db.js";
+import { bindMartialInfoTooltip } from "../../martial-arts/shared.js";
+
+async function loadEnums() {
+  const rows = await queryRows("SELECT type, id, label FROM enums ORDER BY type, id");
+  return enumMapFromRows(rows);
+}
+
+function chainGroups(rows, idColumn, outputKey) {
+  return [...groupBy(rows, idColumn).entries()].map(([id, chains]) => ({
+    [outputKey]: Number(id),
+    chains: chains.map((row) => ({ count: Number(row.count), effect: row.effect })),
+  }));
+}
+
+async function loadLoadoutTables() {
+  const [martialArts, styles, effects, passives, statusEffects, sectChains, styleChains, enums] = await Promise.all([
+    queryRows("SELECT * FROM martial_arts ORDER BY id"),
+    queryRows("SELECT * FROM martial_art_styles ORDER BY martial_art_id, slot"),
+    queryRows("SELECT * FROM martial_art_effects ORDER BY martial_art_id, slot"),
+    queryRows("SELECT * FROM martial_art_passives ORDER BY martial_art_id, slot"),
+    queryRows("SELECT id, name, value_per_level AS valuePerLevel, template FROM status_effects ORDER BY id"),
+    queryRows("SELECT * FROM sect_chains ORDER BY sect_id, count"),
+    queryRows("SELECT * FROM style_chains ORDER BY style_id, count"),
+    loadEnums(),
+  ]);
+  const stylesByMartial = groupBy(styles, "martial_art_id");
+  const effectsByMartial = groupBy(effects, "martial_art_id");
+  const passivesByMartial = groupBy(passives, "martial_art_id");
+
+  return {
+    wuxue: martialArts.map((row) => ({
+      ...row,
+      sectId: Number(row.sect_id),
+      typeId: Number(row.type_id),
+      rare: Number(row.rarity_id),
+      styleIds: (stylesByMartial.get(row.id) || []).map((item) => Number(item.style_id)),
+      effect: (effectsByMartial.get(row.id) || []).map((item) => ({ id: Number(item.effect_id), level: Number(item.level) })),
+      passives: (passivesByMartial.get(row.id) || []).map((item) => item.text),
+      obtainMethod: row.obtain_method,
+      sectRestricted: Boolean(Number(row.is_sect_restricted)),
+    })),
+    effects: statusEffects.map((row) => ({
+      id: Number(row.id),
+      name: row.name,
+      valuePerLevel: row.valuePerLevel === null ? null : Number(row.valuePerLevel),
+      template: row.template,
+    })),
+    sectChains: chainGroups(sectChains, "sect_id", "sectId"),
+    styleChains: chainGroups(styleChains, "style_id", "styleId"),
+    enums,
+  };
+}
 
 function render() {
   if (state.customMartial.enabled && !canEnableCustomMartial(state, MAX_SELECTION)) {
@@ -103,28 +155,20 @@ function bindEvents() {
   });
 
   els.martialList.addEventListener("click", (event) => {
+    if (event.target.closest("[data-martial-info]")) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     const card = event.target.closest("[data-name]");
     if (!card || card.getAttribute("aria-disabled") === "true") return;
     toggleSelection(card.dataset.name);
   });
 
-  els.martialList.addEventListener("mouseover", (event) => {
-    const card = event.target.closest("[data-name]");
-    if (!card || card.contains(event.relatedTarget)) return;
-    const item = state.wuxue.find((entry) => entry.name === card.dataset.name);
-    if (!item) return;
-    showMartialTooltip(item, event);
-  });
-
-  els.martialList.addEventListener("mousemove", (event) => {
-    if (!hoverTooltip.classList.contains("is-visible")) return;
-    positionTooltip(event);
-  });
-
-  els.martialList.addEventListener("mouseout", (event) => {
-    const card = event.target.closest("[data-name]");
-    if (!card || card.contains(event.relatedTarget)) return;
-    hideTooltip();
+  bindMartialInfoTooltip(els.martialList, {
+    enums: state.enums,
+    effectsCatalog: state.effects,
+    getItem: (id) => state.wuxue.find((entry) => Number(entry.id) === Number(id)),
   });
 
   els.selectedList.addEventListener("click", (event) => {
@@ -161,7 +205,7 @@ function bindEvents() {
 }
 
 async function loadData() {
-  const { wuxue, effects, sectChains, styleChains, enums } = await loadLoadoutData();
+  const { wuxue, effects, sectChains, styleChains, enums } = await loadLoadoutTables();
 
   state.wuxue = wuxue;
   state.effects = effects;

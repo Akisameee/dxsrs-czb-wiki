@@ -16,6 +16,7 @@ import {
   rareText,
   rowsOf,
   setButtonBusy,
+  setControlsDisabled,
   uniqueSorted,
   waitForPaint,
   weaponOptions,
@@ -150,6 +151,7 @@ export function initSelfCreateSimulator(context) {
     simulation: null,
     analysis: null,
     seed: null,
+    isAnalyzing: false,
     charts: {},
   };
 
@@ -402,13 +404,24 @@ export function initSelfCreateSimulator(context) {
     );
   }
 
+  function analysisControls() {
+    return [
+      ...ATTRIBUTE_NAMES.map((name) => numberInput(els.form, name)),
+      els.weaponType,
+      els.simulationCount,
+    ];
+  }
+
   async function runInitialAnalysis() {
+    if (state.isAnalyzing) return;
     runSimulation();
     if (!state.simulation || !isAttributeTotalValid()) return;
 
+    state.isAnalyzing = true;
     const trials = simulationTrialCount(els);
     els.status.textContent = SIMULATOR_DESCRIPTION;
     setButtonBusy(els.runAnalysisButton, true, "模拟中");
+    setControlsDisabled(analysisControls(), true);
     els.simulationResults.innerHTML = renderProgress(`模拟中...每项 ${trials} 次`);
     await waitForPaint();
 
@@ -489,6 +502,8 @@ export function initSelfCreateSimulator(context) {
       els.status.textContent = SIMULATOR_DESCRIPTION;
       els.simulationResults.innerHTML = renderProgress(`模拟失败：${error.message}`);
     } finally {
+      state.isAnalyzing = false;
+      setControlsDisabled(analysisControls(), false);
       setButtonBusy(els.runAnalysisButton, false);
       updateButtons();
     }

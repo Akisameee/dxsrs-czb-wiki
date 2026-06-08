@@ -5,7 +5,7 @@ const path = (href) => `${base}${href.replace(/^\/+/, "")}`;
 
 const navItems = [
   { key: "home", label: "首页", href: "" },
-  { key: "martial", label: "功法", href: "tools/loadout/" },
+  { key: "martial", label: "武学", href: "martial-arts/" },
   { key: "characters", label: "人物", href: "characters/" },
   { key: "events", label: "事件", href: null },
 ];
@@ -44,6 +44,10 @@ const isToolActive = toolItems.some((item) => item.key === active);
       }
     </div>
   </div>
+  <div class="nav-search" role="search">
+    <input id="global-search-input" type="search" placeholder="搜索页面、人物、武学" autocomplete="off" />
+    <div id="global-search-results" class="nav-search-results" hidden></div>
+  </div>
 </nav>
 
 <script>
@@ -71,4 +75,8 @@ const isToolActive = toolItems.some((item) => item.key === active);
     setMenuOpen(false);
     button?.focus();
   });
+</script>
+
+<script>
+  import "../search/global-search.js";
 </script>

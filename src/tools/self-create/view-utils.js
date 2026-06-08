@@ -25,7 +25,7 @@ export function nullableString(value) {
 }
 
 export function rowsOf(table) {
-  return Array.isArray(table) ? table : table?.rows || [];
+  return Array.isArray(table) ? table : [];
 }
 
 export function uniqueSorted(items) {
@@ -120,6 +120,19 @@ export function setButtonBusy(button, busy, text = "") {
   button.removeAttribute("aria-label");
   button.textContent = button.dataset.idleText || button.textContent;
   delete button.dataset.idleText;
+}
+
+export function setControlsDisabled(controls, disabled) {
+  for (const control of controls.filter(Boolean)) {
+    if (disabled) {
+      control.dataset.disabledBeforeBusy = String(control.disabled);
+      control.disabled = true;
+      continue;
+    }
+
+    control.disabled = control.dataset.disabledBeforeBusy === "true";
+    delete control.dataset.disabledBeforeBusy;
+  }
 }
 
 export function waitForPaint() {

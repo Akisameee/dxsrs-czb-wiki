@@ -1,4 +1,5 @@
 import { enumLabel } from "../../shared/utils.js";
+import { getPaginationAction, pageFromPaginationAction, renderPagination } from "../../shared/pagination.js";
 import { searchSelfCreateInitials } from "./searcher.js";
 import {
   ATTRIBUTE_NAMES,
@@ -14,6 +15,7 @@ import {
   resultBadge,
   rowsOf,
   setButtonBusy,
+  setControlsDisabled,
   styleOptions,
   waitForPaint,
   weaponOptions,
@@ -121,6 +123,7 @@ export function initSelfCreateSearcher(context) {
     matches: [],
     sortPrimary: "styleMatch",
     page: 1,
+    isSearching: false,
   };
 
   function renderAreaOptions() {
@@ -258,23 +261,38 @@ export function initSelfCreateSearcher(context) {
     state.page = Math.max(1, Math.min(state.page, pageCount));
     const start = (state.page - 1) * SEARCHER_PAGE_SIZE;
     const visible = results.slice(start, start + SEARCHER_PAGE_SIZE);
+    const pagination = renderPagination({
+      page: state.page,
+      pageCount,
+      extraHtml: `<button type="button" data-searcher-sort-cycle>排序：${escapeHtml(sortFieldLabel(state.sortPrimary))}</button>`,
+    });
     els.results.innerHTML = `
       <div class="searcher-result-head">
         <span>共 ${results.length} 个初始输入，${targetCount > 0 ? `最高初始命中 ${best} / ${targetCount}，` : ""}第 ${state.page} / ${pageCount} 页</span>
-        <div class="searcher-result-actions">
-          <button type="button" data-searcher-page="prev" ${state.page <= 1 ? "disabled" : ""}>上一页</button>
-          <button type="button" data-searcher-page="next" ${state.page >= pageCount ? "disabled" : ""}>下一页</button>
-          <button type="button" data-searcher-sort-cycle>排序：${escapeHtml(sortFieldLabel(state.sortPrimary))}</button>
-        </div>
+        ${pagination}
       </div>
       ${visible.map((route) => renderRoute(route)).join("")}
     `;
   }
 
+  function searchControls() {
+    return [
+      els.weaponType,
+      els.style,
+      els.area,
+      els.effect,
+      els.effectLevel,
+      els.simulationCount,
+    ];
+  }
+
   async function searchRoutes() {
+    if (state.isSearching) return;
+    state.isSearching = true;
     const trials = searcherTrialCount();
     els.status.textContent = `估算中...每个初始输入 ${trials} 次试验`;
     setButtonBusy(els.searchButton, true, "搜索中");
+    setControlsDisabled(searchControls(), true);
     await waitForPaint();
     try {
       state.matches = await searchSelfCreateInitials(searchTarget(), data, {
@@ -292,6 +310,8 @@ export function initSelfCreateSearcher(context) {
     } catch (error) {
       els.status.textContent = `估算失败：${error.message}`;
     } finally {
+      state.isSearching = false;
+      setControlsDisabled(searchControls(), false);
       setButtonBusy(els.searchButton, false);
     }
   }
@@ -316,9 +336,10 @@ export function initSelfCreateSearcher(context) {
       return;
     }
 
-    const pageButton = event.target.closest("[data-searcher-page]");
-    if (!pageButton) return;
-    state.page += pageButton.dataset.searcherPage === "next" ? 1 : -1;
+    const action = getPaginationAction(event);
+    if (!action) return;
+    const pageCount = Math.max(1, Math.ceil(state.matches.length / SEARCHER_PAGE_SIZE));
+    state.page = pageFromPaginationAction(action, state.page, pageCount);
     renderResults();
   });
 

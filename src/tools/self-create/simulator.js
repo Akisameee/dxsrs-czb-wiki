@@ -5,7 +5,7 @@ const DEFAULT_BUFF_TARGET = 1;
 const GAILIANG_PERCENT_STEP = 4;
 
 function rowsOf(table) {
-  return Array.isArray(table) ? table : table?.rows || [];
+  return Array.isArray(table) ? table : [];
 }
 
 function clone(value) {
@@ -38,11 +38,10 @@ function rareGroup(rare) {
 
 function defaultData(data) {
   return {
-    wugongRows: rowsOf(data?.wugongRows || data?.GWuGong || data?.wugong),
-    chainRows: rowsOf(data?.chainRows || data?.GLianSuo || data?.chains),
-    ziChuangWeiLiRows: rowsOf(data?.ziChuangWeiLiRows || data?.GZiChuangWeiLi || data?.ziChuangWeiLi),
-    ziChuangBuffRows: rowsOf(data?.ziChuangBuffRows || data?.GZiChuangBuff || data?.ziChuangBuff),
-    styleNames: data?.styleNames || data?.enumTypes?.LianSuo_FG || {},
+    wugongRows: rowsOf(data?.wugongRows),
+    chainRows: rowsOf(data?.chainRows),
+    ziChuangWeiLiRows: rowsOf(data?.ziChuangWeiLiRows),
+    ziChuangBuffRows: rowsOf(data?.ziChuangBuffRows),
   };
 }
 
