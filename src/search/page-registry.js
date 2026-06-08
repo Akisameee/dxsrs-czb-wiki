@@ -4,6 +4,7 @@ const STATIC_PAGES = [
   { type: "页面", title: "首页", href: "" },
   { type: "武学", title: "武学图鉴", href: "martial-arts/" },
   { type: "人物", title: "人物地点索引", href: "characters/" },
+  { type: "数据", title: "数据总览", href: "data/" },
   { type: "工具", title: "武学配装", href: "tools/loadout/" },
   { type: "工具", title: "自创武学模拟", href: "tools/self-create/" },
 ];

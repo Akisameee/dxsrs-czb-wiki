@@ -1,5 +1,6 @@
 import { enumLabel, escapeHtml, fieldValue } from "../shared/utils.js";
-import { hideTooltip, positionTooltipAt, showTooltipContent } from "../shared/hover-tooltip.js";
+import { bindHoverTooltipTarget } from "../shared/hover-tooltip.js";
+import { renderWikiCard } from "../shared/wiki-card.js";
 
 const SITE_ROOT = (document.body.dataset.dataRoot || "data/").replace(/data\/?$/, "");
 
@@ -68,41 +69,24 @@ export function renderCharacterCard(character, enums) {
     Number(character.is_manager) ? tag("管事人") : "",
   ].filter(Boolean).join("");
 
-  return `
-    <a class="character-card character-card-link" href="${escapeHtml(characterDetailHref(character.id))}">
-      <div class="character-card-main">
-        <strong>${escapeHtml(character.name)}</strong>
-        <span class="character-title-actions">
-          <span class="character-card-location">${escapeHtml(characterLocationText(character, enums))}</span>
-          <span
-            class="martial-info-button character-info-button"
-            data-character-info="${escapeHtml(character.id)}"
-            aria-label="查看 ${escapeHtml(character.name)} 信息"
-          >?</span>
-        </span>
-      </div>
-      <div class="tag-row">${tags}</div>
-      <span class="character-card-action">查看详情</span>
-    </a>
-  `;
+  return renderWikiCard({
+    href: characterDetailHref(character.id),
+    title: character.name,
+    subtitle: characterLocationText(character, enums),
+    tags,
+    info: {
+      attr: "data-character-info",
+      value: character.id,
+      label: `查看 ${character.name} 信息`,
+    },
+  });
 }
 
 export function bindCharacterInfoTooltip(container, options) {
   const { getItem, enums } = options;
-
-  container.addEventListener("mouseover", (event) => {
-    const button = event.target.closest("[data-character-info]");
-    if (!button || !container.contains(button) || button.contains(event.relatedTarget)) return;
-    const item = getItem(button.dataset.characterInfo);
-    if (!item) return;
-    showTooltipContent(renderCharacterTooltip(item, enums), event);
-    const rect = button.getBoundingClientRect();
-    positionTooltipAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
-  });
-
-  container.addEventListener("mouseout", (event) => {
-    const button = event.target.closest("[data-character-info]");
-    if (!button || !container.contains(button) || button.contains(event.relatedTarget)) return;
-    hideTooltip();
+  bindHoverTooltipTarget(container, {
+    selector: "[data-character-info]",
+    getItem: (target) => getItem(target.dataset.characterInfo),
+    renderTooltip: (character) => renderCharacterTooltip(character, enums),
   });
 }

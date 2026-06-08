@@ -113,7 +113,7 @@ const TABLES = {
       character_id: "INTEGER NOT NULL",
       slot: "INTEGER NOT NULL",
       level: "INTEGER NOT NULL",
-      name: "TEXT NOT NULL",
+      martial_art_id: "INTEGER NOT NULL",
       martial_level: "INTEGER NOT NULL",
     },
   },
@@ -146,6 +146,33 @@ const TABLES = {
       armor: "TEXT",
       fame: "INTEGER",
       chivalry: "INTEGER",
+    },
+  },
+  character_quests: {
+    primaryKey: ["id"],
+    columns: {
+      id: "INTEGER NOT NULL",
+      raw_name: "TEXT",
+      raw_character_name: "TEXT NOT NULL",
+      character_id: "INTEGER NOT NULL",
+      stage: "INTEGER NOT NULL",
+      required_affinity: "INTEGER NOT NULL",
+      quest_type_id: "INTEGER NOT NULL",
+      reward: "TEXT",
+      sort_order: "INTEGER NOT NULL",
+    },
+  },
+  character_quest_targets: {
+    primaryKey: ["quest_id", "slot"],
+    columns: {
+      quest_id: "INTEGER NOT NULL",
+      slot: "INTEGER NOT NULL",
+      target_role: "TEXT NOT NULL",
+      target_kind: "TEXT NOT NULL",
+      target_id: "INTEGER",
+      target_region_id: "INTEGER",
+      target_name: "TEXT",
+      raw_value: "TEXT NOT NULL",
     },
   },
   locations: {
@@ -303,7 +330,11 @@ const INDEXES = [
   "CREATE INDEX idx_characters_weapon ON characters(weapon_type_id)",
   "CREATE INDEX idx_location_characters_character ON location_characters(character_id)",
   "CREATE INDEX idx_character_martial_arts_character ON character_martial_arts(character_id)",
+  "CREATE INDEX idx_character_martial_arts_martial ON character_martial_arts(martial_art_id)",
   "CREATE INDEX idx_character_attribute_snapshots_character ON character_attribute_snapshots(character_id)",
+  "CREATE INDEX idx_character_quests_character ON character_quests(character_id)",
+  "CREATE INDEX idx_character_quests_type ON character_quests(quest_type_id)",
+  "CREATE INDEX idx_character_quest_targets_quest ON character_quest_targets(quest_id)",
   "CREATE INDEX idx_martial_arts_name ON martial_arts(name)",
   "CREATE INDEX idx_martial_arts_sect ON martial_arts(sect_id)",
   "CREATE INDEX idx_martial_arts_type ON martial_arts(type_id)",
@@ -431,6 +462,16 @@ function groupRowsByName(rows, nameField) {
   return grouped;
 }
 
+function characterIdLookup(npcRows) {
+  const idByName = new Map();
+  for (const row of npcRows) {
+    const id = Number(row.index);
+    if (row.name) idByName.set(row.name, id);
+    idByName.set(npcName(row), id);
+  }
+  return idByName;
+}
+
 function buildCharacterRows(npcRows, npcWordRows, locationByCode) {
   const wordByName = new Map((npcWordRows || []).filter((row) => row.juesename).map((row) => [row.juesename, row.word]));
   return npcRows.map((row) => {
@@ -510,22 +551,51 @@ function buildCharacterFriendRows(npcRows) {
   );
 }
 
-function buildCharacterMartialRows(npcRows, npcMartialRows) {
-  const idByName = new Map(npcRows.map((row) => [npcName(row), Number(row.index)]));
+function martialArtIdByInternalName(wugongRows) {
+  const lookup = new Map();
+  const duplicates = [];
+  wugongRows.forEach((row, index) => {
+    if (!row.name) return;
+    const id = Number(row.index ?? index);
+    if (lookup.has(row.name)) duplicates.push(row.name);
+    lookup.set(row.name, id);
+  });
+
+  if (duplicates.length > 0) {
+    throw new Error(`GWuGong.name 存在重名，无法安全映射 NPC 武功：${[...new Set(duplicates)].join("、")}`);
+  }
+  return lookup;
+}
+
+function buildCharacterMartialRows(npcRows, npcMartialRows, wugongRows) {
+  const idByName = characterIdLookup(npcRows);
+  const martialIdByName = martialArtIdByInternalName(wugongRows);
+  const missing = [...new Set((npcMartialRows || [])
+    .map((row) => row.wugongname)
+    .filter((name) => name && !martialIdByName.has(name)))];
+
+  if (missing.length > 0) {
+    throw new Error(`GNpcWuGong.wugongname 无法映射到 GWuGong.name：${missing.join("、")}`);
+  }
+
   return (npcMartialRows || [])
-    .filter((row) => idByName.has(row.juesename))
-    .sort((a, b) => Number(a.lv) - Number(b.lv) || String(a.wugongname).localeCompare(String(b.wugongname), "zh-Hans-CN"))
+    .filter((row) => idByName.has(row.juesename) && martialIdByName.has(row.wugongname))
+    .sort((a, b) => (
+      idByName.get(a.juesename) - idByName.get(b.juesename)
+      || Number(a.lv) - Number(b.lv)
+      || martialIdByName.get(a.wugongname) - martialIdByName.get(b.wugongname)
+    ))
     .map((row, slot) => ({
       character_id: idByName.get(row.juesename),
       slot,
       level: Number(row.lv),
-      name: row.wugongname,
+      martial_art_id: martialIdByName.get(row.wugongname),
       martial_level: Number(row.wugonglv),
     }));
 }
 
 function buildCharacterAttributeSnapshotRows(npcRows, npcAttributeRows) {
-  const idByName = new Map(npcRows.map((row) => [npcName(row), Number(row.index)]));
+  const idByName = characterIdLookup(npcRows);
   return (npcAttributeRows || [])
     .filter((row) => idByName.has(row.juesename))
     .sort((a, b) => Number(a.lv) - Number(b.lv))
@@ -557,6 +627,132 @@ function buildCharacterAttributeSnapshotRows(npcRows, npcAttributeRows) {
       fame: row.mingsheng,
       chivalry: row.xiayi,
     }));
+}
+
+function buildItemLookups(itemRows) {
+  const itemByName = new Map();
+  for (const row of itemRows || []) {
+    const item = {
+      id: Number(row.index),
+      name: row.chnname || row.name,
+    };
+    if (row.name) itemByName.set(row.name, item);
+    if (row.chnname) itemByName.set(row.chnname, item);
+  }
+  return { itemByName };
+}
+
+function resolveQuestTarget(rawValue, lookups) {
+  if (!rawValue) return null;
+
+  const location = lookups.locationByCode.get(rawValue);
+  if (location) {
+    return {
+      target_kind: "location",
+      target_id: location.locationId,
+      target_region_id: location.regionId,
+      target_name: location.locationName,
+      raw_value: rawValue,
+    };
+  }
+
+  const characterId = lookups.characterIdByName.get(rawValue);
+  if (characterId !== undefined) {
+    return {
+      target_kind: "character",
+      target_id: characterId,
+      target_region_id: null,
+      target_name: lookups.characterNameById.get(characterId) || rawValue,
+      raw_value: rawValue,
+    };
+  }
+
+  const item = lookups.itemByName.get(rawValue);
+  if (item) {
+    return {
+      target_kind: "item",
+      target_id: item.id,
+      target_region_id: null,
+      target_name: item.name,
+      raw_value: rawValue,
+    };
+  }
+
+  return {
+    target_kind: "unknown",
+    target_id: null,
+    target_region_id: null,
+    target_name: rawValue,
+    raw_value: rawValue,
+  };
+}
+
+function buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, locationByCode) {
+  const characterIdByName = characterIdLookup(npcRows);
+  const characterNameById = new Map(npcRows.map((row) => [Number(row.index), npcName(row)]));
+  const { itemByName } = buildItemLookups(itemRows);
+  const areaNameByCode = new Map(areaRows.filter((row) => row.name).map((row) => [row.name, row.chnname || row.name]));
+  const locationLookup = new Map();
+  for (const [code, location] of locationByCode.entries()) {
+    locationLookup.set(code, {
+      ...location,
+      locationName: areaNameByCode.get(code) || code,
+    });
+  }
+
+  const rows = (qingYuanRows || [])
+    .filter((row) => characterIdByName.has(row.juesename))
+    .sort((a, b) =>
+      characterIdByName.get(a.juesename) - characterIdByName.get(b.juesename)
+      || Number(a.youhaodu) - Number(b.youhaodu)
+      || Number(a.index) - Number(b.index),
+    );
+
+  const stageByCharacter = new Map();
+  const quests = [];
+  const targets = [];
+  const lookups = {
+    characterIdByName,
+    characterNameById,
+    itemByName,
+    locationByCode: locationLookup,
+  };
+
+  rows.forEach((row, sortOrder) => {
+    const characterId = characterIdByName.get(row.juesename);
+    const stage = (stageByCharacter.get(characterId) || 0) + 1;
+    stageByCharacter.set(characterId, stage);
+
+    const questId = Number(row.index);
+    quests.push({
+      id: questId,
+      raw_name: row.name || null,
+      raw_character_name: row.juesename,
+      character_id: characterId,
+      stage,
+      required_affinity: Number(row.youhaodu),
+      quest_type_id: Number(row.questtype),
+      reward: row.reward || null,
+      sort_order: sortOrder,
+    });
+
+    const targetValues = [
+      { role: "main", value: row.missiontarget },
+      { role: "extra", value: row.strparam1 },
+      { role: "extra", value: row.strparam2 },
+    ].filter((item) => item.value);
+
+    targetValues.forEach((item, slot) => {
+      targets.push({
+        quest_id: questId,
+        slot,
+        target_role: item.role,
+        ...resolveQuestTarget(item.value, lookups),
+      });
+    });
+  });
+
+  return { quests, targets };
 }
 
 function buildLocationRows(areaRows, npcRows, locationByCode, locationById) {
@@ -816,15 +1012,20 @@ function buildRowsFromSource(source, enumSource) {
   const npcMartialRows = tableByName(extracted, "GNpcWuGong");
   const npcAttributeRows = tableByName(extracted, "GNpcAttribute");
   const npcWordRows = tableByName(extracted, "NPC_Word");
+  const qingYuanRows = tableByName(extracted, "QingYuan");
+  const itemRows = tableByName(extracted, "GItem");
   const enumTypes = buildEnumTypes({ enumSource, areaRows, chainRows });
   const { locationByCode, locationById } = buildLocationLookups(areaRows);
+  const characterQuestData = buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, locationByCode);
 
   return {
     enums: enumRows(enumTypes),
     characters: buildCharacterRows(npcRows, npcWordRows, locationByCode),
     character_friends: buildCharacterFriendRows(npcRows),
-    character_martial_arts: buildCharacterMartialRows(npcRows, npcMartialRows),
+    character_martial_arts: buildCharacterMartialRows(npcRows, npcMartialRows, wugongRows),
     character_attribute_snapshots: buildCharacterAttributeSnapshotRows(npcRows, npcAttributeRows),
+    character_quests: characterQuestData.quests,
+    character_quest_targets: characterQuestData.targets,
     locations: buildLocationRows(areaRows, npcRows, locationByCode, locationById),
     location_characters: buildLocationCharacterRows(npcRows, locationByCode),
     unplaced_characters: buildUnplacedCharacterRows(npcRows, locationByCode),

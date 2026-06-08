@@ -59,7 +59,11 @@ function renderMartialArts(martialArts) {
     <div class="character-skill-row">
       <span>Lv ${escapeHtml(level)}</span>
       <div>
-        ${items.map((item) => tag(`${item.name} ${item.martial_level}`, "is-skill")).join("")}
+        ${items.map((item) => `
+          <a class="tag is-skill" href="${escapeHtml(pagePath(`martial-arts/detail/?id=${item.martial_art_id}`))}">
+            ${escapeHtml(`${item.name} ${item.martial_level}`)}
+          </a>
+        `).join("")}
       </div>
     </div>
   `).join("");
@@ -83,7 +87,70 @@ function renderSnapshots(snapshots) {
   `;
 }
 
-function renderCharacter({ character, martialArts, snapshots, enums }) {
+function targetLabel(target) {
+  const name = target.target_name || target.raw_value;
+  if (target.target_kind === "character" && target.target_id !== null && target.target_id !== undefined) {
+    return `<a href="${escapeHtml(pagePath(`characters/detail/?id=${target.target_id}`))}">${escapeHtml(name)}</a>`;
+  }
+  return escapeHtml(name);
+}
+
+function renderQuestTargets(targets) {
+  if (!targets.length) return `<span class="muted-text">未记录</span>`;
+  return targets.map((target) => `
+    <span class="character-quest-target">
+      ${targetLabel(target)}
+    </span>
+  `).join("");
+}
+
+function questTypeLabel(enums, id) {
+  return enumLabel(enums, "QuestType", id, `类型 ${id}`).replace(/^情缘_/, "");
+}
+
+function renderQuests(quests, targetsByQuest, enums) {
+  if (!quests.length) return "";
+  return `
+    <section class="character-detail-section character-page-wide">
+      <h3>心愿任务</h3>
+      <div class="character-quest-list">
+        ${quests.map((quest) => `
+          <article class="character-quest">
+            <header>
+              <strong>阶段 ${escapeHtml(quest.stage)}</strong>
+            </header>
+            <div class="character-quest-body">
+              <div>
+                <span>亲密度</span>
+                <strong>${escapeHtml(quest.required_affinity)}</strong>
+              </div>
+              <div>
+                <span>类型</span>
+                <strong>${escapeHtml(questTypeLabel(enums, quest.quest_type_id))}</strong>
+              </div>
+              <div>
+                <span>目标</span>
+                <strong>${renderQuestTargets(targetsByQuest.get(quest.id) || [])}</strong>
+              </div>
+              <div>
+                <span>奖励</span>
+                <strong>${escapeHtml(quest.reward || "-")}</strong>
+              </div>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderCharacter({ character, martialArts, snapshots, quests, questTargets, enums }) {
+  const targetsByQuest = new Map();
+  for (const target of questTargets) {
+    if (!targetsByQuest.has(target.quest_id)) targetsByQuest.set(target.quest_id, []);
+    targetsByQuest.get(target.quest_id).push(target);
+  }
+
   const tags = [
     tag(enumLabel(enums, "LianSuo_MP", character.sect_id, "未知门派")),
     tag(enumLabel(enums, "NPC_Rare", character.rarity_id, "未知资质"), `rarity rarity-npc-${character.rarity_id}`),
@@ -170,6 +237,8 @@ function renderCharacter({ character, martialArts, snapshots, enums }) {
         <div class="character-skill-list">${renderMartialArts(martialArts)}</div>
       </section>
 
+      ${renderQuests(quests, targetsByQuest, enums)}
+
       ${renderSnapshots(snapshots)}
 
       ${character.word ? `
@@ -188,19 +257,33 @@ function detailId() {
 }
 
 async function loadData(id) {
-  const [character, martialArts, snapshots, enumRows] = await Promise.all([
+  const [character, martialArts, snapshots, quests, questTargets, enumRows] = await Promise.all([
     queryOne("SELECT * FROM characters WHERE id = ?", [id]),
     queryRows(`
-      SELECT level, name, martial_level
-      FROM character_martial_arts
-      WHERE character_id = ?
-      ORDER BY level, slot
+      SELECT c.level, c.martial_art_id, m.name, c.martial_level
+      FROM character_martial_arts c
+      JOIN martial_arts m ON m.id = c.martial_art_id
+      WHERE c.character_id = ?
+      ORDER BY c.level, c.slot
     `, [id]),
     queryRows(`
       SELECT *
       FROM character_attribute_snapshots
       WHERE character_id = ?
       ORDER BY level, slot
+    `, [id]),
+    queryRows(`
+      SELECT *
+      FROM character_quests
+      WHERE character_id = ?
+      ORDER BY sort_order
+    `, [id]),
+    queryRows(`
+      SELECT t.*
+      FROM character_quest_targets t
+      JOIN character_quests q ON q.id = t.quest_id
+      WHERE q.character_id = ?
+      ORDER BY q.sort_order, t.slot
     `, [id]),
     queryRows("SELECT type, id, label FROM enums ORDER BY type, id"),
   ]);
@@ -209,6 +292,8 @@ async function loadData(id) {
     character,
     martialArts,
     snapshots,
+    quests,
+    questTargets,
     enums: enumMapFromRows(enumRows),
   };
 }

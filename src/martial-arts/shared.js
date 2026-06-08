@@ -1,5 +1,6 @@
 import { enumLabel, escapeHtml, fieldValue, formatEffectText, getRareMeta, listValue, martialTypeLabel } from "../shared/utils.js";
-import { hideTooltip, positionTooltipAt, showTooltipContent } from "../shared/hover-tooltip.js";
+import { bindHoverTooltipTarget } from "../shared/hover-tooltip.js";
+import { renderWikiCard } from "../shared/wiki-card.js";
 
 const SITE_ROOT = (document.body.dataset.dataRoot || "data/").replace(/data\/?$/, "");
 
@@ -118,58 +119,27 @@ export function renderMartialCard(item, enums, options = {}) {
   const rare = getRareMeta(martialRare(item), enums);
   const typeName = martialTypeLabel(enums, martialTypeId(item));
   const name = martialName(item);
-  const selected = Boolean(options.selected);
-  const disabled = Boolean(options.disabled);
-  const className = [
-    "martial-card",
-    options.href ? "martial-card-link" : "",
-    rare.className,
-    selected ? "is-selected" : "",
-    disabled ? "is-disabled" : "",
-    options.className || "",
-  ].filter(Boolean).join(" ");
   const tags = [
     tag(enumLabel(enums, "LianSuo_MP", martialSectId(item)), "sect"),
     ...martialStyleIds(item).map((styleId) => tag(enumLabel(enums, "LianSuo_FG", styleId))),
   ].join("");
   const infoValue = options.infoValue ?? martialId(item) ?? name;
-  const actions = `
-    <span class="martial-title-actions">
-      <span
-        class="martial-info-button"
-        data-martial-info="${escapeHtml(infoValue)}"
-        aria-label="查看 ${escapeHtml(name)} 信息"
-      >?</span>
-      ${options.showCheckMark ? `<span class="check-mark" aria-hidden="true">✓</span>` : ""}
-    </span>
-  `;
-  const body = `
-    <span class="martial-title">
-      <span>(${escapeHtml(typeName)}) ${escapeHtml(name)}</span>
-      ${actions}
-    </span>
-    <span class="tag-row">${tags}</span>
-  `;
-
-  if (options.href) {
-    return `
-      <a class="${className}" href="${escapeHtml(options.href)}">
-        ${body}
-      </a>
-    `;
-  }
-
-  return `
-    <button
-      type="button"
-      class="${className}"
-      ${options.dataName ? `data-name="${escapeHtml(options.dataName)}"` : ""}
-      ${options.title ? `title="${escapeHtml(options.title)}"` : ""}
-      ${disabled ? "aria-disabled=\"true\"" : ""}
-    >
-      ${body}
-    </button>
-  `;
+  return renderWikiCard({
+    href: options.href,
+    title: `(${typeName}) ${name}`,
+    tags,
+    className: [rare.className, options.className || ""].filter(Boolean).join(" "),
+    selected: Boolean(options.selected),
+    disabled: Boolean(options.disabled),
+    titleAttr: options.title,
+    dataAttrs: options.dataName ? { "data-name": options.dataName } : {},
+    showCheckMark: Boolean(options.showCheckMark),
+    info: {
+      attr: "data-martial-info",
+      value: infoValue,
+      label: `查看 ${name} 信息`,
+    },
+  });
 }
 
 export function martialDetailHref(id) {
@@ -178,20 +148,9 @@ export function martialDetailHref(id) {
 
 export function bindMartialInfoTooltip(container, options) {
   const { getItem, enums, effectsCatalog = [] } = options;
-
-  container.addEventListener("mouseover", (event) => {
-    const button = event.target.closest("[data-martial-info]");
-    if (!button || !container.contains(button) || button.contains(event.relatedTarget)) return;
-    const item = getItem(button.dataset.martialInfo);
-    if (!item) return;
-    showTooltipContent(renderMartialTooltip(item, enums, { effectsCatalog }), event);
-    const rect = button.getBoundingClientRect();
-    positionTooltipAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
-  });
-
-  container.addEventListener("mouseout", (event) => {
-    const button = event.target.closest("[data-martial-info]");
-    if (!button || !container.contains(button) || button.contains(event.relatedTarget)) return;
-    hideTooltip();
+  bindHoverTooltipTarget(container, {
+    selector: "[data-martial-info]",
+    getItem: (target) => getItem(target.dataset.martialInfo),
+    renderTooltip: (item) => renderMartialTooltip(item, enums, { effectsCatalog }),
   });
 }

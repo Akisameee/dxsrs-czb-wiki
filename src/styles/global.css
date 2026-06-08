@@ -525,7 +525,7 @@ select:focus {
   padding: 16px 18px 18px;
 }
 
-.martial-card {
+.wiki-card {
   display: grid;
   gap: 7px;
   height: 104px;
@@ -537,59 +537,59 @@ select:focus {
   cursor: pointer;
 }
 
-.martial-card-link {
+.wiki-card-link {
   color: inherit;
   text-decoration: none;
 }
 
-.martial-card.rarity-gray {
+.wiki-card.rarity-gray {
   border-color: #aeb7c2;
   background: #f1f3f5;
 }
 
-.martial-card.rarity-green {
+.wiki-card.rarity-green {
   border-color: #9bc8ac;
   background: #f4fbf6;
 }
 
-.martial-card.rarity-blue {
+.wiki-card.rarity-blue {
   border-color: #98bfe4;
   background: #f3f8fd;
 }
 
-.martial-card.rarity-purple {
+.wiki-card.rarity-purple {
   border-color: #bea5dc;
   background: #faf6ff;
 }
 
-.martial-card.rarity-gold {
+.wiki-card.rarity-gold {
   border-color: #d8b763;
   background: #fff9e8;
 }
 
-.martial-card.rarity-unknown {
+.wiki-card.rarity-unknown {
   border-color: var(--line);
   background: #fff;
 }
 
-.martial-card:hover {
+.wiki-card:hover {
   border-color: #9db8b2;
   box-shadow: 0 8px 20px rgba(31, 111, 88, 0.08);
 }
 
-.martial-card.is-selected {
+.wiki-card.is-selected {
   border-color: var(--active);
   outline: 2px solid var(--active);
   outline-offset: -2px;
   box-shadow: 0 0 0 3px rgba(31, 111, 88, 0.08);
 }
 
-.martial-card.is-disabled {
+.wiki-card.is-disabled {
   opacity: 0.52;
   cursor: not-allowed;
 }
 
-.martial-title {
+.wiki-card-title {
   display: flex;
   align-items: start;
   justify-content: space-between;
@@ -598,14 +598,23 @@ select:focus {
   line-height: 1.35;
 }
 
-.martial-title-actions {
+.wiki-card-title-actions {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
   gap: 6px;
 }
 
-.martial-info-button {
+.wiki-card-subtitle {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wiki-info-button {
   display: inline-grid;
   place-items: center;
   width: 22px;
@@ -620,8 +629,8 @@ select:focus {
   cursor: help;
 }
 
-.martial-info-button:hover,
-.martial-info-button:focus-visible {
+.wiki-info-button:hover,
+.wiki-info-button:focus-visible {
   border-color: var(--active);
   background: #fff;
   color: var(--active);
@@ -708,7 +717,7 @@ select:focus {
   color: #687386;
 }
 
-.martial-tooltip {
+.hover-tooltip {
   position: fixed;
   z-index: 50;
   width: min(340px, calc(100vw - 28px));
@@ -724,13 +733,13 @@ select:focus {
   transition: opacity 120ms ease, transform 120ms ease;
 }
 
-.martial-tooltip.is-visible {
+.hover-tooltip.is-visible {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-.martial-tooltip header {
+.hover-tooltip header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -738,7 +747,7 @@ select:focus {
   margin-bottom: 10px;
 }
 
-.martial-tooltip header strong {
+.hover-tooltip header strong {
   font-size: 15px;
   line-height: 1.4;
 }
@@ -1099,6 +1108,10 @@ select:focus {
   padding: 12px;
 }
 
+.data-overview-page .characters-controls {
+  grid-template-columns: minmax(180px, 260px) minmax(240px, 1fr);
+}
+
 .characters-workbench {
   display: grid;
   grid-template-columns: minmax(230px, 0.32fr) minmax(0, 1fr);
@@ -1251,6 +1264,54 @@ select:focus {
   cursor: not-allowed;
 }
 
+.data-table-wrap {
+  min-width: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+.data-overview-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 13px;
+}
+
+.data-overview-table th,
+.data-overview-table td {
+  max-width: 360px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-overview-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6f8f7;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.data-overview-table td {
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+}
+
+.data-overview-table tr:nth-child(even) td {
+  background: #fbfcfd;
+}
+
+.data-null {
+  color: var(--muted);
+  font-style: italic;
+}
+
 .character-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1259,77 +1320,6 @@ select:focus {
   min-height: 0;
   overflow: auto;
   padding: 14px;
-}
-
-.character-card {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  overflow: hidden;
-}
-
-.character-card summary {
-  display: grid;
-  gap: 8px;
-  padding: 12px;
-  cursor: pointer;
-}
-
-.character-card[open] summary {
-  border-bottom: 1px solid #edf1f4;
-  background: #fbfcfd;
-}
-
-.character-card-link {
-  display: grid;
-  gap: 8px;
-  padding: 12px;
-  color: inherit;
-  text-decoration: none;
-}
-
-.character-card-link:hover {
-  border-color: #9db8b2;
-  background: #fbfefd;
-}
-
-.character-card-action {
-  color: var(--active);
-  font-size: 12px;
-}
-
-.character-card-main {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 0;
-}
-
-.character-card-main strong {
-  font-size: 15px;
-}
-
-.character-title-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  min-width: 0;
-}
-
-.character-card-location {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.character-info-button {
-  flex: 0 0 auto;
 }
 
 .character-detail {
@@ -1461,6 +1451,86 @@ select:focus {
 
 .character-snapshot strong {
   color: var(--text);
+}
+
+.character-quest-list {
+  display: grid;
+  gap: 8px;
+}
+
+.character-quest {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.character-quest header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.character-quest header strong {
+  color: #394149;
+  font-size: 13px;
+}
+
+.character-quest header span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.character-quest-body {
+  display: grid;
+  grid-template-columns: 90px 90px minmax(0, 1fr) minmax(120px, 0.6fr);
+  gap: 6px;
+}
+
+.character-quest-body > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 7px 8px;
+  border-radius: 6px;
+  background: #f7f8fa;
+}
+
+.character-quest-body span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.character-quest-body strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.character-quest-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 6px 4px 0;
+}
+
+.character-quest-target a {
+  color: var(--active);
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.character-quest-target a:hover {
+  text-decoration: underline;
+}
+
+.muted-text {
+  color: var(--muted);
 }
 
 .character-word {
@@ -2351,7 +2421,8 @@ body.is-resizing-split {
 
   .characters-controls,
   .character-page-grid,
-  .character-stat-grid {
+  .character-stat-grid,
+  .character-quest-body {
     grid-template-columns: 1fr;
   }
 
