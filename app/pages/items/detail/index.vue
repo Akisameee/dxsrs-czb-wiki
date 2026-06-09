@@ -5,16 +5,16 @@ const route = useRoute();
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>道具详情</UiCardTitle>
-        <UiCardDescription>id: {{ route.query.id || "-" }}</UiCardDescription>
-      </UiCardHeader>
-      <UiCardFooter>
-        <UiButton as-child variant="outline">
+    <Card>
+      <CardHeader>
+        <CardTitle>道具详情</CardTitle>
+        <CardDescription>id: {{ route.query.id || "-" }}</CardDescription>
+      </CardHeader>
+      <CardFooter>
+        <Button as-child variant="outline">
           <NuxtLink to="/items/">返回道具</NuxtLink>
-        </UiButton>
-      </UiCardFooter>
-    </UiCard>
+        </Button>
+      </CardFooter>
+    </Card>
   </main>
 </template>

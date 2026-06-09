@@ -30,53 +30,53 @@ const columns = computed(() => Object.keys(filteredRows.value[0] || {}));
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>数据总览</UiCardTitle>
-        <UiCardDescription>{{ pending ? "读取中..." : `${table || "-"}：${filteredRows.length} 行` }}</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent class="grid gap-4 md:grid-cols-2">
-        <UiLabel class="grid gap-2">
+    <Card>
+      <CardHeader>
+        <CardTitle>数据总览</CardTitle>
+        <CardDescription>{{ pending ? "读取中..." : `${table || "-"}：${filteredRows.length} 行` }}</CardDescription>
+      </CardHeader>
+      <CardContent class="grid gap-4 md:grid-cols-2">
+        <Label class="grid gap-2">
           表
-          <UiSelect v-model="table">
-            <UiSelectTrigger class="w-full">
-              <UiSelectValue placeholder="选择表" />
-            </UiSelectTrigger>
-            <UiSelectContent>
-              <UiSelectItem v-for="name in data?.tables || []" :key="name" :value="name">
+          <Select v-model="table">
+            <SelectTrigger class="w-full">
+              <SelectValue placeholder="选择表" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="name in data?.tables || []" :key="name" :value="name">
                 {{ name }}
-              </UiSelectItem>
-            </UiSelectContent>
-          </UiSelect>
-        </UiLabel>
-        <UiLabel class="grid gap-2">
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </Label>
+        <Label class="grid gap-2">
           搜索
-          <UiInput v-model="search" type="search" placeholder="搜索当前表" />
-        </UiLabel>
-      </UiCardContent>
-    </UiCard>
+          <Input v-model="search" type="search" placeholder="搜索当前表" />
+        </Label>
+      </CardContent>
+    </Card>
 
-    <UiCard v-if="error">
-      <UiCardContent class="text-destructive">{{ error.message }}</UiCardContent>
-    </UiCard>
+    <Card v-if="error">
+      <CardContent class="text-destructive">{{ error.message }}</CardContent>
+    </Card>
 
-    <UiCard v-else>
-      <UiCardContent class="overflow-auto">
-        <UiTable>
-          <UiTableHeader>
-            <UiTableRow>
-              <UiTableHead v-for="column in columns" :key="column">{{ column }}</UiTableHead>
-            </UiTableRow>
-          </UiTableHeader>
-          <UiTableBody>
-            <UiTableRow v-for="(row, index) in filteredRows" :key="index">
-              <UiTableCell v-for="column in columns" :key="column">
+    <Card v-else>
+      <CardContent class="overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead v-for="column in columns" :key="column">{{ column }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="(row, index) in filteredRows" :key="index">
+              <TableCell v-for="column in columns" :key="column">
                 {{ row[column] ?? "NULL" }}
-              </UiTableCell>
-            </UiTableRow>
-          </UiTableBody>
-        </UiTable>
-      </UiCardContent>
-    </UiCard>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   </main>
 </template>

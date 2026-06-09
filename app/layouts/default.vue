@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { navigationMenuTriggerStyle } from "~/components/ui/navigation-menu";
+
 const route = useRoute();
 
 const links = [
@@ -19,18 +21,27 @@ function isActive(to: string) {
 
 <template>
   <div>
-    <header class="border-b">
-      <nav class="container mx-auto flex flex-wrap gap-2 p-4">
-        <UiButton
-          v-for="link in links"
-          :key="link.to"
-          as-child
-          :variant="isActive(link.to) ? 'secondary' : 'ghost'"
-          size="sm"
-        >
-          <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
-        </UiButton>
-      </nav>
+    <header>
+      <div class="container mx-auto flex flex-wrap items-center justify-between gap-4 p-4">
+        <NuxtLink class="text-sm font-medium" to="/">大侠式人生重制版</NuxtLink>
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem
+              v-for="link in links"
+              :key="link.to"
+            >
+              <NavigationMenuLink
+                as-child
+                :active="isActive(link.to)"
+                :class="navigationMenuTriggerStyle()"
+              >
+                <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+      <Separator />
     </header>
     <slot />
   </div>

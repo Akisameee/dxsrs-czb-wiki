@@ -21,19 +21,19 @@ const lockedSect = getLockedSect(emptyState);
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>配装工具</UiCardTitle>
-        <UiCardDescription>配装算法已接入，界面按新组件体系重建。</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent class="flex flex-wrap gap-2">
-        <UiBadge variant="outline">最大武学数量：{{ MAX_SELECTION }}</UiBadge>
-        <UiBadge variant="outline">已选：{{ selectedCount }}</UiBadge>
-        <UiBadge variant="outline">锁定门派：{{ lockedSect || "无" }}</UiBadge>
-        <UiBadge v-for="slot in EQUIPMENT_STYLE_SLOTS" :key="slot.key" variant="outline">
+    <Card>
+      <CardHeader>
+        <CardTitle>配装工具</CardTitle>
+        <CardDescription>配装算法已接入，界面按新组件体系重建。</CardDescription>
+      </CardHeader>
+      <CardContent class="flex flex-wrap gap-2">
+        <Badge variant="outline">最大武学数量：{{ MAX_SELECTION }}</Badge>
+        <Badge variant="outline">已选：{{ selectedCount }}</Badge>
+        <Badge variant="outline">锁定门派：{{ lockedSect || "无" }}</Badge>
+        <Badge v-for="slot in EQUIPMENT_STYLE_SLOTS" :key="slot.key" variant="outline">
           {{ slot.label }}
-        </UiBadge>
-      </UiCardContent>
-    </UiCard>
+        </Badge>
+      </CardContent>
+    </Card>
   </main>
 </template>

@@ -13,25 +13,28 @@ const entries = [
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>大侠式人生重制版 Wiki</UiCardTitle>
-        <UiCardDescription>数据、工具和逆向公式整理。</UiCardDescription>
-      </UiCardHeader>
-    </UiCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>大侠式人生重制版 Wiki</CardTitle>
+        <CardDescription>数据、工具和逆向公式整理。</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Separator />
+      </CardContent>
+    </Card>
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <UiCard v-for="entry in entries" :key="entry.to">
-        <UiCardHeader>
-          <UiCardTitle>{{ entry.title }}</UiCardTitle>
-          <UiCardDescription>{{ entry.text }}</UiCardDescription>
-        </UiCardHeader>
-        <UiCardFooter>
-          <UiButton as-child>
+      <Card v-for="entry in entries" :key="entry.to">
+        <CardHeader>
+          <CardTitle>{{ entry.title }}</CardTitle>
+          <CardDescription>{{ entry.text }}</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button as-child>
             <NuxtLink :to="entry.to">进入</NuxtLink>
-          </UiButton>
-        </UiCardFooter>
-      </UiCard>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   </main>
 </template>

@@ -22,21 +22,21 @@ const sampleRoute = computed(() => {
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>自创武学</UiCardTitle>
-        <UiCardDescription>自创算法已接入，界面按新组件体系重建。</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent v-if="pending" class="text-muted-foreground">读取 sqlite 数据中...</UiCardContent>
-      <UiCardContent v-else-if="error" class="text-destructive">{{ error.message }}</UiCardContent>
-      <UiCardContent v-else-if="sampleRoute?.initial" class="flex flex-wrap gap-2">
-        <UiBadge variant="outline">seed：{{ makeZiChuangSeed(sampleInput) }}</UiBadge>
-        <UiBadge variant="outline">改良空间：{{ sampleRoute.initialImproveLimit }}</UiBadge>
-        <UiBadge variant="outline">初始风格：{{ sampleRoute.initial.style.name }}</UiBadge>
-        <UiBadge variant="outline">攻击范围：{{ sampleRoute.initial.area.name }}</UiBadge>
-        <UiBadge variant="outline">威力：{{ sampleRoute.initial.power }}</UiBadge>
-        <UiBadge variant="outline">真气：{{ sampleRoute.initial.cost }}</UiBadge>
-      </UiCardContent>
-    </UiCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>自创武学</CardTitle>
+        <CardDescription>自创算法已接入，界面按新组件体系重建。</CardDescription>
+      </CardHeader>
+      <CardContent v-if="pending" class="text-muted-foreground">读取 sqlite 数据中...</CardContent>
+      <CardContent v-else-if="error" class="text-destructive">{{ error.message }}</CardContent>
+      <CardContent v-else-if="sampleRoute?.initial" class="flex flex-wrap gap-2">
+        <Badge variant="outline">seed：{{ makeZiChuangSeed(sampleInput) }}</Badge>
+        <Badge variant="outline">改良空间：{{ sampleRoute.initialImproveLimit }}</Badge>
+        <Badge variant="outline">初始风格：{{ sampleRoute.initial.style.name }}</Badge>
+        <Badge variant="outline">攻击范围：{{ sampleRoute.initial.area.name }}</Badge>
+        <Badge variant="outline">威力：{{ sampleRoute.initial.power }}</Badge>
+        <Badge variant="outline">真气：{{ sampleRoute.initial.cost }}</Badge>
+      </CardContent>
+    </Card>
   </main>
 </template>

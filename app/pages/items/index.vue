@@ -36,51 +36,51 @@ const rows = computed(() => {
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>道具</UiCardTitle>
-        <UiCardDescription>{{ pending ? "读取中..." : `共 ${rows.length} 个道具` }}</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent>
-        <UiInput v-model="search" type="search" placeholder="搜索道具" />
-      </UiCardContent>
-    </UiCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>道具</CardTitle>
+        <CardDescription>{{ pending ? "读取中..." : `共 ${rows.length} 个道具` }}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Input v-model="search" type="search" placeholder="搜索道具" />
+      </CardContent>
+    </Card>
 
-    <UiCard v-if="error">
-      <UiCardContent class="text-destructive">{{ error.message }}</UiCardContent>
-    </UiCard>
+    <Card v-if="error">
+      <CardContent class="text-destructive">{{ error.message }}</CardContent>
+    </Card>
 
-    <UiCard v-else>
-      <UiCardContent class="overflow-auto">
-        <UiTable>
-          <UiTableHeader>
-            <UiTableRow>
-              <UiTableHead>名称</UiTableHead>
-              <UiTableHead>类型</UiTableHead>
-              <UiTableHead>稀有度</UiTableHead>
-              <UiTableHead>材料</UiTableHead>
-              <UiTableHead>说明</UiTableHead>
-              <UiTableHead>操作</UiTableHead>
-            </UiTableRow>
-          </UiTableHeader>
-          <UiTableBody>
-            <UiTableRow v-for="item in rows" :key="item.id">
-              <UiTableCell>{{ itemName(item) }}</UiTableCell>
-              <UiTableCell>{{ enumLabel(enums, "ItemType", item.type_id) }}</UiTableCell>
-              <UiTableCell>
-                <UiBadge variant="outline">{{ enumLabel(enums, "ItemRare", item.rarity_id) }}</UiBadge>
-              </UiTableCell>
-              <UiTableCell>{{ Number(item.is_material) ? "是" : "否" }}</UiTableCell>
-              <UiTableCell>{{ item.description || "无说明" }}</UiTableCell>
-              <UiTableCell>
-                <UiButton as-child variant="outline" size="sm">
+    <Card v-else>
+      <CardContent class="overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>名称</TableHead>
+              <TableHead>类型</TableHead>
+              <TableHead>稀有度</TableHead>
+              <TableHead>材料</TableHead>
+              <TableHead>说明</TableHead>
+              <TableHead>操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="item in rows" :key="item.id">
+              <TableCell>{{ itemName(item) }}</TableCell>
+              <TableCell>{{ enumLabel(enums, "ItemType", item.type_id) }}</TableCell>
+              <TableCell>
+                <Badge variant="outline">{{ enumLabel(enums, "ItemRare", item.rarity_id) }}</Badge>
+              </TableCell>
+              <TableCell>{{ Number(item.is_material) ? "是" : "否" }}</TableCell>
+              <TableCell>{{ item.description || "无说明" }}</TableCell>
+              <TableCell>
+                <Button as-child variant="outline" size="sm">
                   <NuxtLink :to="`/items/detail/?id=${item.id}`">详情</NuxtLink>
-                </UiButton>
-              </UiTableCell>
-            </UiTableRow>
-          </UiTableBody>
-        </UiTable>
-      </UiCardContent>
-    </UiCard>
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   </main>
 </template>
