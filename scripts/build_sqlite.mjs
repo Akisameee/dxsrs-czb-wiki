@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readdirSync, rmSync, readFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SOURCE, ROOT, deriveChainEnums, extractTables } from "./lib/bgdatabase.mjs";
+import { writeSqlite } from "./sqlite/write-sqlite.mjs";
 
 const DEFAULT_ENUM_SOURCE = join(ROOT, "re/dump/cpp2il_analysis/types/Assembly-CSharp");
 const OUTPUT = join(ROOT, "public/data/wiki.sqlite");
@@ -28,6 +28,16 @@ const STATUS_EFFECT_META = {
   99: { value_per_level: null, template: "无特殊效果" },
 };
 
+const LEGACY_SECT_TARGET_IDS = new Map([
+  ["少林寺", 0],
+  ["武当派", 1],
+  ["丐帮", 2],
+  ["逍遥派", 5],
+  ["古墓派", 6],
+  ["日月神教", 8],
+  ["五毒教", 9],
+]);
+
 const TABLES = {
   enums: {
     primaryKey: ["type", "id"],
@@ -41,7 +51,6 @@ const TABLES = {
     primaryKey: ["id"],
     columns: {
       id: "INTEGER NOT NULL",
-      name: "TEXT NOT NULL",
       portrait: "TEXT",
       region_id: "INTEGER",
       location_id: "INTEGER",
@@ -99,14 +108,6 @@ const TABLES = {
       word: "TEXT",
     },
   },
-  character_friends: {
-    primaryKey: ["character_id", "slot"],
-    columns: {
-      character_id: "INTEGER NOT NULL",
-      slot: "INTEGER NOT NULL",
-      name: "TEXT NOT NULL",
-    },
-  },
   character_martial_arts: {
     primaryKey: ["character_id", "slot"],
     columns: {
@@ -152,13 +153,11 @@ const TABLES = {
     primaryKey: ["id"],
     columns: {
       id: "INTEGER NOT NULL",
-      raw_name: "TEXT",
-      raw_character_name: "TEXT NOT NULL",
       character_id: "INTEGER NOT NULL",
       stage: "INTEGER NOT NULL",
       required_affinity: "INTEGER NOT NULL",
       quest_type_id: "INTEGER NOT NULL",
-      reward: "TEXT",
+      reward_item_id: "INTEGER",
       sort_order: "INTEGER NOT NULL",
     },
   },
@@ -171,8 +170,6 @@ const TABLES = {
       target_kind: "TEXT NOT NULL",
       target_id: "INTEGER",
       target_region_id: "INTEGER",
-      target_name: "TEXT",
-      raw_value: "TEXT NOT NULL",
     },
   },
   locations: {
@@ -199,12 +196,33 @@ const TABLES = {
       sort_order: "INTEGER NOT NULL",
     },
   },
+  items: {
+    primaryKey: ["id"],
+    columns: {
+      id: "INTEGER NOT NULL",
+      icon: "TEXT",
+      description: "TEXT",
+      type_id: "INTEGER",
+      rarity_id: "INTEGER",
+      use_type_id: "INTEGER",
+      use_text: "TEXT",
+      use_value: "REAL",
+      use_value2: "INTEGER",
+      use_value3: "REAL",
+      cost: "REAL",
+      required_strength: "INTEGER",
+      required_constitution: "INTEGER",
+      required_physique: "INTEGER",
+      required_agility: "INTEGER",
+      required_cultivation: "INTEGER",
+      required_mastery: "INTEGER",
+      is_material: "INTEGER NOT NULL",
+    },
+  },
   martial_arts: {
     primaryKey: ["id"],
     columns: {
       id: "INTEGER NOT NULL",
-      internal_name: "TEXT",
-      name: "TEXT NOT NULL",
       sect_id: "INTEGER",
       type_id: "INTEGER",
       rarity_id: "INTEGER",
@@ -244,7 +262,6 @@ const TABLES = {
     primaryKey: ["id"],
     columns: {
       id: "INTEGER NOT NULL",
-      name: "TEXT NOT NULL",
       value_per_level: "REAL",
       template: "TEXT",
     },
@@ -269,13 +286,12 @@ const TABLES = {
     primaryKey: ["id"],
     columns: {
       id: "INTEGER NOT NULL",
-      name: "TEXT NOT NULL",
       type_id: "INTEGER",
       rarity_id: "INTEGER",
       cost: "INTEGER",
       slash_effect_id: "INTEGER",
       hit_effect_id: "INTEGER",
-      attack_area_name: "TEXT",
+      attack_area_id: "INTEGER",
       is_custom: "INTEGER NOT NULL",
     },
   },
@@ -323,7 +339,6 @@ const TABLES = {
 };
 
 const INDEXES = [
-  "CREATE INDEX idx_characters_name ON characters(name)",
   "CREATE INDEX idx_characters_location ON characters(region_id, location_id)",
   "CREATE INDEX idx_characters_sect ON characters(sect_id)",
   "CREATE INDEX idx_characters_rarity ON characters(rarity_id)",
@@ -334,8 +349,10 @@ const INDEXES = [
   "CREATE INDEX idx_character_attribute_snapshots_character ON character_attribute_snapshots(character_id)",
   "CREATE INDEX idx_character_quests_character ON character_quests(character_id)",
   "CREATE INDEX idx_character_quests_type ON character_quests(quest_type_id)",
+  "CREATE INDEX idx_character_quests_reward_item ON character_quests(reward_item_id)",
   "CREATE INDEX idx_character_quest_targets_quest ON character_quest_targets(quest_id)",
-  "CREATE INDEX idx_martial_arts_name ON martial_arts(name)",
+  "CREATE INDEX idx_items_type ON items(type_id)",
+  "CREATE INDEX idx_items_rarity ON items(rarity_id)",
   "CREATE INDEX idx_martial_arts_sect ON martial_arts(sect_id)",
   "CREATE INDEX idx_martial_arts_type ON martial_arts(type_id)",
   "CREATE INDEX idx_martial_arts_rarity ON martial_arts(rarity_id)",
@@ -428,8 +445,27 @@ function enumRows(enumTypes) {
   );
 }
 
+function namedEnumRows(type, rows, idGetter, labelGetter) {
+  return rows
+    .map((row, index) => ({
+      type,
+      id: Number(idGetter(row, index)),
+      label: labelGetter(row, index) ?? null,
+    }))
+    .filter((row) => Number.isFinite(row.id) && row.label !== null && row.label !== undefined && row.label !== "")
+    .sort((a, b) => a.id - b.id);
+}
+
 function npcName(row) {
   return `${row.xing || ""}${row.ming || ""}` || `NPC ${row.index}`;
+}
+
+function attackAreaLookups(wugongRows) {
+  const names = [...new Set((wugongRows || []).map((row) => row.attackareaname).filter(Boolean))]
+    .sort((a, b) => String(a).localeCompare(String(b), "zh-Hans-CN"));
+  const attackAreaByName = new Map(names.map((name, id) => [name, id]));
+  const attackAreaEnums = names.map((name, id) => ({ type: "AttackArea", id, label: name }));
+  return { attackAreaByName, attackAreaEnums };
 }
 
 function buildLocationLookups(areaRows) {
@@ -479,7 +515,6 @@ function buildCharacterRows(npcRows, npcWordRows, locationByCode) {
     const name = npcName(row);
     return {
       id: Number(row.index),
-      name,
       portrait: row.touxiang || null,
       region_id: location?.regionId ?? null,
       location_id: location?.locationId ?? null,
@@ -537,18 +572,6 @@ function buildCharacterRows(npcRows, npcWordRows, locationByCode) {
       word: wordByName.get(name) || null,
     };
   });
-}
-
-function buildCharacterFriendRows(npcRows) {
-  return npcRows.flatMap((row) =>
-    [row.friend1, row.friend2]
-      .filter(Boolean)
-      .map((name, slot) => ({
-        character_id: Number(row.index),
-        slot,
-        name,
-      })),
-  );
 }
 
 function martialArtIdByInternalName(wugongRows) {
@@ -631,15 +654,43 @@ function buildCharacterAttributeSnapshotRows(npcRows, npcAttributeRows) {
 
 function buildItemLookups(itemRows) {
   const itemByName = new Map();
+  const duplicates = [];
   for (const row of itemRows || []) {
     const item = {
       id: Number(row.index),
-      name: row.chnname || row.name,
     };
-    if (row.name) itemByName.set(row.name, item);
-    if (row.chnname) itemByName.set(row.chnname, item);
+    for (const name of [row.name, row.chnname].filter(Boolean)) {
+      if (itemByName.has(name) && itemByName.get(name).id !== item.id) duplicates.push(name);
+      itemByName.set(name, item);
+    }
+  }
+  if (duplicates.length > 0) {
+    throw new Error(`GItem 名称存在重名，无法安全映射物品：${[...new Set(duplicates)].join("、")}`);
   }
   return { itemByName };
+}
+
+function buildItemRows(itemRows) {
+  return itemRows.map((row) => ({
+    id: Number(row.index),
+    icon: row.png || null,
+    description: cleanText(row.desc),
+    type_id: Number(row.type),
+    rarity_id: Number(row.rare),
+    use_type_id: Number(row.usetype),
+    use_text: cleanText(row.usestring),
+    use_value: Number(row.usevalue),
+    use_value2: Number(row.usevalue2),
+    use_value3: Number(row.usevalue3),
+    cost: Number(row.ccost),
+    required_strength: Number(row.xianzhi_lvli),
+    required_constitution: Number(row.xianzhi_gengu),
+    required_physique: Number(row.xianzhi_tipo),
+    required_agility: Number(row.xianzhi_shenfa),
+    required_cultivation: Number(row.xianzhi_xiuwei),
+    required_mastery: Number(row.xianzhi_jingtong),
+    is_material: boolInt(row.iscailiao),
+  }));
 }
 
 function resolveQuestTarget(rawValue, lookups) {
@@ -651,8 +702,6 @@ function resolveQuestTarget(rawValue, lookups) {
       target_kind: "location",
       target_id: location.locationId,
       target_region_id: location.regionId,
-      target_name: location.locationName,
-      raw_value: rawValue,
     };
   }
 
@@ -662,8 +711,6 @@ function resolveQuestTarget(rawValue, lookups) {
       target_kind: "character",
       target_id: characterId,
       target_region_id: null,
-      target_name: lookups.characterNameById.get(characterId) || rawValue,
-      raw_value: rawValue,
     };
   }
 
@@ -673,8 +720,15 @@ function resolveQuestTarget(rawValue, lookups) {
       target_kind: "item",
       target_id: item.id,
       target_region_id: null,
-      target_name: item.name,
-      raw_value: rawValue,
+    };
+  }
+
+  const sectId = LEGACY_SECT_TARGET_IDS.get(rawValue);
+  if (sectId !== undefined) {
+    return {
+      target_kind: "sect",
+      target_id: sectId,
+      target_region_id: null,
     };
   }
 
@@ -682,22 +736,15 @@ function resolveQuestTarget(rawValue, lookups) {
     target_kind: "unknown",
     target_id: null,
     target_region_id: null,
-    target_name: rawValue,
-    raw_value: rawValue,
   };
 }
 
 function buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, locationByCode) {
   const characterIdByName = characterIdLookup(npcRows);
-  const characterNameById = new Map(npcRows.map((row) => [Number(row.index), npcName(row)]));
   const { itemByName } = buildItemLookups(itemRows);
-  const areaNameByCode = new Map(areaRows.filter((row) => row.name).map((row) => [row.name, row.chnname || row.name]));
   const locationLookup = new Map();
   for (const [code, location] of locationByCode.entries()) {
-    locationLookup.set(code, {
-      ...location,
-      locationName: areaNameByCode.get(code) || code,
-    });
+    locationLookup.set(code, location);
   }
 
   const rows = (qingYuanRows || [])
@@ -707,13 +754,18 @@ function buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, loca
       || Number(a.youhaodu) - Number(b.youhaodu)
       || Number(a.index) - Number(b.index),
     );
+  const missingRewards = [...new Set(rows
+    .map((row) => row.reward)
+    .filter((reward) => reward && !itemByName.has(reward)))];
+  if (missingRewards.length > 0) {
+    throw new Error(`QingYuan.reward 无法映射到 GItem：${missingRewards.join("、")}`);
+  }
 
   const stageByCharacter = new Map();
   const quests = [];
   const targets = [];
   const lookups = {
     characterIdByName,
-    characterNameById,
     itemByName,
     locationByCode: locationLookup,
   };
@@ -726,13 +778,11 @@ function buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, loca
     const questId = Number(row.index);
     quests.push({
       id: questId,
-      raw_name: row.name || null,
-      raw_character_name: row.juesename,
       character_id: characterId,
       stage,
       required_affinity: Number(row.youhaodu),
       quest_type_id: Number(row.questtype),
-      reward: row.reward || null,
+      reward_item_id: row.reward ? itemByName.get(row.reward).id : null,
       sort_order: sortOrder,
     });
 
@@ -823,8 +873,6 @@ function buildMartialArtRows(wugongRows, detailRows) {
     const obtainMethod = cleanText(row.huodefangfa);
     return {
       id: Number(row.index ?? index),
-      internal_name: row.name ?? null,
-      name: row.chnname,
       sect_id: Number(row.liansuo_mp),
       type_id: typeId,
       rarity_id: Number(row.rare),
@@ -890,24 +938,22 @@ function buildChainRows(chainRows, idName, outputName) {
 function buildStatusEffectRows(enumTypes) {
   return Object.entries(enumTypes.BuffType || {})
     .filter(([id]) => STATUS_EFFECT_META[Number(id)])
-    .map(([id, name]) => ({
+    .map(([id]) => ({
       id: Number(id),
-      name,
       ...STATUS_EFFECT_META[Number(id)],
     }))
     .sort((a, b) => a.id - b.id);
 }
 
-function buildCustomMartialArtRows(wugongRows) {
+function buildCustomMartialArtRows(wugongRows, attackAreaByName) {
   return wugongRows.map((row, id) => ({
     id,
-    name: row.chnname,
     type_id: Number(row.type),
     rarity_id: Number(row.rare),
     cost: Number(row.cost),
     slash_effect_id: Number(row.slashfx),
     hit_effect_id: Number(row.hitfx),
-    attack_area_name: row.attackareaname,
+    attack_area_id: attackAreaByName.get(row.attackareaname) ?? null,
     is_custom: boolInt(row.iszichuang),
   }));
 }
@@ -957,45 +1003,6 @@ function buildCustomEffectRateRows(rows) {
   }));
 }
 
-function sqliteIdentifier(name) {
-  return `"${name.replaceAll('"', '""')}"`;
-}
-
-function columnAffinity(type) {
-  if (type.includes("INTEGER")) return "INTEGER";
-  if (type.includes("REAL")) return "REAL";
-  return "TEXT";
-}
-
-function coerceValue(value, type) {
-  if (value === "" || value === undefined) return null;
-  const affinity = columnAffinity(type);
-  if (affinity === "INTEGER") return value === null ? null : Number.parseInt(value, 10);
-  if (affinity === "REAL") return value === null ? null : Number.parseFloat(value);
-  return value;
-}
-
-function createTable(db, name, definition) {
-  const columns = Object.entries(definition.columns).map(([column, type]) => `${sqliteIdentifier(column)} ${type}`);
-  if (definition.primaryKey?.length) {
-    columns.push(`PRIMARY KEY (${definition.primaryKey.map(sqliteIdentifier).join(", ")})`);
-  }
-  db.exec(`CREATE TABLE ${sqliteIdentifier(name)} (${columns.join(", ")})`);
-}
-
-function importTable(db, name, definition, rows) {
-  const columns = Object.keys(definition.columns);
-  const placeholders = columns.map(() => "?").join(", ");
-  const insert = db.prepare(
-    `INSERT INTO ${sqliteIdentifier(name)} (${columns.map(sqliteIdentifier).join(", ")}) VALUES (${placeholders})`,
-  );
-
-  for (const row of rows) {
-    insert.run(...columns.map((column) => coerceValue(row[column], definition.columns[column])));
-  }
-  return rows.length;
-}
-
 function buildRowsFromSource(source, enumSource) {
   if (!existsSync(source)) {
     throw new Error(`找不到原始数据库文件：${source}`);
@@ -1016,12 +1023,18 @@ function buildRowsFromSource(source, enumSource) {
   const itemRows = tableByName(extracted, "GItem");
   const enumTypes = buildEnumTypes({ enumSource, areaRows, chainRows });
   const { locationByCode, locationById } = buildLocationLookups(areaRows);
+  const { attackAreaByName, attackAreaEnums } = attackAreaLookups(wugongRows);
   const characterQuestData = buildCharacterQuestData(qingYuanRows, npcRows, areaRows, itemRows, locationByCode);
+  const displayEnumRows = [
+    ...namedEnumRows("Character", npcRows, (row) => row.index, npcName),
+    ...namedEnumRows("MartialArt", wugongRows, (row, index) => row.index ?? index, (row) => row.chnname),
+    ...namedEnumRows("Item", itemRows, (row) => row.index, (row) => row.chnname || row.name),
+    ...attackAreaEnums,
+  ];
 
   return {
-    enums: enumRows(enumTypes),
+    enums: [...enumRows(enumTypes), ...displayEnumRows],
     characters: buildCharacterRows(npcRows, npcWordRows, locationByCode),
-    character_friends: buildCharacterFriendRows(npcRows),
     character_martial_arts: buildCharacterMartialRows(npcRows, npcMartialRows, wugongRows),
     character_attribute_snapshots: buildCharacterAttributeSnapshotRows(npcRows, npcAttributeRows),
     character_quests: characterQuestData.quests,
@@ -1029,6 +1042,7 @@ function buildRowsFromSource(source, enumSource) {
     locations: buildLocationRows(areaRows, npcRows, locationByCode, locationById),
     location_characters: buildLocationCharacterRows(npcRows, locationByCode),
     unplaced_characters: buildUnplacedCharacterRows(npcRows, locationByCode),
+    items: buildItemRows(itemRows),
     martial_arts: buildMartialArtRows(wugongRows, wugongDetailRows),
     martial_art_styles: buildMartialArtStyleRows(wugongRows),
     martial_art_effects: buildMartialArtEffectRows(wugongRows, wugongDetailRows),
@@ -1036,7 +1050,7 @@ function buildRowsFromSource(source, enumSource) {
     status_effects: buildStatusEffectRows(enumTypes),
     sect_chains: buildChainRows(chainRows, "sect_id", "sect_id"),
     style_chains: buildChainRows(chainRows, "style_id", "style_id"),
-    custom_martial_arts: buildCustomMartialArtRows(wugongRows),
+    custom_martial_arts: buildCustomMartialArtRows(wugongRows, attackAreaByName),
     custom_martial_art_effects: buildCustomMartialArtEffectRows(wugongRows),
     custom_style_weights: buildCustomStyleWeightRows(chainRows),
     custom_martial_power_ranges: buildCustomPowerRows(customPowerRows),
@@ -1050,30 +1064,12 @@ export function buildSqlite({
   output = OUTPUT,
 } = {}) {
   const rowsByTable = buildRowsFromSource(source, enumSource);
-  mkdirSync(dirname(output), { recursive: true });
-  rmSync(output, { force: true });
-
-  const db = new DatabaseSync(output);
-  db.exec("PRAGMA journal_mode = DELETE");
-  db.exec("PRAGMA foreign_keys = OFF");
-  db.exec("BEGIN");
-
-  const counts = {};
-  try {
-    for (const [name, definition] of Object.entries(TABLES)) {
-      createTable(db, name, definition);
-      counts[name] = importTable(db, name, definition, rowsByTable[name] || []);
-    }
-    for (const statement of INDEXES) db.exec(statement);
-    db.exec("COMMIT");
-  } catch (error) {
-    db.exec("ROLLBACK");
-    db.close();
-    throw error;
-  }
-
-  db.exec("VACUUM");
-  db.close();
+  const counts = writeSqlite({
+    output,
+    tables: TABLES,
+    indexes: INDEXES,
+    rowsByTable,
+  });
 
   return {
     source: relative(ROOT, source).replaceAll("\\", "/"),

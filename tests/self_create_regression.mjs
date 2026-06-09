@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
-import { SelfCreateSimulation } from "../src/tools/self-create/simulator.js";
-import { makeZiChuangSeed } from "../src/tools/self-create/unity-random.js";
+import { SelfCreateSimulation } from "../app/lib/self-create/simulator.js";
+import { makeZiChuangSeed } from "../app/lib/self-create/unity-random.js";
 
 const db = new DatabaseSync(new URL("../public/data/wiki.sqlite", import.meta.url));
 
@@ -10,6 +10,12 @@ function all(sql) {
 }
 
 function loadSelfCreateData() {
+  const enums = {};
+  for (const row of all("SELECT type, id, label FROM enums ORDER BY type, id")) {
+    if (!enums[row.type]) enums[row.type] = {};
+    enums[row.type][String(row.id)] = row.label;
+  }
+
   const effectsByTemplate = new Map();
   for (const row of all("SELECT * FROM custom_martial_art_effects ORDER BY custom_martial_art_id, slot")) {
     if (!effectsByTemplate.has(row.custom_martial_art_id)) effectsByTemplate.set(row.custom_martial_art_id, []);
@@ -20,13 +26,13 @@ function loadSelfCreateData() {
     wugongRows: all("SELECT * FROM custom_martial_arts ORDER BY id").map((row) => {
       const effects = new Map((effectsByTemplate.get(row.id) || []).map((item) => [Number(item.slot), item]));
       const output = {
-        chnname: row.name,
+        chnname: enums.MartialArt?.[String(row.id)] || `武学 ${row.id}`,
         type: Number(row.type_id),
         rare: Number(row.rarity_id),
         cost: Number(row.cost),
         slashfx: Number(row.slash_effect_id),
         hitfx: Number(row.hit_effect_id),
-        attackareaname: row.attack_area_name,
+        attackareaname: enums.AttackArea?.[String(row.attack_area_id)] || "",
         iszichuang: Boolean(Number(row.is_custom)),
       };
       for (let slot = 1; slot <= 3; slot += 1) {
