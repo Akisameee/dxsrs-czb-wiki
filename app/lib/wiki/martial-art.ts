@@ -78,6 +78,13 @@ export type MartialArtPassiveTemplateRow = {
 
 export type MartialArtPassiveTemplateMap = Record<string, string>;
 
+export type MartialArtPassiveChainRow = {
+  id: number;
+  passive_type: "sect" | "style";
+  count: number;
+  value: string | null;
+};
+
 export type MartialArtEffectSummary = {
   id: string;
   text: string;
@@ -152,13 +159,45 @@ export function martialArtPassiveTemplateMap(rows: MartialArtPassiveTemplateRow[
   return Object.fromEntries(rows.map((row) => [String(row.id), row.template || ""]));
 }
 
+function passiveTemplateValues(value: number | string | (number | string)[] | null | undefined) {
+  const values = Array.isArray(value) ? value : [value];
+  return values.map((item) => formatMartialArtDecimal(item));
+}
+
 export function formatMartialArtPassiveTemplate(
   template: string | null | undefined,
-  value: number | null | undefined,
+  value: number | string | (number | string)[] | null | undefined,
 ) {
   if (!template) return "";
-  const param = formatMartialArtDecimal(value);
-  return template.replaceAll("{param}", param);
+  const values = passiveTemplateValues(value);
+  return values.reduce(
+    (text, item, index) => text.replaceAll(`{param${index + 1}}`, item),
+    template.replaceAll("{param}", values[0] || "-"),
+  );
+}
+
+export function martialArtPassiveChainTemplateId(row: Pick<MartialArtPassiveChainRow, "id" | "passive_type" | "count">) {
+  return `chain:${row.passive_type}:${row.id}:${row.count}`;
+}
+
+export function martialArtPassiveChainValues(row: Pick<MartialArtPassiveChainRow, "value">) {
+  if (!row.value) return [];
+  try {
+    const values = JSON.parse(row.value);
+    return Array.isArray(values) ? values : [];
+  } catch {
+    return [];
+  }
+}
+
+export function martialArtPassiveChainDescription(
+  row: MartialArtPassiveChainRow,
+  templates: MartialArtPassiveTemplateMap = {},
+) {
+  return formatMartialArtPassiveTemplate(
+    templates[martialArtPassiveChainTemplateId(row)],
+    martialArtPassiveChainValues(row),
+  );
 }
 
 export function martialArtPassiveDescription(
@@ -250,7 +289,7 @@ export function formatMartialArtNumber(value: number | null | undefined) {
   return String(Math.round(Number(value)));
 }
 
-export function formatMartialArtDecimal(value: number | null | undefined) {
+export function formatMartialArtDecimal(value: number | string | null | undefined) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
   return String(Math.round(Number(value) * 100) / 100);
 }

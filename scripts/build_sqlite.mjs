@@ -297,20 +297,13 @@ const TABLES = {
       template: "TEXT",
     },
   },
-  sect_chains: {
-    primaryKey: ["sect_id", "count"],
+  passive_chains: {
+    primaryKey: ["passive_type", "id", "count"],
     columns: {
-      sect_id: "INTEGER NOT NULL",
+      id: "INTEGER NOT NULL",
+      passive_type: "TEXT NOT NULL",
       count: "INTEGER NOT NULL",
-      effect: "TEXT NOT NULL",
-    },
-  },
-  style_chains: {
-    primaryKey: ["style_id", "count"],
-    columns: {
-      style_id: "INTEGER NOT NULL",
-      count: "INTEGER NOT NULL",
-      effect: "TEXT NOT NULL",
+      value: "TEXT NOT NULL",
     },
   },
   custom_martial_arts: {
@@ -972,18 +965,109 @@ function buildMartialArtLevelRows(wugongRows, detailRows) {
     .sort((a, b) => a.martial_art_id - b.martial_art_id || a.level - b.level);
 }
 
-function buildChainRows(chainRows, idName, outputName) {
-  const groups = new Map();
-  for (const row of chainRows) {
-    const styleId = Number(row.fengge);
-    const sectId = Number(row.menpai);
-    const groupId = idName === "sect_id" ? sectId : styleId;
-    if (idName === "sect_id" && (styleId !== 0 || sectId === 15)) continue;
-    if (idName === "style_id" && styleId === 0) continue;
-    if (!groups.has(groupId)) groups.set(groupId, []);
-    groups.get(groupId).push({ [outputName]: groupId, count: Number(row.qty), effect: row.desc });
+function chainPassiveType(row) {
+  const styleId = Number(row.fengge);
+  const sectId = Number(row.menpai);
+  if (styleId !== 0) return "style";
+  if (sectId !== 15) return "sect";
+  return null;
+}
+
+function chainPassiveId(row) {
+  const passiveType = chainPassiveType(row);
+  if (passiveType === "style") return Number(row.fengge);
+  if (passiveType === "sect") return Number(row.menpai);
+  return null;
+}
+
+function chainPassiveTemplateId(row) {
+  const passiveType = chainPassiveType(row);
+  const id = chainPassiveId(row);
+  const count = Number(row.qty);
+  if (!passiveType || !Number.isFinite(id) || !Number.isFinite(count)) return null;
+  return `chain:${passiveType}:${id}:${count}`;
+}
+
+function normalizedNumberText(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return String(Math.round(number * 100) / 100);
+}
+
+function replaceNumberToken(text, value, placeholder) {
+  const candidates = [
+    normalizedNumberText(value),
+    normalizedNumberText(Number(value) * 100),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp(`(?<![\\d.])${escaped}(?![\\d.])`);
+    if (pattern.test(text)) {
+      return {
+        text: text.replace(pattern, placeholder),
+        value: Number(candidate),
+      };
+    }
   }
-  return [...groups.values()].flat().sort((a, b) => a[outputName] - b[outputName] || a.count - b.count);
+
+  return { text, value: null };
+}
+
+function chainTemplateAndValue(row) {
+  let template = cleanText(row.desc) || "";
+  const values = [];
+
+  for (const [index, rawValue] of [row.value1, row.value2].entries()) {
+    const number = Number(rawValue);
+    if (!Number.isFinite(number) || number === 0) continue;
+    const result = replaceNumberToken(template, number, `{param${index + 1}}`);
+    template = result.text;
+    if (result.value !== null) values.push(result.value);
+  }
+
+  if (values.length === 1) template = template.replaceAll("{param1}", "{param}");
+
+  return {
+    template,
+    value: JSON.stringify(values),
+  };
+}
+
+function buildChainTemplateRows(chainRows) {
+  return chainRows
+    .map((row) => {
+      const id = chainPassiveTemplateId(row);
+      if (!id) return null;
+      return {
+        id,
+        template: chainTemplateAndValue(row).template,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => String(a.id).localeCompare(String(b.id), "zh-Hans-CN", { numeric: true }));
+}
+
+function buildPassiveChainRows(chainRows) {
+  return chainRows
+    .map((row) => {
+      const passiveType = chainPassiveType(row);
+      const id = chainPassiveId(row);
+      const count = Number(row.qty);
+      if (!passiveType || !Number.isFinite(id) || !Number.isFinite(count)) return null;
+      return {
+        id,
+        passive_type: passiveType,
+        count,
+        value: chainTemplateAndValue(row).value,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (
+      String(a.passive_type).localeCompare(String(b.passive_type))
+      || a.id - b.id
+      || a.count - b.count
+    ));
 }
 
 function buildStatusEffectRows(enumTypes) {
@@ -1098,10 +1182,12 @@ function buildRowsFromSource(source, enumSource) {
     martial_art_styles: buildMartialArtStyleRows(wugongRows),
     martial_art_effects: buildMartialArtEffectRows(wugongRows, wugongDetailRows),
     martial_art_levels: buildMartialArtLevelRows(wugongRows, wugongDetailRows),
-    martial_art_passive_templates: martialArtPassiveTemplateRows(),
+    martial_art_passive_templates: [
+      ...martialArtPassiveTemplateRows(),
+      ...buildChainTemplateRows(chainRows),
+    ],
     status_effects: buildStatusEffectRows(enumTypes),
-    sect_chains: buildChainRows(chainRows, "sect_id", "sect_id"),
-    style_chains: buildChainRows(chainRows, "style_id", "style_id"),
+    passive_chains: buildPassiveChainRows(chainRows),
     custom_martial_arts: buildCustomMartialArtRows(wugongRows, attackAreaByName),
     custom_martial_art_effects: buildCustomMartialArtEffectRows(wugongRows),
     custom_style_weights: buildCustomStyleWeightRows(chainRows),
