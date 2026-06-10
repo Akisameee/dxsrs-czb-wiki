@@ -1,14 +1,174 @@
 <script setup lang="ts">
+import { enumMapFromRows } from "~/lib/utils";
+import { rarityCardClass } from "~/lib/rarity";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import WikiText from "~/components/wiki/WikiText.vue";
+import {
+  formatMartialArtDecimal,
+  formatMartialArtNumber,
+  formatMartialArtPercent,
+  martialArtAssetEffectLabel,
+  martialArtAttackAreaLabel,
+  martialArtEffectLabel,
+  martialArtName,
+  martialArtIsInternal,
+  martialArtLevelPassiveDescriptions,
+  martialArtPassiveDescription,
+  martialArtPassiveSlots,
+  martialArtRarityToneId,
+  martialArtRarityLabel,
+  martialArtRestrictionLabel,
+  martialArtRestrictionValue,
+  martialArtSectLabel,
+  martialArtStyleLabel,
+  martialArtTypeLabel,
+  type MartialArtEffectRow,
+  type MartialArtLevelRow,
+  type MartialArtStyleRow,
+  type MartialArtSummaryRow,
+} from "~/lib/wiki/martial-art";
+import { linkCharactersInText } from "~/lib/wiki/text";
+
 useHead({ title: "武学详情" });
+
 const route = useRoute();
+const { queryRows } = useWikiDb();
+
+const martialArtId = computed(() => Number(route.query.id));
+
+const { data, pending, error } = await useAsyncData(
+  () => `martial-arts-detail-${route.query.id || "empty"}`,
+  async () => {
+    const id = Number(route.query.id);
+    if (!Number.isFinite(id)) {
+      return { martialArt: null, styles: [], effects: [], levels: [], enums: {} };
+    }
+
+    const [martialArts, styles, effects, levels, enumRows] = await Promise.all([
+      queryRows<MartialArtSummaryRow>(
+        `SELECT id, sect_id, type_id, rarity_id, attack_area_id, slash_effect_id, hit_effect_id,
+          power, cost, interval, accuracy, obtain_method, is_sect_restricted, is_custom_source,
+          passive_1_id, passive_1_value, passive_2_id, passive_2_value, passive_3_id, passive_3_value
+         FROM martial_arts
+         WHERE id = ?`,
+        [id],
+      ),
+      queryRows<MartialArtStyleRow>(
+        "SELECT martial_art_id, slot, style_id FROM martial_art_styles WHERE martial_art_id = ? ORDER BY slot",
+        [id],
+      ),
+      queryRows<MartialArtEffectRow>(
+        "SELECT martial_art_id, slot, effect_id, target_id, level FROM martial_art_effects WHERE martial_art_id = ? ORDER BY slot",
+        [id],
+      ),
+      queryRows<MartialArtLevelRow>(
+        `SELECT martial_art_id, level, training_exp, required_strength, required_constitution,
+          required_physique, required_agility, required_mastery, power, effect_1_level, effect_2_level,
+          effect_3_level, hp, qi_recovery
+         FROM martial_art_levels
+         WHERE martial_art_id = ?
+         ORDER BY level`,
+        [id],
+      ),
+      queryRows<{ type: string; id: number; label: string | null }>(
+        "SELECT type, id, label FROM enums ORDER BY type, id",
+      ),
+    ]);
+
+    return {
+      martialArt: martialArts[0] || null,
+      styles,
+      effects,
+      levels,
+      enums: enumMapFromRows(enumRows),
+    };
+  },
+  { server: false, watch: [martialArtId] },
+);
+
+const martialArt = computed(() => data.value?.martialArt || null);
+const enums = computed(() => data.value?.enums || {});
+const isInternalMartialArt = computed(() => martialArt.value ? martialArtIsInternal(martialArt.value) : false);
+const styleLabels = computed(() =>
+  (data.value?.styles || [])
+    .map((row) => martialArtStyleLabel(row, enums.value))
+    .filter(Boolean),
+);
+const effects = computed(() => data.value?.effects || []);
+const levels = computed(() => data.value?.levels || []);
+const highestLevel = computed(() => levels.value[levels.value.length - 1] || null);
+const effectBadges = computed(() =>
+  effects.value
+    .filter((item) => Number(item.level) > 0)
+    .map((item) => ({
+      id: `${item.martial_art_id}-${item.slot}`,
+      text: martialArtEffectLabel(item, enums.value),
+    })),
+);
+const passiveLines = computed(() => [
+  ...martialArtPassiveSlots(martialArt.value)
+    .map((item) => martialArtPassiveDescription(item, enums.value))
+    .filter(Boolean),
+  ...martialArtLevelPassiveDescriptions(highestLevel.value),
+]);
+const obtainMethodParts = computed(() => {
+  const parts = linkCharactersInText(martialArt.value?.obtain_method, enums.value);
+  return parts.length ? parts : [{ type: "text" as const, text: "-" }];
+});
+const levelRows = computed(() =>
+  levels.value.map((level) => {
+    const effectsText = [1, 2, 3]
+      .map((slot) => levelEffectText(level, slot as 1 | 2 | 3))
+      .filter(Boolean)
+      .join(" / ");
+    return {
+      ...level,
+      powerText: formatMartialArtDecimal(level.power),
+      hpText: formatMartialArtNumber(level.hp),
+      qiRecoveryText: formatMartialArtDecimal(level.qi_recovery),
+      trainingExpText: formatMartialArtNumber(level.training_exp),
+      strengthText: formatMartialArtNumber(level.required_strength),
+      constitutionText: formatMartialArtNumber(level.required_constitution),
+      physiqueText: formatMartialArtNumber(level.required_physique),
+      agilityText: formatMartialArtNumber(level.required_agility),
+      masteryText: formatMartialArtNumber(level.required_mastery),
+      effectsText: effectsText || "-",
+    };
+  }),
+);
+
+function martialArtInitial(item: MartialArtSummaryRow) {
+  return martialArtName(item, enums.value).slice(0, 1);
+}
+
+function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
+  const passiveId = Number(martialArt.value?.[`passive_${slot}_id` as keyof MartialArtSummaryRow]);
+  const value = Number(level[`effect_${slot}_level` as const] || 0);
+  if (!Number.isFinite(passiveId) || passiveId <= 0 || value <= 0) return "";
+  return martialArtPassiveDescription(
+    { passive_id: passiveId, value },
+    enums.value,
+  );
+}
 </script>
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <Card>
+    <Card v-if="error">
+      <CardContent class="text-destructive">{{ error.message }}</CardContent>
+    </Card>
+
+    <Card v-else-if="pending">
       <CardHeader>
         <CardTitle>武学详情</CardTitle>
-        <CardDescription>id: {{ route.query.id || "-" }}</CardDescription>
+        <CardDescription>读取中...</CardDescription>
+      </CardHeader>
+    </Card>
+
+    <Card v-else-if="!martialArt">
+      <CardHeader>
+        <CardTitle>武学详情</CardTitle>
+        <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
       </CardHeader>
       <CardFooter>
         <Button as-child variant="outline">
@@ -16,5 +176,192 @@ const route = useRoute();
         </Button>
       </CardFooter>
     </Card>
+
+    <template v-else>
+      <Card :class="rarityCardClass(martialArtRarityToneId(martialArt.rarity_id))">
+        <CardHeader>
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div class="grid gap-2">
+              <div>
+                <CardTitle class="text-2xl">{{ martialArtName(martialArt, enums) }}</CardTitle>
+              </div>
+            </div>
+
+            <Button as-child variant="outline">
+              <NuxtLink to="/martial-arts/">返回武学</NuxtLink>
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
+        <Card>
+          <CardHeader>
+            <CardTitle>基础信息</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
+            <div class="flex items-center justify-center rounded-md border border-dashed p-6">
+              <Avatar class="size-20 text-2xl">
+                <AvatarFallback>{{ martialArtInitial(martialArt) }}</AvatarFallback>
+              </Avatar>
+            </div>
+            <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">类型</span>
+                <span>{{ martialArtTypeLabel(martialArt, enums) }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">门派</span>
+                <span>{{ martialArtSectLabel(martialArt, enums) }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">稀有度</span>
+                <span>{{ martialArtRarityLabel(martialArt, enums) }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">门派限制</span>
+                <span>{{ martialArtRestrictionValue(martialArt) }}</span>
+              </div>
+              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">真气消耗</span>
+                <span>{{ formatMartialArtNumber(martialArt.cost) }}</span>
+              </div>
+              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">攻击范围</span>
+                <span>{{ martialArtAttackAreaLabel(martialArt, enums) }}</span>
+              </div>
+              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">出招间隔</span>
+                <span>{{ martialArt.interval === null || martialArt.interval === undefined ? "无间隔" : formatMartialArtNumber(martialArt.interval) }}</span>
+              </div>
+              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
+                <span class="text-muted-foreground">命中率</span>
+                <span>{{ martialArt.accuracy === null || martialArt.accuracy === undefined ? "无命中" : formatMartialArtPercent(martialArt.accuracy) }}</span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-muted-foreground">风格</span>
+                <div v-if="styleLabels.length" class="flex flex-wrap justify-end gap-2">
+                  <Badge
+                    v-for="style in styleLabels"
+                    :key="style"
+                    variant="secondary"
+                  >
+                    {{ style }}
+                  </Badge>
+                </div>
+                <span v-else>无风格</span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-muted-foreground">效果</span>
+                <div v-if="effectBadges.length" class="flex flex-wrap justify-end gap-2">
+                  <Badge
+                    v-for="item in effectBadges"
+                    :key="item.id"
+                    variant="secondary"
+                  >
+                    {{ item.text }}
+                  </Badge>
+                </div>
+                <span v-else>无效果</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card v-if="isInternalMartialArt">
+          <CardHeader>
+            <CardTitle>被动</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+            <template v-if="passiveLines.length">
+              <span
+                v-for="item in passiveLines"
+                :key="item"
+              >
+                {{ item }}
+              </span>
+            </template>
+            <span v-else class="text-muted-foreground">无被动</span>
+          </CardContent>
+        </Card>
+
+        <Card v-else>
+          <CardHeader>
+            <CardTitle>特效</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-3">
+            <div class="grid gap-2 rounded-md border p-4">
+              <span class="text-sm text-muted-foreground">招式特效</span>
+              <span class="text-sm">{{ martialArtAssetEffectLabel(martialArt.slash_effect_id) }}</span>
+            </div>
+            <div class="grid gap-2 rounded-md border p-4">
+              <span class="text-sm text-muted-foreground">命中特效</span>
+              <span class="text-sm">{{ martialArtAssetEffectLabel(martialArt.hit_effect_id) }}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>获取方式</CardTitle>
+        </CardHeader>
+        <CardContent class="text-sm leading-7">
+          <WikiText :parts="obtainMethodParts" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>等级成长</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div v-if="levelRows.length" class="overflow-auto">
+            <Table class="[&_td]:text-center [&_th]:text-center">
+              <TableHeader>
+                <TableRow>
+                  <TableHead rowspan="2">阶位</TableHead>
+                  <TableHead rowspan="2">威力</TableHead>
+                  <TableHead rowspan="2">体力</TableHead>
+                  <TableHead rowspan="2">真气恢复</TableHead>
+                  <TableHead rowspan="2">修炼经验</TableHead>
+                  <TableHead colspan="5" class="text-center">属性加成</TableHead>
+                  <TableHead rowspan="2">效果</TableHead>
+                </TableRow>
+                <TableRow>
+                  <TableHead>膂力</TableHead>
+                  <TableHead>根骨</TableHead>
+                  <TableHead>体魄</TableHead>
+                  <TableHead>身法</TableHead>
+                  <TableHead>武艺</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow
+                  v-for="item in levelRows"
+                  :key="`${item.martial_art_id}-${item.level}`"
+                >
+                  <TableCell>第 {{ item.level + 1 }} 阶</TableCell>
+                  <TableCell>{{ item.powerText }}</TableCell>
+                  <TableCell>{{ item.hpText }}</TableCell>
+                  <TableCell>{{ item.qiRecoveryText }}</TableCell>
+                  <TableCell>{{ item.trainingExpText }}</TableCell>
+                  <TableCell>{{ item.strengthText }}</TableCell>
+                  <TableCell>{{ item.constitutionText }}</TableCell>
+                  <TableCell>{{ item.physiqueText }}</TableCell>
+                  <TableCell>{{ item.agilityText }}</TableCell>
+                  <TableCell>{{ item.masteryText }}</TableCell>
+                  <TableCell>{{ item.effectsText }}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+          <div v-else class="text-sm text-muted-foreground">
+            无等级成长数据
+          </div>
+        </CardContent>
+      </Card>
+
+    </template>
   </main>
 </template>

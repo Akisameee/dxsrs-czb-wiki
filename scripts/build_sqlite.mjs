@@ -226,11 +226,22 @@ const TABLES = {
       sect_id: "INTEGER",
       type_id: "INTEGER",
       rarity_id: "INTEGER",
+      attack_area_id: "INTEGER",
+      slash_effect_id: "INTEGER",
+      hit_effect_id: "INTEGER",
       power: "REAL",
       cost: "INTEGER",
+      interval: "INTEGER",
+      accuracy: "INTEGER",
       obtain_method: "TEXT",
       is_sect_restricted: "INTEGER NOT NULL",
-      special: "TEXT",
+      is_custom_source: "INTEGER NOT NULL",
+      passive_1_id: "INTEGER",
+      passive_1_value: "REAL",
+      passive_2_id: "INTEGER",
+      passive_2_value: "REAL",
+      passive_3_id: "INTEGER",
+      passive_3_value: "REAL",
     },
   },
   martial_art_styles: {
@@ -247,15 +258,27 @@ const TABLES = {
       martial_art_id: "INTEGER NOT NULL",
       slot: "INTEGER NOT NULL",
       effect_id: "INTEGER NOT NULL",
+      target_id: "INTEGER",
       level: "INTEGER NOT NULL",
     },
   },
-  martial_art_passives: {
-    primaryKey: ["martial_art_id", "slot"],
+  martial_art_levels: {
+    primaryKey: ["martial_art_id", "level"],
     columns: {
       martial_art_id: "INTEGER NOT NULL",
-      slot: "INTEGER NOT NULL",
-      text: "TEXT NOT NULL",
+      level: "INTEGER NOT NULL",
+      training_exp: "INTEGER",
+      required_strength: "INTEGER",
+      required_constitution: "INTEGER",
+      required_physique: "INTEGER",
+      required_agility: "INTEGER",
+      required_mastery: "INTEGER",
+      power: "REAL",
+      effect_1_level: "INTEGER",
+      effect_2_level: "INTEGER",
+      effect_3_level: "INTEGER",
+      hp: "INTEGER",
+      qi_recovery: "REAL",
     },
   },
   status_effects: {
@@ -358,6 +381,7 @@ const INDEXES = [
   "CREATE INDEX idx_martial_arts_rarity ON martial_arts(rarity_id)",
   "CREATE INDEX idx_martial_art_styles_style ON martial_art_styles(style_id)",
   "CREATE INDEX idx_martial_art_effects_effect ON martial_art_effects(effect_id)",
+  "CREATE INDEX idx_martial_art_levels_martial ON martial_art_levels(martial_art_id)",
   "CREATE INDEX idx_custom_martial_effect_rates_effect ON custom_martial_effect_rates(effect_id)",
 ];
 
@@ -857,30 +881,37 @@ function maxLevelDetailRow(detailRows, martialIndex) {
   return rows.filter((row) => Number(row.weili) > 0).sort((a, b) => b.lv - a.lv)[0];
 }
 
-function passivesFromRawDetail(detailRow) {
-  const passives = [];
-  const hp = Number(detailRow?.hp);
-  const zhenqiup = Number(detailRow?.zhenqiup);
-  if (Number.isFinite(hp) && hp > 0) passives.push(`体力值+${roundNumber(hp, 0)}`);
-  if (Number.isFinite(zhenqiup) && zhenqiup > 0) passives.push(`真气增加速度+${roundNumber(zhenqiup)}%`);
-  return passives;
+function highestLevelDetailRow(detailRows, martialIndex) {
+  return detailRows.slice(martialIndex * 10, martialIndex * 10 + 10).sort((a, b) => b.lv - a.lv)[0];
 }
 
-function buildMartialArtRows(wugongRows, detailRows) {
+function buildMartialArtRows(wugongRows, detailRows, attackAreaByName) {
   return wugongRows.map((row, index) => {
     const typeId = Number(row.type);
     const maxDetail = maxLevelDetailRow(detailRows, index);
+    const highestDetail = highestLevelDetailRow(detailRows, index);
     const obtainMethod = cleanText(row.huodefangfa);
     return {
       id: Number(row.index ?? index),
       sect_id: Number(row.liansuo_mp),
       type_id: typeId,
       rarity_id: Number(row.rare),
+      attack_area_id: attackAreaByName.get(row.attackareaname) ?? null,
+      slash_effect_id: Number(row.slashfx),
+      hit_effect_id: Number(row.hitfx),
       power: typeId === 6 || !maxDetail ? null : roundNumber(maxDetail.weili),
       cost: typeId === 6 ? null : Number(row.cost),
+      interval: Number(row.jiange),
+      accuracy: Number(row.mingzhong),
       obtain_method: obtainMethod,
       is_sect_restricted: boolInt(obtainMethod && obtainMethod.startsWith("武林大会奖品")),
-      special: null,
+      is_custom_source: boolInt(row.iszichuang),
+      passive_1_id: Number(row.beidong1) || null,
+      passive_1_value: Number(highestDetail?.b1value ?? 0),
+      passive_2_id: Number(row.beidong2) || null,
+      passive_2_value: Number(highestDetail?.b2value ?? 0),
+      passive_3_id: Number(row.beidong3) || null,
+      passive_3_value: Number(highestDetail?.b3value ?? 0),
     };
   });
 }
@@ -903,22 +934,34 @@ function buildMartialArtEffectRows(wugongRows, detailRows) {
         martial_art_id: Number(row.index ?? index),
         slot,
         effect_id: Number(row[`buff${slot}`]),
+        target_id: Number(row[`bufftarget${slot}`]),
         level: Number(detail?.[`b${slot}value`] ?? 0),
       }))
       .filter((item) => Number.isFinite(item.effect_id) && item.effect_id !== 99 && item.level >= 0);
   });
 }
 
-function buildMartialArtPassiveRows(wugongRows, detailRows) {
-  return wugongRows.flatMap((row, index) => {
-    if (Number(row.type) !== 6) return [];
-    const detail = detailRows.slice(index * 10, index * 10 + 10).sort((a, b) => b.lv - a.lv)[0];
-    return passivesFromRawDetail(detail).map((text, slot) => ({
-      martial_art_id: Number(row.index ?? index),
-      slot,
-      text,
-    }));
-  });
+function buildMartialArtLevelRows(wugongRows, detailRows) {
+  const martialIdByName = martialArtIdByInternalName(wugongRows);
+  return detailRows
+    .filter((row) => martialIdByName.has(row.wugongname))
+    .map((row) => ({
+      martial_art_id: martialIdByName.get(row.wugongname),
+      level: Number(row.lv),
+      training_exp: Number(row.maxexp),
+      required_strength: Number(row.xiulian_lvli),
+      required_constitution: Number(row.xiulian_gengu),
+      required_physique: Number(row.xiulian_tipo),
+      required_agility: Number(row.xiulian_shenfa),
+      required_mastery: Number(row.xiulian_wuyi),
+      power: roundNumber(row.weili),
+      effect_1_level: Number(row.b1value),
+      effect_2_level: Number(row.b2value),
+      effect_3_level: Number(row.b3value),
+      hp: Number(row.hp),
+      qi_recovery: roundNumber(row.zhenqiup),
+    }))
+    .sort((a, b) => a.martial_art_id - b.martial_art_id || a.level - b.level);
 }
 
 function buildChainRows(chainRows, idName, outputName) {
@@ -1043,10 +1086,10 @@ function buildRowsFromSource(source, enumSource) {
     location_characters: buildLocationCharacterRows(npcRows, locationByCode),
     unplaced_characters: buildUnplacedCharacterRows(npcRows, locationByCode),
     items: buildItemRows(itemRows),
-    martial_arts: buildMartialArtRows(wugongRows, wugongDetailRows),
+    martial_arts: buildMartialArtRows(wugongRows, wugongDetailRows, attackAreaByName),
     martial_art_styles: buildMartialArtStyleRows(wugongRows),
     martial_art_effects: buildMartialArtEffectRows(wugongRows, wugongDetailRows),
-    martial_art_passives: buildMartialArtPassiveRows(wugongRows, wugongDetailRows),
+    martial_art_levels: buildMartialArtLevelRows(wugongRows, wugongDetailRows),
     status_effects: buildStatusEffectRows(enumTypes),
     sect_chains: buildChainRows(chainRows, "sect_id", "sect_id"),
     style_chains: buildChainRows(chainRows, "style_id", "style_id"),
