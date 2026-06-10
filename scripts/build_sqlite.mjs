@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_SOURCE, ROOT, deriveChainEnums, extractTables } from "./lib/bgdatabase.mjs";
+import { martialArtPassiveTemplateRows } from "./lib/martial-art-passive-templates.mjs";
 import { writeSqlite } from "./sqlite/write-sqlite.mjs";
 
 const DEFAULT_ENUM_SOURCE = join(ROOT, "re/dump/cpp2il_analysis/types/Assembly-CSharp");
@@ -279,6 +280,13 @@ const TABLES = {
       effect_3_level: "INTEGER",
       hp: "INTEGER",
       qi_recovery: "REAL",
+    },
+  },
+  martial_art_passive_templates: {
+    primaryKey: ["id"],
+    columns: {
+      id: "TEXT NOT NULL",
+      template: "TEXT NOT NULL",
     },
   },
   status_effects: {
@@ -1090,6 +1098,7 @@ function buildRowsFromSource(source, enumSource) {
     martial_art_styles: buildMartialArtStyleRows(wugongRows),
     martial_art_effects: buildMartialArtEffectRows(wugongRows, wugongDetailRows),
     martial_art_levels: buildMartialArtLevelRows(wugongRows, wugongDetailRows),
+    martial_art_passive_templates: martialArtPassiveTemplateRows(),
     status_effects: buildStatusEffectRows(enumTypes),
     sect_chains: buildChainRows(chainRows, "sect_id", "sect_id"),
     style_chains: buildChainRows(chainRows, "style_id", "style_id"),

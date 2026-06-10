@@ -71,6 +71,13 @@ export type MartialArtPassiveSlot = {
   value: number | null;
 };
 
+export type MartialArtPassiveTemplateRow = {
+  id: string;
+  template: string;
+};
+
+export type MartialArtPassiveTemplateMap = Record<string, string>;
+
 export type MartialArtEffectSummary = {
   id: string;
   text: string;
@@ -141,26 +148,32 @@ export function martialArtPassiveLabel(
   return enumLabel(enums, "BeiDongType", item.passive_id, "无");
 }
 
-export const SPECIAL_DESCRIPTION_TEMPLATES: Record<string, (param: number) => string> = {
-  8: (param) => `攻击造成的「中毒」状态层数+${param}`,
-  53: () => "闪避后行动顺序获得提前",
-  57: (param) => `当获得减益状态时，有${param}%几率免疫该状态`,
-  hp: (param) => `体力值+${formatMartialArtNumber(param)}`,
-  qi_recovery: (param) => `真气增加速度+${formatMartialArtDecimal(param)}%`,
-};
+export function martialArtPassiveTemplateMap(rows: MartialArtPassiveTemplateRow[]) {
+  return Object.fromEntries(rows.map((row) => [String(row.id), row.template || ""]));
+}
+
+export function formatMartialArtPassiveTemplate(
+  template: string | null | undefined,
+  value: number | null | undefined,
+) {
+  if (!template) return "";
+  const param = formatMartialArtDecimal(value);
+  return template.replaceAll("{param}", param);
+}
 
 export function martialArtPassiveDescription(
   item: Pick<MartialArtPassiveSlot, "passive_id" | "value">,
   enums: WikiEnums,
+  templates: MartialArtPassiveTemplateMap = {},
 ) {
   const id = Number(item.passive_id);
   if (!Number.isFinite(id) || id <= 0) return "";
 
-  const param = Number(item.value ?? 0);
-  const template = SPECIAL_DESCRIPTION_TEMPLATES[String(id)];
-  if (template) return template(Number.isFinite(param) ? param : 0);
+  const text = formatMartialArtPassiveTemplate(templates[String(id)], item.value);
+  if (text) return text;
 
   const label = martialArtPassiveLabel(item, enums);
+  const param = Number(item.value ?? 0);
   return Number.isFinite(param) && param > 0 ? `${label}（参数 ${param}）` : label;
 }
 
@@ -178,13 +191,18 @@ export function martialArtPassiveSlots(item: MartialArtSummaryRow | null | undef
   });
 }
 
-export function martialArtLevelPassiveDescriptions(level: Pick<MartialArtLevelRow, "hp" | "qi_recovery"> | null | undefined) {
+export function martialArtLevelPassiveDescriptions(
+  level: Pick<MartialArtLevelRow, "hp" | "qi_recovery"> | null | undefined,
+  templates: MartialArtPassiveTemplateMap = {},
+) {
   if (!level) return [];
   const hp = Number(level.hp);
   const qiRecovery = Number(level.qi_recovery);
   return [
-    Number.isFinite(hp) && hp > 0 ? SPECIAL_DESCRIPTION_TEMPLATES.hp(hp) : "",
-    Number.isFinite(qiRecovery) && qiRecovery > 0 ? SPECIAL_DESCRIPTION_TEMPLATES.qi_recovery(qiRecovery) : "",
+    Number.isFinite(hp) && hp > 0 ? formatMartialArtPassiveTemplate(templates.hp, hp) : "",
+    Number.isFinite(qiRecovery) && qiRecovery > 0
+      ? formatMartialArtPassiveTemplate(templates.qi_recovery, qiRecovery)
+      : "",
   ].filter(Boolean);
 }
 
@@ -248,6 +266,7 @@ export function buildMartialArtSummary(
   effects: MartialArtEffectRow[],
   levels: MartialArtLevelRow[],
   enums: WikiEnums,
+  passiveTemplates: MartialArtPassiveTemplateMap = {},
 ): MartialArtSummary {
   const highestLevel = levels.at(-1) || null;
   const obtainMethodParts = linkCharactersInText(martialArt.obtain_method, enums);
@@ -270,9 +289,9 @@ export function buildMartialArtSummary(
     })),
     passives: [
       ...martialArtPassiveSlots(martialArt)
-        .map((row) => martialArtPassiveDescription(row, enums))
+        .map((row) => martialArtPassiveDescription(row, enums, passiveTemplates))
         .filter(Boolean),
-      ...martialArtLevelPassiveDescriptions(highestLevel),
+      ...martialArtLevelPassiveDescriptions(highestLevel, passiveTemplates),
     ],
     obtainMethodParts: obtainMethodParts.length ? obtainMethodParts : [wikiText("-")],
   };

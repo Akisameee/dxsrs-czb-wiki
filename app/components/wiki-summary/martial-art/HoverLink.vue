@@ -8,7 +8,7 @@ import {
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
 import { rarityTextClass } from "~/lib/rarity";
-import { useMartialArtSummary } from "~/composables/useMartialArtSummary";
+import { useMartialArtSummary } from "~/composables/useMartialArtData";
 
 const MartialArtSummaryPanel = defineAsyncComponent(() => import("./SummaryPanel.vue"));
 

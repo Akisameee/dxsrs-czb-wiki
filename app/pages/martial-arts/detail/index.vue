@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { enumMapFromRows } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import WikiText from "~/components/wiki/WikiText.vue";
@@ -17,22 +16,20 @@ import {
   martialArtPassiveSlots,
   martialArtRarityToneId,
   martialArtRarityLabel,
-  martialArtRestrictionLabel,
   martialArtRestrictionValue,
   martialArtSectLabel,
   martialArtStyleLabel,
   martialArtTypeLabel,
-  type MartialArtEffectRow,
   type MartialArtLevelRow,
-  type MartialArtStyleRow,
   type MartialArtSummaryRow,
 } from "~/lib/wiki/martial-art";
 import { linkCharactersInText } from "~/lib/wiki/text";
+import { useMartialArtData } from "~/composables/useMartialArtData";
 
 useHead({ title: "武学详情" });
 
 const route = useRoute();
-const { queryRows } = useWikiDb();
+const { loadMartialArtDetail } = useMartialArtData();
 
 const martialArtId = computed(() => Number(route.query.id));
 
@@ -41,53 +38,17 @@ const { data, pending, error } = await useAsyncData(
   async () => {
     const id = Number(route.query.id);
     if (!Number.isFinite(id)) {
-      return { martialArt: null, styles: [], effects: [], levels: [], enums: {} };
+      return { martialArt: null, styles: [], effects: [], levels: [], passiveTemplates: {}, enums: {} };
     }
 
-    const [martialArts, styles, effects, levels, enumRows] = await Promise.all([
-      queryRows<MartialArtSummaryRow>(
-        `SELECT id, sect_id, type_id, rarity_id, attack_area_id, slash_effect_id, hit_effect_id,
-          power, cost, interval, accuracy, obtain_method, is_sect_restricted, is_custom_source,
-          passive_1_id, passive_1_value, passive_2_id, passive_2_value, passive_3_id, passive_3_value
-         FROM martial_arts
-         WHERE id = ?`,
-        [id],
-      ),
-      queryRows<MartialArtStyleRow>(
-        "SELECT martial_art_id, slot, style_id FROM martial_art_styles WHERE martial_art_id = ? ORDER BY slot",
-        [id],
-      ),
-      queryRows<MartialArtEffectRow>(
-        "SELECT martial_art_id, slot, effect_id, target_id, level FROM martial_art_effects WHERE martial_art_id = ? ORDER BY slot",
-        [id],
-      ),
-      queryRows<MartialArtLevelRow>(
-        `SELECT martial_art_id, level, training_exp, required_strength, required_constitution,
-          required_physique, required_agility, required_mastery, power, effect_1_level, effect_2_level,
-          effect_3_level, hp, qi_recovery
-         FROM martial_art_levels
-         WHERE martial_art_id = ?
-         ORDER BY level`,
-        [id],
-      ),
-      queryRows<{ type: string; id: number; label: string | null }>(
-        "SELECT type, id, label FROM enums ORDER BY type, id",
-      ),
-    ]);
-
-    return {
-      martialArt: martialArts[0] || null,
-      styles,
-      effects,
-      levels,
-      enums: enumMapFromRows(enumRows),
-    };
+    return loadMartialArtDetail(id);
   },
   { server: false, watch: [martialArtId] },
 );
 
 const martialArt = computed(() => data.value?.martialArt || null);
 const enums = computed(() => data.value?.enums || {});
+const passiveTemplates = computed(() => data.value?.passiveTemplates || {});
 const isInternalMartialArt = computed(() => martialArt.value ? martialArtIsInternal(martialArt.value) : false);
 const styleLabels = computed(() =>
   (data.value?.styles || [])
@@ -107,9 +68,9 @@ const effectBadges = computed(() =>
 );
 const passiveLines = computed(() => [
   ...martialArtPassiveSlots(martialArt.value)
-    .map((item) => martialArtPassiveDescription(item, enums.value))
+    .map((item) => martialArtPassiveDescription(item, enums.value, passiveTemplates.value))
     .filter(Boolean),
-  ...martialArtLevelPassiveDescriptions(highestLevel.value),
+  ...martialArtLevelPassiveDescriptions(highestLevel.value, passiveTemplates.value),
 ]);
 const obtainMethodParts = computed(() => {
   const parts = linkCharactersInText(martialArt.value?.obtain_method, enums.value);
@@ -148,6 +109,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
   return martialArtPassiveDescription(
     { passive_id: passiveId, value },
     enums.value,
+    passiveTemplates.value,
   );
 }
 </script>
