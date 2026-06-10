@@ -3,6 +3,7 @@ import { defineAsyncComponent } from "vue";
 import type { WikiTextPart } from "~/lib/wiki/text";
 
 const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/character/HoverLink.vue"));
+const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/item/HoverLink.vue"));
 
 defineProps<{
   parts: WikiTextPart[];
@@ -20,12 +21,10 @@ defineProps<{
       :id="part.id"
       :label="part.text"
     />
-    <NuxtLink
+    <ItemHoverLink
       v-else-if="part.type === 'item'"
-      :to="`/items/detail/?id=${part.id}`"
-      class="font-medium underline-offset-4 hover:underline"
-    >
-      {{ part.text }}
-    </NuxtLink>
+      :id="part.id"
+      :label="part.text"
+    />
   </template>
 </template>
