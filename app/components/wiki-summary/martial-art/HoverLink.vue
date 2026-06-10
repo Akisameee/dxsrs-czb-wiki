@@ -8,7 +8,8 @@ import {
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
 import { rarityTextClass } from "~/lib/rarity";
-import { useMartialArtSummary } from "~/composables/useMartialArtData";
+import { useMartialArtData } from "~/composables/useMartialArtData";
+import type { MartialArtSummary } from "~/lib/wiki/martial-art";
 
 const MartialArtSummaryPanel = defineAsyncComponent(() => import("./SummaryPanel.vue"));
 
@@ -31,7 +32,10 @@ const martialArtId = computed(() => {
 const detailUrl = computed(() => (
   martialArtId.value === null ? "/martial-arts/" : `/martial-arts/detail/?id=${martialArtId.value}`
 ));
-const { summary, pending, error, load } = useMartialArtSummary(martialArtId);
+const { loadMartialArtSummary } = useMartialArtData();
+const summary = shallowRef<MartialArtSummary | null>(null);
+const pending = ref(false);
+const error = shallowRef<Error | null>(null);
 const displayLabel = computed(() => (
   props.label
   || summary.value?.name
@@ -47,8 +51,33 @@ const linkClass = computed(() => [
   rarityTextClass(rarityId.value),
 ]);
 
+async function load() {
+  const value = martialArtId.value;
+  if (value === null) return null;
+
+  pending.value = true;
+  error.value = null;
+  try {
+    const nextSummary = await loadMartialArtSummary(value);
+    if (martialArtId.value === value) summary.value = nextSummary;
+    return nextSummary;
+  } catch (caught) {
+    if (martialArtId.value === value) {
+      error.value = caught instanceof Error ? caught : new Error(String(caught));
+    }
+    return null;
+  } finally {
+    if (martialArtId.value === value) pending.value = false;
+  }
+}
+
 watch(open, (value) => {
   if (value) void load();
+});
+
+watch(martialArtId, () => {
+  summary.value = null;
+  error.value = null;
 });
 
 onMounted(() => {

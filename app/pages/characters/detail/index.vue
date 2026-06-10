@@ -1,80 +1,23 @@
 <script setup lang="ts">
 import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/vue";
-import { enumLabel, enumMapFromRows } from "~/lib/utils";
-import { rarityBadgeClass, rarityCardClass } from "~/lib/rarity";
+import { enumLabel } from "~/lib/utils";
+import { rarityCardClass } from "~/lib/rarity";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import WikiText from "~/components/wiki/WikiText.vue";
-import { formatQuestParts } from "~/lib/wiki/character";
+import {
+  formatQuestParts,
+  type CharacterQuestRow,
+  type CharacterQuestTargetRow,
+} from "~/lib/wiki/character";
+import {
+  useCharacterData,
+  type CharacterDetailRow,
+} from "~/composables/useCharacterData";
 
 useHead({ title: "人物详情" });
 
-type Character = {
-  id: number;
-  portrait: string | null;
-  region_id: number | null;
-  location_id: number | null;
-  sect_id: number;
-  sex_id: number;
-  rarity_id: number;
-  rank_id: number;
-  position_id: number;
-  level: number;
-  favorite_rarity_id: number;
-  fame: number;
-  chivalry: number;
-  gold: number;
-  is_instructor: number;
-  is_manager: number;
-  weapon_type_id: number;
-  growth_type_id: number;
-  equipment_weapon: string | null;
-  equipment_armor: string | null;
-  equipment_other_weapon: string | null;
-  strength: number;
-  constitution: number;
-  physique: number;
-  agility: number;
-  cultivation: number;
-  fist: number;
-  blade_sword: number;
-  spear_staff: number;
-  hidden_weapon: number;
-  internal: number;
-  mining: number;
-  herb_gathering: number;
-  hunting: number;
-  forging: number;
-  alchemy: number;
-  sewing: number;
-  likes_tea: number;
-  likes_wine: number;
-  likes_music: number;
-  likes_chess: number;
-  likes_book: number;
-  likes_painting: number;
-  word: string | null;
-};
-
-type CharacterQuest = {
-  id: number;
-  character_id: number;
-  stage: number;
-  required_affinity: number;
-  quest_type_id: number;
-  reward_item_id: number | null;
-};
-
-type CharacterQuestTarget = {
-  quest_id: number;
-  slot: number;
-  target_role: string;
-  target_kind: string;
-  target_id: number | null;
-  target_region_id: number | null;
-};
-
 const route = useRoute();
-const { queryRows } = useWikiDb();
+const { loadCharacterDetail } = useCharacterData();
 
 const characterId = computed(() => Number(route.query.id));
 
@@ -86,29 +29,7 @@ const { data, pending, error } = await useAsyncData(
       return { character: null, quests: [], questTargets: [], enums: {} };
     }
 
-    const [characters, quests, questTargets, enumRows] = await Promise.all([
-      queryRows<Character>("SELECT * FROM characters WHERE id = ?", [id]),
-      queryRows<CharacterQuest>(
-        "SELECT id, character_id, stage, required_affinity, quest_type_id, reward_item_id FROM character_quests WHERE character_id = ? ORDER BY stage",
-        [id],
-      ),
-      queryRows<CharacterQuestTarget>(
-        `SELECT t.quest_id, t.slot, t.target_role, t.target_kind, t.target_id, t.target_region_id
-         FROM character_quest_targets t
-         JOIN character_quests q ON q.id = t.quest_id
-         WHERE q.character_id = ?
-         ORDER BY t.quest_id, t.slot`,
-        [id],
-      ),
-      queryRows<{ type: string; id: number; label: string | null }>("SELECT type, id, label FROM enums ORDER BY type, id"),
-    ]);
-
-    return {
-      character: characters[0] || null,
-      quests,
-      questTargets,
-      enums: enumMapFromRows(enumRows),
-    };
+    return loadCharacterDetail(id);
   },
   { server: false, watch: [characterId] },
 );
@@ -119,7 +40,7 @@ const radarCanvas = ref<HTMLCanvasElement | null>(null);
 let radarChart: any = null;
 
 const targetsByQuest = computed(() => {
-  const groups = new Map<number, CharacterQuestTarget[]>();
+  const groups = new Map<number, CharacterQuestTargetRow[]>();
   for (const target of data.value?.questTargets || []) {
     const targets = groups.get(target.quest_id) || [];
     targets.push(target);
@@ -179,15 +100,15 @@ const favoriteItems = computed(() => {
   ].filter((entry) => entry.value);
 });
 
-function characterName(item: Character) {
+function characterName(item: CharacterDetailRow) {
   return enumLabel(enums.value, "Character", item.id, `人物 ${item.id}`);
 }
 
-function characterInitial(item: Character) {
+function characterInitial(item: CharacterDetailRow) {
   return characterName(item).slice(0, 1);
 }
 
-function locationText(item: Character) {
+function locationText(item: CharacterDetailRow) {
   if (item.region_id === null || item.location_id === null) return "无地点";
   return `${enumLabel(enums.value, "DiDian", item.region_id)} / ${enumLabel(enums.value, "Area", item.location_id)}`;
 }
@@ -201,11 +122,11 @@ function label(type: string, id: number | string | null | undefined, fallback = 
   return enumLabel(enums.value, type, id, fallback);
 }
 
-function questTargets(quest: CharacterQuest) {
+function questTargets(quest: CharacterQuestRow) {
   return targetsByQuest.value.get(quest.id) || [];
 }
 
-function questSummaryParts(quest: CharacterQuest) {
+function questSummaryParts(quest: CharacterQuestRow) {
   return formatQuestParts(quest, questTargets(quest), enums.value);
 }
 

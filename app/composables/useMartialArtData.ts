@@ -1,5 +1,3 @@
-import type { MaybeRefOrGetter } from "vue";
-import { computed, ref, shallowRef, toValue, watch } from "vue";
 import { enumMapFromRows } from "~/lib/utils";
 import {
   buildMartialArtSummary,
@@ -129,47 +127,4 @@ export function useMartialArtData() {
     loadMartialArtDetail,
     loadMartialArtSummary,
   };
-}
-
-export function useMartialArtSummary(id: MaybeRefOrGetter<number | string | null | undefined>) {
-  const { loadMartialArtSummary } = useMartialArtData();
-  const summary = shallowRef<MartialArtSummary | null>(null);
-  const pending = ref(false);
-  const error = shallowRef<Error | null>(null);
-
-  const martialArtId = computed(() => {
-    const value = Number(toValue(id));
-    return Number.isFinite(value) ? value : null;
-  });
-
-  async function load() {
-    const value = martialArtId.value;
-    if (value === null) return null;
-
-    if (summaryCache.has(value)) {
-      summary.value = summaryCache.get(value) || null;
-      return summary.value;
-    }
-
-    pending.value = true;
-    error.value = null;
-    try {
-      const nextSummary = await loadMartialArtSummary(value);
-      summary.value = nextSummary;
-      return nextSummary;
-    } catch (caught) {
-      error.value = caught instanceof Error ? caught : new Error(String(caught));
-      return null;
-    } finally {
-      pending.value = false;
-    }
-  }
-
-  watch(martialArtId, () => {
-    const value = martialArtId.value;
-    summary.value = value === null ? null : summaryCache.get(value) || null;
-    error.value = null;
-  });
-
-  return { summary, pending, error, load };
 }

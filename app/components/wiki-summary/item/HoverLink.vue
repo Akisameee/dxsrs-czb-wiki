@@ -8,7 +8,8 @@ import {
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
 import { rarityTextClass } from "~/lib/rarity";
-import { useItemSummary } from "~/composables/useItemSummary";
+import { useItemData } from "~/composables/useItemData";
+import type { ItemSummary } from "~/lib/wiki/item";
 
 const ItemSummaryPanel = defineAsyncComponent(() => import("./SummaryPanel.vue"));
 
@@ -31,7 +32,10 @@ const itemId = computed(() => {
 const detailUrl = computed(() => (
   itemId.value === null ? "/items/" : `/items/detail/?id=${itemId.value}`
 ));
-const { summary, pending, error, load } = useItemSummary(itemId);
+const { loadItemSummary } = useItemData();
+const summary = shallowRef<ItemSummary | null>(null);
+const pending = ref(false);
+const error = shallowRef<Error | null>(null);
 const displayLabel = computed(() => (
   props.label
   || summary.value?.name
@@ -47,8 +51,33 @@ const linkClass = computed(() => [
   rarityTextClass(rarityId.value),
 ]);
 
+async function load() {
+  const value = itemId.value;
+  if (value === null) return null;
+
+  pending.value = true;
+  error.value = null;
+  try {
+    const nextSummary = await loadItemSummary(value);
+    if (itemId.value === value) summary.value = nextSummary;
+    return nextSummary;
+  } catch (caught) {
+    if (itemId.value === value) {
+      error.value = caught instanceof Error ? caught : new Error(String(caught));
+    }
+    return null;
+  } finally {
+    if (itemId.value === value) pending.value = false;
+  }
+}
+
 watch(open, (value) => {
   if (value) void load();
+});
+
+watch(itemId, () => {
+  summary.value = null;
+  error.value = null;
 });
 
 onMounted(() => {

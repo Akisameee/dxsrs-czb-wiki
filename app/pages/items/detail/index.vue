@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { enumMapFromRows } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
 import {
-  buildItemSummary,
   formatItemNumber,
-  type ItemSummaryRow,
 } from "~/lib/wiki/item";
+import { useItemData } from "~/composables/useItemData";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   Card,
@@ -20,7 +18,7 @@ import { Separator } from "~/components/ui/separator";
 useHead({ title: "道具详情" });
 
 const route = useRoute();
-const { queryRows } = useWikiDb();
+const { loadItemDetail } = useItemData();
 
 const itemId = computed(() => Number(route.query.id));
 
@@ -28,28 +26,9 @@ const { data, pending, error } = await useAsyncData(
   () => `items-detail-${route.query.id || "empty"}`,
   async () => {
     const id = Number(route.query.id);
-    if (!Number.isFinite(id)) return { item: null, summary: null };
+    if (!Number.isFinite(id)) return { item: null, summary: null, enums: {} };
 
-    const [items, enumRows] = await Promise.all([
-      queryRows<ItemSummaryRow>(
-        `SELECT id, icon, description, type_id, rarity_id, use_type_id, use_text, use_value,
-          use_value2, use_value3, cost, required_strength, required_constitution,
-          required_physique, required_agility, required_cultivation, required_mastery, is_material
-         FROM items
-         WHERE id = ?`,
-        [id],
-      ),
-      queryRows<{ type: string; id: number; label: string | null }>(
-        "SELECT type, id, label FROM enums ORDER BY type, id",
-      ),
-    ]);
-
-    const item = items[0] || null;
-    const enums = enumMapFromRows(enumRows);
-    return {
-      item,
-      summary: item ? buildItemSummary(item, enums) : null,
-    };
+    return loadItemDetail(id);
   },
   { server: false, watch: [itemId] },
 );
