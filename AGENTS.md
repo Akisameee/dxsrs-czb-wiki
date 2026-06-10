@@ -36,6 +36,13 @@
 - Tailwind utility 可以用于布局和间距；不要写独立 CSS 类去复刻旧样式。
 - 不要把视觉颜色、边框、阴影等样式重复写在业务页面里，优先使用 shadcn 组件的 `variant` 和默认样式。
 
+### 验证方式
+
+- 代码修改后优先使用 `npm run build` 验证 Nuxt 静态生成是否通过。
+- 在当前 Windows 工作区里，`npm run build` 应尽量在沙箱外执行；普通沙箱执行可能因为 Vite 子进程启动报 `spawn EPERM`。
+- 如果普通执行出现 `spawn EPERM`，应使用同一个命令在沙箱外重新验证；这通常是运行环境限制，不代表代码本身失败。
+- `npm exec tsc -- --noEmit` 目前会被既有类型配置和 shadcn-vue 组件声明问题干扰，不能作为主要验收标准。
+
 ### 组件组合
 
 常见组合方式：

@@ -8,15 +8,18 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
+import { rarityTextClass } from "~/lib/rarity";
 import { characterDetailUrl } from "~/lib/wiki/character";
 
 const props = withDefaults(defineProps<{
   id: number | string | null | undefined;
   mode?: "link" | "button";
   label?: string;
+  rarityId?: number | string | null;
 }>(), {
   mode: "link",
   label: "",
+  rarityId: null,
 });
 
 const open = ref(false);
@@ -29,9 +32,17 @@ const detailUrl = computed(() => (
 ));
 const { summary, pending, error, load } = useCharacterSummary(characterId);
 const displayLabel = computed(() => props.label || summary.value?.name || `人物 ${props.id ?? "-"}`);
+const linkClass = computed(() => [
+  "font-medium underline-offset-4 hover:underline",
+  rarityTextClass(props.rarityId ?? summary.value?.rarityId),
+]);
 
 watch(open, (value) => {
   if (value) void load();
+});
+
+onMounted(() => {
+  if (props.mode === "link" && (!props.label || props.rarityId === null)) void load();
 });
 </script>
 
@@ -54,7 +65,7 @@ watch(open, (value) => {
       <NuxtLink
         v-else
         :to="detailUrl"
-        class="font-medium underline-offset-4 hover:underline"
+        :class="linkClass"
       >
         <slot>{{ displayLabel }}</slot>
       </NuxtLink>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import { enumLabel, enumMapFromRows } from "~/lib/utils";
 import { useMediaQuery } from "@vueuse/core";
 import { rarityCardClass } from "~/lib/rarity";
@@ -9,7 +10,6 @@ import {
   characterName as getCharacterName,
   type CharacterSummaryRow,
 } from "~/lib/wiki/character";
-import CharacterHoverLink from "~/components/wiki-summary/character/HoverLink.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -43,10 +43,12 @@ useHead({ title: "人物" });
 
 type Character = CharacterSummaryRow;
 
+const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/character/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const sectFilter = ref("all");
 const regionFilter = ref("all");
+const rarityFilter = ref("all");
 const currentPage = ref(1);
 const isSm = useMediaQuery("(min-width: 640px)");
 const isLg = useMediaQuery("(min-width: 1024px)");
@@ -99,6 +101,7 @@ function enumOptions(type: string) {
 
 const sectOptions = computed(() => enumOptions("LianSuo_MP"));
 const regionOptions = computed(() => enumOptions("DiDian"));
+const rarityOptions = computed(() => enumOptions("NPC_Rare"));
 
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
@@ -106,6 +109,7 @@ const filteredRows = computed(() => {
     if (keyword && !characterName(item).toLowerCase().includes(keyword)) return false;
     if (sectFilter.value !== "all" && String(item.sect_id) !== sectFilter.value) return false;
     if (regionFilter.value !== "all" && String(item.region_id) !== regionFilter.value) return false;
+    if (rarityFilter.value !== "all" && String(item.rarity_id) !== rarityFilter.value) return false;
     return true;
   });
 });
@@ -117,7 +121,7 @@ const pagedRows = computed(() => {
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)));
 
-watch([search, sectFilter, regionFilter], () => {
+watch([search, sectFilter, regionFilter, rarityFilter], () => {
   currentPage.value = 1;
 });
 
@@ -141,7 +145,7 @@ watch(pageCount, (count) => {
           {{ pending ? "读取中..." : `共 ${characters.length} 人，当前 ${filteredRows.length} 条` }}
         </CardDescription>
       </CardHeader>
-      <CardContent class="grid gap-4 md:grid-cols-3">
+      <CardContent class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="grid gap-2">
           <Label for="character-search">搜索</Label>
           <Input id="character-search" v-model="search" type="search" placeholder="搜索人物" />
@@ -169,6 +173,20 @@ watch(pageCount, (count) => {
             <SelectContent>
               <SelectItem value="all">全部地点</SelectItem>
               <SelectItem v-for="option in regionOptions" :key="option.id" :value="option.id">
+                {{ option.label }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="grid gap-2">
+          <Label for="character-rarity">资质</Label>
+          <Select v-model="rarityFilter">
+            <SelectTrigger id="character-rarity" class="w-full">
+              <SelectValue placeholder="全部资质" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">全部资质</SelectItem>
+              <SelectItem v-for="option in rarityOptions" :key="option.id" :value="option.id">
                 {{ option.label }}
               </SelectItem>
             </SelectContent>
@@ -230,6 +248,9 @@ watch(pageCount, (count) => {
                 <CardDescription class="truncate">{{ locationText(item) }}</CardDescription>
                 <Badge variant="outline" class="mt-2">
                   {{ enumLabel(enums, "LianSuo_MP", item.sect_id) }}
+                </Badge>
+                <Badge variant="secondary" class="mt-2">
+                  {{ enumLabel(enums, "BingQiType", item.weapon_type_id) }}
                 </Badge>
               </div>
 

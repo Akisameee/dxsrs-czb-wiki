@@ -3,6 +3,8 @@ import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/v
 import { enumLabel, enumMapFromRows } from "~/lib/utils";
 import { rarityBadgeClass, rarityCardClass } from "~/lib/rarity";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import WikiText from "~/components/wiki/WikiText.vue";
+import { formatQuestParts } from "~/lib/wiki/character";
 
 useHead({ title: "人物详情" });
 
@@ -203,65 +205,8 @@ function questTargets(quest: CharacterQuest) {
   return targetsByQuest.value.get(quest.id) || [];
 }
 
-function questTargetLabel(target: CharacterQuestTarget) {
-  if (target.target_kind === "character") {
-    return label("Character", target.target_id, "未知人物");
-  }
-  if (target.target_kind === "item") {
-    return label("Item", target.target_id, "未知道具");
-  }
-  if (target.target_kind === "location") {
-    const region = label("DiDian", target.target_region_id, "未知地点");
-    const location = label("Area", target.target_id, "");
-    return location ? `${region} / ${location}` : region;
-  }
-  if (target.target_kind === "sect") {
-    return label("LianSuo_MP", target.target_id, "未知门派");
-  }
-  return target.target_id === null ? "-" : String(target.target_id);
-}
-
-function questRewardText(quest: CharacterQuest) {
-  return quest.reward_item_id === null
-    ? ""
-    : label("Item", quest.reward_item_id, `道具 ${quest.reward_item_id}`);
-}
-
-function withQuestReward(quest: CharacterQuest, text: string) {
-  const reward = questRewardText(quest);
-  return reward ? `${text}，奖励 ${reward}` : text;
-}
-
-function questSummary(quest: CharacterQuest) {
-  const targets = questTargets(quest);
-  const mainTarget = targets.find((target) => target.target_role === "main");
-  const main = mainTarget ? questTargetLabel(mainTarget) : "";
-  const extras = targets.filter((target) => target.target_role !== "main").map(questTargetLabel).filter(Boolean);
-
-  if (quest.quest_type_id === 240) {
-    return withQuestReward(quest, `交付 ${main || "指定物品"}`);
-  }
-  if (quest.quest_type_id === 241) {
-    return withQuestReward(quest, `教训 ${main || "指定人物"}`);
-  }
-  if (quest.quest_type_id === 242) {
-    const related = extras.length ? `，关联人物 ${extras.join("、")}` : "";
-    return withQuestReward(quest, `前往 ${main || "指定地点"} 找回传家宝${related}`);
-  }
-  if (quest.quest_type_id === 243) {
-    return withQuestReward(quest, `给 ${main || "指定人物"} 下挑战书`);
-  }
-  if (quest.quest_type_id === 244) {
-    return withQuestReward(quest, `操作该人物赢得与 ${main || "指定人物"} 的比武`);
-  }
-  if (quest.quest_type_id === 720) {
-    const sect = extras.length ? extras.join("、") : main;
-    return withQuestReward(quest, `参加 ${sect || "指定门派"} 武林大会`);
-  }
-
-  const questType = label("QuestType", quest.quest_type_id, "任务").replace(/^情缘_/, "");
-  const targetText = targets.map(questTargetLabel).join("、");
-  return withQuestReward(quest, targetText ? `${questType}：${targetText}` : questType);
+function questSummaryParts(quest: CharacterQuest) {
+  return formatQuestParts(quest, questTargets(quest), enums.value);
 }
 
 function skillIconClass(value: number, index: number) {
@@ -373,14 +318,6 @@ onBeforeUnmount(() => {
                 <CardTitle class="text-2xl">{{ characterName(character) }}</CardTitle>
                 <CardDescription>{{ locationText(character) }}</CardDescription>
               </div>
-              <div class="flex flex-wrap gap-2">
-                <Badge variant="outline">{{ label("LianSuo_MP", character.sect_id, "无门派") }}</Badge>
-                <Badge :class="rarityBadgeClass(character.rarity_id)">
-                  {{ label("NPC_Rare", character.rarity_id, "资质") }}
-                </Badge>
-                <Badge variant="secondary">{{ label("Dengji", character.rank_id, "等级") }}</Badge>
-                <Badge variant="secondary">{{ label("DiWei", character.position_id, "地位") }}</Badge>
-              </div>
             </div>
 
             <Button as-child variant="outline">
@@ -403,6 +340,22 @@ onBeforeUnmount(() => {
               </Avatar>
             </div>
             <div class="grid gap-3 text-sm sm:grid-cols-2">
+              <div class="flex justify-between gap-3">
+                <span class="text-muted-foreground">门派</span>
+                <span>{{ label("LianSuo_MP", character.sect_id, "无门派") }}</span>
+              </div>
+              <div class="flex justify-between gap-3">
+                <span class="text-muted-foreground">地位</span>
+                <span>{{ label("DiWei", character.position_id, "地位") }}</span>
+              </div>
+              <div class="flex justify-between gap-3">
+                <span class="text-muted-foreground">资质</span>
+                <span>{{ label("NPC_Rare", character.rarity_id, "资质") }}</span>
+              </div>
+              <div class="flex justify-between gap-3">
+                <span class="text-muted-foreground">资历</span>
+                <span>{{ label("Dengji", character.rank_id, "资历") }}</span>
+              </div>
               <div class="flex justify-between gap-3">
                 <span class="text-muted-foreground">名声</span>
                 <span>{{ formatNumber(character.fame) }}</span>
@@ -523,7 +476,10 @@ onBeforeUnmount(() => {
             :key="quest.id"
             class="flex flex-col gap-1 rounded-md border px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
           >
-            <span>阶段 {{ quest.stage }}：{{ questSummary(quest) }}</span>
+            <span>
+              阶段 {{ quest.stage }}：
+              <WikiText :parts="questSummaryParts(quest)" />
+            </span>
             <span class="text-sm text-muted-foreground">亲密度 {{ quest.required_affinity }}</span>
           </div>
           <div v-if="!(data?.quests || []).length" class="text-sm text-muted-foreground">

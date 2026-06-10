@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import type { CharacterSummary } from "~/lib/wiki/character";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
+import WikiText from "~/components/wiki/WikiText.vue";
+
+const HoverLink = defineAsyncComponent(() => import("./HoverLink.vue"));
 
 defineProps<{
   summary: CharacterSummary | null;
@@ -53,7 +57,8 @@ defineProps<{
         v-for="quest in summary.quests"
         :key="quest.id"
       >
-        {{ quest.stage }}. {{ quest.text }}
+        <span class="text-muted-foreground">阶段 {{ quest.stage }}：</span>
+        <WikiText :parts="quest.parts" />
       </div>
     </div>
     <div v-else class="border-t pt-3 text-sm text-muted-foreground">
