@@ -394,9 +394,9 @@ onBeforeUnmount(() => {
         <Card>
           <CardHeader>
             <CardTitle>基础信息</CardTitle>
-            <CardDescription>头像资源待解包后接入</CardDescription>
           </CardHeader>
           <CardContent class="grid gap-4">
+            <div class="text-sm text-muted-foreground">头像</div>
             <div class="flex items-center justify-center rounded-md border border-dashed py-6">
               <Avatar class="size-20 text-2xl">
                 <AvatarFallback>{{ characterInitial(character) }}</AvatarFallback>
@@ -449,11 +449,10 @@ onBeforeUnmount(() => {
 
         <Card>
           <CardHeader>
-            <CardTitle>四维</CardTitle>
-            <CardDescription>膂力、根骨、体魄、身法</CardDescription>
+            <CardTitle>四维数值</CardTitle>
           </CardHeader>
-          <CardContent class="grid gap-6">
-            <div class="h-80">
+          <CardContent class="grid min-w-0 gap-6 overflow-hidden">
+            <div class="relative h-80 w-full min-w-0 overflow-hidden">
               <canvas ref="radarCanvas" class="h-full w-full" aria-label="四维雷达图" />
             </div>
             <div class="grid gap-3 sm:grid-cols-2">
