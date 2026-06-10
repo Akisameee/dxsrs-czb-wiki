@@ -1,51 +1,14 @@
 <script setup lang="ts">
-import type { MartialArtSummaryData } from "~/composables/useMartialArtSummary";
-import {
-  formatMartialArtNumber,
-  martialArtEffectLabel,
-  martialArtLevelPassiveDescriptions,
-  martialArtName,
-  martialArtPassiveDescription,
-  martialArtPassiveSlots,
-  martialArtRarityLabel,
-  martialArtRestrictionLabel,
-  martialArtSectLabel,
-  martialArtStyleLabel,
-  martialArtTypeLabel,
-} from "~/lib/wiki/martial-art";
+import type { MartialArtSummary } from "~/lib/wiki/martial-art";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Badge } from "~/components/ui/badge";
+import WikiText from "~/components/wiki/WikiText.vue";
 
-const props = defineProps<{
-  summary: MartialArtSummaryData | null;
+defineProps<{
+  summary: MartialArtSummary | null;
   pending?: boolean;
   error?: Error | null;
 }>();
-
-const item = computed(() => props.summary?.martialArt || null);
-const enums = computed(() => props.summary?.enums || {});
-const name = computed(() => item.value ? martialArtName(item.value, enums.value) : "");
-const typeLabel = computed(() => item.value ? martialArtTypeLabel(item.value, enums.value) : "未知类型");
-const sectLabel = computed(() => item.value ? martialArtSectLabel(item.value, enums.value) : "无门派");
-const rarityLabel = computed(() => item.value ? martialArtRarityLabel(item.value, enums.value) : "稀有度");
-const power = computed(() => formatMartialArtNumber(item.value?.power));
-const cost = computed(() => formatMartialArtNumber(item.value?.cost));
-const highestLevel = computed(() => props.summary?.levels?.at(-1) || null);
-const styles = computed(() =>
-  (props.summary?.styles || [])
-    .map((row) => martialArtStyleLabel(row, enums.value))
-    .filter(Boolean),
-);
-const effects = computed(() =>
-  (props.summary?.effects || []).map((row) => ({
-    id: `${row.martial_art_id}-${row.slot}`,
-    text: martialArtEffectLabel(row, enums.value),
-  })),
-);
-const passives = computed(() => [
-  ...martialArtPassiveSlots(item.value)
-    .map((row) => martialArtPassiveDescription(row, enums.value))
-    .filter(Boolean),
-  ...martialArtLevelPassiveDescriptions(highestLevel.value),
-]);
 </script>
 
 <template>
@@ -55,55 +18,51 @@ const passives = computed(() => [
   <div v-else-if="error" class="text-sm text-destructive">
     {{ error.message }}
   </div>
-  <div v-else-if="summary && item" class="grid gap-3">
-    <div class="grid gap-1">
-      <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0">
-          <div class="font-medium">{{ name }}</div>
-          <div class="text-sm text-muted-foreground">
-            {{ typeLabel }} / {{ sectLabel }}
-          </div>
-        </div>
-        <Badge variant="outline">{{ rarityLabel }}</Badge>
+  <div v-else-if="summary" class="grid gap-3">
+    <div class="flex items-start gap-3">
+        <Avatar size="lg">
+        <AvatarFallback>{{ summary.initial }}</AvatarFallback>
+      </Avatar>
+      <div class="min-w-0">
+        <div class="font-medium">{{ summary.name }}</div>
+        <div class="text-sm text-muted-foreground">{{ summary.type }}</div>
       </div>
-      <div class="flex flex-wrap gap-2">
-        <Badge variant="secondary">{{ martialArtRestrictionLabel(item) }}</Badge>
-      </div>
+      <Badge variant="outline">{{ summary.rarity }}</Badge>
     </div>
 
     <div class="grid gap-2 text-sm">
       <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">威力</span>
-        <span class="tabular-nums">{{ power }}</span>
+        <span class="text-muted-foreground">门派</span>
+        <span class="tabular-nums">{{ summary.sect }}</span>
       </div>
       <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">真气</span>
-        <span class="tabular-nums">{{ cost }}</span>
+        <span class="text-muted-foreground">风格</span>
+        <div class="flex flex-wrap justify-end gap-2">
+          <Badge
+            v-for="style in summary.styles"
+            :key="style"
+            variant="secondary"
+          >
+            {{ style }}
+          </Badge>
+        </div>
       </div>
+    </div>
+
+    <div class="grid gap-2 border-t pt-3 text-sm">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">获取</span>
-        <span class="min-w-0 flex-1 text-right">{{ item.obtain_method || "-" }}</span>
+        <span class="min-w-0 flex-1 text-right">
+          <WikiText :parts="summary.obtainMethodParts" />
+        </span>
       </div>
     </div>
 
-    <div v-if="styles.length" class="grid gap-2 border-t pt-3 text-sm">
-      <div class="text-muted-foreground">风格</div>
-      <div class="flex flex-wrap gap-2">
-        <Badge
-          v-for="style in styles"
-          :key="style"
-          variant="outline"
-        >
-          {{ style }}
-        </Badge>
-      </div>
-    </div>
-
-    <div v-if="effects.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="summary.effects.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">效果</div>
       <div class="grid gap-1">
         <div
-          v-for="effect in effects"
+          v-for="effect in summary.effects"
           :key="effect.id"
           class="rounded-md border px-3 py-2"
         >
@@ -112,11 +71,11 @@ const passives = computed(() => [
       </div>
     </div>
 
-    <div v-if="passives.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="summary.passives.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">被动</div>
       <div class="grid gap-1">
         <div
-          v-for="passive in passives"
+          v-for="passive in summary.passives"
           :key="passive"
           class="rounded-md border px-3 py-2"
         >

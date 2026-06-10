@@ -184,6 +184,9 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
             <div class="grid gap-2">
               <div>
                 <CardTitle class="text-2xl">{{ martialArtName(martialArt, enums) }}</CardTitle>
+                <CardDescription class="truncate">
+                  {{ martialArtTypeLabel(martialArt, enums) }}
+                </CardDescription>
               </div>
             </div>
 
@@ -273,14 +276,15 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
             <CardTitle>被动</CardTitle>
           </CardHeader>
           <CardContent class="grid gap-2 text-sm">
-            <template v-if="passiveLines.length">
-              <span
+            <div v-if="passiveLines.length" class="grid gap-1">
+              <div
                 v-for="item in passiveLines"
                 :key="item"
+                class="rounded-md border px-3 py-2"
               >
                 {{ item }}
-              </span>
-            </template>
+              </div>
+            </div>
             <span v-else class="text-muted-foreground">无被动</span>
           </CardContent>
         </Card>
@@ -326,7 +330,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
                   <TableHead rowspan="2">真气恢复</TableHead>
                   <TableHead rowspan="2">修炼经验</TableHead>
                   <TableHead colspan="5" class="text-center">属性加成</TableHead>
-                  <TableHead rowspan="2">效果</TableHead>
+                  <TableHead rowspan="2">特殊被动</TableHead>
                 </TableRow>
                 <TableRow>
                   <TableHead>膂力</TableHead>
@@ -341,7 +345,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
                   v-for="item in levelRows"
                   :key="`${item.martial_art_id}-${item.level}`"
                 >
-                  <TableCell>第 {{ item.level + 1 }} 阶</TableCell>
+                  <TableCell>第 {{ item.level }} 阶</TableCell>
                   <TableCell>{{ item.powerText }}</TableCell>
                   <TableCell>{{ item.hpText }}</TableCell>
                   <TableCell>{{ item.qiRecoveryText }}</TableCell>

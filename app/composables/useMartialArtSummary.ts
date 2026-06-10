@@ -2,8 +2,10 @@ import type { MaybeRefOrGetter } from "vue";
 import { computed, ref, shallowRef, toValue, watch } from "vue";
 import { enumMapFromRows } from "~/lib/utils";
 import {
+  buildMartialArtSummary,
   type MartialArtEffectRow,
   type MartialArtLevelRow,
+  type MartialArtSummary,
   type MartialArtStyleRow,
   type MartialArtSummaryRow,
   type WikiEnums,
@@ -11,20 +13,12 @@ import {
 
 type EnumRow = { type: string; id: number; label: string | null };
 
-export type MartialArtSummaryData = {
-  martialArt: MartialArtSummaryRow;
-  styles: MartialArtStyleRow[];
-  effects: MartialArtEffectRow[];
-  levels: MartialArtLevelRow[];
-  enums: WikiEnums;
-};
-
-const summaryCache = new Map<number, MartialArtSummaryData | null>();
+const summaryCache = new Map<number, MartialArtSummary | null>();
 let enumsPromise: Promise<WikiEnums> | null = null;
 
 export function useMartialArtSummary(id: MaybeRefOrGetter<number | string | null | undefined>) {
   const { queryRows } = useWikiDb();
-  const summary = shallowRef<MartialArtSummaryData | null>(null);
+  const summary = shallowRef<MartialArtSummary | null>(null);
   const pending = ref(false);
   const error = shallowRef<Error | null>(null);
 
@@ -76,7 +70,7 @@ export function useMartialArtSummary(id: MaybeRefOrGetter<number | string | null
 
       const martialArt = martialArts[0] || null;
       const nextSummary = martialArt
-        ? { martialArt, styles, effects, levels, enums }
+        ? buildMartialArtSummary(martialArt, styles, effects, levels, enums)
         : null;
       summaryCache.set(value, nextSummary);
       summary.value = nextSummary;

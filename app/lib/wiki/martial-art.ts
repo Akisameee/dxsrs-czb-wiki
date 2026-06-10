@@ -1,6 +1,11 @@
 import { enumLabel } from "../utils";
 
-import { type WikiEnums } from "./text";
+import {
+  linkCharactersInText,
+  type WikiEnums,
+  type WikiTextPart,
+  wikiText,
+} from "./text";
 
 export type { WikiEnums } from "./text";
 
@@ -66,6 +71,26 @@ export type MartialArtPassiveSlot = {
   value: number | null;
 };
 
+export type MartialArtEffectSummary = {
+  id: string;
+  text: string;
+};
+
+export type MartialArtSummary = {
+  id: number;
+  name: string;
+  initial: string;
+  detailUrl: string;
+  rarityId: number | null;
+  type: string;
+  sect: string;
+  rarity: string;
+  styles: string[];
+  effects: MartialArtEffectSummary[];
+  passives: string[];
+  obtainMethodParts: WikiTextPart[];
+};
+
 export function martialArtRarityToneId(id: number | string | null | undefined) {
   const value = Number(id);
   if (!Number.isFinite(value)) return null;
@@ -78,6 +103,14 @@ export function martialArtIsInternal(item: Pick<MartialArtSummaryRow, "type_id">
 
 export function martialArtName(item: Pick<MartialArtSummaryRow, "id">, enums: WikiEnums) {
   return enumLabel(enums, "MartialArt", item.id, `武学 ${item.id}`);
+}
+
+export function martialArtInitial(item: Pick<MartialArtSummaryRow, "id">, enums: WikiEnums) {
+  return martialArtName(item, enums).slice(0, 1);
+}
+
+export function martialArtDetailUrl(id: number) {
+  return `/martial-arts/detail/?id=${id}`;
 }
 
 export function martialArtTypeLabel(
@@ -207,4 +240,40 @@ export function formatMartialArtDecimal(value: number | null | undefined) {
 export function formatMartialArtPercent(value: number | null | undefined) {
   const text = formatMartialArtNumber(value);
   return text === "-" ? "-" : `${text}%`;
+}
+
+export function buildMartialArtSummary(
+  martialArt: MartialArtSummaryRow,
+  styles: MartialArtStyleRow[],
+  effects: MartialArtEffectRow[],
+  levels: MartialArtLevelRow[],
+  enums: WikiEnums,
+): MartialArtSummary {
+  const highestLevel = levels.at(-1) || null;
+  const obtainMethodParts = linkCharactersInText(martialArt.obtain_method, enums);
+
+  return {
+    id: martialArt.id,
+    name: martialArtName(martialArt, enums),
+    initial: martialArtInitial(martialArt, enums),
+    detailUrl: martialArtDetailUrl(martialArt.id),
+    rarityId: martialArtRarityToneId(martialArt.rarity_id),
+    type: martialArtTypeLabel(martialArt, enums),
+    sect: martialArtSectLabel(martialArt, enums),
+    rarity: martialArtRarityLabel(martialArt, enums),
+    styles: styles
+      .map((row) => martialArtStyleLabel(row, enums))
+      .filter(Boolean),
+    effects: effects.map((row) => ({
+      id: `${row.martial_art_id}-${row.slot}`,
+      text: martialArtEffectLabel(row, enums),
+    })),
+    passives: [
+      ...martialArtPassiveSlots(martialArt)
+        .map((row) => martialArtPassiveDescription(row, enums))
+        .filter(Boolean),
+      ...martialArtLevelPassiveDescriptions(highestLevel),
+    ],
+    obtainMethodParts: obtainMethodParts.length ? obtainMethodParts : [wikiText("-")],
+  };
 }

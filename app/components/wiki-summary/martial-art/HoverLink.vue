@@ -8,7 +8,6 @@ import {
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
 import { rarityTextClass } from "~/lib/rarity";
-import { martialArtName, martialArtRarityToneId } from "~/lib/wiki/martial-art";
 import { useMartialArtSummary } from "~/composables/useMartialArtSummary";
 
 const MartialArtSummaryPanel = defineAsyncComponent(() => import("./SummaryPanel.vue"));
@@ -35,12 +34,13 @@ const detailUrl = computed(() => (
 const { summary, pending, error, load } = useMartialArtSummary(martialArtId);
 const displayLabel = computed(() => (
   props.label
-  || (summary.value ? martialArtName(summary.value.martialArt, summary.value.enums) : "")
+  || summary.value?.name
   || `武学 ${props.id ?? "-"}`
 ));
 const rarityId = computed(() => (
   props.rarityId
-  ?? (summary.value ? martialArtRarityToneId(summary.value.martialArt.rarity_id) : null)
+  ?? summary.value?.rarityId
+  ?? null
 ));
 const linkClass = computed(() => [
   "font-medium underline-offset-4 hover:underline",

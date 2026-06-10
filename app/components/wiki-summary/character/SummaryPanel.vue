@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import type { CharacterSummary } from "~/lib/wiki/character";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import WikiText from "~/components/wiki/WikiText.vue";
-
-const HoverLink = defineAsyncComponent(() => import("./HoverLink.vue"));
 
 defineProps<{
   summary: CharacterSummary | null;
@@ -30,6 +27,7 @@ defineProps<{
         <div class="font-medium">{{ summary.name }}</div>
         <div class="text-sm text-muted-foreground">{{ summary.location }}</div>
       </div>
+      <Badge variant="outline">{{ summary.rarity }}</Badge>
     </div>
 
     <div class="grid gap-2 text-sm">
