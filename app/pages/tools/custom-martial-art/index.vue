@@ -6,6 +6,12 @@ import {
   searchCustomMartialArtInitials,
   summarizeFinalValueDistributions,
 } from "~/lib/custom-martial-art";
+import InitialInputCard from "~/components/tools/custom-martial-art/InitialInputCard.vue";
+import InitialResultCard from "~/components/tools/custom-martial-art/InitialResultCard.vue";
+import SearchControlsCard from "~/components/tools/custom-martial-art/SearchControlsCard.vue";
+import SearchResultsCard from "~/components/tools/custom-martial-art/SearchResultsCard.vue";
+import SimulationStatsCard from "~/components/tools/custom-martial-art/SimulationStatsCard.vue";
+import { martialArtRarityToneId } from "~/lib/wiki/martial-art";
 
 useHead({ title: "自创武学" });
 
@@ -20,19 +26,20 @@ const SEARCH_SORT_FIELDS = [
   { id: "averagePower", label: "威力均值" },
   { id: "maxPower", label: "最大威力" },
 ];
+const DEFAULT_SEARCH_SORT_ORDER = SEARCH_SORT_FIELDS.map((field) => field.id);
 
 const { data: context, pending, error } = useCustomMartialArtData();
 
 const input = reactive({
   name: "自创武功",
-  yi: "6",
-  qi: "1",
-  xing: "6",
-  shen: "7",
+  yi: "5",
+  qi: "5",
+  xing: "5",
+  shen: "5",
   weaponType: "2",
 });
 
-const analysisTrials = ref("256");
+const analysisTrials = ref("1024");
 const analysisStatus = ref("");
 const analysisBusy = ref(false);
 const analysis = ref<any | null>(null);
@@ -44,7 +51,7 @@ const searchTarget = reactive({
   effectType: EMPTY_OPTION,
   effectLevel: "",
 });
-const searchTrials = ref("96");
+const searchTrials = ref("256");
 const searchStatus = ref("");
 const searchBusy = ref(false);
 const searchResults = ref<any[]>([]);
@@ -55,10 +62,11 @@ const enums = computed(() => context.value?.enums || {});
 const algorithmData = computed(() => context.value?.data || null);
 const effectNames = computed(() => context.value?.effectNames || new Map<number, string>());
 const styleNames = computed(() => context.value?.styleNames || {});
+const errorMessage = computed(() => error.value?.message || "");
 
 const weaponOptions = computed(() => WEAPON_TYPE_IDS.map((id) => ({
   id: String(id),
-  label: enumName("BingQiType", id, `武器 ${id}`),
+  label: enumName("BingQiType", id, ""),
 })));
 
 const attributeTotal = computed(() => ATTRIBUTE_NAMES.reduce((sum, key) => sum + numberValue(input[key]), 0));
@@ -83,6 +91,9 @@ const currentRoute = computed(() => {
 
 const currentSummary = computed(() => currentRoute.value?.initial || null);
 const currentSeed = computed(() => attributesValid.value ? makeZiChuangSeed(currentInput.value) : null);
+const currentRareLabel = computed(() => currentSummary.value ? rareLabel(currentSummary.value.rare) : "");
+const currentRarityId = computed(() => currentSummary.value ? martialArtRarityToneId(currentSummary.value.rare) : null);
+const currentEffectLabel = computed(() => currentSummary.value ? effectText(currentSummary.value.effect) : "");
 
 const styleOptions = computed(() => uniqueSorted((algorithmData.value?.chainRows || [])
   .map((row: any) => Number(row.fengge))
@@ -117,10 +128,9 @@ const searchTargetPayload = computed(() => ({
 
 const sortedSearchResults = computed(() => sortSearchResults(searchResults.value, searchSort.value));
 const searchPageCount = computed(() => Math.max(1, Math.ceil(sortedSearchResults.value.length / SEARCH_PAGE_SIZE)));
-const visibleSearchResults = computed(() => {
-  const start = (searchPage.value - 1) * SEARCH_PAGE_SIZE;
-  return sortedSearchResults.value.slice(start, start + SEARCH_PAGE_SIZE);
-});
+const searchSortLabel = computed(() => (
+  SEARCH_SORT_FIELDS.find((field) => field.id === searchSort.value)?.label || "威力均值"
+));
 
 watch(() => input, () => {
   analysis.value = null;
@@ -160,18 +170,6 @@ function uniqueSorted<T>(items: T[]) {
 function enumName(type: string, id: number | string | null | undefined, fallback = "未知") {
   if (id === null || id === undefined || Number.isNaN(Number(id))) return fallback;
   return enums.value?.[type]?.[String(id)] || fallback;
-}
-
-function formatPercent(value: number | string | null | undefined) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return "0.0%";
-  return `${(number * 100).toFixed(1)}%`;
-}
-
-function formatNumber(value: number | string | null | undefined, digits = 2) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return "0";
-  return number.toFixed(digits).replace(/\.?0+$/, "");
 }
 
 function rareLabel(rare: number | string | null | undefined) {
@@ -327,10 +325,6 @@ async function runSearch() {
   }
 }
 
-function resultAttributes(route: any) {
-  return ATTRIBUTE_NAMES.map((name) => route.input?.[name]).join(" / ");
-}
-
 function resultStats(route: any) {
   return route.stats || {};
 }
@@ -345,7 +339,15 @@ function sortSearchResults(results: any[], primary: string) {
       averagePower: Number(statsB.averagePower || 0) - Number(statsA.averagePower || 0),
       maxPower: Number(statsB.maxPower || 0) - Number(statsA.maxPower || 0),
     };
-    return comparisons[primary] || comparisons.averagePower || Number(a.seed || 0) - Number(b.seed || 0);
+    const sortOrder = [
+      primary,
+      ...DEFAULT_SEARCH_SORT_ORDER.filter((key) => key !== primary),
+    ];
+    for (const key of sortOrder) {
+      const comparison = comparisons[key] || 0;
+      if (comparison !== 0) return comparison;
+    }
+    return Number(a.seed || 0) - Number(b.seed || 0);
   });
 }
 
@@ -355,321 +357,97 @@ function cycleSearchSort() {
   searchPage.value = 1;
 }
 
-function sortLabel() {
-  return SEARCH_SORT_FIELDS.find((field) => field.id === searchSort.value)?.label || "威力均值";
+function updateInput(patch: Record<string, string>) {
+  Object.assign(input, patch);
+}
+
+function updateSearchTarget(patch: Record<string, string>) {
+  Object.assign(searchTarget, patch);
+}
+
+function updateSearchPage(page: number) {
+  searchPage.value = Math.max(1, Math.min(page, searchPageCount.value));
+}
+
+async function applySearchResult(route: any) {
+  const source = route?.input || {};
+  updateInput({
+    yi: String(numberValue(source.yi)),
+    qi: String(numberValue(source.qi)),
+    xing: String(numberValue(source.xing)),
+    shen: String(numberValue(source.shen)),
+    weaponType: String(numberValue(source.weaponType, numberValue(searchTarget.weaponType))),
+  });
+  await nextTick();
+  await runAnalysis();
 }
 </script>
 
 <template>
-  <main class="container mx-auto grid items-start gap-6 p-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+  <main class="container mx-auto grid items-start gap-6 p-6 xl:grid-cols-[minmax(0,1fr)_380px]">
     <section class="grid min-w-0 content-start gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>自创武学模拟</CardTitle>
-          <CardDescription>
-            输入初始四维和武器类型，查看种子、初始结果和贪心锁定后的概率分布。
-          </CardDescription>
-        </CardHeader>
-        <CardContent v-if="pending" class="text-sm text-muted-foreground">读取 sqlite 数据中...</CardContent>
-        <CardContent v-else-if="error" class="text-sm text-destructive">{{ error.message }}</CardContent>
-        <CardContent v-else class="grid gap-4">
-          <div class="grid gap-3 sm:grid-cols-5">
-            <div class="grid gap-2">
-              <Label class="text-muted-foreground" for="custom-yi">意念</Label>
-              <Input id="custom-yi" v-model="input.yi" type="number" min="0" max="10" />
-            </div>
-            <div class="grid gap-2">
-              <Label class="text-muted-foreground" for="custom-qi">气劲</Label>
-              <Input id="custom-qi" v-model="input.qi" type="number" min="0" max="10" />
-            </div>
-            <div class="grid gap-2">
-              <Label class="text-muted-foreground" for="custom-xing">形态</Label>
-              <Input id="custom-xing" v-model="input.xing" type="number" min="0" max="10" />
-            </div>
-            <div class="grid gap-2">
-              <Label class="text-muted-foreground" for="custom-shen">神韵</Label>
-              <Input id="custom-shen" v-model="input.shen" type="number" min="0" max="10" />
-            </div>
-            <div class="grid gap-2">
-              <Label class="text-muted-foreground" for="custom-weapon">武器</Label>
-              <Select v-model="input.weaponType">
-                <SelectTrigger id="custom-weapon" class="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem v-for="option in weaponOptions" :key="option.id" :value="option.id">
-                    {{ option.label }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+      <SearchControlsCard
+        :target="searchTarget"
+        :weapon-options="weaponOptions"
+        :style-options="styleOptions"
+        :area-options="areaOptions"
+        :effect-options="effectOptions"
+        :empty-option="EMPTY_OPTION"
+        :effect-max-level="selectedEffectMaxLevel"
+        :trials="searchTrials"
+        :status="searchStatus"
+        :pending="pending"
+        :busy="searchBusy"
+        @update-target="updateSearchTarget"
+        @update-trials="searchTrials = $event"
+        @search="runSearch"
+      />
 
-          <div class="flex flex-wrap gap-2">
-            <Badge :variant="attributesValid ? 'outline' : 'destructive'">
-              四维 {{ attributeTotal }} / {{ ATTRIBUTE_TOTAL }}
-            </Badge>
-            <Badge v-if="currentSeed !== null" variant="outline">seed {{ currentSeed }}</Badge>
-            <Badge v-if="currentRoute" variant="outline">改良空间 {{ currentRoute.initialImproveLimit }}</Badge>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>当前结果</CardTitle>
-          <CardDescription>
-            初始生成时的风格、范围、效果、威力和真气。
-          </CardDescription>
-        </CardHeader>
-        <CardContent v-if="!attributesValid" class="text-sm text-muted-foreground">
-          四维总和必须为 {{ ATTRIBUTE_TOTAL }} 后才能自创。
-        </CardContent>
-        <CardContent v-else-if="!currentSummary" class="text-sm text-muted-foreground">
-          暂无结果。
-        </CardContent>
-        <CardContent v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">品阶</span>
-            <span>{{ rareLabel(currentSummary.rare) }}</span>
-          </div>
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">风格</span>
-            <span>{{ currentSummary.style.name }}</span>
-          </div>
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">攻击范围</span>
-            <span>{{ currentSummary.area.name }}</span>
-          </div>
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">特殊效果</span>
-            <span>{{ effectText(currentSummary.effect) }}</span>
-          </div>
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">招式威力</span>
-            <span>{{ formatNumber(currentSummary.power) }}</span>
-          </div>
-          <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
-            <span class="text-muted-foreground">消耗真气</span>
-            <span>{{ currentSummary.cost }}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader class="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>概率分布</CardTitle>
-            <CardDescription>
-              分别估算锁定每个目标后的命中概率。
-              <span v-if="analysisStatus" class="text-foreground">{{ analysisStatus }}</span>
-            </CardDescription>
-          </div>
-          <Button :disabled="!currentRoute || analysisBusy" @click="runAnalysis">
-            {{ analysisBusy ? "模拟中" : "模拟" }}
-          </Button>
-        </CardHeader>
-        <CardContent class="grid gap-4">
-          <div class="grid max-w-xs gap-2">
-            <Label class="text-muted-foreground" for="analysis-trials">每项目模拟次数</Label>
-            <Input id="analysis-trials" v-model="analysisTrials" type="number" min="1" max="10000" step="32" />
-          </div>
-
-          <div v-if="!analysis" class="py-8 text-center text-sm text-muted-foreground">
-            点击模拟查看当前初始输入的分布。
-          </div>
-          <div v-else class="grid gap-5">
-            <div class="grid gap-2">
-              <div class="text-sm text-muted-foreground">风格命中概率</div>
-              <div class="grid gap-2">
-                <div v-for="row in analysis.styles.slice(0, 8)" :key="row.label" class="grid grid-cols-[80px_minmax(0,1fr)_56px] items-center gap-3 text-sm">
-                  <span class="truncate">{{ row.label }}</span>
-                  <div class="h-2 rounded-full bg-muted">
-                    <div class="h-2 rounded-full bg-primary" :style="{ width: `${Math.max(2, row.value * 100)}%` }" />
-                  </div>
-                  <span class="text-right tabular-nums">{{ formatPercent(row.value) }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid gap-2">
-              <div class="text-sm text-muted-foreground">攻击范围命中概率</div>
-              <div class="flex flex-wrap gap-2">
-                <Badge v-for="row in analysis.areas.slice(0, 12)" :key="row.label" variant="outline">
-                  {{ row.label }} {{ formatPercent(row.value) }}
-                </Badge>
-              </div>
-            </div>
-
-            <div class="grid gap-2">
-              <div class="text-sm text-muted-foreground">最高等级特殊效果命中概率</div>
-              <div class="flex flex-wrap gap-2">
-                <Badge v-for="row in analysis.effects.slice(0, 12)" :key="row.label" variant="outline">
-                  {{ row.label }} {{ formatPercent(row.value) }}
-                </Badge>
-              </div>
-            </div>
-
-            <div class="grid gap-2">
-              <div class="text-sm text-muted-foreground">最终威力</div>
-              <div class="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
-                <Badge variant="outline">最小 {{ formatNumber(analysis.finalValues.powerSummary.min) }}</Badge>
-                <Badge variant="outline">Q1 {{ formatNumber(analysis.finalValues.powerSummary.q1) }}</Badge>
-                <Badge variant="outline">中位 {{ formatNumber(analysis.finalValues.powerSummary.median) }}</Badge>
-                <Badge variant="outline">Q3 {{ formatNumber(analysis.finalValues.powerSummary.q3) }}</Badge>
-                <Badge variant="outline">最大 {{ formatNumber(analysis.finalValues.powerSummary.max) }}</Badge>
-                <Badge variant="outline">均值 {{ formatNumber(analysis.finalValues.powerSummary.mean) }}</Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <SearchResultsCard
+        :results="sortedSearchResults"
+        :page="searchPage"
+        :page-size="SEARCH_PAGE_SIZE"
+        :sort-label="searchSortLabel"
+        :effect-text="effectText"
+        :weapon-type-text="(value) => enumName('BingQiType', value, '')"
+        @sort="cycleSearchSort"
+        @update-page="updateSearchPage"
+        @apply="applySearchResult"
+      />
     </section>
 
     <aside class="grid min-w-0 content-start gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>初始搜索</CardTitle>
-          <CardDescription>
-            选择目标词条后，枚举四维组合并估算贪心锁定命中概率。
-            <span v-if="searchStatus" class="text-foreground">{{ searchStatus }}</span>
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="grid gap-4">
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-weapon">武器</Label>
-            <Select v-model="searchTarget.weaponType">
-              <SelectTrigger id="search-weapon" class="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem v-for="option in weaponOptions" :key="option.id" :value="option.id">
-                  {{ option.label }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <InitialInputCard
+        :input="input"
+        :weapon-options="weaponOptions"
+        :attribute-total="attributeTotal"
+        :attribute-target="ATTRIBUTE_TOTAL"
+        :attributes-valid="attributesValid"
+        :trials="analysisTrials"
+        :status="analysisStatus"
+        :busy="analysisBusy"
+        :can-run="Boolean(currentRoute)"
+        :pending="pending"
+        :error-message="errorMessage"
+        @update-input="updateInput"
+        @update-trials="analysisTrials = $event"
+        @run="runAnalysis"
+      />
 
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-style">目标风格</Label>
-            <Select v-model="searchTarget.styleId">
-              <SelectTrigger id="search-style" class="w-full">
-                <SelectValue placeholder="不指定" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="EMPTY_OPTION">不指定</SelectItem>
-                <SelectItem v-for="option in styleOptions" :key="option.id" :value="option.id">
-                  {{ option.label }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <InitialResultCard
+        :current-seed="currentSeed"
+        :attributes-valid="attributesValid"
+        :attribute-target="ATTRIBUTE_TOTAL"
+        :summary="currentSummary"
+        :improve-limit="currentRoute?.initialImproveLimit ?? null"
+        :rarity-id="currentRarityId"
+        :rare-label="currentRareLabel"
+        :effect-label="currentEffectLabel"
+      />
 
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-area">攻击范围</Label>
-            <Select v-model="searchTarget.areaName">
-              <SelectTrigger id="search-area" class="w-full">
-                <SelectValue placeholder="不指定" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="EMPTY_OPTION">不指定</SelectItem>
-                <SelectItem v-for="option in areaOptions" :key="option.id" :value="option.id">
-                  {{ option.label }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-effect">特殊效果</Label>
-            <Select v-model="searchTarget.effectType">
-              <SelectTrigger id="search-effect" class="w-full">
-                <SelectValue placeholder="不指定" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem :value="EMPTY_OPTION">不指定</SelectItem>
-                <SelectItem v-for="option in effectOptions" :key="option.id" :value="option.id">
-                  {{ option.label }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-effect-level">效果等级</Label>
-            <Input
-              id="search-effect-level"
-              v-model="searchTarget.effectLevel"
-              type="number"
-              min="1"
-              :max="selectedEffectMaxLevel || undefined"
-              :disabled="selectedEffectMaxLevel <= 0"
-            />
-          </div>
-
-          <div class="grid gap-2">
-            <Label class="text-muted-foreground" for="search-trials">每组合模拟次数</Label>
-            <Input id="search-trials" v-model="searchTrials" type="number" min="1" max="10000" step="16" />
-          </div>
-
-          <Button :disabled="pending || searchBusy" @click="runSearch">
-            {{ searchBusy ? "搜索中" : "搜索" }}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader class="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>搜索结果</CardTitle>
-            <CardDescription>
-              {{ searchResults.length ? `共 ${searchResults.length} 个组合，第 ${searchPage} / ${searchPageCount} 页` : "还没有搜索结果。" }}
-            </CardDescription>
-          </div>
-          <Button v-if="searchResults.length" variant="outline" size="sm" @click="cycleSearchSort">
-            排序：{{ sortLabel() }}
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div v-if="!searchResults.length" class="py-10 text-center text-sm text-muted-foreground">
-            选择目标后点击搜索。
-          </div>
-          <div v-else class="grid gap-3">
-            <Card v-for="route in visibleSearchResults" :key="`${route.seed}-${resultAttributes(route)}`">
-              <CardHeader>
-                <CardTitle class="text-base">四维 {{ resultAttributes(route) }}</CardTitle>
-                <CardDescription>seed {{ route.seed }}，模拟 {{ resultStats(route).trials || 0 }} 次</CardDescription>
-              </CardHeader>
-              <CardContent class="grid gap-3">
-                <div class="flex flex-wrap gap-2">
-                  <Badge variant="secondary">风格 {{ route.initial.style.name }}</Badge>
-                  <Badge variant="secondary">范围 {{ route.initial.area.name }}</Badge>
-                  <Badge variant="secondary">{{ effectText(route.initial.effect) }}</Badge>
-                  <Badge variant="secondary">改良 {{ route.initial.gailiangkongjian }}</Badge>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  <Badge v-if="resultStats(route).target?.styleId !== null" variant="outline">
-                    风格 {{ formatPercent(resultStats(route).styleProbability) }}
-                  </Badge>
-                  <Badge v-if="resultStats(route).target?.areaName !== null" variant="outline">
-                    范围 {{ formatPercent(resultStats(route).areaProbability) }}
-                  </Badge>
-                  <Badge v-if="resultStats(route).target?.effectType !== null" variant="outline">
-                    效果 {{ formatPercent(resultStats(route).effectProbability) }}
-                  </Badge>
-                  <Badge variant="outline">威力均值 {{ formatNumber(resultStats(route).averagePower) }}</Badge>
-                  <Badge variant="outline">最大威力 {{ formatNumber(resultStats(route).maxPower) }}</Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div class="flex justify-end gap-2">
-              <Button variant="outline" size="sm" :disabled="searchPage <= 1" @click="searchPage -= 1">上一页</Button>
-              <Button variant="outline" size="sm" :disabled="searchPage >= searchPageCount" @click="searchPage += 1">下一页</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <SimulationStatsCard
+        :analysis="analysis"
+      />
     </aside>
   </main>
 </template>
