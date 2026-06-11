@@ -1,4 +1,5 @@
-import { JOINABLE_SECT_IDS } from "../constants.js";
+export const MAX_SELECTION = 12;
+export const JOINABLE_SECT_IDS = [0, 1, 2, 5, 6, 8, 9];
 
 export function getTournamentPrizeSect(item) {
   return item?.sectRestricted && JOINABLE_SECT_IDS.includes(Number(item.sectId)) ? Number(item.sectId) : "";
@@ -8,8 +9,12 @@ export function getJoinableSects() {
   return [...JOINABLE_SECT_IDS];
 }
 
+function martialSelectionKey(item) {
+  return item?.id ?? item?.name;
+}
+
 export function getSelectedMartialItems(state) {
-  return state.wuxue.filter((item) => state.selected.has(item.name));
+  return state.wuxue.filter((item) => state.selected.has(martialSelectionKey(item)));
 }
 
 export function getCustomMartial(state) {

@@ -1,4 +1,6 @@
-import { BASIC_STYLE_ID, JIANGHU_SECT_ID, PENGLAI_SECT_ID } from "../constants.js";
+const PENGLAI_SECT_ID = 7;
+const JIANGHU_SECT_ID = 12;
+const BASIC_STYLE_ID = 19;
 
 export function getPenglaiModifier(sectCounts) {
   const count = sectCounts.get(PENGLAI_SECT_ID) || 0;
@@ -133,8 +135,8 @@ export function buildVisibleChainRecords(sectChains, styleChains, sectCounts, st
     .map((record) => evaluateChainView(record, penglaiModifier, basicUnlocked))
     .sort((a, b) => {
       if (a.met !== b.met) return a.met ? -1 : 1;
-      if (a.count !== b.count) return b.count - a.count;
-      if (a.groupType !== b.groupType) return a.groupType === "sect" ? -1 : 1;
-      return Number(a.groupName) - Number(b.groupName);
+      const idDiff = Number(a.groupName) - Number(b.groupName);
+      if (idDiff !== 0) return idDiff;
+      return a.groupType === b.groupType ? 0 : a.groupType === "sect" ? -1 : 1;
     });
 }
