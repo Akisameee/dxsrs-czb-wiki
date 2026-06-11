@@ -161,7 +161,7 @@ function pickInitialTemplate(rng, weaponType, wugongRows, options = {}) {
   return clone(candidates[rng.rangeInt(0, candidates.length)]);
 }
 
-export class SelfCreateSimulation {
+export class CustomMartialArtSimulation {
   constructor(input, data, options = {}) {
     this.input = clone(input);
     this.data = defaultData(data);
@@ -322,3 +322,5 @@ export function summarizeZiChuangStep(step, styleNames = {}) {
     power: step.detail.power,
   };
 }
+
+export { CustomMartialArtSimulation as SelfCreateSimulation };

@@ -1,10 +1,10 @@
-import { SelfCreateSimulation } from "./simulator.js";
+import { CustomMartialArtSimulation } from "./simulator.js";
 import { UnityRandom } from "./unity-random.js";
 import {
   effectIdentityMatches,
   effectMatches,
   initialMatch,
-  normalizeSelfCreateTarget,
+  normalizeCustomMartialArtTarget,
   summaryMatches,
 } from "./target.js";
 
@@ -25,7 +25,7 @@ function snapshotFor(simulation, from = "current") {
 
 function cloneSimulationAt(simulation, options = {}) {
   const snapshot = clone(snapshotFor(simulation, options.from));
-  const copy = new SelfCreateSimulation(simulation.input, simulation.data);
+  const copy = new CustomMartialArtSimulation(simulation.input, simulation.data);
   copy.rng = options.rng instanceof UnityRandom
     ? options.rng
     : new UnityRandom(Number(options.seed ?? simulation.seed));
@@ -37,7 +37,7 @@ function cloneSimulationAt(simulation, options = {}) {
 }
 
 export function greedyLocksForTarget(summary, targetInput) {
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   return {
     fenggelock: target.styleId === null || Number(summary?.style?.id) === target.styleId,
     arealock: target.areaName === null || summary?.area?.name === target.areaName,
@@ -116,7 +116,7 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
   const seedBase = Number(options.seedBase ?? 1);
   const seeds = Array.isArray(options.seeds) && options.seeds.length > 0 ? options.seeds : null;
   const styleNames = options.styleNames || {};
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   const distribution = new Map();
 
   let success = 0;

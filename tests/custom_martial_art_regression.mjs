@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
-import { SelfCreateSimulation } from "../app/lib/self-create/simulator.js";
-import { makeZiChuangSeed } from "../app/lib/self-create/unity-random.js";
+import { CustomMartialArtSimulation } from "../app/lib/custom-martial-art/simulator.js";
+import { makeZiChuangSeed } from "../app/lib/custom-martial-art/unity-random.js";
 
 const db = new DatabaseSync(new URL("../public/data/wiki.sqlite", import.meta.url));
 
@@ -9,7 +9,7 @@ function all(sql) {
   return db.prepare(sql).all();
 }
 
-function loadSelfCreateData() {
+function loadCustomMartialArtData() {
   const enums = {};
   for (const row of all("SELECT type, id, label FROM enums ORDER BY type, id")) {
     if (!enums[row.type]) enums[row.type] = {};
@@ -65,7 +65,7 @@ function loadSelfCreateData() {
   };
 }
 
-const data = loadSelfCreateData();
+const data = loadCustomMartialArtData();
 
 const forumSwordInput = {
   yi: 6,
@@ -77,7 +77,7 @@ const forumSwordInput = {
   improvements: [],
 };
 
-const simulation = new SelfCreateSimulation(forumSwordInput, data);
+const simulation = new CustomMartialArtSimulation(forumSwordInput, data);
 const route = simulation.toRoute();
 
 assert.equal(makeZiChuangSeed(forumSwordInput), 41793, "6/1/6/7 剑法 seed 应稳定为 41793");
@@ -91,4 +91,4 @@ assert.equal(route.initial.power, 429.12, "初始招式威力应稳定为 429.12
 assert.equal(route.initial.cost, 3, "初始消耗真气应稳定为 3");
 
 db.close();
-console.log("self-create regression passed");
+console.log("custom martial art regression passed");

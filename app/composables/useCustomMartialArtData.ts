@@ -7,10 +7,10 @@ function numberValue(value: SqlNumber, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
-export function useSelfCreateAlgorithmData() {
+export function useCustomMartialArtData() {
   const { queryRows } = useWikiDb();
 
-  return useAsyncData("self-create-algorithm-data", async () => {
+  return useAsyncData("custom-martial-art-data", async () => {
     const [
       templates,
       templateEffects,

@@ -3,7 +3,7 @@ useHead({ title: "首页" });
 
 const entries = [
   { title: "配装工具", text: "选择武学并查看门派、风格连锁。", to: "/tools/loadout/" },
-  { title: "自创武学", text: "模拟初始四维、风格、攻击范围、效果和威力。", to: "/tools/self-create/" },
+  { title: "自创武学", text: "模拟初始四维、风格、攻击范围、效果和威力。", to: "/tools/custom-martial-art/" },
   { title: "武学", text: "查看武学门派、类型、风格、效果和获取方式。", to: "/martial-arts/" },
   { title: "人物", text: "按地点、门派、资质和武功路线索引 NPC。", to: "/characters/" },
   { title: "道具", text: "查看道具类型、稀有度、用途和说明。", to: "/items/" },

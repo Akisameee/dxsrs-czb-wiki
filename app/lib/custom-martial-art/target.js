@@ -9,7 +9,7 @@ function stringOrNull(value) {
   return String(value);
 }
 
-export function normalizeSelfCreateTarget(target = {}) {
+export function normalizeCustomMartialArtTarget(target = {}) {
   return {
     styleId: numberOrNull(target.styleId ?? target.style),
     areaName: stringOrNull(target.areaName ?? target.attackArea),
@@ -21,14 +21,14 @@ export function normalizeSelfCreateTarget(target = {}) {
 }
 
 export function effectIdentityMatches(effect, targetInput) {
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   if (target.effectType !== null && Number(effect.bufftype) !== target.effectType) return false;
   if (target.effectTarget !== null && Number(effect.bufftarget) !== target.effectTarget) return false;
   return true;
 }
 
 export function effectMatches(effect, targetInput) {
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   if (!effectIdentityMatches(effect, target)) return false;
   if (target.effectValue !== null && Number(effect.value) !== target.effectValue) return false;
   if (target.minEffectValue !== null && Number(effect.value) < target.minEffectValue) return false;
@@ -36,7 +36,7 @@ export function effectMatches(effect, targetInput) {
 }
 
 export function summaryMatches(summary, targetInput) {
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   if (target.styleId !== null && Number(summary?.style?.id) !== target.styleId) return false;
   if (target.areaName !== null && summary?.area?.name !== target.areaName) return false;
   if (
@@ -51,7 +51,7 @@ export function summaryMatches(summary, targetInput) {
 }
 
 export function initialMatch(summary, targetInput) {
-  const target = normalizeSelfCreateTarget(targetInput);
+  const target = normalizeCustomMartialArtTarget(targetInput);
   const items = [];
 
   if (target.styleId !== null) {
@@ -89,3 +89,5 @@ export function initialMatch(summary, targetInput) {
     items,
   };
 }
+
+export { normalizeCustomMartialArtTarget as normalizeSelfCreateTarget };

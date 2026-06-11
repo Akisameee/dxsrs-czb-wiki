@@ -1,8 +1,8 @@
-import { SelfCreateSimulation } from "./simulator.js";
+import { CustomMartialArtSimulation } from "./simulator.js";
 import { estimateGreedyImprovementStats } from "./probability.js";
 import {
   initialMatch,
-  normalizeSelfCreateTarget,
+  normalizeCustomMartialArtTarget,
 } from "./target.js";
 
 const ATTRIBUTE_TOTAL = 20;
@@ -16,7 +16,7 @@ function numberOrNull(value) {
 }
 
 function normalizeTarget(target) {
-  const normalized = normalizeSelfCreateTarget(target);
+  const normalized = normalizeCustomMartialArtTarget(target);
   return {
     weaponType: numberOrNull(target.weaponType),
     ...normalized,
@@ -35,7 +35,7 @@ function* attributeCombos(total = ATTRIBUTE_TOTAL, max = ATTRIBUTE_MAX) {
   }
 }
 
-export async function searchSelfCreateInitials(targetInput, data, options = {}) {
+export async function searchCustomMartialArtInitials(targetInput, data, options = {}) {
   const target = normalizeTarget(targetInput);
   if (target.weaponType === null) {
     throw new Error("weaponType 是必填项");
@@ -56,7 +56,7 @@ export async function searchSelfCreateInitials(targetInput, data, options = {}) 
 
   for (let index = 0; index < combos.length; index += 1) {
     const attributes = combos[index];
-    const simulation = new SelfCreateSimulation(
+    const simulation = new CustomMartialArtSimulation(
       { ...attributes, weaponType: target.weaponType, name: "自创武功" },
       data
     );
@@ -86,3 +86,4 @@ export async function searchSelfCreateInitials(targetInput, data, options = {}) 
 }
 
 export { attributeCombos, initialMatch };
+export { searchCustomMartialArtInitials as searchSelfCreateInitials };

@@ -6,7 +6,7 @@ const route = useRoute();
 const links = [
   { label: "首页", to: "/" },
   { label: "配装", to: "/tools/loadout/" },
-  { label: "自创", to: "/tools/self-create/" },
+  { label: "自创", to: "/tools/custom-martial-art/" },
   { label: "武学", to: "/martial-arts/" },
   { label: "人物", to: "/characters/" },
   { label: "道具", to: "/items/" },
