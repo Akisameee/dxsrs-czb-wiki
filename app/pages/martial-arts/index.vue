@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
 
 useHead({ title: "武学" });
 
@@ -148,10 +149,6 @@ function martialArtCardClass(item: MartialArt) {
 
 function martialArtUrl(item: MartialArt) {
   return `/martial-arts/detail/?id=${item.id}`;
-}
-
-function martialArtInitial(item: MartialArt) {
-  return martialArtName(item, enums.value).slice(0, 1);
 }
 
 function styleLabels(item: MartialArt) {
@@ -273,9 +270,12 @@ function handleMartialArtKeydown(event: KeyboardEvent, item: MartialArt) {
         >
           <CardHeader>
             <div class="flex items-start gap-3">
-              <div class="flex size-10 shrink-0 items-center justify-center rounded-full border text-sm font-medium text-muted-foreground">
-                {{ martialArtInitial(item) }}
-              </div>
+              <MartialArtIcon
+                :name="martialArtName(item, enums)"
+                :type-id="item.type_id"
+                :rarity-id="item.rarity_id"
+                :size="40"
+              />
 
               <div class="min-w-0 flex-1">
                 <CardTitle class="truncate text-base">{{ martialArtName(item, enums) }}</CardTitle>

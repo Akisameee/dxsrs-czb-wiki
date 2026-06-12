@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { rarityCardClass } from "~/lib/rarity";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatMartialArtDecimal,
@@ -98,10 +98,6 @@ const levelRows = computed(() =>
   }),
 );
 
-function martialArtInitial(item: MartialArtSummaryRow) {
-  return martialArtName(item, enums.value).slice(0, 1);
-}
-
 function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
   const passiveId = Number(martialArt.value?.[`passive_${slot}_id` as keyof MartialArtSummaryRow]);
   const value = Number(level[`effect_${slot}_level` as const] || 0);
@@ -166,9 +162,12 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
           </CardHeader>
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
             <div class="flex items-center justify-center rounded-md border border-dashed p-6">
-              <Avatar class="size-20 text-2xl">
-                <AvatarFallback>{{ martialArtInitial(martialArt) }}</AvatarFallback>
-              </Avatar>
+              <MartialArtIcon
+                :name="martialArtName(martialArt, enums)"
+                :type-id="martialArt.type_id"
+                :rarity-id="martialArt.rarity_id"
+                :size="96"
+              />
             </div>
             <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex items-start justify-between gap-3">

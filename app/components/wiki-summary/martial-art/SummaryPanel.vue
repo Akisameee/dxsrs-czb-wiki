@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MartialArtSummary } from "~/lib/wiki/martial-art";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
+import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{
@@ -20,9 +20,12 @@ defineProps<{
   </div>
   <div v-else-if="summary" class="grid gap-3">
     <div class="flex items-start gap-3">
-        <Avatar size="lg">
-        <AvatarFallback>{{ summary.initial }}</AvatarFallback>
-      </Avatar>
+      <MartialArtIcon
+        :name="summary.name"
+        :type-id="summary.typeId"
+        :rarity-id="summary.rarityRawId"
+        :size="40"
+      />
       <div class="min-w-0">
         <div class="font-medium">{{ summary.name }}</div>
         <div class="text-sm text-muted-foreground">{{ summary.type }}</div>

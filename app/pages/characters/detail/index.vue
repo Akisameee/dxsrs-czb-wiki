@@ -2,7 +2,7 @@
 import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/vue";
 import { enumLabel } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatQuestParts,
@@ -256,9 +256,11 @@ onBeforeUnmount(() => {
           <CardContent class="grid gap-4">
             <div class="text-sm text-muted-foreground">头像</div>
             <div class="flex items-center justify-center rounded-md border border-dashed py-6">
-              <Avatar class="size-20 text-2xl">
-                <AvatarFallback>{{ characterInitial(character) }}</AvatarFallback>
-              </Avatar>
+              <CharacterPortrait
+                :ids="{ characterId: character.id, portrait: character.portrait }"
+                :fallback="characterInitial(character)"
+                :size="160"
+              />
             </div>
             <div class="grid gap-3 text-sm sm:grid-cols-2">
               <div class="flex justify-between gap-3">

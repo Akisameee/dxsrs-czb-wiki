@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterSummary } from "~/lib/wiki/character";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
+import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{
@@ -20,9 +20,11 @@ defineProps<{
   </div>
   <div v-else-if="summary" class="grid gap-3">
     <div class="flex items-start gap-3">
-      <Avatar size="lg">
-        <AvatarFallback>{{ summary.initial }}</AvatarFallback>
-      </Avatar>
+      <CharacterPortrait
+        :ids="{ characterId: summary.id, portrait: summary.portrait }"
+        :fallback="summary.initial"
+        :size="48"
+      />
       <div class="min-w-0">
         <div class="font-medium">{{ summary.name }}</div>
         <div class="text-sm text-muted-foreground">{{ summary.location }}</div>

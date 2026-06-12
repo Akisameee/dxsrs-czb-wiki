@@ -13,6 +13,7 @@ export type { WikiEnums } from "./text";
 
 export type CharacterSummaryRow = {
   id: number;
+  portrait: string | null;
   region_id: number | null;
   location_id: number | null;
   sect_id: number;
@@ -47,6 +48,7 @@ export type CharacterQuestSummary = {
 
 export type CharacterSummary = {
   id: number;
+  portrait: string | null;
   name: string;
   initial: string;
   detailUrl: string;
@@ -183,6 +185,7 @@ export function buildCharacterSummary(
   const targetsByQuest = groupBy(questTargets, "quest_id");
   return {
     id: character.id,
+    portrait: character.portrait,
     name: characterName(character, enums),
     initial: characterInitial(character, enums),
     detailUrl: characterDetailUrl(character.id),

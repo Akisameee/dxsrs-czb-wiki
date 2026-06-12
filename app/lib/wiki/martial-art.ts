@@ -95,6 +95,8 @@ export type MartialArtSummary = {
   name: string;
   initial: string;
   detailUrl: string;
+  typeId: number | null;
+  rarityRawId: number | null;
   rarityId: number | null;
   type: string;
   sect: string;
@@ -315,6 +317,8 @@ export function buildMartialArtSummary(
     name: martialArtName(martialArt, enums),
     initial: martialArtInitial(martialArt, enums),
     detailUrl: martialArtDetailUrl(martialArt.id),
+    typeId: martialArt.type_id ?? null,
+    rarityRawId: martialArt.rarity_id ?? null,
     rarityId: martialArtRarityToneId(martialArt.rarity_id),
     type: martialArtTypeLabel(martialArt, enums),
     sect: martialArtSectLabel(martialArt, enums),

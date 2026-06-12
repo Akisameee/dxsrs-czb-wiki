@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ItemSummary } from "~/lib/wiki/item";
+import GameImage from "~/components/wiki/GameImage.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
@@ -21,7 +22,8 @@ defineProps<{
   <div v-else-if="summary" class="grid gap-3">
     <div class="flex items-start gap-3">
       <Avatar size="lg">
-        <AvatarFallback>{{ summary.initial }}</AvatarFallback>
+        <GameImage v-if="summary.icon" :name="summary.icon" :alt="summary.name" :size="40" />
+        <AvatarFallback v-else>{{ summary.initial }}</AvatarFallback>
       </Avatar>
       <div class="min-w-0">
         <div class="font-medium">{{ summary.name }}</div>

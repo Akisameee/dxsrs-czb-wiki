@@ -13,6 +13,7 @@ import {
   itemTypeLabel,
   type ItemSummaryRow,
 } from "~/lib/wiki/item";
+import GameImage from "~/components/wiki/GameImage.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -242,7 +243,8 @@ function handleItemKeydown(event: KeyboardEvent, item: Item) {
           <CardHeader>
             <div class="flex items-start gap-3">
               <Avatar size="lg">
-                <AvatarFallback>{{ itemInitial(item, enums) }}</AvatarFallback>
+                <GameImage v-if="item.icon" :name="item.icon" :alt="itemName(item, enums)" :size="40" />
+                <AvatarFallback v-else>{{ itemInitial(item, enums) }}</AvatarFallback>
               </Avatar>
 
               <div class="min-w-0 flex-1">

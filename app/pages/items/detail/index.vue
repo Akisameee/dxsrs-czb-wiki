@@ -4,6 +4,7 @@ import {
   formatItemNumber,
 } from "~/lib/wiki/item";
 import { useItemData } from "~/composables/useItemData";
+import GameImage from "~/components/wiki/GameImage.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
@@ -105,7 +106,8 @@ const rawValueRows = computed(() => {
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
             <div class="flex items-center justify-center rounded-md border border-dashed p-6">
               <Avatar class="size-20 text-2xl">
-                <AvatarFallback>{{ summary.initial }}</AvatarFallback>
+                <GameImage v-if="summary.icon" :name="summary.icon" :alt="summary.name" :size="80" />
+                <AvatarFallback v-else>{{ summary.initial }}</AvatarFallback>
               </Avatar>
             </div>
             <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">

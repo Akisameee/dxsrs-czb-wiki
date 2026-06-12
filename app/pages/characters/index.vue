@@ -10,8 +10,8 @@ import {
   characterName as getCharacterName,
   type CharacterSummaryRow,
 } from "~/lib/wiki/character";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
+import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
 import {
   Card,
   CardContent,
@@ -244,9 +244,11 @@ watch(pageCount, (count) => {
         >
           <CardHeader>
             <div class="flex items-start gap-3">
-              <Avatar size="lg">
-                <AvatarFallback>{{ characterInitial(item) }}</AvatarFallback>
-              </Avatar>
+              <CharacterPortrait
+                :ids="{ characterId: item.id, portrait: item.portrait }"
+                :fallback="characterInitial(item)"
+                :size="48"
+              />
 
               <div class="min-w-0 flex-1">
                 <CardTitle class="truncate text-base">{{ characterName(item) }}</CardTitle>

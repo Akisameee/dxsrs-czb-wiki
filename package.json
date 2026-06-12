@@ -8,7 +8,7 @@
     "build": "nuxt generate",
     "preview": "nuxt preview",
     "build:data": "npm run build:db",
-    "build:db": "node --no-warnings scripts/build_sqlite.mjs",
+    "build:db": "python -m scripts.database",
     "typecheck": "vue-tsc --noEmit --pretty false"
   },
   "dependencies": {

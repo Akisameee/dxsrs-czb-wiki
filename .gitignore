@@ -5,6 +5,7 @@ server*.log
 re/
 
 # Local caches and editor noise.
+**__pycache__/
 .tools/
 .vscode/
 .idea/
