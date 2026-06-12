@@ -4,6 +4,7 @@ import type { WikiTextPart } from "~/lib/wiki/text";
 
 const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/character/HoverLink.vue"));
 const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/item/HoverLink.vue"));
+const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/martial-art/HoverLink.vue"));
 
 defineProps<{
   parts: WikiTextPart[];
@@ -23,6 +24,11 @@ defineProps<{
     />
     <ItemHoverLink
       v-else-if="part.type === 'item'"
+      :id="part.id"
+      :label="part.text"
+    />
+    <MartialArtHoverLink
+      v-else-if="part.type === 'martialArt'"
       :id="part.id"
       :label="part.text"
     />

@@ -1,14 +1,20 @@
-import type { LoadoutMartialArt } from "~/composables/useLoadoutData";
+import type {
+  CustomMartialState,
+  EquipmentStyleKey,
+  EquipmentStyles,
+  LoadoutCountItem,
+  LoadoutMartialArt,
+  LoadoutOption,
+  LoadoutVisibleChainRecord,
+} from "~/lib/loadout/types";
 
-export type LoadoutOption = {
-  id: string;
-  label: string;
-};
-
-export type CustomMartialState = {
-  enabled: boolean;
-  sectId: string;
-  styleId: string;
+export type {
+  CustomMartialState,
+  EquipmentStyleKey,
+  EquipmentStyles,
+  LoadoutCountItem,
+  LoadoutOption,
+  LoadoutVisibleChainRecord,
 };
 
 export type CountRow = {

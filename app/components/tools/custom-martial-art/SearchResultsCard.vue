@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CustomMartialEffect, SearchResultRoute, SearchResultStats } from "~/components/tools/custom-martial-art/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -19,21 +20,21 @@ import {
 } from "~/components/ui/pagination";
 
 const props = defineProps<{
-  results: any[];
+  results: SearchResultRoute[];
   page: number;
   pageSize: number;
   sortLabel: string;
-  effectText: (effect: any) => string;
+  effectText: (effect: CustomMartialEffect | null) => string;
   weaponTypeText: (value: number | string | null | undefined) => string;
 }>();
 
 const emit = defineEmits<{
   sort: [];
   updatePage: [page: number];
-  apply: [route: any];
+  apply: [route: SearchResultRoute];
 }>();
 
-const ATTRIBUTE_NAMES = ["yi", "qi", "xing", "shen"];
+const ATTRIBUTE_NAMES = ["yi", "qi", "xing", "shen"] as const;
 
 const pageCount = computed(() => Math.max(1, Math.ceil(props.results.length / props.pageSize)));
 const visibleResults = computed(() => {
@@ -41,11 +42,11 @@ const visibleResults = computed(() => {
   return props.results.slice(start, start + props.pageSize);
 });
 
-function resultAttributes(route: any) {
-  return ATTRIBUTE_NAMES.map((name) => route.input?.[name]).join(" / ");
+function resultAttributes(route: SearchResultRoute) {
+  return ATTRIBUTE_NAMES.map((name) => route.input[name]).join(" / ");
 }
 
-function resultStats(route: any) {
+function resultStats(route: SearchResultRoute): SearchResultStats {
   return route.stats || {};
 }
 

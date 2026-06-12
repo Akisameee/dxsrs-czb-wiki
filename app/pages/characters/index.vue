@@ -93,6 +93,12 @@ function goToCharacter(item: Character) {
   return navigateTo(characterDetailUrl(item.id));
 }
 
+function handleCharacterKeydown(event: KeyboardEvent, item: Character) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  void goToCharacter(item);
+}
+
 function enumOptions(type: string) {
   return Object.entries(enums.value[type] || {})
     .filter(([, label]) => label)
@@ -234,8 +240,7 @@ watch(pageCount, (count) => {
           role="link"
           tabindex="0"
           @click="goToCharacter(item)"
-          @keydown.enter="goToCharacter(item)"
-          @keydown.space.prevent="goToCharacter(item)"
+          @keydown="handleCharacterKeydown($event, item)"
         >
           <CardHeader>
             <div class="flex items-start gap-3">

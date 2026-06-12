@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoadoutOption } from "./types";
+import type { EquipmentStyleKey, EquipmentStyles, LoadoutOption } from "./types";
 import {
   Card,
   CardContent,
@@ -17,13 +17,13 @@ import {
 } from "~/components/ui/select";
 
 defineProps<{
-  equipmentStyles: Record<string, string>;
+  equipmentStyles: EquipmentStyles;
   equipmentStyleOptions: LoadoutOption[];
   emptyOption: string;
 }>();
 
 const emit = defineEmits<{
-  updateEquipmentStyle: [key: string, value: string];
+  updateEquipmentStyle: [key: EquipmentStyleKey, value: string];
 }>();
 
 </script>

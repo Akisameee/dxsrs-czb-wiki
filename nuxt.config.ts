@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 
-const siteBase = process.env.SITE_BASE ?? "/dxsrs-czb-wiki/";
+const siteBase = import.meta.env.SITE_BASE ?? "/dxsrs-czb-wiki/";
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-06-09",
@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     baseURL: siteBase.endsWith("/") ? siteBase : `${siteBase}/`,
     head: {
       htmlAttrs: { lang: "zh-CN" },
-      titleTemplate: (title) => title ? `${title} - 大侠式人生重制版` : "大侠式人生重制版",
+      titleTemplate: "%s - 大侠式人生重制版",
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],

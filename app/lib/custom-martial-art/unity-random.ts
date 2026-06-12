@@ -1,19 +1,23 @@
 const MT_SEED = 1812433253;
 
-function uint(value) {
+import type { CustomMartialInput } from "./types";
+
+function uint(value: number) {
   return value >>> 0;
 }
 
-function seedStep(previous) {
+function seedStep(previous: number) {
   return uint(Math.imul(MT_SEED, previous) + 1);
 }
 
 export class UnityRandom {
+  state: [number, number, number, number] = [0, 0, 0, 0];
+
   constructor(seed = 0) {
     this.initState(seed);
   }
 
-  initState(seed) {
+  initState(seed: number) {
     const x = uint(seed);
     const y = seedStep(x);
     const z = seedStep(y);
@@ -37,7 +41,7 @@ export class UnityRandom {
     return (this.nextUint() & 0x7fffff) / 0x7fffff;
   }
 
-  rangeInt(minInclusive, maxExclusive) {
+  rangeInt(minInclusive: number, maxExclusive: number) {
     const min = Math.trunc(minInclusive);
     const max = Math.trunc(maxExclusive);
     if (max <= min) return min;
@@ -46,7 +50,7 @@ export class UnityRandom {
     return min + (this.nextUint() % span);
   }
 
-  rangeFloat(minInclusive, maxInclusive) {
+  rangeFloat(minInclusive: number, maxInclusive: number) {
     const min = Number(minInclusive);
     const max = Number(maxInclusive);
     const value = this.value();
@@ -58,7 +62,7 @@ export class UnityRandom {
   }
 }
 
-export function makeZiChuangSeed({ yi, qi, xing, shen, weaponType }) {
+export function makeZiChuangSeed({ yi, qi, xing, shen, weaponType }: CustomMartialInput) {
   return (
     Number(yi) +
     Number(qi) * 11 +

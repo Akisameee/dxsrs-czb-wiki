@@ -1,4 +1,10 @@
 import { enumLabel, enumMapFromRows } from "~/lib/utils";
+import type {
+  LoadoutChainGroup,
+  LoadoutData,
+  LoadoutMartialArt,
+  LoadoutPassiveChainRecord,
+} from "~/lib/loadout/types";
 import {
   martialArtName,
   martialArtPassiveChainDescription,
@@ -16,41 +22,7 @@ import {
 
 type EnumRow = { type: string; id: number; label: string | null };
 
-type PassiveChainRecord = {
-  count: number;
-  effect: string;
-};
-
-export type LoadoutMartialArt = {
-  id: number;
-  name: string;
-  initial: string;
-  sectId: number | null;
-  sect: string;
-  styleIds: number[];
-  styles: string[];
-  typeId: number | null;
-  type: string;
-  rare: number | null;
-  rarityToneId: number | null;
-  power: number | null;
-  cost: number | null;
-  obtainMethod: string | null;
-  sectRestricted: boolean;
-};
-
-export type LoadoutChainGroup = {
-  sectId?: number;
-  styleId?: number;
-  chains: PassiveChainRecord[];
-};
-
-export type LoadoutData = {
-  wuxue: LoadoutMartialArt[];
-  sectChains: LoadoutChainGroup[];
-  styleChains: LoadoutChainGroup[];
-  enums: WikiEnums;
-};
+export type { LoadoutChainGroup, LoadoutData, LoadoutMartialArt } from "~/lib/loadout/types";
 
 function numberValue(value: number | string | null | undefined) {
   const number = Number(value);
@@ -58,8 +30,8 @@ function numberValue(value: number | string | null | undefined) {
 }
 
 function groupChainRows(rows: MartialArtPassiveChainRow[], templates: Record<string, string>) {
-  const sectGroups = new Map<number, PassiveChainRecord[]>();
-  const styleGroups = new Map<number, PassiveChainRecord[]>();
+  const sectGroups = new Map<number, LoadoutPassiveChainRecord[]>();
+  const styleGroups = new Map<number, LoadoutPassiveChainRecord[]>();
 
   for (const row of rows) {
     const id = numberValue(row.id);
@@ -71,7 +43,7 @@ function groupChainRows(rows: MartialArtPassiveChainRow[], templates: Record<str
     target.set(id, [...(target.get(id) || []), { count, effect }]);
   }
 
-  const sortChains = (chains: PassiveChainRecord[]) => chains.sort((a, b) => a.count - b.count);
+  const sortChains = (chains: LoadoutPassiveChainRecord[]) => chains.sort((a, b) => a.count - b.count);
 
   return {
     sectChains: [...sectGroups.entries()]
@@ -92,7 +64,7 @@ function legacyChainGroups(
     idKey: keyof T,
     outputKey: "sectId" | "styleId",
   ) => {
-    const groups = new Map<number, PassiveChainRecord[]>();
+    const groups = new Map<number, LoadoutPassiveChainRecord[]>();
     for (const row of rows) {
       const id = numberValue(row[idKey] as number);
       const count = numberValue(row.count);

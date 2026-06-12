@@ -1,28 +1,42 @@
-import { UnityRandom, makeZiChuangSeed } from "./unity-random.js";
+import { UnityRandom, makeZiChuangSeed } from "./unity-random";
+import type {
+  CustomBuffRow,
+  CustomMartialAlgorithmData,
+  CustomMartialAlgorithmMartialRow,
+  CustomMartialChanged,
+  CustomMartialDetail,
+  CustomMartialHistoryStep,
+  CustomMartialInput,
+  CustomMartialLocks,
+  CustomMartialSummary,
+  CustomMartialZichuangState,
+  CustomPowerRangeRow,
+  CustomStyleWeightRow,
+} from "./types";
 
 const DEFAULT_BUFF_TYPE = 99;
 const DEFAULT_BUFF_TARGET = 1;
 const GAILIANG_PERCENT_STEP = 4;
 
-function rowsOf(table) {
+function rowsOf<T>(table: T[] | null | undefined): T[] {
   return Array.isArray(table) ? table : [];
 }
 
-function clone(value) {
+function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
 
-function roundToInt(value) {
+function roundToInt(value: number) {
   return Math.round(Number(value));
 }
 
-function roundTo2(value) {
+function roundTo2(value: number) {
   return Math.round(Number(value) * 100) / 100;
 }
 
-function uniqueBy(items, getter) {
-  const seen = new Set();
-  const result = [];
+function uniqueBy<T>(items: T[], getter: (item: T) => unknown) {
+  const seen = new Set<unknown>();
+  const result: T[] = [];
   for (const item of items) {
     const key = getter(item);
     if (!key || seen.has(key)) continue;
@@ -32,11 +46,11 @@ function uniqueBy(items, getter) {
   return result;
 }
 
-function rareGroup(rare) {
+function rareGroup(rare: number | string) {
   return Number(rare) >= 4 ? [4, 5] : [1, 2, 3];
 }
 
-function defaultData(data) {
+function defaultData(data: Partial<CustomMartialAlgorithmData> | null | undefined): CustomMartialAlgorithmData {
   return {
     wugongRows: rowsOf(data?.wugongRows),
     chainRows: rowsOf(data?.chainRows),
@@ -45,8 +59,8 @@ function defaultData(data) {
   };
 }
 
-export function buildStylePool(chainRows) {
-  const weights = new Map();
+export function buildStylePool(chainRows: CustomStyleWeightRow[]) {
+  const weights = new Map<number, number>();
   for (const row of rowsOf(chainRows)) {
     const style = Number(row.fengge);
     const qty = Number(row.qty);
@@ -54,20 +68,24 @@ export function buildStylePool(chainRows) {
     weights.set(style, Math.max(weights.get(style) || 0, qty));
   }
 
-  const pool = [];
+  const pool: number[] = [];
   for (const [style, weight] of [...weights.entries()].sort((a, b) => a[0] - b[0])) {
     for (let i = 0; i < weight; i += 1) pool.push(style);
   }
   return pool;
 }
 
-export function randomFengGe(rng, chainRows) {
+export function randomFengGe(rng: UnityRandom, chainRows: CustomStyleWeightRow[]) {
   const pool = buildStylePool(chainRows);
   if (pool.length === 0) return null;
   return pool[rng.rangeInt(0, pool.length)];
 }
 
-export function countRare(zichuang, gWuGong, ziChuangWeiLiRows) {
+export function countRare(
+  zichuang: CustomMartialZichuangState,
+  gWuGong: CustomMartialAlgorithmMartialRow,
+  ziChuangWeiLiRows: CustomPowerRangeRow[],
+) {
   const oldRare = Number(gWuGong.rare);
   const row = rowsOf(ziChuangWeiLiRows).find((item) => (
     Number(item.bingqitype) === Number(gWuGong.type) &&
@@ -82,7 +100,12 @@ export function countRare(zichuang, gWuGong, ziChuangWeiLiRows) {
   return oldRare !== Number(row.rare);
 }
 
-export function randomBuff(rng, zichuang, gWuGong, ziChuangBuffRows) {
+export function randomBuff(
+  rng: UnityRandom,
+  zichuang: CustomMartialZichuangState,
+  gWuGong: CustomMartialAlgorithmMartialRow,
+  ziChuangBuffRows: CustomBuffRow[],
+) {
   const rares = new Set(rareGroup(zichuang.rare));
   const candidates = rowsOf(ziChuangBuffRows).filter((row) => rares.has(Number(row.rare)));
 
@@ -91,6 +114,7 @@ export function randomBuff(rng, zichuang, gWuGong, ziChuangBuffRows) {
 
   if (candidates.length > 0 && rng.rangeInt(0, 100) <= 49) {
     const row = candidates[rng.rangeInt(0, candidates.length)];
+    if (!row) return false;
     nextBuff = Number(row.bufftype);
     nextTarget = Number(row.bufftarget);
   }
@@ -101,7 +125,12 @@ export function randomBuff(rng, zichuang, gWuGong, ziChuangBuffRows) {
   return changed;
 }
 
-export function randomAttackArea(rng, zichuang, gWuGong, wugongRows) {
+export function randomAttackArea(
+  rng: UnityRandom,
+  zichuang: CustomMartialZichuangState,
+  gWuGong: CustomMartialAlgorithmMartialRow,
+  wugongRows: CustomMartialAlgorithmMartialRow[],
+) {
   const rares = new Set(rareGroup(zichuang.rare));
   const pool = rowsOf(wugongRows).filter((row) => (
     Number(row.type) === Number(gWuGong.type) &&
@@ -113,9 +142,10 @@ export function randomAttackArea(rng, zichuang, gWuGong, wugongRows) {
   const areaPool = uniqueBy(pool, (row) => row.attackareaname);
   if (areaPool.length === 0) return false;
 
-  const area = areaPool[rng.rangeInt(0, areaPool.length)].attackareaname;
+  const area = areaPool[rng.rangeInt(0, areaPool.length)]?.attackareaname;
   const templatePool = pool.filter((row) => row.attackareaname === area);
   const template = templatePool[rng.rangeInt(0, templatePool.length)];
+  if (!template) return false;
   const changed = gWuGong.attackareaname !== template.attackareaname;
 
   gWuGong.attackareaname = template.attackareaname;
@@ -124,7 +154,13 @@ export function randomAttackArea(rng, zichuang, gWuGong, wugongRows) {
   return changed;
 }
 
-export function countWeili(zichuang, gWuGong, detail, ziChuangWeiLiRows, ziChuangBuffRows) {
+export function countWeili(
+  zichuang: CustomMartialZichuangState,
+  gWuGong: CustomMartialAlgorithmMartialRow,
+  detail: CustomMartialDetail,
+  ziChuangWeiLiRows: CustomPowerRangeRow[],
+  ziChuangBuffRows: CustomBuffRow[],
+) {
   const weiLi = rowsOf(ziChuangWeiLiRows).find((row) => (
     Number(row.bingqitype) === Number(gWuGong.type) &&
     Number(row.rare) === Number(gWuGong.rare)
@@ -145,7 +181,12 @@ export function countWeili(zichuang, gWuGong, detail, ziChuangWeiLiRows, ziChuan
   return detail;
 }
 
-function pickInitialTemplate(rng, weaponType, wugongRows, options = {}) {
+function pickInitialTemplate(
+  rng: UnityRandom,
+  weaponType: number | string | null | undefined,
+  wugongRows: CustomMartialAlgorithmMartialRow[],
+  options: { initialTemplateRareMin?: number | string; initialTemplateRareMax?: number | string } = {},
+): CustomMartialAlgorithmMartialRow {
   const minRare = Number(options.initialTemplateRareMin ?? 1);
   const maxRare = Number(options.initialTemplateRareMax ?? 3);
   const candidates = rowsOf(wugongRows).filter((row) => (
@@ -158,16 +199,32 @@ function pickInitialTemplate(rng, weaponType, wugongRows, options = {}) {
   if (candidates.length === 0) {
     throw new Error(`没有找到武器类型 ${weaponType} 的自创模板候选`);
   }
-  return clone(candidates[rng.rangeInt(0, candidates.length)]);
+  const candidate = candidates[rng.rangeInt(0, candidates.length)];
+  if (!candidate) {
+    throw new Error(`没有找到武器类型 ${weaponType} 的自创模板候选`);
+  }
+  return clone(candidate);
 }
 
 export class CustomMartialArtSimulation {
-  constructor(input, data, options = {}) {
+  input: CustomMartialInput;
+  data: CustomMartialAlgorithmData;
+  rng: UnityRandom;
+  zichuang: CustomMartialZichuangState;
+  gWuGong: CustomMartialAlgorithmMartialRow;
+  detail: CustomMartialDetail;
+  history: CustomMartialHistoryStep[];
+
+  constructor(
+    input: CustomMartialInput,
+    data: Partial<CustomMartialAlgorithmData>,
+    options: { initialTemplateRareMin?: number | string; initialTemplateRareMax?: number | string } = {},
+  ) {
     this.input = clone(input);
     this.data = defaultData(data);
     this.rng = new UnityRandom(makeZiChuangSeed(input));
-    this.zichuang = null;
-    this.gWuGong = null;
+    this.zichuang = null as unknown as CustomMartialZichuangState;
+    this.gWuGong = null as unknown as CustomMartialAlgorithmMartialRow;
     this.detail = { power: 0, b1value: 0 };
     this.history = [];
     this.#create(input, options);
@@ -185,7 +242,10 @@ export class CustomMartialArtSimulation {
     return this.remainingImproveCount > 0;
   }
 
-  #create(input, options = {}) {
+  #create(
+    input: CustomMartialInput,
+    options: { initialTemplateRareMin?: number | string; initialTemplateRareMax?: number | string } = {},
+  ) {
     const template = pickInitialTemplate(this.rng, input.weaponType, this.data.wugongRows, options);
 
     this.gWuGong = {
@@ -219,7 +279,7 @@ export class CustomMartialArtSimulation {
     this.#record("create");
   }
 
-  #record(action, extra = {}) {
+  #record(action: string, extra: Partial<Pick<CustomMartialHistoryStep, "locks" | "changed">> = {}) {
     this.history.push({
       action,
       ...extra,
@@ -229,7 +289,7 @@ export class CustomMartialArtSimulation {
     });
   }
 
-  improve(locks = {}) {
+  improve(locks: CustomMartialLocks = {}) {
     if (!this.canImprove) return this;
 
     this.zichuang.fenggelock = Boolean(locks.fenggelock ?? locks.styleLock ?? this.zichuang.fenggelock);
@@ -239,7 +299,7 @@ export class CustomMartialArtSimulation {
     this.zichuang.percent += GAILIANG_PERCENT_STEP * this.rng.rangeFloat(1, 1.25);
     this.zichuang.gailiangkongjian -= 1;
 
-    const changed = {
+    const changed: CustomMartialChanged = {
       rare: countRare(this.zichuang, this.gWuGong, this.data.ziChuangWeiLiRows),
       style: false,
       area: false,
@@ -265,15 +325,15 @@ export class CustomMartialArtSimulation {
     return this;
   }
 
-  currentSummary(styleNames = {}) {
+  currentSummary(styleNames: Record<string, string> = {}) {
     return summarizeZiChuangStep(this.history.at(-1), styleNames);
   }
 
-  summaries(styleNames = {}) {
+  summaries(styleNames: Record<string, string> = {}) {
     return this.history.map((step) => summarizeZiChuangStep(step, styleNames));
   }
 
-  toRoute(styleNames = {}) {
+  toRoute(styleNames: Record<string, string> = {}) {
     const summaries = this.summaries(styleNames);
     const initial = summaries[0] || null;
     const steps = summaries.slice(1).map((result, index) => ({
@@ -296,7 +356,13 @@ export class CustomMartialArtSimulation {
   }
 }
 
-export function summarizeZiChuangStep(step, styleNames = {}) {
+export function summarizeZiChuangStep(
+  step: CustomMartialHistoryStep | undefined,
+  styleNames: Record<string, string> = {},
+): CustomMartialSummary {
+  if (!step) {
+    throw new Error("缺少自创武学步骤");
+  }
   return {
     action: step.action,
     locks: step.locks || null,

@@ -132,6 +132,12 @@ function itemCardClass(item: Item) {
 function goToItem(item: Item) {
   return navigateTo(itemDetailUrl(item.id));
 }
+
+function handleItemKeydown(event: KeyboardEvent, item: Item) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  void goToItem(item);
+}
 </script>
 
 <template>
@@ -231,8 +237,7 @@ function goToItem(item: Item) {
           role="link"
           tabindex="0"
           @click="goToItem(item)"
-          @keydown.enter="goToItem(item)"
-          @keydown.space.prevent="goToItem(item)"
+          @keydown="handleItemKeydown($event, item)"
         >
           <CardHeader>
             <div class="flex items-start gap-3">

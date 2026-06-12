@@ -1,6 +1,19 @@
 import { enumMapFromRows, groupBy } from "~/lib/utils";
-
-type SqlNumber = number | string | null;
+import type {
+  CustomBuffRow,
+  CustomEffectOption,
+  CustomEffectRateDbRow,
+  CustomMartialAlgorithmData,
+  CustomMartialAlgorithmMartialRow,
+  CustomMartialTemplateEffectRow,
+  CustomMartialTemplateRow,
+  CustomPowerRangeDbRow,
+  CustomPowerRangeRow,
+  CustomStatusEffectDbRow,
+  CustomStyleWeightDbRow,
+  CustomStyleWeightRow,
+  SqlNumber,
+} from "~/components/tools/custom-martial-art/types";
 
 function numberValue(value: SqlNumber, fallback = 0) {
   const number = Number(value);
@@ -20,21 +33,21 @@ export function useCustomMartialArtData() {
       effects,
       enumRows,
     ] = await Promise.all([
-      queryRows<Record<string, any>>("SELECT * FROM custom_martial_arts ORDER BY id"),
-      queryRows<Record<string, any>>("SELECT * FROM custom_martial_art_effects ORDER BY custom_martial_art_id, slot"),
-      queryRows<Record<string, any>>("SELECT * FROM custom_style_weights ORDER BY id"),
-      queryRows<Record<string, any>>("SELECT * FROM custom_martial_power_ranges ORDER BY id"),
-      queryRows<Record<string, any>>("SELECT * FROM custom_martial_effect_rates ORDER BY id"),
-      queryRows<Record<string, any>>("SELECT id, value_per_level AS valuePerLevel, template FROM status_effects ORDER BY id"),
+      queryRows<CustomMartialTemplateRow>("SELECT * FROM custom_martial_arts ORDER BY id"),
+      queryRows<CustomMartialTemplateEffectRow>("SELECT * FROM custom_martial_art_effects ORDER BY custom_martial_art_id, slot"),
+      queryRows<CustomStyleWeightDbRow>("SELECT * FROM custom_style_weights ORDER BY id"),
+      queryRows<CustomPowerRangeDbRow>("SELECT * FROM custom_martial_power_ranges ORDER BY id"),
+      queryRows<CustomEffectRateDbRow>("SELECT * FROM custom_martial_effect_rates ORDER BY id"),
+      queryRows<CustomStatusEffectDbRow>("SELECT id, value_per_level AS valuePerLevel, template FROM status_effects ORDER BY id"),
       queryRows<{ type: string; id: number; label: string | null }>("SELECT type, id, label FROM enums ORDER BY type, id"),
     ]);
 
     const enums = enumMapFromRows(enumRows);
     const effectsByTemplate = groupBy(templateEffects, "custom_martial_art_id");
-    const data = {
+    const data: CustomMartialAlgorithmData = {
       wugongRows: templates.map((row) => {
         const effectSlots = new Map((effectsByTemplate.get(row.id) || []).map((item) => [Number(item.slot), item]));
-        const output: Record<string, any> = {
+        const output = {
           chnname: enums.MartialArt?.[String(row.id)] || `武学 ${row.id}`,
           type: numberValue(row.type_id),
           rare: numberValue(row.rarity_id),
@@ -43,7 +56,7 @@ export function useCustomMartialArtData() {
           hitfx: numberValue(row.hit_effect_id),
           attackareaname: enums.AttackArea?.[String(row.attack_area_id)] || "",
           iszichuang: Boolean(Number(row.is_custom)),
-        };
+        } as CustomMartialAlgorithmMartialRow;
 
         for (let slot = 1; slot <= 3; slot += 1) {
           const effect = effectSlots.get(slot);
@@ -55,7 +68,7 @@ export function useCustomMartialArtData() {
       chainRows: styleWeights.map((row) => ({
         fengge: numberValue(row.style_id),
         qty: numberValue(row.weight),
-      })),
+      }) satisfies CustomStyleWeightRow),
       ziChuangWeiLiRows: powerRanges.map((row) => ({
         bingqitype: numberValue(row.weapon_type_id),
         rare: numberValue(row.rarity_id),
@@ -64,25 +77,27 @@ export function useCustomMartialArtData() {
         weilimax: numberValue(row.power_max),
         percentmin: numberValue(row.percent_min),
         percentmax: numberValue(row.percent_max),
-      })),
+      }) satisfies CustomPowerRangeRow),
       ziChuangBuffRows: effectRates.map((row) => ({
         rare: numberValue(row.rarity_id),
         bufftype: numberValue(row.effect_id),
         bufftarget: numberValue(row.target_id),
         value: numberValue(row.level),
         percent: numberValue(row.percent),
-      })),
+      }) satisfies CustomBuffRow),
     };
+
+    const effectOptions: CustomEffectOption[] = effects.map((row) => ({
+      id: numberValue(row.id),
+      name: enums.BuffType?.[String(row.id)] || `效果 ${row.id}`,
+      valuePerLevel: row.valuePerLevel === null ? null : numberValue(row.valuePerLevel),
+      template: row.template,
+    }));
 
     return {
       data,
       enums,
-      effects: effects.map((row) => ({
-        id: numberValue(row.id),
-        name: enums.BuffType?.[String(row.id)] || `效果 ${row.id}`,
-        valuePerLevel: row.valuePerLevel === null ? null : numberValue(row.valuePerLevel),
-        template: row.template,
-      })),
+      effects: effectOptions,
       effectNames: new Map(effects.map((item) => [Number(item.id), enums.BuffType?.[String(item.id)] || `效果 ${item.id}`])),
       styleNames: enums.LianSuo_FG || {},
     };

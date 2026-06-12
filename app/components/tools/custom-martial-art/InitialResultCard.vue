@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CustomMartialSummary } from "~/components/tools/custom-martial-art/types";
 import { rarityCardClass } from "~/lib/rarity";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -12,7 +13,7 @@ defineProps<{
   currentSeed: number | null;
   attributesValid: boolean;
   attributeTarget: number;
-  summary: any | null;
+  summary: CustomMartialSummary | null;
   improveLimit: number | null;
   rarityId: number | string | null;
   rareLabel: string;

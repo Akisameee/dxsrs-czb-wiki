@@ -11,6 +11,20 @@ import InitialResultCard from "~/components/tools/custom-martial-art/InitialResu
 import SearchControlsCard from "~/components/tools/custom-martial-art/SearchControlsCard.vue";
 import SearchResultsCard from "~/components/tools/custom-martial-art/SearchResultsCard.vue";
 import SimulationStatsCard from "~/components/tools/custom-martial-art/SimulationStatsCard.vue";
+import type {
+  CustomBuffRow,
+  CustomEffectOption,
+  CustomMartialEffect,
+  CustomMartialAlgorithmMartialRow,
+  CustomMartialInput,
+  CustomStyleWeightRow,
+  ProbabilityRow,
+  SearchResultCandidate,
+  SearchResultRoute,
+  SearchResultStats,
+  SearchTarget,
+  SimulationAnalysis,
+} from "~/components/tools/custom-martial-art/types";
 import { martialArtRarityToneId } from "~/lib/wiki/martial-art";
 
 useHead({ title: "自创武学" });
@@ -30,7 +44,7 @@ const DEFAULT_SEARCH_SORT_ORDER = SEARCH_SORT_FIELDS.map((field) => field.id);
 
 const { data: context, pending, error } = useCustomMartialArtData();
 
-const input = reactive({
+const input = reactive<CustomMartialInput>({
   name: "自创武功",
   yi: "5",
   qi: "5",
@@ -42,9 +56,9 @@ const input = reactive({
 const analysisTrials = ref("1024");
 const analysisStatus = ref("");
 const analysisBusy = ref(false);
-const analysis = ref<any | null>(null);
+const analysis = ref<SimulationAnalysis | null>(null);
 
-const searchTarget = reactive({
+const searchTarget = reactive<SearchTarget>({
   weaponType: "2",
   styleId: EMPTY_OPTION,
   areaName: EMPTY_OPTION,
@@ -54,14 +68,17 @@ const searchTarget = reactive({
 const searchTrials = ref("256");
 const searchStatus = ref("");
 const searchBusy = ref(false);
-const searchResults = ref<any[]>([]);
+const searchResults = ref<SearchResultRoute[]>([]);
 const searchPage = ref(1);
 const searchSort = ref("styleMatch");
 
 const enums = computed(() => context.value?.enums || {});
 const algorithmData = computed(() => context.value?.data || null);
 const effectNames = computed(() => context.value?.effectNames || new Map<number, string>());
-const styleNames = computed(() => context.value?.styleNames || {});
+const styleNames = computed<Record<string, string>>(() => Object.fromEntries(
+  Object.entries(context.value?.styleNames || {})
+    .filter((entry): entry is [string, string] => entry[1] !== null),
+));
 const errorMessage = computed(() => error.value?.message || "");
 
 const weaponOptions = computed(() => WEAPON_TYPE_IDS.map((id) => ({
@@ -96,26 +113,26 @@ const currentRarityId = computed(() => currentSummary.value ? martialArtRarityTo
 const currentEffectLabel = computed(() => currentSummary.value ? effectText(currentSummary.value.effect) : "");
 
 const styleOptions = computed(() => uniqueSorted((algorithmData.value?.chainRows || [])
-  .map((row: any) => Number(row.fengge))
+  .map((row: CustomStyleWeightRow) => Number(row.fengge))
   .filter((id: number) => id > 0))
   .map((id) => ({ id: String(id), label: enumName("LianSuo_FG", id, `风格 ${id}`) })));
 
 const areaOptions = computed(() => areasForWeapon(searchTarget.weaponType));
 
 const effectOptions = computed(() => {
-  const available = new Set((algorithmData.value?.ziChuangBuffRows || []).map((row: any) => Number(row.bufftype)));
+  const available = new Set((algorithmData.value?.ziChuangBuffRows || []).map((row: CustomBuffRow) => Number(row.bufftype)));
   available.add(99);
-  return (context.value?.effects || [])
-    .filter((effect: any) => available.has(Number(effect.id)))
-    .map((effect: any) => ({ id: String(effect.id), label: effect.name }));
+  return ((context.value?.effects || []) as CustomEffectOption[])
+    .filter((effect) => available.has(Number(effect.id)))
+    .map((effect) => ({ id: String(effect.id), label: effect.name }));
 });
 
 const selectedEffectMaxLevel = computed(() => {
   const effectType = numberOrNull(searchTarget.effectType);
   if (effectType === null || effectType === 99) return 0;
-  return (algorithmData.value?.ziChuangBuffRows || [])
-    .filter((row: any) => Number(row.bufftype) === effectType)
-    .reduce((max: number, row: any) => Math.max(max, Number(row.value || 0)), 0);
+  return ((algorithmData.value?.ziChuangBuffRows || []) as CustomBuffRow[])
+    .filter((row) => Number(row.bufftype) === effectType)
+    .reduce((max, row) => Math.max(max, Number(row.value || 0)), 0);
 });
 
 const searchTargetPayload = computed(() => ({
@@ -176,27 +193,31 @@ function rareLabel(rare: number | string | null | undefined) {
   return enumName("WuGongRare", rare, `稀有度 ${rare}`);
 }
 
-function effectText(effect: any) {
+function effectText(effect: CustomMartialEffect | null) {
   if (!effect || Number(effect.bufftype) === 99) return "无特殊效果";
   const name = effectNames.value.get(Number(effect.bufftype)) || `效果 ${effect.bufftype}`;
   return `${name} ${effect.value}`;
 }
 
+function weaponTypeText(value: number | string | null | undefined) {
+  return enumName("BingQiType", value, "");
+}
+
 function areasForWeapon(weaponType: number | string) {
-  return uniqueSorted((algorithmData.value?.wugongRows || [])
-    .filter((row: any) => (
+  return uniqueSorted(((algorithmData.value?.wugongRows || []) as CustomMartialAlgorithmMartialRow[])
+    .filter((row) => (
       Number(row.type) === Number(weaponType) &&
       !row.iszichuang &&
       row.attackareaname &&
       row.attackareaname !== "无"
     ))
-    .map((row: any) => row.attackareaname))
+    .map((row) => row.attackareaname))
     .map((name) => ({ id: String(name), label: String(name) }));
 }
 
 function effectMaxTargets() {
   const maxByType = new Map<number, number>();
-  for (const row of algorithmData.value?.ziChuangBuffRows || []) {
+  for (const row of (algorithmData.value?.ziChuangBuffRows || []) as CustomBuffRow[]) {
     const type = Number(row.bufftype);
     const level = Number(row.value || 0);
     if (!Number.isFinite(type) || type === 99 || level <= 0) continue;
@@ -221,6 +242,10 @@ function waitForPaint() {
   });
 }
 
+function hasInitial(route: SearchResultCandidate): route is SearchResultRoute {
+  return route.initial !== null;
+}
+
 async function runAnalysis() {
   if (!algorithmData.value || !currentRoute.value) return;
 
@@ -230,16 +255,15 @@ async function runAnalysis() {
 
   try {
     const simulation = new CustomMartialArtSimulation(currentInput.value, algorithmData.value);
-    const styles: any[] = [];
-    const areas: any[] = [];
-    const effects: any[] = [];
+    const styles: ProbabilityRow[] = [];
+    const areas: ProbabilityRow[] = [];
+    const effects: ProbabilityRow[] = [];
     const powerSamples: number[] = [];
 
     const styleTargets = styleOptions.value.map((style) => ({ id: Number(style.id), label: style.label }));
-    for (let index = 0; index < styleTargets.length; index += 1) {
-      const style = styleTargets[index];
+    for (const [index, style] of styleTargets.entries()) {
       analysisStatus.value = `模拟风格 ${index + 1} / ${styleTargets.length}`;
-      const stats = await estimateCustomMartialArtStats(simulation, { styleId: style.id }, {
+      const stats: SearchResultStats = await estimateCustomMartialArtStats(simulation, { styleId: style.id }, {
         trials,
         styleNames: styleNames.value,
         includeSamples: true,
@@ -247,29 +271,27 @@ async function runAnalysis() {
         yieldToMain: waitForPaint,
       });
       powerSamples.push(...(stats.samples?.power || []));
-      styles.push({ label: style.label, value: stats.styleProbability });
+      styles.push({ label: style.label, value: stats.styleProbability ?? 0 });
       await waitForPaint();
     }
 
     const areaTargets = areasForWeapon(input.weaponType);
-    for (let index = 0; index < areaTargets.length; index += 1) {
-      const area = areaTargets[index];
+    for (const [index, area] of areaTargets.entries()) {
       analysisStatus.value = `模拟攻击范围 ${index + 1} / ${areaTargets.length}`;
-      const stats = await estimateCustomMartialArtStats(simulation, { areaName: area.id }, {
+      const stats: SearchResultStats = await estimateCustomMartialArtStats(simulation, { areaName: area.id }, {
         trials,
         styleNames: styleNames.value,
         yieldEvery: 32,
         yieldToMain: waitForPaint,
       });
-      areas.push({ label: area.label, value: stats.areaProbability });
+      areas.push({ label: area.label, value: stats.areaProbability ?? 0 });
       await waitForPaint();
     }
 
     const effectTargets = effectMaxTargets();
-    for (let index = 0; index < effectTargets.length; index += 1) {
-      const effect = effectTargets[index];
+    for (const [index, effect] of effectTargets.entries()) {
       analysisStatus.value = `模拟效果 ${index + 1} / ${effectTargets.length}`;
-      const stats = await estimateCustomMartialArtStats(simulation, {
+      const stats: SearchResultStats = await estimateCustomMartialArtStats(simulation, {
         effectType: effect.id,
         minEffectValue: effect.maxLevel,
       }, {
@@ -280,20 +302,20 @@ async function runAnalysis() {
         yieldToMain: waitForPaint,
       });
       powerSamples.push(...(stats.samples?.power || []));
-      effects.push({ label: `${effect.label} ${effect.maxLevel}`, value: stats.effectProbability });
+      effects.push({ label: `${effect.label} ${effect.maxLevel}`, value: stats.effectProbability ?? 0 });
       await waitForPaint();
     }
 
     analysis.value = {
       trials,
-      styles: styles.sort((a, b) => b.value - a.value),
-      areas: areas.sort((a, b) => b.value - a.value),
-      effects: effects.sort((a, b) => b.value - a.value),
+      styles: styles.sort((a, b) => Number(b.value) - Number(a.value)),
+      areas: areas.sort((a, b) => Number(b.value) - Number(a.value)),
+      effects: effects.sort((a, b) => Number(b.value) - Number(a.value)),
       finalValues: summarizeFinalValueDistributions(powerSamples, []),
     };
     analysisStatus.value = "";
-  } catch (err: any) {
-    analysisStatus.value = `模拟失败：${err?.message || err}`;
+  } catch (err: unknown) {
+    analysisStatus.value = `模拟失败：${errorText(err)}`;
   } finally {
     analysisBusy.value = false;
   }
@@ -307,7 +329,7 @@ async function runSearch() {
   const trials = Math.max(1, Math.trunc(Number(searchTrials.value) || 1));
 
   try {
-    searchResults.value = await searchCustomMartialArtInitials(searchTargetPayload.value, algorithmData.value, {
+    const results = await searchCustomMartialArtInitials(searchTargetPayload.value, algorithmData.value, {
       styleNames: styleNames.value,
       trials,
       comboYieldEvery: 4,
@@ -315,21 +337,26 @@ async function runSearch() {
       onProgress({ current, total }: { current: number; total: number }) {
         searchStatus.value = `搜索中...${current} / ${total}`;
       },
-    });
+    }) as SearchResultCandidate[];
+    searchResults.value = results.filter(hasInitial);
     searchPage.value = 1;
     searchStatus.value = "";
-  } catch (err: any) {
-    searchStatus.value = `搜索失败：${err?.message || err}`;
+  } catch (err: unknown) {
+    searchStatus.value = `搜索失败：${errorText(err)}`;
   } finally {
     searchBusy.value = false;
   }
 }
 
-function resultStats(route: any) {
+function errorText(err: unknown) {
+  return err instanceof Error ? err.message : String(err);
+}
+
+function resultStats(route: SearchResultRoute): SearchResultStats {
   return route.stats || {};
 }
 
-function sortSearchResults(results: any[], primary: string) {
+function sortSearchResults(results: SearchResultRoute[], primary: string) {
   return [...results].sort((a, b) => {
     const statsA = resultStats(a);
     const statsB = resultStats(b);
@@ -357,11 +384,11 @@ function cycleSearchSort() {
   searchPage.value = 1;
 }
 
-function updateInput(patch: Record<string, string>) {
+function updateInput(patch: Partial<CustomMartialInput>) {
   Object.assign(input, patch);
 }
 
-function updateSearchTarget(patch: Record<string, string>) {
+function updateSearchTarget(patch: Partial<SearchTarget>) {
   Object.assign(searchTarget, patch);
 }
 
@@ -369,7 +396,7 @@ function updateSearchPage(page: number) {
   searchPage.value = Math.max(1, Math.min(page, searchPageCount.value));
 }
 
-async function applySearchResult(route: any) {
+async function applySearchResult(route: SearchResultRoute) {
   const source = route?.input || {};
   updateInput({
     yi: String(numberValue(source.yi)),
@@ -409,7 +436,7 @@ async function applySearchResult(route: any) {
         :page-size="SEARCH_PAGE_SIZE"
         :sort-label="searchSortLabel"
         :effect-text="effectText"
-        :weapon-type-text="(value) => enumName('BingQiType', value, '')"
+        :weapon-type-text="weaponTypeText"
         @sort="cycleSearchSort"
         @update-page="updateSearchPage"
         @apply="applySearchResult"

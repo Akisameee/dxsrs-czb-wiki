@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoadoutOption } from "~/components/tools/loadout/types";
+import type { CustomMartialOption, SearchTarget } from "~/components/tools/custom-martial-art/types";
 import RunControls from "~/components/tools/custom-martial-art/RunControls.vue";
 import {
   Card,
@@ -13,11 +13,11 @@ import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
 
 const props = defineProps<{
-  target: Record<string, string>;
-  weaponOptions: LoadoutOption[];
-  styleOptions: LoadoutOption[];
-  areaOptions: LoadoutOption[];
-  effectOptions: LoadoutOption[];
+  target: SearchTarget;
+  weaponOptions: CustomMartialOption[];
+  styleOptions: CustomMartialOption[];
+  areaOptions: CustomMartialOption[];
+  effectOptions: CustomMartialOption[];
   emptyOption: string;
   effectMaxLevel: number;
   trials: string;
@@ -27,7 +27,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  updateTarget: [patch: Record<string, string>];
+  updateTarget: [patch: Partial<SearchTarget>];
   updateTrials: [value: string];
   search: [];
 }>();

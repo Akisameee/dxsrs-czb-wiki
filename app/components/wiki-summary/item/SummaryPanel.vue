@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ItemSummary } from "~/lib/wiki/item";
+import WikiText from "~/components/wiki/WikiText.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 
@@ -46,7 +47,9 @@ defineProps<{
 
     <div class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">说明</div>
-      <div>{{ summary.description }}</div>
+      <div>
+        <WikiText :parts="summary.descriptionParts" />
+      </div>
     </div>
 
     <div v-if="summary.useText !== '无' || summary.useValues.length" class="grid gap-2 border-t pt-3 text-sm">

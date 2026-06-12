@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Chart as ChartInstance, Plugin, TooltipItem } from "chart.js";
+import type { PowerSummary, SimulationAnalysis } from "~/components/tools/custom-martial-art/types";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -13,11 +15,24 @@ import {
 } from "~/components/ui/collapsible";
 
 const props = defineProps<{
-  analysis: any | null;
+  analysis: SimulationAnalysis | null;
 }>();
 
-const powerCanvas = ref<HTMLCanvasElement | null>(null);
-let powerChart: any = null;
+const powerCanvas = useTemplateRef<HTMLCanvasElement>("powerCanvas");
+
+type PowerMarker = {
+  label: string;
+  value: number;
+  color: string;
+};
+
+type PowerChartPoint = {
+  x: number;
+  y: number;
+};
+
+let powerChart: ChartInstance<"line", PowerChartPoint[]> | null = null;
+let hoveredPowerMarker: PowerMarker | null = null;
 
 async function renderPowerChart() {
   await nextTick();
@@ -30,7 +45,10 @@ async function renderPowerChart() {
     powerChart = null;
     return;
   }
-  const xValues = points.map((point: any) => Number(point.x)).filter((value: number) => Number.isFinite(value));
+  const chartPoints = points
+    .map((point) => ({ x: Number(point.x), y: Number(point.y) }))
+    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+  const xValues = chartPoints.map((point) => point.x);
   const xMin = xValues.length ? Math.min(...xValues) : undefined;
   const xMax = xValues.length ? Math.max(...xValues) : undefined;
 
@@ -41,43 +59,47 @@ async function renderPowerChart() {
   const foreground = styles.getPropertyValue("--foreground").trim() || "#111";
   const background = styles.getPropertyValue("--background").trim() || "#fff";
   const muted = styles.getPropertyValue("--muted-foreground").trim() || "#666";
-  const markerPlugin = {
+  const markerPlugin: Plugin<"line"> = {
     id: "power-summary-markers",
-    afterEvent(chart: any, args: any) {
+    afterEvent(chart, args) {
       const powerSummary = props.analysis?.finalValues?.powerSummary;
       if (!powerSummary) return;
 
-      const { chartArea, scales } = chart;
-      const event = args.event;
+      const { chartArea } = chart;
+      const xScale = chart.scales.x;
+      const { x: eventX, y: eventY } = args.event;
+      if (!xScale || typeof eventX !== "number" || typeof eventY !== "number") return;
       const markers = powerMarkers(powerSummary, primary, foreground);
       const hovered = markers.find((marker) => {
-        const x = scales.x.getPixelForValue(marker.value);
+        const x = xScale.getPixelForValue(marker.value);
         return (
-          event.x >= chartArea.left &&
-          event.x <= chartArea.right &&
-          event.y >= chartArea.top &&
-          event.y <= chartArea.bottom &&
-          Math.abs(event.x - x) <= 6
+          eventX >= chartArea.left &&
+          eventX <= chartArea.right &&
+          eventY >= chartArea.top &&
+          eventY <= chartArea.bottom &&
+          Math.abs(eventX - x) <= 6
         );
       }) || null;
 
-      if (chart.$powerMarkerHover?.label !== hovered?.label) {
-        chart.$powerMarkerHover = hovered;
+      if (hoveredPowerMarker?.label !== hovered?.label) {
+        hoveredPowerMarker = hovered;
         args.changed = true;
       }
     },
-    afterDatasetsDraw(chart: any) {
+    afterDatasetsDraw(chart) {
       const powerSummary = props.analysis?.finalValues?.powerSummary;
       if (!powerSummary) return;
 
-      const { ctx, chartArea, scales } = chart;
+      const { ctx, chartArea } = chart;
+      const xScale = chart.scales.x;
+      if (!xScale) return;
       const markers = powerMarkers(powerSummary, primary, foreground);
 
       ctx.save();
       ctx.font = "12px sans-serif";
       ctx.textBaseline = "top";
       for (const marker of markers) {
-        const x = scales.x.getPixelForValue(marker.value);
+        const x = xScale.getPixelForValue(marker.value);
         if (x < chartArea.left || x > chartArea.right) continue;
 
         ctx.strokeStyle = marker.color;
@@ -90,10 +112,9 @@ async function renderPowerChart() {
         ctx.setLineDash([]);
       }
 
-      const hovered = chart.$powerMarkerHover;
-      if (hovered) {
-        const x = scales.x.getPixelForValue(hovered.value);
-        const text = `${hovered.label} ${formatNumber(hovered.value)}`;
+      if (hoveredPowerMarker) {
+        const x = xScale.getPixelForValue(hoveredPowerMarker.value);
+        const text = `${hoveredPowerMarker.label} ${formatNumber(hoveredPowerMarker.value)}`;
         const paddingX = 6;
         const paddingY = 4;
         const width = ctx.measureText(text).width + paddingX * 2;
@@ -119,7 +140,7 @@ async function renderPowerChart() {
       datasets: [
         {
           label: "威力",
-          data: points,
+          data: chartPoints,
           parsing: false,
           borderColor: primary,
           backgroundColor: `color-mix(in oklch, ${primary} 12%, transparent)`,
@@ -149,7 +170,7 @@ async function renderPowerChart() {
             title() {
               return [];
             },
-            label(context: any) {
+            label(context: TooltipItem<"line">) {
               return `威力 ${formatNumber(context.parsed.x)}`;
             },
           },
@@ -168,7 +189,7 @@ async function renderPowerChart() {
           ticks: {
             count: 5,
             includeBounds: true,
-            callback(value: any) {
+            callback(value: number | string) {
               return formatNumber(value);
             },
           },
@@ -219,7 +240,7 @@ function barWidth(value: number | string | null | undefined) {
   return `${Math.max(2, Math.min(100, number * 100))}%`;
 }
 
-function powerMarkers(powerSummary: any, primary: string, foreground: string) {
+function powerMarkers(powerSummary: PowerSummary, primary: string, foreground: string) {
   return [
     { label: "中位", value: Number(powerSummary.median), color: primary },
     { label: "均值", value: Number(powerSummary.mean), color: foreground },

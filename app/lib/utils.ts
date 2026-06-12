@@ -9,8 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 export function enumMapFromRows(rows: Array<{ type: string, id: number | string, label: string | null }>) {
   const enums: Record<string, Record<string, string | null>> = {}
   for (const row of rows) {
-    enums[row.type] ||= {}
-    enums[row.type][String(row.id)] = row.label
+    const group = enums[row.type] ?? {}
+    group[String(row.id)] = row.label
+    enums[row.type] = group
   }
   return enums
 }

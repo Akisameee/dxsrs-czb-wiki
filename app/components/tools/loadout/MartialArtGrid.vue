@@ -25,6 +25,12 @@ const emit = defineEmits<{
   toggleMartialArt: [item: SelectableMartialArt, checked?: boolean];
 }>();
 
+function handleCardKeydown(event: KeyboardEvent, item: SelectableMartialArt) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  emit("toggleMartialArt", item);
+}
+
 function cardClass(item: SelectableMartialArt) {
   const classes = [
     "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md",
@@ -58,8 +64,7 @@ function cardClass(item: SelectableMartialArt) {
       :aria-disabled="!canSelect(item)"
       :title="disabledReason(item) || item.name"
       @click="emit('toggleMartialArt', item)"
-      @keydown.enter="emit('toggleMartialArt', item)"
-      @keydown.space.prevent="emit('toggleMartialArt', item)"
+      @keydown="handleCardKeydown($event, item)"
     >
       <CardHeader>
         <div class="flex items-start gap-3">

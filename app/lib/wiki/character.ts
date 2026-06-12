@@ -130,30 +130,30 @@ export function formatQuestParts(
   const extraGroups = (fallback: string) => extras.map((target) => questTargetParts(target, enums, fallback));
 
   if (quest.quest_type_id === 240) {
-    return withQuestReward(quest, [wikiText("交付 "), ...main("指定物品")], enums);
+    return withQuestReward(quest, [wikiText("交付"), ...main("指定物品")], enums);
   }
   if (quest.quest_type_id === 241) {
-    return withQuestReward(quest, [wikiText("教训 "), ...main("指定人物")], enums);
+    return withQuestReward(quest, [wikiText("教训"), ...main("指定人物")], enums);
   }
   if (quest.quest_type_id === 242) {
-    const parts = [...main("指定地点"), wikiText(" 寻宝")];
+    const parts = [...main("指定地点"), wikiText("寻宝")];
     if (extras.length) {
-      parts.push(wikiText("，找 "));
+      parts.push(wikiText("，击败"));
       parts.push(...joinWikiPartGroups(extraGroups("未知人物"), "、"));
     }
     return withQuestReward(quest, parts, enums);
   }
   if (quest.quest_type_id === 243) {
-    return withQuestReward(quest, [wikiText("给 "), ...main("指定人物"), wikiText(" 下挑战书")], enums);
+    return withQuestReward(quest, [wikiText("给"), ...main("指定人物"), wikiText("下挑战书")], enums);
   }
   if (quest.quest_type_id === 244) {
-    return withQuestReward(quest, [wikiText("赢得与 "), ...main("指定人物"), wikiText(" 的比武")], enums);
+    return withQuestReward(quest, [wikiText("赢得与"), ...main("指定人物"), wikiText("的比武")], enums);
   }
   if (quest.quest_type_id === 720) {
     const sectParts = extras.length
       ? joinWikiPartGroups(extraGroups("指定门派"), "、")
       : main("指定门派");
-    return withQuestReward(quest, [wikiText("参加 "), ...sectParts, wikiText(" 武林大会")], enums);
+    return withQuestReward(quest, [wikiText("参加"), ...sectParts, wikiText("武林大会")], enums);
   }
 
   const questType = enumLabel(enums, "QuestType", quest.quest_type_id, "任务").replace(/^情缘_/, "");

@@ -83,8 +83,7 @@ onMounted(() => {
         size="icon-sm"
         aria-label="查看人物摘要"
         @click.stop
-        @keydown.enter.stop
-        @keydown.space.stop
+        @keydown.stop
       >
         <slot>
           <CircleHelp />

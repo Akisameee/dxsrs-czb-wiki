@@ -1,15 +1,24 @@
-function numberOrNull(value) {
+import type {
+  CustomMartialEffectSummary,
+  CustomMartialMatch,
+  CustomMartialMatchItem,
+  CustomMartialSummary,
+  CustomMartialTargetInput,
+  NormalizedCustomMartialTarget,
+} from "./types";
+
+function numberOrNull(value: unknown) {
   if (value === null || value === undefined || value === "") return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
 }
 
-function stringOrNull(value) {
+function stringOrNull(value: unknown) {
   if (value === null || value === undefined || value === "") return null;
   return String(value);
 }
 
-export function normalizeCustomMartialArtTarget(target = {}) {
+export function normalizeCustomMartialArtTarget(target: CustomMartialTargetInput = {}): NormalizedCustomMartialTarget {
   return {
     styleId: numberOrNull(target.styleId ?? target.style),
     areaName: stringOrNull(target.areaName ?? target.attackArea),
@@ -20,14 +29,17 @@ export function normalizeCustomMartialArtTarget(target = {}) {
   };
 }
 
-export function effectIdentityMatches(effect, targetInput) {
+export function effectIdentityMatches(
+  effect: CustomMartialEffectSummary,
+  targetInput: CustomMartialTargetInput,
+) {
   const target = normalizeCustomMartialArtTarget(targetInput);
   if (target.effectType !== null && Number(effect.bufftype) !== target.effectType) return false;
   if (target.effectTarget !== null && Number(effect.bufftarget) !== target.effectTarget) return false;
   return true;
 }
 
-export function effectMatches(effect, targetInput) {
+export function effectMatches(effect: CustomMartialEffectSummary, targetInput: CustomMartialTargetInput) {
   const target = normalizeCustomMartialArtTarget(targetInput);
   if (!effectIdentityMatches(effect, target)) return false;
   if (target.effectValue !== null && Number(effect.value) !== target.effectValue) return false;
@@ -35,7 +47,7 @@ export function effectMatches(effect, targetInput) {
   return true;
 }
 
-export function summaryMatches(summary, targetInput) {
+export function summaryMatches(summary: CustomMartialSummary | null, targetInput: CustomMartialTargetInput) {
   const target = normalizeCustomMartialArtTarget(targetInput);
   if (target.styleId !== null && Number(summary?.style?.id) !== target.styleId) return false;
   if (target.areaName !== null && summary?.area?.name !== target.areaName) return false;
@@ -50,9 +62,12 @@ export function summaryMatches(summary, targetInput) {
   return true;
 }
 
-export function initialMatch(summary, targetInput) {
+export function initialMatch(
+  summary: CustomMartialSummary | null,
+  targetInput: CustomMartialTargetInput,
+): CustomMartialMatch {
   const target = normalizeCustomMartialArtTarget(targetInput);
-  const items = [];
+  const items: CustomMartialMatchItem[] = [];
 
   if (target.styleId !== null) {
     items.push({

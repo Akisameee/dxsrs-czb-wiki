@@ -40,6 +40,12 @@ function toggleCustomMartial() {
   }
 }
 
+function handleCardKeydown(event: KeyboardEvent) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  toggleCustomMartial();
+}
+
 function cardClass() {
   const classes = [
     "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md",
@@ -59,8 +65,7 @@ function cardClass() {
     :aria-pressed="customMartial.enabled"
     :aria-disabled="!customCanBeEnabled && !customMartial.enabled"
     @click="toggleCustomMartial"
-    @keydown.enter="toggleCustomMartial"
-    @keydown.space.prevent="toggleCustomMartial"
+    @keydown="handleCardKeydown"
   >
     <CardHeader>
       <div>

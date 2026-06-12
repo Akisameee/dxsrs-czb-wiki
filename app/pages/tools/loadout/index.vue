@@ -22,7 +22,16 @@ import FilterCard from "~/components/tools/loadout/FilterCard.vue";
 import InscriptionCard from "~/components/tools/loadout/InscriptionCard.vue";
 import MartialArtGrid from "~/components/tools/loadout/MartialArtGrid.vue";
 import SelectedArtsCard from "~/components/tools/loadout/SelectedArtsCard.vue";
-import { loadoutEnumLabel, useLoadoutData, type LoadoutMartialArt } from "~/composables/useLoadoutData";
+import { loadoutEnumLabel, useLoadoutData } from "~/composables/useLoadoutData";
+import type {
+  ChainRecordView,
+  CustomMartialState,
+  EquipmentStyleKey,
+  EquipmentStyles,
+  LoadoutCountItem,
+  LoadoutVisibleChainRecord,
+} from "~/components/tools/loadout/types";
+import type { LoadoutMartialArt } from "~/lib/loadout/types";
 
 useHead({ title: "配装工具" });
 
@@ -34,16 +43,12 @@ const { data, pending, error } = useLoadoutData();
 const sectFilter = ref("all");
 const styleFilter = ref("all");
 const selected = ref(new Set<number>());
-const equipmentStyles = reactive<Record<string, string>>({
+const equipmentStyles = reactive<EquipmentStyles>({
   weapon1: EMPTY_OPTION,
   weapon2: EMPTY_OPTION,
   armor: EMPTY_OPTION,
 });
-const customMartial = reactive<{
-  enabled: boolean;
-  sectId: string;
-  styleId: string;
-}>({
+const customMartial = reactive<CustomMartialState>({
   enabled: false,
   sectId: EMPTY_OPTION,
   styleId: EMPTY_OPTION,
@@ -68,7 +73,9 @@ const loadoutState = computed(() => ({
   },
 }));
 
-function countBy(items: any[], getter: (item: any) => number | number[] | null | undefined) {
+type CountValue = number | string | null | undefined;
+
+function countBy<T>(items: T[], getter: (item: T) => CountValue | CountValue[]) {
   const counts = new Map<number, number>();
   for (const item of items) {
     const values = getter(item);
@@ -101,13 +108,13 @@ const selectedCount = computed(() => getMartialSelectionCount(loadoutState.value
 const selectedItems = computed(() => getSelectedMartialItems(loadoutState.value));
 const customMartialItem = computed(() => getCustomMartial(loadoutState.value));
 const customMartialActive = computed(() => Boolean(customMartialItem.value));
-const martialCountItems = computed(() => getMartialCountItems(loadoutState.value));
+const martialCountItems = computed<LoadoutCountItem[]>(() => getMartialCountItems(loadoutState.value));
 const styleCountItems = computed(() => getStyleCountItems(loadoutState.value));
 const sectCounts = computed(() => countBy(martialCountItems.value, (item) => item.sectId));
 const styleCounts = computed(() => countBy(styleCountItems.value, (item) => item.styleIds || []));
 const penglaiModifier = computed(() => getPenglaiModifier(sectCounts.value));
 const basicUnlocked = computed(() => isBasicChainUnlocked(styleChains.value, styleCounts.value, penglaiModifier.value));
-const visibleChainRecords = computed(() => buildVisibleChainRecords(
+const visibleChainRecords = computed<LoadoutVisibleChainRecord[]>(() => buildVisibleChainRecords(
   sectChains.value,
   styleChains.value,
   sectCounts.value,
@@ -166,17 +173,17 @@ const styleCountRows = computed(() => sortedCounts(styleCounts.value).map(([id, 
 })));
 
 function chainBlockClass(state: string) {
-  const classes: Record<string, string> = {
+  const classes = {
     "active-node": "bg-primary",
     "reached-node": "bg-primary/60",
     progress: "bg-muted-foreground/35",
     "empty-node": "bg-muted ring-1 ring-border",
     empty: "bg-muted/60",
   };
-  return classes[state] || classes.empty;
+  return classes[state as keyof typeof classes] ?? classes.empty;
 }
 
-const chainRecordViews = computed(() => visibleChainRecords.value.map((record: any) => ({
+const chainRecordViews = computed<ChainRecordView[]>(() => visibleChainRecords.value.map((record) => ({
   key: `${record.groupType}-${record.groupName}`,
   label: record.groupType === "sect"
     ? enumName("LianSuo_MP", record.groupName, `门派 ${record.groupName}`)
@@ -186,7 +193,7 @@ const chainRecordViews = computed(() => visibleChainRecords.value.map((record: a
   level: record.level,
   met: record.met,
   activeEffect: record.activeEffect,
-  blocks: record.blocks.map((block: any) => ({
+  blocks: record.blocks.map((block) => ({
     value: block.value,
     class: chainBlockClass(block.state),
     tooltip: block.effect ? `${block.value}: ${block.effect}` : String(block.value),
@@ -229,11 +236,11 @@ function removeSelected(item: LoadoutMartialArt) {
   toggleMartialArt(item, false);
 }
 
-function updateEquipmentStyle(key: string, value: string) {
+function updateEquipmentStyle(key: EquipmentStyleKey, value: string) {
   equipmentStyles[key] = value;
 }
 
-function updateCustomMartial(patch: Partial<typeof customMartial>) {
+function updateCustomMartial(patch: Partial<CustomMartialState>) {
   Object.assign(customMartial, patch);
 }
 

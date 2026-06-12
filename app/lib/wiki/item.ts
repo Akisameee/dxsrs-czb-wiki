@@ -1,6 +1,11 @@
 import { enumLabel } from "../utils";
 
-import { type WikiEnums } from "./text";
+import {
+  linkMartialArtsInText,
+  type WikiEnums,
+  type WikiTextPart,
+  wikiText,
+} from "./text";
 
 export type { WikiEnums } from "./text";
 
@@ -44,6 +49,7 @@ export type ItemSummary = {
   materialText: string;
   cost: string;
   description: string;
+  descriptionParts: WikiTextPart[];
   useText: string;
   useValues: string[];
   requirements: ItemRequirementSummary[];
@@ -117,6 +123,9 @@ export function itemRequirements(item: ItemSummaryRow): ItemRequirementSummary[]
 }
 
 export function buildItemSummary(item: ItemSummaryRow, enums: WikiEnums): ItemSummary {
+  const description = item.description || "无说明";
+  const descriptionParts = linkMartialArtsInText(description, enums);
+
   return {
     id: item.id,
     name: itemName(item, enums),
@@ -129,7 +138,8 @@ export function buildItemSummary(item: ItemSummaryRow, enums: WikiEnums): ItemSu
     useType: itemUseTypeLabel(item, enums),
     materialText: itemMaterialText(item),
     cost: formatItemNumber(item.cost),
-    description: item.description || "无说明",
+    description,
+    descriptionParts: descriptionParts.length ? descriptionParts : [wikiText(description)],
     useText: item.use_text || "无",
     useValues: itemUseValues(item),
     requirements: itemRequirements(item),

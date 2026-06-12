@@ -1,10 +1,11 @@
 import initSqlJs from "sql.js";
+import type { Database, Statement } from "sql.js";
 
 type SqlValue = string | number | Uint8Array | null;
 
-let dbPromise: Promise<any> | null = null;
+let dbPromise: Promise<Database> | null = null;
 
-function statementRows(statement: any) {
+function statementRows(statement: Statement) {
   const rows: Record<string, SqlValue>[] = [];
   while (statement.step()) rows.push(statement.getAsObject());
   return rows;

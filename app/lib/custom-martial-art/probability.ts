@@ -1,30 +1,58 @@
-import { CustomMartialArtSimulation } from "./simulator.js";
-import { UnityRandom } from "./unity-random.js";
+import { CustomMartialArtSimulation } from "./simulator";
+import { UnityRandom } from "./unity-random";
 import {
   effectIdentityMatches,
   effectMatches,
   initialMatch,
   normalizeCustomMartialArtTarget,
   summaryMatches,
-} from "./target.js";
+} from "./target";
+import type {
+  CustomMartialDensityPoint,
+  CustomMartialDistributionSummary,
+  CustomMartialFinalValueDistributions,
+  CustomMartialStats,
+  CustomMartialSummary,
+  CustomMartialTargetInput,
+  CustomMartialTrialResult,
+  NormalizedCustomMartialTarget,
+} from "./types";
 
-function clone(value) {
+type GreedyImprovementOptions = {
+  from?: "current" | "initial";
+  seed?: number | string;
+  rng?: UnityRandom;
+  maxSteps?: number | string;
+  styleNames?: Record<string, string>;
+};
+
+type EstimateStatsOptions = GreedyImprovementOptions & {
+  trials?: number | string;
+  yieldEvery?: number | string;
+  yieldToMain?: (() => void | Promise<void>) | null;
+  seedBase?: number | string;
+  seeds?: Array<number | string>;
+  includeSamples?: boolean;
+};
+
+function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
 
-function finiteNonNegativeInteger(value, fallback) {
+function finiteNonNegativeInteger(value: unknown, fallback: number) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
   return Math.max(0, Math.trunc(number));
 }
 
-function snapshotFor(simulation, from = "current") {
+function snapshotFor(simulation: CustomMartialArtSimulation, from: "current" | "initial" = "current") {
   if (from === "initial") return simulation.history[0];
   return simulation.history.at(-1);
 }
 
-function cloneSimulationAt(simulation, options = {}) {
+function cloneSimulationAt(simulation: CustomMartialArtSimulation, options: GreedyImprovementOptions = {}) {
   const snapshot = clone(snapshotFor(simulation, options.from));
+  if (!snapshot) throw new Error("缺少自创武学模拟快照");
   const copy = new CustomMartialArtSimulation(simulation.input, simulation.data);
   copy.rng = options.rng instanceof UnityRandom
     ? options.rng
@@ -36,7 +64,10 @@ function cloneSimulationAt(simulation, options = {}) {
   return copy;
 }
 
-export function greedyLocksForTarget(summary, targetInput) {
+export function greedyLocksForTarget(
+  summary: CustomMartialSummary | null,
+  targetInput: CustomMartialTargetInput,
+) {
   const target = normalizeCustomMartialArtTarget(targetInput);
   return {
     fenggelock: target.styleId === null || Number(summary?.style?.id) === target.styleId,
@@ -45,7 +76,11 @@ export function greedyLocksForTarget(summary, targetInput) {
   };
 }
 
-export function runGreedyImprovementTrial(simulation, targetInput, options = {}) {
+export function runGreedyImprovementTrial(
+  simulation: CustomMartialArtSimulation,
+  targetInput: CustomMartialTargetInput,
+  options: GreedyImprovementOptions = {},
+): CustomMartialTrialResult {
   const styleNames = options.styleNames || {};
   const maxSteps = Number.isFinite(Number(options.maxSteps))
     ? finiteNonNegativeInteger(options.maxSteps, 0)
@@ -65,7 +100,7 @@ export function runGreedyImprovementTrial(simulation, targetInput, options = {})
 
   const final = trial.currentSummary(styleNames);
   return {
-    seed: options.seed ?? null,
+    seed: options.seed === undefined ? null : Number(options.seed),
     steps,
     success: summaryMatches(final, targetInput),
     match: initialMatch(final, targetInput),
@@ -74,15 +109,15 @@ export function runGreedyImprovementTrial(simulation, targetInput, options = {})
   };
 }
 
-function targetStyleHits(summary, target) {
+function targetStyleHits(summary: CustomMartialSummary | null, target: NormalizedCustomMartialTarget) {
   return target.styleId === null || Number(summary?.style?.id) === target.styleId;
 }
 
-function targetAreaHits(summary, target) {
+function targetAreaHits(summary: CustomMartialSummary | null, target: NormalizedCustomMartialTarget) {
   return target.areaName === null || summary?.area?.name === target.areaName;
 }
 
-function targetEffectHits(summary, target) {
+function targetEffectHits(summary: CustomMartialSummary | null, target: NormalizedCustomMartialTarget) {
   if (
     target.effectType === null &&
     target.effectTarget === null &&
@@ -95,7 +130,7 @@ function targetEffectHits(summary, target) {
   return effectMatches(summary?.effect || {}, target);
 }
 
-function targetEffectWeightedLevel(summary, target) {
+function targetEffectWeightedLevel(summary: CustomMartialSummary | null, target: NormalizedCustomMartialTarget) {
   if (
     target.effectType === null &&
     target.effectTarget === null
@@ -109,7 +144,11 @@ function targetEffectWeightedLevel(summary, target) {
   return Number(summary?.effect?.value || 0);
 }
 
-export async function estimateGreedyImprovementStats(simulation, targetInput, options = {}) {
+export async function estimateGreedyImprovementStats(
+  simulation: CustomMartialArtSimulation,
+  targetInput: CustomMartialTargetInput,
+  options: EstimateStatsOptions = {},
+): Promise<CustomMartialStats> {
   const trials = Math.max(1, finiteNonNegativeInteger(options.trials, 256));
   const yieldEvery = finiteNonNegativeInteger(options.yieldEvery, 0);
   const yieldToMain = typeof options.yieldToMain === "function" ? options.yieldToMain : null;
@@ -117,7 +156,7 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
   const seeds = Array.isArray(options.seeds) && options.seeds.length > 0 ? options.seeds : null;
   const styleNames = options.styleNames || {};
   const target = normalizeCustomMartialArtTarget(targetInput);
-  const distribution = new Map();
+  const distribution = new Map<string, number>();
 
   let success = 0;
   let styleHits = 0;
@@ -127,8 +166,8 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
   let powerSum = 0;
   let costSum = 0;
   let maxPower = 0;
-  const powerValues = [];
-  const costValues = [];
+  const powerValues: number[] = [];
+  const costValues: number[] = [];
   let improveSpaceSum = 0;
   let totalSteps = 0;
   let bestMatchCount = 0;
@@ -141,7 +180,7 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
       styleNames,
       seed,
     });
-    const final = result.final || {};
+    const final = result.final;
     const matchedCount = Number(result.match.matchedCount || 0);
     const key = `${matchedCount}/${result.match.targetCount}`;
 
@@ -150,12 +189,14 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
     if (targetAreaHits(final, target)) areaHits += 1;
     if (targetEffectHits(final, target)) effectHits += 1;
     effectWeightedLevelSum += targetEffectWeightedLevel(final, target);
-    powerValues.push(Number(final.power || 0));
-    costValues.push(Number(final.cost || 0));
-    powerSum += powerValues.at(-1);
-    costSum += costValues.at(-1);
-    maxPower = Math.max(maxPower, powerValues.at(-1));
-    improveSpaceSum += Number(final.gailiangkongjian || 0);
+    const power = Number(final?.power || 0);
+    const cost = Number(final?.cost || 0);
+    powerValues.push(power);
+    costValues.push(cost);
+    powerSum += power;
+    costSum += cost;
+    maxPower = Math.max(maxPower, power);
+    improveSpaceSum += Number(final?.gailiangkongjian || 0);
     totalSteps += result.steps;
     bestMatchCount = Math.max(bestMatchCount, matchedCount);
     distribution.set(key, (distribution.get(key) || 0) + 1);
@@ -165,7 +206,7 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
     }
   }
 
-  const stats = {
+  const stats: CustomMartialStats = {
     trials,
     success,
     probability: success / trials,
@@ -198,17 +239,17 @@ export async function estimateGreedyImprovementStats(simulation, targetInput, op
   return stats;
 }
 
-function quantile(sortedValues, percentile) {
+function quantile(sortedValues: number[], percentile: number) {
   if (!sortedValues.length) return 0;
   const index = (sortedValues.length - 1) * percentile;
   const lower = Math.floor(index);
   const upper = Math.ceil(index);
-  if (lower === upper) return sortedValues[lower];
+  if (lower === upper) return sortedValues[lower] ?? 0;
   const weight = index - lower;
-  return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight;
+  return (sortedValues[lower] ?? 0) * (1 - weight) + (sortedValues[upper] ?? 0) * weight;
 }
 
-function distributionSummary(values) {
+function distributionSummary(values: number[]): CustomMartialDistributionSummary {
   const sorted = [...values].sort((a, b) => a - b);
   if (!sorted.length) {
     return {
@@ -223,30 +264,30 @@ function distributionSummary(values) {
 
   const sum = sorted.reduce((total, value) => total + value, 0);
   return {
-    min: sorted[0],
+    min: sorted[0] ?? 0,
     q1: quantile(sorted, 0.25),
     median: quantile(sorted, 0.5),
     q3: quantile(sorted, 0.75),
-    max: sorted.at(-1),
+    max: sorted.at(-1) ?? 0,
     mean: sum / sorted.length,
   };
 }
 
-function standardDeviation(values, mean) {
+function standardDeviation(values: number[], mean: number) {
   if (values.length <= 1) return 0;
   const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / (values.length - 1);
   return Math.sqrt(variance);
 }
 
-function gaussianKernel(value) {
+function gaussianKernel(value: number) {
   return Math.exp(-0.5 * value * value) / Math.sqrt(2 * Math.PI);
 }
 
-function densityPoints(values, maxPoints = 160) {
+function densityPoints(values: number[], maxPoints = 160): CustomMartialDensityPoint[] {
   const samples = values.map(Number).filter(Number.isFinite).sort((a, b) => a - b);
   if (!samples.length) return [];
-  const min = samples[0];
-  const max = samples.at(-1);
+  const min = samples[0] ?? 0;
+  const max = samples.at(-1) ?? 0;
   if (min === max) {
     return [{ x: min, y: 100 }];
   }
@@ -270,10 +311,10 @@ function densityPoints(values, maxPoints = 160) {
   });
 }
 
-function massPoints(values) {
+function massPoints(values: number[]): CustomMartialDensityPoint[] {
   const samples = values.map(Number).filter(Number.isFinite);
   if (!samples.length) return [];
-  const counts = new Map();
+  const counts = new Map<number, number>();
   for (const sample of samples) {
     counts.set(sample, (counts.get(sample) || 0) + 1);
   }
@@ -285,7 +326,10 @@ function massPoints(values) {
     }));
 }
 
-export function summarizeFinalValueDistributions(powerValues, costValues) {
+export function summarizeFinalValueDistributions(
+  powerValues: Array<number | string>,
+  costValues: Array<number | string>,
+): CustomMartialFinalValueDistributions {
   const powers = powerValues.map(Number).filter(Number.isFinite);
   const costs = costValues.map(Number).filter(Number.isFinite);
   return {

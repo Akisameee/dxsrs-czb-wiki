@@ -4,6 +4,7 @@ import {
   formatItemNumber,
 } from "~/lib/wiki/item";
 import { useItemData } from "~/composables/useItemData";
+import WikiText from "~/components/wiki/WikiText.vue";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   Card,
@@ -161,7 +162,7 @@ const rawValueRows = computed(() => {
           <CardTitle>说明</CardTitle>
         </CardHeader>
         <CardContent class="text-sm leading-7">
-          {{ summary.description }}
+          <WikiText :parts="summary.descriptionParts" />
         </CardContent>
       </Card>
 

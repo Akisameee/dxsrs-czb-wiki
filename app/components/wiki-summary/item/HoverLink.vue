@@ -94,8 +94,7 @@ onMounted(() => {
         size="icon-sm"
         aria-label="查看道具摘要"
         @click.stop
-        @keydown.enter.stop
-        @keydown.space.stop
+        @keydown.stop
       >
         <slot>
           <CircleHelp />

@@ -184,7 +184,7 @@ async function renderRadarChart() {
           angleLines: { color: themeColor("--border", "#e5e7eb") },
           pointLabels: {
             color: themeColor("--foreground", "#111827"),
-            font: { size: 13, weight: "600" },
+            font: { size: 13, weight: 600 },
           },
         },
       },

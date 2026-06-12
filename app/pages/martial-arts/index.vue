@@ -163,6 +163,12 @@ function styleLabels(item: MartialArt) {
 function goToMartialArt(item: MartialArt) {
   return navigateTo(martialArtUrl(item));
 }
+
+function handleMartialArtKeydown(event: KeyboardEvent, item: MartialArt) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  void goToMartialArt(item);
+}
 </script>
 
 <template>
@@ -263,8 +269,7 @@ function goToMartialArt(item: MartialArt) {
           role="link"
           tabindex="0"
           @click="goToMartialArt(item)"
-          @keydown.enter="goToMartialArt(item)"
-          @keydown.space.prevent="goToMartialArt(item)"
+          @keydown="handleMartialArtKeydown($event, item)"
         >
           <CardHeader>
             <div class="flex items-start gap-3">

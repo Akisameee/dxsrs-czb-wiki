@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoadoutOption } from "~/components/tools/loadout/types";
+import type { CustomMartialInput, CustomMartialOption } from "~/components/tools/custom-martial-art/types";
 import RunControls from "~/components/tools/custom-martial-art/RunControls.vue";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -14,8 +14,8 @@ import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
 
 const props = defineProps<{
-  input: Record<string, string>;
-  weaponOptions: LoadoutOption[];
+  input: CustomMartialInput;
+  weaponOptions: CustomMartialOption[];
   attributeTotal: number;
   attributeTarget: number;
   attributesValid: boolean;
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  updateInput: [patch: Record<string, string>];
+  updateInput: [patch: Partial<CustomMartialInput>];
   updateTrials: [value: string];
   run: [];
 }>();

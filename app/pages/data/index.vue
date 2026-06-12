@@ -11,7 +11,7 @@ const { data, pending, error } = await useAsyncData("data-overview", async () =>
 }, { server: false });
 
 watchEffect(() => {
-  if (!table.value && data.value?.tables?.length) table.value = data.value.tables[0];
+  if (!table.value && data.value?.tables?.length) table.value = data.value.tables[0] ?? "";
 });
 
 const { data: tableRows } = await useAsyncData(`table-${table.value}`, async () => {
