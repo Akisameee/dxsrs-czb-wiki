@@ -51,6 +51,8 @@ export type ItemSummary = {
   description: string;
   descriptionParts: WikiTextPart[];
   useText: string;
+  useEffectText: string;
+  useEffectParts: WikiTextPart[];
   useValues: string[];
   requirements: ItemRequirementSummary[];
 };
@@ -104,6 +106,51 @@ export function itemUseValues(item: Pick<ItemSummaryRow, "use_value" | "use_valu
     .map((value) => formatItemNumber(value));
 }
 
+function itemUseNumber(value: number | null | undefined) {
+  const number = Number(value);
+  return Number.isFinite(number) ? formatItemNumber(number) : "";
+}
+
+export function itemUseEffectText(item: Pick<ItemSummaryRow, "use_type_id" | "use_text" | "use_value" | "use_value2" | "use_value3">) {
+  const type = Number(item.use_type_id);
+  const text = item.use_text || "";
+  const value1 = itemUseNumber(item.use_value);
+  const value2 = itemUseNumber(item.use_value2);
+  const value3 = itemUseNumber(item.use_value3);
+
+  switch (type) {
+    case 1:
+      return [
+        text ? `学习武学「${text}」` : "学习武学",
+        value1 ? `最高可至 ${value1} 重` : "",
+        value3 ? `需要 ${value3} 重基础` : "",
+        value2 ? `武学修为 +${value2}` : "",
+      ].filter(Boolean).join("，");
+    case 2:
+      return text ? `习得「${text}」的制作图纸` : "习得制作图纸";
+    case 3:
+      return value1 ? `治愈永久内伤，效果等级 ${value1}` : "治愈永久内伤";
+    case 4:
+      return value1 ? `治愈永久外伤，效果等级 ${value1}` : "治愈永久外伤";
+    case 5:
+      return value1 ? `治愈新的内伤，效果等级 ${value1}` : "治愈新的内伤";
+    case 6:
+      return value1 ? `治愈新的外伤，效果等级 ${value1}` : "治愈新的外伤";
+    case 8:
+      return value1 ? `延长 ${value1} 年寿命` : "延长寿命";
+    case 9:
+      return value1 ? `回复 ${value1} 点行动力` : "回复行动力";
+    case 10:
+      return text
+        ? `永久增加 ${value1 || "0"} 点${text}`
+        : `永久增加 ${value1 || "0"} 点四项基础属性`;
+    case 12:
+      return value1 ? `获得 ${value1} 武学经验` : "获得武学经验";
+    default:
+      return item.use_text || "无";
+  }
+}
+
 export function itemRequirements(item: ItemSummaryRow): ItemRequirementSummary[] {
   return [
     { key: "strength", label: "膂力", value: item.required_strength },
@@ -125,6 +172,8 @@ export function itemRequirements(item: ItemSummaryRow): ItemRequirementSummary[]
 export function buildItemSummary(item: ItemSummaryRow, enums: WikiEnums): ItemSummary {
   const description = item.description || "无说明";
   const descriptionParts = linkMartialArtsInText(description, enums);
+  const useEffectText = itemUseEffectText(item);
+  const useEffectParts = linkMartialArtsInText(useEffectText, enums);
 
   return {
     id: item.id,
@@ -141,6 +190,8 @@ export function buildItemSummary(item: ItemSummaryRow, enums: WikiEnums): ItemSu
     description,
     descriptionParts: descriptionParts.length ? descriptionParts : [wikiText(description)],
     useText: item.use_text || "无",
+    useEffectText,
+    useEffectParts: useEffectParts.length ? useEffectParts : [wikiText(useEffectText)],
     useValues: itemUseValues(item),
     requirements: itemRequirements(item),
   };

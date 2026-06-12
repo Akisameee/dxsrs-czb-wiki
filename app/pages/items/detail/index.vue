@@ -129,10 +129,6 @@ const rawValueRows = computed(() => {
                 <span class="text-muted-foreground">使用类型</span>
                 <span>{{ summary.useType }}</span>
               </div>
-              <div class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">使用参数</span>
-                <span>{{ useValuesText }}</span>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -171,19 +167,8 @@ const rawValueRows = computed(() => {
           <CardTitle>使用效果</CardTitle>
         </CardHeader>
         <CardContent class="grid gap-4 text-sm">
-          <div>{{ summary.useText }}</div>
+          <div><WikiText :parts="summary.useEffectParts" /></div>
           <template v-if="rawValueRows.length">
-            <Separator />
-            <div class="grid gap-2 sm:grid-cols-3">
-              <div
-                v-for="row in rawValueRows"
-                :key="row.label"
-                class="flex items-center justify-between rounded-md border px-3 py-2"
-              >
-                <span class="text-muted-foreground">{{ row.label }}</span>
-                <span class="tabular-nums">{{ row.value }}</span>
-              </div>
-            </div>
           </template>
         </CardContent>
       </Card>

@@ -54,16 +54,7 @@ defineProps<{
 
     <div v-if="summary.useText !== '无' || summary.useValues.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">使用</div>
-      <div>{{ summary.useText }}</div>
-      <div v-if="summary.useValues.length" class="flex flex-wrap gap-2">
-        <Badge
-          v-for="value in summary.useValues"
-          :key="value"
-          variant="secondary"
-        >
-          {{ value }}
-        </Badge>
-      </div>
+      <div><WikiText :parts="summary.useEffectParts" /></div>
     </div>
   </div>
   <div v-else class="text-sm text-muted-foreground">

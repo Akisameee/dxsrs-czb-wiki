@@ -286,7 +286,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
             <Table class="[&_td]:text-center [&_th]:text-center">
               <TableHeader>
                 <TableRow>
-                  <TableHead rowspan="2">阶位</TableHead>
+                  <TableHead rowspan="2">等级</TableHead>
                   <TableHead rowspan="2">威力</TableHead>
                   <TableHead rowspan="2">体力</TableHead>
                   <TableHead rowspan="2">真气恢复</TableHead>
@@ -307,7 +307,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
                   v-for="item in levelRows"
                   :key="`${item.martial_art_id}-${item.level}`"
                 >
-                  <TableCell>第 {{ item.level }} 阶</TableCell>
+                  <TableCell>第 {{ item.level }} 重</TableCell>
                   <TableCell>{{ item.powerText }}</TableCell>
                   <TableCell>{{ item.hpText }}</TableCell>
                   <TableCell>{{ item.qiRecoveryText }}</TableCell>
