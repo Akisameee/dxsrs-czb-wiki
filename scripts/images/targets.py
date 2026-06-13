@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .effects import effect_texture_refs, merge_texture_refs
-from .paths import DEFAULT_ITEMS_SOURCE, DEFAULT_MARTIAL_ARTS_SOURCE, DEFAULT_PORTRAITS_SOURCE
+from .paths import DEFAULT_CHAINS_SOURCE, DEFAULT_ITEMS_SOURCE, DEFAULT_MARTIAL_ARTS_SOURCE, DEFAULT_PORTRAITS_SOURCE
 from .portraits import portrait_texture_refs
 from .unity_assets import load_table_rows
 
@@ -34,14 +34,24 @@ def wiki_texture_names(items_source: Path = DEFAULT_ITEMS_SOURCE) -> set[str]:
     }
 
 
+def chain_texture_names(chains_source: Path = DEFAULT_CHAINS_SOURCE) -> set[str]:
+    return {
+        row.get("png")
+        for row in load_table_rows(chains_source)
+        if row.get("png")
+    }
+
+
 def build_texture_targets(
     *,
     source: Path,
     names: set[str] | None = None,
     items_source: Path = DEFAULT_ITEMS_SOURCE,
+    chains_source: Path = DEFAULT_CHAINS_SOURCE,
     portraits_source: Path = DEFAULT_PORTRAITS_SOURCE,
     martial_arts_source: Path = DEFAULT_MARTIAL_ARTS_SOURCE,
     include_items: bool = True,
+    include_chains: bool = True,
     include_martial_art_icons: bool = True,
     include_portraits: bool = True,
     include_effects: bool = True,
@@ -52,6 +62,8 @@ def build_texture_targets(
 
     if include_items:
         target_names.update(wiki_texture_names(items_source))
+    if include_chains:
+        target_names.update(chain_texture_names(chains_source))
     if include_martial_art_icons:
         target_names.update(MARTIAL_ART_TEXTURE_NAMES)
     if include_portraits:

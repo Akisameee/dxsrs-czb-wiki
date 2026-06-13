@@ -3,6 +3,7 @@ import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/v
 import { enumLabel } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
 import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
+import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatQuestParts,
@@ -53,10 +54,10 @@ const attributeStats = computed(() => {
   const item = character.value;
   if (!item) return [];
   return [
-    { key: "strength", label: "膂力", value: item.strength, textClass: "text-rose-600" },
-    { key: "physique", label: "体魄", value: item.physique, textClass: "text-emerald-600" },
-    { key: "agility", label: "身法", value: item.agility, textClass: "text-lime-600" },
-    { key: "constitution", label: "根骨", value: item.constitution, textClass: "text-blue-600" },
+    { key: "strength", label: "膂力", value: item.strength },
+    { key: "physique", label: "体魄", value: item.physique },
+    { key: "agility", label: "身法", value: item.agility },
+    { key: "constitution", label: "根骨", value: item.constitution },
   ];
 });
 
@@ -223,27 +224,16 @@ onBeforeUnmount(() => {
         <CardTitle>人物详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
       </CardHeader>
-      <CardFooter>
-        <Button as-child variant="outline">
-          <NuxtLink to="/characters/">返回人物</NuxtLink>
-        </Button>
-      </CardFooter>
     </Card>
 
     <template v-else>
       <Card :class="rarityCardClass(character.rarity_id)">
         <CardHeader>
-          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div class="grid gap-2">
-              <div>
-                <CardTitle class="text-2xl">{{ characterName(character) }}</CardTitle>
-                <CardDescription>{{ locationText(character) }}</CardDescription>
-              </div>
+          <div class="grid gap-2">
+            <div>
+              <CardTitle class="text-2xl">{{ characterName(character) }}</CardTitle>
+              <CardDescription>{{ locationText(character) }}</CardDescription>
             </div>
-
-            <Button as-child variant="outline">
-              <NuxtLink to="/characters/">返回人物</NuxtLink>
-            </Button>
           </div>
         </CardHeader>
       </Card>
@@ -264,7 +254,11 @@ onBeforeUnmount(() => {
             <div class="grid auto-rows-min content-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex justify-between gap-3">
                 <span class="text-muted-foreground">门派</span>
-                <span>{{ label("LianSuo_MP", character.sect_id, "无门派") }}</span>
+                <SectHoverLink
+                  mode="link"
+                  :id="character.sect_id"
+                  :label="label('LianSuo_MP', character.sect_id, '无门派')"
+                />
               </div>
               <div class="flex justify-between gap-3">
                 <span class="text-muted-foreground">地位</span>
@@ -333,13 +327,13 @@ onBeforeUnmount(() => {
                 :key="item.key"
                 class="flex items-center justify-between rounded-md border px-3 py-2"
               >
-                <span :class="item.textClass">{{ item.label }}</span>
+                <span>{{ item.label }}</span>
                 <span class="tabular-nums">{{ formatNumber(item.value) }}/1000</span>
               </div>
             </div>
             <div class="relative h-47 w-full min-w-0 overflow-hidden">
               <canvas ref="radarCanvas" class="block h-full w-full" aria-label="四维雷达图" />
-0            </div>
+            </div>
           </CardContent>
         </Card>
       </div>

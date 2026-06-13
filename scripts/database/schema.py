@@ -281,13 +281,14 @@ TABLES = {
       "qi_recovery": "REAL"
     }
   },
-  "martial_art_passive_templates": {
+  "passives": {
     "primaryKey": [
       "id"
     ],
     "columns": {
       "id": "TEXT NOT NULL",
-      "template": "TEXT NOT NULL"
+      "template": "TEXT NOT NULL",
+      "icon": "TEXT"
     }
   },
   "status_effects": {
@@ -418,7 +419,9 @@ TABLES = {
       "id": "INTEGER NOT NULL",
       "passive_type": "TEXT NOT NULL",
       "count": "INTEGER NOT NULL",
-      "value": "TEXT NOT NULL"
+      "passive_id": "TEXT NOT NULL",
+      "param1": "REAL",
+      "param2": "REAL"
     }
   },
   "portrait_part_assets": {

@@ -1,3 +1,5 @@
+import type { WikiTextPart } from "~/lib/wiki/text";
+
 export type LoadoutOption = {
   id: string;
   label: string;
@@ -6,6 +8,8 @@ export type LoadoutOption = {
 export type LoadoutPassiveChainRecord = {
   count: number;
   effect: string;
+  effectParts: WikiTextPart[];
+  icon?: string | null;
 };
 
 export type LoadoutMartialArt = {
@@ -106,6 +110,7 @@ export type LoadoutChainStateBlock = {
   node: LoadoutRequirementNode | null;
   state: LoadoutChainBlockState;
   effect: string | null;
+  effectParts: WikiTextPart[];
 };
 
 export type LoadoutChainRecordInput = LoadoutChainGroup & {
@@ -119,6 +124,7 @@ export type LoadoutVisibleChainRecord = LoadoutChainRecordInput & {
   met: boolean;
   activeChain: LoadoutRequirementNode | null;
   activeEffect: string;
+  activeEffectParts: WikiTextPart[];
   displayCount: number;
   blocks: LoadoutChainStateBlock[];
 };

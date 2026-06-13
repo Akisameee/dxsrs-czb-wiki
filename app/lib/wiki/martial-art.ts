@@ -4,6 +4,7 @@ import {
   linkCharactersInText,
   type WikiEnums,
   type WikiTextPart,
+  wikiStrong,
   wikiText,
 } from "./text";
 
@@ -167,9 +168,10 @@ export type MartialArtPassiveSlot = {
   value: number | null;
 };
 
-export type MartialArtPassiveTemplateRow = {
+export type PassiveRow = {
   id: string;
   template: string;
+  icon?: string | null;
 };
 
 export type MartialArtPassiveTemplateMap = Record<string, string>;
@@ -178,7 +180,11 @@ export type MartialArtPassiveChainRow = {
   id: number;
   passive_type: "sect" | "style";
   count: number;
-  value: string | null;
+  passive_id?: string | null;
+  template?: string | null;
+  param1?: number | null;
+  param2?: number | null;
+  icon?: string | null;
 };
 
 export type MartialArtEffectSummary = {
@@ -253,7 +259,7 @@ export function martialArtPassiveLabel(
   return enumLabel(enums, "BeiDongType", item.passive_id, "无");
 }
 
-export function martialArtPassiveTemplateMap(rows: MartialArtPassiveTemplateRow[]) {
+export function martialArtPassiveTemplateMap(rows: PassiveRow[]) {
   return Object.fromEntries(rows.map((row) => [String(row.id), row.template || ""]));
 }
 
@@ -266,36 +272,40 @@ export function formatMartialArtPassiveTemplate(
   template: string | null | undefined,
   value: number | string | (number | string)[] | null | undefined,
 ) {
-  if (!template) return "";
+  return formatMartialArtPassiveTemplateParts(template, value).map((part) => part.text).join("");
+}
+
+export function formatMartialArtPassiveTemplateParts(
+  template: string | null | undefined,
+  value: number | string | (number | string)[] | null | undefined,
+): WikiTextPart[] {
+  if (!template) return [];
   const values = passiveTemplateValues(value);
-  return values.reduce(
-    (text, item, index) => text.replaceAll(`{param${index + 1}}`, item),
-    template.replaceAll("{param}", values[0] || "-"),
-  );
-}
-
-export function martialArtPassiveChainTemplateId(row: Pick<MartialArtPassiveChainRow, "id" | "passive_type" | "count">) {
-  return `chain:${row.passive_type}:${row.id}:${row.count}`;
-}
-
-export function martialArtPassiveChainValues(row: Pick<MartialArtPassiveChainRow, "value">) {
-  if (!row.value) return [];
-  try {
-    const values = JSON.parse(row.value);
-    return Array.isArray(values) ? values : [];
-  } catch {
-    return [];
+  const parts: WikiTextPart[] = [];
+  let index = 0;
+  const pattern = /\{param(\d*)\}/g;
+  for (const match of template.matchAll(pattern)) {
+    if (match.index === undefined) continue;
+    if (match.index > index) parts.push(wikiText(template.slice(index, match.index)));
+    const valueIndex = match[1] ? Number(match[1]) - 1 : 0;
+    parts.push(wikiStrong(values[valueIndex] || "-"));
+    index = match.index + match[0].length;
   }
+  if (index < template.length) parts.push(wikiText(template.slice(index)));
+  return parts;
 }
 
 export function martialArtPassiveChainDescription(
   row: MartialArtPassiveChainRow,
-  templates: MartialArtPassiveTemplateMap = {},
+  _templates: MartialArtPassiveTemplateMap = {},
 ) {
-  return formatMartialArtPassiveTemplate(
-    templates[martialArtPassiveChainTemplateId(row)],
-    martialArtPassiveChainValues(row),
-  );
+  return martialArtPassiveChainDescriptionParts(row).map((part) => part.text).join("");
+}
+
+export function martialArtPassiveChainDescriptionParts(row: MartialArtPassiveChainRow) {
+  const values = [row.param1, row.param2].filter((value) => value !== null && value !== undefined);
+  const parts = formatMartialArtPassiveTemplateParts(row.template, values);
+  return parts.length ? parts : [];
 }
 
 export function martialArtPassiveDescription(

@@ -106,6 +106,7 @@ export function evaluateChainState({
       node,
       state: getChainBlockState(value, displayCount, node, activeChain),
       effect: node?.chain.effect || null,
+      effectParts: node?.chain.effectParts || [],
     };
   });
 
@@ -114,6 +115,7 @@ export function evaluateChainState({
     met: Boolean(activeChain),
     activeChain,
     activeEffect: activeChain?.chain.effect || "",
+    activeEffectParts: activeChain?.chain.effectParts || [],
     displayCount,
     blocks,
   };

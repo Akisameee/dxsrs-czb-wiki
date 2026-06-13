@@ -16,7 +16,6 @@ import {
   buildVisibleChainRecords,
   isBasicChainUnlocked,
 } from "~/lib/loadout";
-import ChainResultsCard from "~/components/tools/loadout/ChainResultsCard.vue";
 import CustomMartialCard from "~/components/tools/loadout/CustomMartialCard.vue";
 import FilterCard from "~/components/tools/loadout/FilterCard.vue";
 import InscriptionCard from "~/components/tools/loadout/InscriptionCard.vue";
@@ -88,10 +87,6 @@ function countBy<T>(items: T[], getter: (item: T) => CountValue | CountValue[]) 
   return counts;
 }
 
-function sortedCounts(counts: Map<number, number>) {
-  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
-}
-
 function enumName(type: string, id: number | string | null | undefined, fallback = "未知") {
   return loadoutEnumLabel(enums.value, type, id, fallback);
 }
@@ -160,28 +155,17 @@ const equipmentStyleOptions = computed(() => EQUIPMENT_STYLE_OPTION_IDS.map((id)
   label: enumName("LianSuo_FG", id, `风格 ${id}`),
 })));
 
-const sectCountRows = computed(() => sortedCounts(sectCounts.value).map(([id, count]) => ({
+const sectCountRows = computed(() => [...sectCounts.value.entries()].map(([id, count]) => ({
   id,
   label: enumName("LianSuo_MP", id),
   count,
 })));
 
-const styleCountRows = computed(() => sortedCounts(styleCounts.value).map(([id, count]) => ({
+const styleCountRows = computed(() => [...styleCounts.value.entries()].map(([id, count]) => ({
   id,
   label: enumName("LianSuo_FG", id),
   count,
 })));
-
-function chainBlockClass(state: string) {
-  const classes = {
-    "active-node": "bg-primary",
-    "reached-node": "bg-primary/60",
-    progress: "bg-muted-foreground/35",
-    "empty-node": "bg-muted ring-1 ring-border",
-    empty: "bg-muted/60",
-  };
-  return classes[state as keyof typeof classes] ?? classes.empty;
-}
 
 const chainRecordViews = computed<ChainRecordView[]>(() => visibleChainRecords.value.map((record) => ({
   key: `${record.groupType}-${record.groupName}`,
@@ -189,13 +173,20 @@ const chainRecordViews = computed<ChainRecordView[]>(() => visibleChainRecords.v
     ? enumName("LianSuo_MP", record.groupName, `门派 ${record.groupName}`)
     : enumName("LianSuo_FG", record.groupName, `风格 ${record.groupName}`),
   typeLabel: record.groupType === "sect" ? "门派" : "风格",
+  groupType: record.groupType,
+  groupName: Number(record.groupName),
   count: record.count,
   level: record.level,
   met: record.met,
   activeEffect: record.activeEffect,
+  activeEffectParts: record.activeEffectParts,
+  icon: record.activeChain?.chain.icon || record.chains[0]?.icon || null,
+  descriptions: record.chains.map((chain) => chain.effect).filter(Boolean),
   blocks: record.blocks.map((block) => ({
     value: block.value,
-    class: chainBlockClass(block.state),
+    state: block.state,
+    effect: block.effect || "",
+    effectParts: block.effectParts,
     tooltip: block.effect ? `${block.value}: ${block.effect}` : String(block.value),
   })),
 })));
@@ -250,62 +241,63 @@ watch(customCanBeEnabled, (value) => {
 </script>
 
 <template>
-  <main class="container mx-auto grid items-start gap-6 p-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-    <section class="grid min-w-0 content-start gap-6">
-      <FilterCard
-        :pending="pending"
-        :total="wuxue.length"
-        :filtered="filteredRows.length"
-        :sect-filter="sectFilter"
-        :style-filter="styleFilter"
-        :sect-options="sectOptions"
-        :style-options="styleOptions"
-        @update:sect-filter="sectFilter = $event"
-        @update:style-filter="styleFilter = $event"
-      />
+  <main class="container mx-auto grid gap-6 p-6">
+    <FilterCard
+      :pending="pending"
+      :total="wuxue.length"
+      :filtered="filteredRows.length"
+      :sect-filter="sectFilter"
+      :style-filter="styleFilter"
+      :sect-options="sectOptions"
+      :style-options="styleOptions"
+      @update:sect-filter="sectFilter = $event"
+      @update:style-filter="styleFilter = $event"
+    />
 
-      <div class="grid gap-6 lg:grid-cols-2">
-        <InscriptionCard
-          :equipment-styles="equipmentStyles"
-          :equipment-style-options="equipmentStyleOptions"
-          :empty-option="EMPTY_OPTION"
-          @update-equipment-style="updateEquipmentStyle"
+    <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+      <section class="grid min-w-0 content-start gap-6">
+        <div class="grid gap-6 lg:grid-cols-2">
+          <InscriptionCard
+            :equipment-styles="equipmentStyles"
+            :equipment-style-options="equipmentStyleOptions"
+            :empty-option="EMPTY_OPTION"
+            @update-equipment-style="updateEquipmentStyle"
+          />
+
+          <CustomMartialCard
+            :empty-option="EMPTY_OPTION"
+            :custom-martial="customMartial"
+            :custom-can-be-enabled="customCanBeEnabled"
+            :custom-conflict-sect-label="customConflictSectLabel"
+            :joinable-sect-options="joinableSectOptions"
+            :custom-style-options="customStyleOptions"
+            @update-custom-martial="updateCustomMartial"
+          />
+        </div>
+
+        <MartialArtGrid
+          :error-message="errorMessage"
+          :rows="filteredRows"
+          :is-selected="isSelected"
+          :can-select="canSelect"
+          :disabled-reason="disabledReason"
+          @toggle-martial-art="toggleMartialArt"
         />
+      </section>
 
-        <CustomMartialCard
-          :empty-option="EMPTY_OPTION"
-          :custom-martial="customMartial"
-          :custom-can-be-enabled="customCanBeEnabled"
-          :custom-conflict-sect-label="customConflictSectLabel"
-          :joinable-sect-options="joinableSectOptions"
-          :custom-style-options="customStyleOptions"
-          @update-custom-martial="updateCustomMartial"
+      <aside class="grid min-w-0 content-start gap-6">
+        <SelectedArtsCard
+          :selected-items="selectedItems"
+          :selected-count="selectedCount"
+          :locked-sect-label="lockedSectLabel"
+          :custom-martial-active="customMartialActive"
+          :sect-counts="sectCountRows"
+          :style-counts="styleCountRows"
+          :chain-records="chainRecordViews"
+          @clear-selection="clearSelection"
+          @remove-selected="removeSelected"
         />
-      </div>
-
-      <MartialArtGrid
-        :error-message="errorMessage"
-        :rows="filteredRows"
-        :is-selected="isSelected"
-        :can-select="canSelect"
-        :disabled-reason="disabledReason"
-        @toggle-martial-art="toggleMartialArt"
-      />
-    </section>
-
-    <aside class="grid min-w-0 content-start gap-6">
-      <SelectedArtsCard
-        :selected-items="selectedItems"
-        :selected-count="selectedCount"
-        :locked-sect-label="lockedSectLabel"
-        :custom-martial-active="customMartialActive"
-        :sect-counts="sectCountRows"
-        :style-counts="styleCountRows"
-        @clear-selection="clearSelection"
-        @remove-selected="removeSelected"
-      />
-
-      <ChainResultsCard :records="chainRecordViews" />
-    </aside>
+      </aside>
+    </div>
   </main>
 </template>

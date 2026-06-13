@@ -2,7 +2,7 @@
 import {
   MAX_SELECTION,
 } from "~/lib/loadout";
-import type { CountRow, SelectableMartialArt } from "./types";
+import type { ChainRecordView, CountRow, SelectableMartialArt } from "./types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -12,20 +12,38 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import LoadoutChainRow from "./LoadoutChainRow.vue";
 
-defineProps<{
+const props = defineProps<{
   selectedItems: SelectableMartialArt[];
   selectedCount: number;
   lockedSectLabel: string;
   customMartialActive: boolean;
   sectCounts: CountRow[];
   styleCounts: CountRow[];
+  chainRecords: ChainRecordView[];
 }>();
 
 const emit = defineEmits<{
   clearSelection: [];
   removeSelected: [item: SelectableMartialArt];
 }>();
+
+function chainRecord(type: "sect" | "style", id: number) {
+  return props.chainRecords.find((record) => record.groupType === type && record.groupName === id) || null;
+}
+
+function sortedRows(type: "sect" | "style", rows: CountRow[]) {
+  return [...rows].sort((left, right) => {
+    const leftMet = Boolean(chainRecord(type, left.id)?.met);
+    const rightMet = Boolean(chainRecord(type, right.id)?.met);
+    if (leftMet !== rightMet) return leftMet ? -1 : 1;
+    return left.id - right.id;
+  });
+}
+
+const sortedSectCounts = computed(() => sortedRows("sect", props.sectCounts));
+const sortedStyleCounts = computed(() => sortedRows("style", props.styleCounts));
 </script>
 
 <template>
@@ -63,20 +81,26 @@ const emit = defineEmits<{
 
       <div class="grid gap-2">
         <div class="text-sm text-muted-foreground">门派</div>
-        <div v-if="sectCounts.length" class="flex flex-wrap gap-2">
-          <Badge v-for="row in sectCounts" :key="row.id" variant="outline">
-            {{ row.label }} {{ row.count }}
-          </Badge>
+        <div v-if="sortedSectCounts.length" class="grid gap-2">
+          <LoadoutChainRow
+            v-for="row in sortedSectCounts"
+            :key="row.id"
+            :row="row"
+            :record="chainRecord('sect', row.id)"
+          />
         </div>
         <p v-else class="text-sm text-muted-foreground">无</p>
       </div>
 
       <div class="grid gap-2">
         <div class="text-sm text-muted-foreground">风格</div>
-        <div v-if="styleCounts.length" class="flex flex-wrap gap-2">
-          <Badge v-for="row in styleCounts" :key="row.id" variant="outline">
-            {{ row.label }} {{ row.count }}
-          </Badge>
+        <div v-if="sortedStyleCounts.length" class="grid gap-2">
+          <LoadoutChainRow
+            v-for="row in sortedStyleCounts"
+            :key="row.id"
+            :row="row"
+            :record="chainRecord('style', row.id)"
+          />
         </div>
         <p v-else class="text-sm text-muted-foreground">无</p>
       </div>

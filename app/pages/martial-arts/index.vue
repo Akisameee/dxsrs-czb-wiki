@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import { useMediaQuery } from "@vueuse/core";
 import { enumMapFromRows } from "~/lib/utils";
-import { rarityCardClass } from "~/lib/rarity";
 import {
   martialArtRarityToneId,
   martialArtName,
@@ -12,8 +10,7 @@ import {
   type MartialArtStyleRow,
   type MartialArtSummaryRow,
 } from "~/lib/wiki/martial-art";
-import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import MartialArtCard from "~/components/wiki/martial-art/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
@@ -21,7 +18,6 @@ useHead({ title: "武学" });
 
 type MartialArt = MartialArtSummaryRow;
 
-const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki/martial-art/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const sectFilter = ref("all");
@@ -153,10 +149,13 @@ function martialArtUrl(item: MartialArt) {
   return `/martial-arts/detail/?id=${item.id}`;
 }
 
-function styleLabels(item: MartialArt) {
+function styleItems(item: MartialArt) {
   return (stylesByMartialArt.value.get(item.id) || [])
-    .map((row) => martialArtStyleLabel(row, enums.value))
-    .filter(Boolean);
+    .map((row) => ({
+      id: row.style_id,
+      label: martialArtStyleLabel(row, enums.value),
+    }))
+    .filter((row) => row.label);
 }
 
 function goToMartialArt(item: MartialArt) {
@@ -186,31 +185,21 @@ function goToMartialArt(item: MartialArt) {
       :page-size="pageSize"
       empty-label="没有匹配的武学"
     >
-        <WikiCard
+        <MartialArtCard
           v-for="item in pagedRows"
           :key="item.id"
           role="link"
-          :title="martialArtName(item, enums)"
-          :description="martialArtTypeLabel(item, enums)"
-          :badges="[
-            { label: martialArtSectLabel(item, enums), variant: 'outline' },
-            ...styleLabels(item).map((style) => ({ label: style, variant: 'secondary' as const })),
-          ]"
-          :color="rarityCardClass(item.rarity_id - 1)"
+          :id="item.id"
+          :name="martialArtName(item, enums)"
+          :type="martialArtTypeLabel(item, enums)"
+          :type-id="item.type_id"
+          :rarity-id="item.rarity_id"
+          :rarity-tone-id="martialArtRarityToneId(item.rarity_id)"
+          :sect-id="item.sect_id"
+          :sect-label="martialArtSectLabel(item, enums)"
+          :styles="styleItems(item)"
           :on-click="() => goToMartialArt(item)"
-        >
-          <template #avatar>
-            <MartialArtIcon
-              :name="martialArtName(item, enums)"
-              :type-id="item.type_id"
-              :rarity-id="item.rarity_id"
-              :size="40"
-            />
-          </template>
-          <template #action>
-            <MartialArtHoverLink :id="item.id" mode="button" />
-          </template>
-        </WikiCard>
+        />
     </WikiCardGrid>
   </main>
 </template>

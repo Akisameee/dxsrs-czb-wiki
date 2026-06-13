@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -72,27 +71,16 @@ const rawValueRows = computed(() => {
         <CardTitle>道具详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
       </CardHeader>
-      <CardFooter>
-        <Button as-child variant="outline">
-          <NuxtLink to="/items/">返回道具</NuxtLink>
-        </Button>
-      </CardFooter>
     </Card>
 
     <template v-else>
       <Card :class="rarityCardClass(summary.rarityId)">
         <CardHeader>
-          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div class="grid gap-2">
-              <div>
-                <CardTitle class="text-2xl">{{ summary.name }}</CardTitle>
-                <CardDescription>{{ summary.type }}</CardDescription>
-              </div>
+          <div class="grid gap-2">
+            <div>
+              <CardTitle class="text-2xl">{{ summary.name }}</CardTitle>
+              <CardDescription>{{ summary.type }}</CardDescription>
             </div>
-
-            <Button as-child variant="outline">
-              <NuxtLink to="/items/">返回道具</NuxtLink>
-            </Button>
           </div>
         </CardHeader>
       </Card>

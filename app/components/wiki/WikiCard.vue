@@ -85,7 +85,8 @@ function handleKeydown(event: KeyboardEvent) {
           <CardDescription v-if="description" class="truncate">
             {{ description }}
           </CardDescription>
-          <div v-if="badges.length" class="mt-2 flex flex-wrap gap-2">
+          <div v-if="$slots.badges || badges.length" class="mt-2 flex flex-wrap gap-2">
+            <slot name="badges" />
             <Badge
               v-for="badge in badges"
               :key="badge.label"

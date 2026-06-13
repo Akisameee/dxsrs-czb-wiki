@@ -12,25 +12,28 @@ defineProps<{
 </script>
 
 <template>
-  <template
-    v-for="(part, index) in parts"
-    :key="index"
-  >
-    <span v-if="part.type === 'text'">{{ part.text }}</span>
-    <CharacterHoverLink
-      v-else-if="part.type === 'character'"
-      :id="part.id"
-      :label="part.text"
-    />
-    <ItemHoverLink
-      v-else-if="part.type === 'item'"
-      :id="part.id"
-      :label="part.text"
-    />
-    <MartialArtHoverLink
-      v-else-if="part.type === 'martialArt'"
-      :id="part.id"
-      :label="part.text"
-    />
-  </template>
+  <span class="inline">
+    <template
+      v-for="(part, index) in parts"
+      :key="index"
+    >
+      <span v-if="part.type === 'text'">{{ part.text }}</span>
+      <strong v-else-if="part.type === 'strong'" class="font-semibold text-foreground">{{ part.text }}</strong>
+      <CharacterHoverLink
+        v-else-if="part.type === 'character'"
+        :id="part.id"
+        :label="part.text"
+      />
+      <ItemHoverLink
+        v-else-if="part.type === 'item'"
+        :id="part.id"
+        :label="part.text"
+      />
+      <MartialArtHoverLink
+        v-else-if="part.type === 'martialArt'"
+        :id="part.id"
+        :label="part.text"
+      />
+    </template>
+  </span>
 </template>

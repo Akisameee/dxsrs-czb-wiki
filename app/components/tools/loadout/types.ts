@@ -7,6 +7,8 @@ import type {
   LoadoutOption,
   LoadoutVisibleChainRecord,
 } from "~/lib/loadout/types";
+import type { WikiTextPart } from "~/lib/wiki/text";
+import type { LoadoutChainBlockState } from "~/lib/loadout/types";
 
 export type {
   CustomMartialState,
@@ -25,18 +27,25 @@ export type CountRow = {
 
 export type ChainBlockView = {
   value: number;
-  class: string;
+  state: LoadoutChainBlockState;
   tooltip: string;
+  effect: string;
+  effectParts: WikiTextPart[];
 };
 
 export type ChainRecordView = {
   key: string;
   label: string;
   typeLabel: string;
+  groupType: "sect" | "style";
+  groupName: number;
   count: number;
   level: number;
   met: boolean;
   activeEffect: string;
+  activeEffectParts: WikiTextPart[];
+  icon?: string | null;
+  descriptions?: string[];
   blocks: ChainBlockView[];
 };
 

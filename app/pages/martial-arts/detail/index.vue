@@ -2,6 +2,8 @@
 import { rarityCardClass } from "~/lib/rarity";
 import MartialArtEffectPreview from "~/components/wiki/martial-art/MartialArtEffectPreview.vue";
 import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
+import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
+import StyleHoverLink from "~/components/wiki/style/HoverLink.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatMartialArtDecimal,
@@ -59,10 +61,13 @@ const martialArt = computed(() => data.value?.martialArt || null);
 const enums = computed(() => data.value?.enums || {});
 const passiveTemplates = computed(() => data.value?.passiveTemplates || {});
 const isInternalMartialArt = computed(() => martialArt.value ? martialArtIsInternal(martialArt.value) : false);
-const styleLabels = computed(() =>
+const styleItems = computed(() =>
   (data.value?.styles || [])
-    .map((row) => martialArtStyleLabel(row, enums.value))
-    .filter(Boolean),
+    .map((row) => ({
+      id: row.style_id,
+      label: martialArtStyleLabel(row, enums.value),
+    }))
+    .filter((row) => row.label),
 );
 const effects = computed(() => data.value?.effects || []);
 const assetEffects = computed(() => data.value?.assetEffects || []);
@@ -181,7 +186,6 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                 class="w-full"
               />
             </div>
-            <div class="grid gap-2">
             <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">类型</span>
@@ -189,7 +193,11 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
               </div>
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">门派</span>
-                <span>{{ martialArtSectLabel(martialArt, enums) }}</span>
+                <SectHoverLink
+                  mode="link"
+                  :id="martialArt.sect_id"
+                  :label="martialArtSectLabel(martialArt, enums)"
+                />
               </div>
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">稀有度</span>
@@ -217,14 +225,13 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
               </div>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <span class="text-muted-foreground">风格</span>
-                <div v-if="styleLabels.length" class="flex flex-wrap justify-end gap-2">
-                  <Badge
-                    v-for="style in styleLabels"
-                    :key="style"
-                    variant="secondary"
-                  >
-                    {{ style }}
-                  </Badge>
+                <div v-if="styleItems.length" class="flex flex-wrap justify-end gap-2">
+                  <StyleHoverLink
+                    v-for="style in styleItems"
+                    :key="style.id"
+                    :id="style.id"
+                    :label="style.label"
+                  />
                 </div>
                 <span v-else>无风格</span>
               </div>

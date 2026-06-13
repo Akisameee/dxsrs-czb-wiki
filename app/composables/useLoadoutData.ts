@@ -8,13 +8,12 @@ import type {
 import {
   martialArtName,
   martialArtPassiveChainDescription,
-  martialArtPassiveTemplateMap,
+  martialArtPassiveChainDescriptionParts,
   martialArtRarityToneId,
   martialArtSectLabel,
   martialArtStyleLabel,
   martialArtTypeLabel,
   type MartialArtPassiveChainRow,
-  type MartialArtPassiveTemplateRow,
   type MartialArtStyleRow,
   type MartialArtSummaryRow,
   type WikiEnums,
@@ -29,7 +28,7 @@ function numberValue(value: number | string | null | undefined) {
   return Number.isFinite(number) ? number : null;
 }
 
-function groupChainRows(rows: MartialArtPassiveChainRow[], templates: Record<string, string>) {
+function groupChainRows(rows: MartialArtPassiveChainRow[]) {
   const sectGroups = new Map<number, LoadoutPassiveChainRecord[]>();
   const styleGroups = new Map<number, LoadoutPassiveChainRecord[]>();
 
@@ -38,9 +37,10 @@ function groupChainRows(rows: MartialArtPassiveChainRow[], templates: Record<str
     const count = numberValue(row.count);
     if (id === null || count === null) continue;
 
-    const effect = martialArtPassiveChainDescription(row, templates);
+    const effect = martialArtPassiveChainDescription(row);
+    const effectParts = martialArtPassiveChainDescriptionParts(row);
     const target = row.passive_type === "sect" ? sectGroups : styleGroups;
-    target.set(id, [...(target.get(id) || []), { count, effect }]);
+    target.set(id, [...(target.get(id) || []), { count, effect, effectParts, icon: row.icon || null }]);
   }
 
   const sortChains = (chains: LoadoutPassiveChainRecord[]) => chains.sort((a, b) => a.count - b.count);
@@ -69,7 +69,11 @@ function legacyChainGroups(
       const id = numberValue(row[idKey] as number);
       const count = numberValue(row.count);
       if (id === null || count === null) continue;
-      groups.set(id, [...(groups.get(id) || []), { count, effect: row.effect || "" }]);
+      groups.set(id, [...(groups.get(id) || []), {
+        count,
+        effect: row.effect || "",
+        effectParts: [{ type: "text", text: row.effect || "" }],
+      }]);
     }
     return [...groups.entries()]
       .map(([id, chains]) => ({
@@ -101,7 +105,6 @@ export function useLoadoutData() {
       martialArts,
       styles,
       enumRows,
-      templateRows,
     ] = await Promise.all([
       queryRows<MartialArtSummaryRow>(
         `SELECT id, sect_id, type_id, rarity_id, power, cost, obtain_method, is_sect_restricted
@@ -112,11 +115,9 @@ export function useLoadoutData() {
         "SELECT martial_art_id, slot, style_id FROM martial_art_styles ORDER BY martial_art_id, slot",
       ),
       queryRows<EnumRow>("SELECT type, id, label FROM enums ORDER BY type, id"),
-      queryRows<MartialArtPassiveTemplateRow>("SELECT id, template FROM martial_art_passive_templates"),
     ]);
 
     const enums = enumMapFromRows(enumRows);
-    const templates = martialArtPassiveTemplateMap(templateRows);
     const stylesByMartialArt = new Map<number, MartialArtStyleRow[]>();
     for (const row of styles) {
       const rows = stylesByMartialArt.get(row.martial_art_id) || [];
@@ -125,11 +126,15 @@ export function useLoadoutData() {
     }
 
     const passiveChains = await optionalRows<MartialArtPassiveChainRow>(
-      "SELECT id, passive_type, count, value FROM passive_chains ORDER BY passive_type, id, count",
+      `SELECT chain.id, chain.passive_type, chain.count, chain.passive_id,
+        chain.param1, chain.param2, passive.template, passive.icon
+       FROM passive_chains chain
+       JOIN passives passive ON passive.id = chain.passive_id
+       ORDER BY chain.passive_type, chain.id, chain.count`,
     );
 
     const chainGroups = passiveChains
-      ? groupChainRows(passiveChains, templates)
+      ? groupChainRows(passiveChains)
       : legacyChainGroups(
         await queryRows("SELECT sect_id, count, effect FROM sect_chains ORDER BY sect_id, count"),
         await queryRows("SELECT style_id, count, effect FROM style_chains ORDER BY style_id, count"),

@@ -4,6 +4,8 @@ useHead({ title: "数据总览" });
 const { queryRows } = useWikiDb();
 const table = ref("");
 const search = ref("");
+const currentPage = ref(1);
+const pageSize = 50;
 
 const { data, pending, error } = await useAsyncData("data-overview", async () => {
   const tables = await queryRows<{ name: string }>("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name");
@@ -14,18 +16,52 @@ watchEffect(() => {
   if (!table.value && data.value?.tables?.length) table.value = data.value.tables[0] ?? "";
 });
 
-const { data: tableRows } = await useAsyncData(`table-${table.value}`, async () => {
-  if (!table.value) return [];
-  return queryRows<Record<string, unknown>>(`SELECT * FROM ${table.value} LIMIT 200`);
-}, { server: false, watch: [table] });
+function quoteIdentifier(value: string) {
+  return `"${value.replaceAll('"', '""')}"`;
+}
 
-const filteredRows = computed(() => {
-  const keyword = search.value.trim().toLowerCase();
-  if (!keyword) return tableRows.value || [];
-  return (tableRows.value || []).filter((row) => Object.values(row).some((value) => String(value ?? "").toLowerCase().includes(keyword)));
+function likeClause(columns: string[]) {
+  if (!search.value.trim() || !columns.length) return { sql: "", params: [] as string[] };
+  const sql = columns.map((column) => `CAST(${quoteIdentifier(column)} AS TEXT) LIKE ?`).join(" OR ");
+  return {
+    sql: ` WHERE ${sql}`,
+    params: columns.map(() => `%${search.value.trim()}%`),
+  };
+}
+
+const { data: tableData } = await useAsyncData("data-table-rows", async () => {
+  if (!table.value) return { rows: [], columns: [], total: 0 };
+
+  const tableName = quoteIdentifier(table.value);
+  const infoRows = await queryRows<{ name: string }>(`PRAGMA table_info(${tableName})`);
+  const columns = infoRows.map((item) => item.name);
+  const where = likeClause(columns);
+  const offset = (currentPage.value - 1) * pageSize;
+
+  const [countRow] = await queryRows<{ count: number }>(
+    `SELECT COUNT(*) AS count FROM ${tableName}${where.sql}`,
+    where.params,
+  );
+  const rows = await queryRows<Record<string, unknown>>(
+    `SELECT * FROM ${tableName}${where.sql} LIMIT ? OFFSET ?`,
+    [...where.params, pageSize, offset],
+  );
+
+  return { rows, columns, total: Number(countRow?.count || 0) };
+}, { server: false, watch: [table, search, currentPage] });
+
+const tableRows = computed(() => tableData.value?.rows || []);
+const columns = computed(() => tableData.value?.columns || []);
+const totalRows = computed(() => tableData.value?.total || 0);
+const pageCount = computed(() => Math.max(1, Math.ceil(totalRows.value / pageSize)));
+
+watch([table, search], () => {
+  currentPage.value = 1;
 });
 
-const columns = computed(() => Object.keys(filteredRows.value[0] || {}));
+watch(pageCount, (count) => {
+  if (currentPage.value > count) currentPage.value = count;
+});
 </script>
 
 <template>
@@ -33,7 +69,7 @@ const columns = computed(() => Object.keys(filteredRows.value[0] || {}));
     <Card>
       <CardHeader>
         <CardTitle>数据总览</CardTitle>
-        <CardDescription>{{ pending ? "读取中..." : `${table || "-"}：${filteredRows.length} 行` }}</CardDescription>
+        <CardDescription>{{ pending ? "读取中..." : `${table || "-"}：${totalRows} 行` }}</CardDescription>
       </CardHeader>
       <CardContent class="grid gap-4 md:grid-cols-2">
         <Label class="grid gap-2">
@@ -61,7 +97,34 @@ const columns = computed(() => Object.keys(filteredRows.value[0] || {}));
     </Card>
 
     <Card v-else>
-      <CardContent class="overflow-auto">
+      <CardContent class="grid gap-4">
+        <Pagination
+          v-slot="{ page }"
+          v-model:page="currentPage"
+          :items-per-page="pageSize"
+          :sibling-count="1"
+          :total="totalRows"
+          show-edges
+        >
+          <PaginationContent v-slot="{ items }">
+            <PaginationFirst />
+            <PaginationPrevious />
+            <template v-for="(item, index) in items" :key="index">
+              <PaginationItem
+                v-if="item.type === 'page'"
+                :is-active="item.value === page"
+                :value="item.value"
+              >
+                {{ item.value }}
+              </PaginationItem>
+              <PaginationEllipsis v-else />
+            </template>
+            <PaginationNext />
+            <PaginationLast />
+          </PaginationContent>
+        </Pagination>
+
+        <div class="overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -69,13 +132,14 @@ const columns = computed(() => Object.keys(filteredRows.value[0] || {}));
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="(row, index) in filteredRows" :key="index">
+            <TableRow v-for="(row, index) in tableRows" :key="index">
               <TableCell v-for="column in columns" :key="column">
                 {{ row[column] ?? "NULL" }}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   </main>

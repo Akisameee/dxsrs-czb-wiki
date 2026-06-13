@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import { useMediaQuery } from "@vueuse/core";
-import { rarityCardClass } from "~/lib/rarity";
 import type { SelectableMartialArt } from "./types";
-import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import MartialArtCard from "~/components/wiki/martial-art/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
-
-const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki/martial-art/HoverLink.vue"));
 
 const props = defineProps<{
   errorMessage: string;
@@ -49,6 +44,13 @@ watch(pageSize, (size, oldSize) => {
 watch(pageCount, (count) => {
   if (currentPage.value > count) currentPage.value = count;
 });
+
+function styleRows(item: SelectableMartialArt) {
+  return item.styles.map((label, index) => ({
+    id: item.styleIds[index],
+    label,
+  }));
+}
 </script>
 
 <template>
@@ -61,33 +63,23 @@ watch(pageCount, (count) => {
     empty-label="没有匹配的武学"
     grid-class="xl:grid-cols-3"
   >
-    <WikiCard
+    <MartialArtCard
       v-for="item in pagedRows"
       :key="item.id"
       role="button"
-      :title="item.name"
-      :description="item.type"
-      :badges="[
-        { label: item.sect, variant: 'outline' },
-        ...item.styles.map((style) => ({ label: style, variant: 'secondary' as const })),
-      ]"
-      :color="rarityCardClass(item.rarityToneId)"
+      :id="item.id"
+      :name="item.name"
+      :type="item.type"
+      :type-id="item.typeId"
+      :rarity-id="item.rare"
+      :rarity-tone-id="item.rarityToneId"
+      :sect-id="item.sectId"
+      :sect-label="item.sect"
+      :styles="styleRows(item)"
       :selected="isSelected(item)"
       :disabled="!canSelect(item)"
       :title-attr="disabledReason(item) || item.name"
       :on-click="() => emit('toggleMartialArt', item)"
-    >
-      <template #avatar>
-        <MartialArtIcon
-          :name="item.name"
-          :type-id="item.typeId"
-          :rarity-id="item.rare"
-          :size="40"
-        />
-      </template>
-      <template #action>
-        <MartialArtHoverLink :id="item.id" mode="button" />
-      </template>
-    </WikiCard>
+    />
   </WikiCardGrid>
 </template>

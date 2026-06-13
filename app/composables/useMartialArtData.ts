@@ -7,7 +7,7 @@ import {
   type MartialArtAssetEffectRow,
   type MartialArtLevelRow,
   type MartialArtPassiveTemplateMap,
-  type MartialArtPassiveTemplateRow,
+  type PassiveRow,
   type MartialArtStyleRow,
   type MartialArtSummary,
   type MartialArtSummaryRow,
@@ -42,8 +42,8 @@ export function useMartialArtData() {
   }
 
   async function loadPassiveTemplates() {
-    passiveTemplatesPromise ||= queryRows<MartialArtPassiveTemplateRow>(
-      "SELECT id, template FROM martial_art_passive_templates",
+    passiveTemplatesPromise ||= queryRows<PassiveRow>(
+      "SELECT id, template, icon FROM passives",
     ).then((rows) => martialArtPassiveTemplateMap(rows));
     return passiveTemplatesPromise;
   }

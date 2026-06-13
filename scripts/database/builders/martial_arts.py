@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import json
 import math
 import re
 from typing import Any
 
 from ..passive_templates import martial_art_passive_template_rows
-from ..utils import bool_int, clean_text, js_number, natural_key, round_number
+from ..utils import bool_int, clean_text, js_number, round_number
 
 
 STATUS_EFFECT_META = {
@@ -83,20 +82,11 @@ def chain_passive_id(row: dict[str, Any]) -> int | None:
     return None
 
 
-def chain_passive_template_id(row: dict[str, Any]) -> str | None:
-    passive_type = chain_passive_type(row)
-    passive_id = chain_passive_id(row)
-    count = js_number(row.get("qty"))
-    if not passive_type or passive_id is None or not math.isfinite(count):
-        return None
-    return f"chain:{passive_type}:{passive_id}:{int(count)}"
-
-
 def normalized_number_text(value: Any) -> str | None:
     number = js_number(value)
     if not math.isfinite(number):
         return None
-    rounded = round(number * 100) / 100
+    rounded = round_number(number)
     if float(rounded).is_integer():
         return str(int(rounded))
     return f"{rounded:.12g}"
@@ -108,29 +98,46 @@ def replace_number_token(text: str, value: Any, placeholder: str) -> dict[str, A
         normalized_number_text(js_number(value) * 100),
     ]
     for candidate in [item for item in candidates if item]:
-        pattern = re.compile(rf"(?<![\d.]){re.escape(candidate)}(?![\d.])")
+        pattern = re.compile(rf"(?<![A-Za-z0-9_{{.]){re.escape(candidate)}(?![A-Za-z0-9_}}.])")
         if pattern.search(text):
             number_value = js_number(candidate)
             if math.isfinite(number_value) and float(number_value).is_integer():
                 number_value = int(number_value)
-            return {"text": pattern.sub(placeholder, text, count=1), "value": number_value}
-    return {"text": text, "value": None}
+            return {"text": pattern.sub(placeholder, text, count=1), "param": number_value}
+    return {"text": text, "param": None}
 
 
-def chain_template_and_value(row: dict[str, Any]) -> dict[str, str]:
+def chain_template_and_params(row: dict[str, Any]) -> dict[str, Any]:
     template = clean_text(row.get("desc")) or ""
-    values: list[float] = []
+    params: list[Any] = [None, None]
+    replaced_indexes: list[int] = []
     for index, raw_value in enumerate([row.get("value1"), row.get("value2")], start=1):
         number = js_number(raw_value)
         if not math.isfinite(number) or number == 0:
             continue
         result = replace_number_token(template, number, f"{{param{index}}}")
         template = result["text"]
-        if result["value"] is not None:
-            values.append(result["value"])
-    if len(values) == 1:
+        if result["param"] is not None:
+            params[index - 1] = result["param"]
+            replaced_indexes.append(index)
+
+    if replaced_indexes == [1]:
         template = template.replace("{param1}", "{param}")
-    return {"template": template, "value": json.dumps(values, ensure_ascii=False, separators=(",", ":"))}
+
+    return {
+        "template": template,
+        "param1": params[0],
+        "param2": params[1],
+    }
+
+
+def chain_passive_template_id(row: dict[str, Any]) -> str | None:
+    passive_type = chain_passive_type(row)
+    passive_id = chain_passive_id(row)
+    count = js_number(row.get("qty"))
+    if not passive_type or passive_id is None or not math.isfinite(count):
+        return None
+    return f"chain:{passive_type}:{passive_id}:{int(count)}"
 
 
 class MartialArtBuilder:
@@ -143,10 +150,7 @@ class MartialArtBuilder:
             "martial_art_styles": self.build_styles(),
             "martial_art_effects": self.build_effects(),
             "martial_art_levels": self.build_levels(),
-            "martial_art_passive_templates": [
-                *martial_art_passive_template_rows(),
-                *self.build_chain_templates(),
-            ],
+            "passives": self.build_passives(),
             "status_effects": self.build_status_effects(),
             "passive_chains": self.build_passive_chains(),
         }
@@ -233,14 +237,21 @@ class MartialArtBuilder:
         ]
         return sorted(rows, key=lambda item: (item["martial_art_id"], item["level"]))
 
-    def build_chain_templates(self) -> list[dict[str, Any]]:
-        rows = []
+    def build_passives(self) -> list[dict[str, Any]]:
+        rows = [
+            {"id": str(row["id"]), "template": row["template"], "icon": None}
+            for row in martial_art_passive_template_rows()
+        ]
         for row in self.ctx.chain_rows:
             row_id = chain_passive_template_id(row)
             if not row_id:
                 continue
-            rows.append({"id": row_id, "template": chain_template_and_value(row)["template"]})
-        return sorted(rows, key=lambda item: natural_key(item["id"]))
+            rows.append({
+                "id": row_id,
+                "template": chain_template_and_params(row)["template"],
+                "icon": clean_text(row.get("png")) or None,
+            })
+        return sorted(rows, key=lambda item: str(item["id"]))
 
     def build_passive_chains(self) -> list[dict[str, Any]]:
         rows = []
@@ -250,11 +261,17 @@ class MartialArtBuilder:
             count = js_number(row.get("qty"))
             if not passive_type or passive_id is None or not math.isfinite(count):
                 continue
+            template_data = chain_template_and_params(row)
+            chain_template_id = chain_passive_template_id(row)
+            if not chain_template_id:
+                continue
             rows.append({
                 "id": passive_id,
                 "passive_type": passive_type,
                 "count": int(count),
-                "value": chain_template_and_value(row)["value"],
+                "passive_id": chain_template_id,
+                "param1": template_data["param1"],
+                "param2": template_data["param2"],
             })
         return sorted(rows, key=lambda item: (item["passive_type"], item["id"], item["count"]))
 

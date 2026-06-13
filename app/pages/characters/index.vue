@@ -11,6 +11,8 @@ import {
   type CharacterSummaryRow,
 } from "~/lib/wiki/character";
 import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
+import { Badge } from "~/components/ui/badge";
+import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
 import WikiCard from "~/components/wiki/WikiCard.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
@@ -166,10 +168,6 @@ watch(pageCount, (count) => {
           role="link"
           :title="characterName(item)"
           :description="locationText(item)"
-          :badges="[
-            { label: enumLabel(enums, 'LianSuo_MP', item.sect_id), variant: 'outline' },
-            { label: enumLabel(enums, 'BingQiType', item.weapon_type_id), variant: 'secondary' },
-          ]"
           :color="rarityCardClass(item.rarity_id)"
           :on-click="() => goToCharacter(item)"
         >
@@ -182,6 +180,15 @@ watch(pageCount, (count) => {
           </template>
           <template #action>
             <CharacterHoverLink :id="item.id" mode="button" />
+          </template>
+          <template #badges>
+            <SectHoverLink
+              :id="item.sect_id"
+              :label="enumLabel(enums, 'LianSuo_MP', item.sect_id)"
+            />
+            <Badge variant="secondary">
+              {{ enumLabel(enums, 'BingQiType', item.weapon_type_id) }}
+            </Badge>
           </template>
         </WikiCard>
     </WikiCardGrid>

@@ -2,12 +2,17 @@ export type WikiEnums = Record<string, Record<string, string | null>>;
 
 export type WikiTextPart =
   | { type: "text"; text: string }
+  | { type: "strong"; text: string }
   | { type: "character"; id: number; text: string }
   | { type: "martialArt"; id: number; text: string }
   | { type: "item"; id: number; text: string };
 
 export function wikiText(text: string): WikiTextPart {
   return { type: "text", text };
+}
+
+export function wikiStrong(text: string): WikiTextPart {
+  return { type: "strong", text };
 }
 
 export function wikiCharacter(id: number, text: string): WikiTextPart {
@@ -89,4 +94,3 @@ export function linkMartialArtsInText(text: string | null | undefined, enums: Wi
 export function linkItemsInText(text: string | null | undefined, enums: WikiEnums) {
   return linkWikiEntriesInText(text, enumLinkEntries(enums, "Item", wikiItem));
 }
-
