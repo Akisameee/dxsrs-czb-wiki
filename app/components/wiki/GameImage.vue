@@ -8,26 +8,47 @@ const props = withDefaults(defineProps<{
   pathId?: number | null;
   image?: GameImageRenderEntry | null;
   alt?: string;
+  fallback?: string;
   size?: number;
   fit?: "trim" | "canvas";
   class?: string;
   style?: Record<string, string | number> | string;
 }>(), {
   alt: "",
-  size: 64,
   fit: "trim",
+});
+
+const root = ref<HTMLElement | null>(null);
+const measuredSize = ref(64);
+let resizeObserver: ResizeObserver | null = null;
+
+onMounted(() => {
+  resizeObserver = new ResizeObserver(([entry]) => {
+    const width = entry?.contentRect.width;
+    if (width && Number.isFinite(width)) measuredSize.value = width;
+  });
+  if (root.value) resizeObserver.observe(root.value);
+});
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
 });
 
 const { getRenderEntry } = useGameImageAtlas();
 const image = computed(() => props.image || getRenderEntry(props.name, props.source, props.pathId));
+const currentSize = computed(() => props.size || measuredSize.value);
 const scale = computed(() => {
   const value = image.value;
   if (!value) return 1;
-  if (props.fit === "canvas") return props.size / value.canvasWidth;
-  return props.size / Math.max(value.width, value.height);
+  if (props.fit === "canvas") return currentSize.value / value.canvasWidth;
+  return currentSize.value / Math.max(value.width, value.height);
 });
 
 const outerStyle = computed(() => {
+  if (!props.size) {
+    return { width: "100%", aspectRatio: "1 / 1" };
+  }
+
   const value = image.value;
   if (!value) {
     return {
@@ -58,10 +79,10 @@ const spriteStyle = computed(() => {
   const width = value.width * currentScale;
   const height = value.height * currentScale;
   const left = props.fit === "trim"
-    ? (props.size - width) / 2
+    ? (currentSize.value - width) / 2
     : value.offsetX * currentScale;
   const top = props.fit === "trim"
-    ? (props.size - height) / 2
+    ? (currentSize.value - height) / 2
     : value.offsetY * currentScale;
 
   return {
@@ -79,17 +100,21 @@ const spriteStyle = computed(() => {
 <template>
   <span
     v-if="image"
+    ref="root"
     role="img"
     :aria-label="alt || undefined"
-    :class="cn('relative inline-block overflow-hidden', props.class)"
+    :class="cn('relative inline-block overflow-hidden rounded-md', props.class)"
     :style="[outerStyle, props.style]"
   >
     <span class="absolute bg-no-repeat" :style="spriteStyle" />
   </span>
   <span
+    ref="root"
     v-else
-    :class="cn('inline-block', props.class)"
+    :class="cn('inline-flex items-center justify-center overflow-hidden rounded-md bg-muted text-sm font-medium text-muted-foreground', props.class)"
     :style="[outerStyle, props.style]"
-    aria-hidden="true"
-  />
+    :aria-hidden="fallback ? undefined : true"
+  >
+    {{ fallback }}
+  </span>
 </template>

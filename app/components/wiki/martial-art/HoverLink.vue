@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 import { CircleHelp } from "@lucide/vue";
-import { Button } from "~/components/ui/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "~/components/ui/hover-card";
+import WikiHoverLink from "~/components/wiki/HoverLink.vue";
 import { rarityTextClass } from "~/lib/rarity";
 import { useMartialArtData } from "~/composables/useMartialArtData";
 import type { MartialArtSummary } from "~/lib/wiki/martial-art";
@@ -86,34 +81,24 @@ onMounted(() => {
 </script>
 
 <template>
-  <HoverCard v-model:open="open">
-    <HoverCardTrigger as-child>
-      <Button
-        v-if="mode === 'button'"
-        variant="ghost"
-        size="icon-sm"
-        aria-label="查看武学摘要"
-        @click.stop
-        @keydown.stop
-      >
-        <slot>
-          <CircleHelp />
-        </slot>
-      </Button>
-      <NuxtLink
-        v-else
-        :to="detailUrl"
-        :class="linkClass"
-      >
-        <slot>{{ displayLabel }}</slot>
-      </NuxtLink>
-    </HoverCardTrigger>
-    <HoverCardContent class="grid w-96 max-w-[calc(100vw-2rem)] gap-3">
-      <MartialArtSummaryPanel
-        :summary="summary"
-        :pending="pending"
-        :error="error"
-      />
-    </HoverCardContent>
-  </HoverCard>
+  <WikiHoverLink
+    v-model:open="open"
+    :mode="mode"
+    :to="detailUrl"
+    :label="displayLabel"
+    :link-class="linkClass"
+    button-label="查看武学摘要"
+  >
+    <template #trigger>
+      <slot>
+        <CircleHelp v-if="mode === 'button'" />
+        <template v-else>{{ displayLabel }}</template>
+      </slot>
+    </template>
+    <MartialArtSummaryPanel
+      :summary="summary"
+      :pending="pending"
+      :error="error"
+    />
+  </WikiHoverLink>
 </template>

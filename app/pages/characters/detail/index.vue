@@ -2,7 +2,7 @@
 import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/vue";
 import { enumLabel } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
-import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
+import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatQuestParts,
@@ -60,7 +60,7 @@ const attributeStats = computed(() => {
   ];
 });
 
-const radarMax = computed(() => Math.max(1000, ...attributeStats.value.map((item) => item.value)));
+const radarMax = computed(() => Math.max(1000, ...attributeStats.value.map((item) => Number(item.value) || 0)));
 
 const weaponCultivations = computed(() => {
   const item = character.value;
@@ -163,9 +163,9 @@ async function renderRadarChart() {
         data: attributeStats.value.map((item) => Math.round(item.value)),
         backgroundColor: "rgba(20, 184, 166, 0.22)",
         borderColor: themeColor("--primary", "#0f172a"),
-        borderWidth: 2,
+        borderWidth: 0.5,
         pointBackgroundColor: themeColor("--primary", "#0f172a"),
-        pointRadius: 3,
+        pointRadius: 2,
       }],
     },
     options: {
@@ -184,7 +184,7 @@ async function renderRadarChart() {
           angleLines: { color: themeColor("--border", "#e5e7eb") },
           pointLabels: {
             color: themeColor("--foreground", "#111827"),
-            font: { size: 13, weight: 600 },
+            font: { size: 13, weight: 400 },
           },
         },
       },
@@ -248,21 +248,20 @@ onBeforeUnmount(() => {
         </CardHeader>
       </Card>
 
-      <div class="grid gap-6 lg:grid-cols-2">
+      <div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
         <Card>
           <CardHeader>
             <CardTitle>基础信息</CardTitle>
           </CardHeader>
-          <CardContent class="grid gap-4">
-            <div class="text-sm text-muted-foreground">头像</div>
-            <div class="flex items-center justify-center rounded-md border border-dashed py-6">
+          <CardContent class="grid items-start gap-6 text-sm md:grid-cols-[auto_1fr]">
+            <div class="flex justify-center rounded-md">
               <CharacterPortrait
                 :ids="{ characterId: character.id, portrait: character.portrait }"
                 :fallback="characterInitial(character)"
-                :size="160"
+                :size="180"
               />
             </div>
-            <div class="grid gap-3 text-sm sm:grid-cols-2">
+            <div class="grid auto-rows-min content-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex justify-between gap-3">
                 <span class="text-muted-foreground">门派</span>
                 <span>{{ label("LianSuo_MP", character.sect_id, "无门派") }}</span>
@@ -327,20 +326,20 @@ onBeforeUnmount(() => {
           <CardHeader>
             <CardTitle>四维数值</CardTitle>
           </CardHeader>
-          <CardContent class="grid min-w-0 gap-6 overflow-hidden">
-            <div class="relative h-80 w-full min-w-0 overflow-hidden">
-              <canvas ref="radarCanvas" class="h-full w-full" aria-label="四维雷达图" />
-            </div>
-            <div class="grid gap-3 sm:grid-cols-2">
+          <CardContent class="grid min-w-0 gap-6 overflow-hidden text-sm md:grid-cols-[minmax(9rem,12rem)_minmax(0,1fr)]">
+            <div class="grid auto-rows-min content-start gap-3">
               <div
                 v-for="item in attributeStats"
                 :key="item.key"
-                class="flex justify-between gap-3 rounded-md border px-3 py-2"
+                class="flex items-center justify-between rounded-md border px-3 py-2"
               >
                 <span :class="item.textClass">{{ item.label }}</span>
-                <span class="tabular-nums">{{ formatNumber(item.value) }}</span>
+                <span class="tabular-nums">{{ formatNumber(item.value) }}/1000</span>
               </div>
             </div>
+            <div class="relative h-47 w-full min-w-0 overflow-hidden">
+              <canvas ref="radarCanvas" class="block h-full w-full" aria-label="四维雷达图" />
+0            </div>
           </CardContent>
         </Card>
       </div>
@@ -366,7 +365,6 @@ onBeforeUnmount(() => {
         <Card>
           <CardHeader>
             <CardTitle>生活技艺</CardTitle>
-            <CardDescription>临时图案，后续替换为解包图片</CardDescription>
           </CardHeader>
           <CardContent class="grid gap-3 sm:grid-cols-2">
             <div

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { rarityCardClass } from "~/lib/rarity";
-import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
+import MartialArtEffectPreview from "~/components/wiki/martial-art/MartialArtEffectPreview.vue";
+import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   formatMartialArtDecimal,
   formatMartialArtNumber,
   formatMartialArtPercent,
-  martialArtAssetEffectLabel,
   martialArtAttackAreaLabel,
   martialArtEffectLabel,
   martialArtName,
@@ -38,7 +38,16 @@ const { data, pending, error } = await useAsyncData(
   async () => {
     const id = Number(route.query.id);
     if (!Number.isFinite(id)) {
-      return { martialArt: null, styles: [], effects: [], levels: [], passiveTemplates: {}, enums: {} };
+      return {
+        martialArt: null,
+        styles: [],
+        effects: [],
+        assetEffects: [],
+        assetEffectLayers: [],
+        levels: [],
+        passiveTemplates: {},
+        enums: {},
+      };
     }
 
     return loadMartialArtDetail(id);
@@ -56,6 +65,8 @@ const styleLabels = computed(() =>
     .filter(Boolean),
 );
 const effects = computed(() => data.value?.effects || []);
+const assetEffects = computed(() => data.value?.assetEffects || []);
+const assetEffectLayers = computed(() => data.value?.assetEffectLayers || []);
 const levels = computed(() => data.value?.levels || []);
 const highestLevel = computed(() => levels.value[levels.value.length - 1] || null);
 const effectBadges = computed(() =>
@@ -108,6 +119,18 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
     passiveTemplates.value,
   );
 }
+
+function assetEffect(kind: "slash" | "hit", effectId: number | null | undefined) {
+  const id = Number(effectId);
+  if (!Number.isFinite(id)) return null;
+  return assetEffects.value.find((item) => item.kind === kind && Number(item.effect_id) === id) || null;
+}
+
+function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null | undefined) {
+  const id = Number(effectId);
+  if (!Number.isFinite(id)) return [];
+  return assetEffectLayers.value.filter((item) => item.kind === kind && Number(item.effect_id) === id);
+}
 </script>
 
 <template>
@@ -128,29 +151,18 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
         <CardTitle>武学详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
       </CardHeader>
-      <CardFooter>
-        <Button as-child variant="outline">
-          <NuxtLink to="/martial-arts/">返回武学</NuxtLink>
-        </Button>
-      </CardFooter>
     </Card>
 
     <template v-else>
       <Card :class="rarityCardClass(martialArtRarityToneId(martialArt.rarity_id))">
         <CardHeader>
-          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div class="grid gap-2">
-              <div>
-                <CardTitle class="text-2xl">{{ martialArtName(martialArt, enums) }}</CardTitle>
-                <CardDescription class="truncate">
-                  {{ martialArtTypeLabel(martialArt, enums) }}
-                </CardDescription>
-              </div>
+          <div class="grid gap-2">
+            <div>
+              <CardTitle class="text-2xl">{{ martialArtName(martialArt, enums) }}</CardTitle>
+              <CardDescription class="truncate">
+                {{ martialArtTypeLabel(martialArt, enums) }}
+              </CardDescription>
             </div>
-
-            <Button as-child variant="outline">
-              <NuxtLink to="/martial-arts/">返回武学</NuxtLink>
-            </Button>
           </div>
         </CardHeader>
       </Card>
@@ -161,14 +173,15 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
             <CardTitle>基础信息</CardTitle>
           </CardHeader>
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
-            <div class="flex items-center justify-center rounded-md border border-dashed p-6">
+            <div class="flex w-32 items-center justify-center rounded-md">
               <MartialArtIcon
                 :name="martialArtName(martialArt, enums)"
                 :type-id="martialArt.type_id"
                 :rarity-id="martialArt.rarity_id"
-                :size="96"
+                class="w-full"
               />
             </div>
+            <div class="grid gap-2">
             <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">类型</span>
@@ -252,17 +265,14 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
 
         <Card v-else>
           <CardHeader>
-            <CardTitle>特效</CardTitle>
+            <CardTitle>招式特效</CardTitle>
           </CardHeader>
-          <CardContent class="grid gap-3">
-            <div class="grid gap-2 rounded-md border p-4">
-              <span class="text-sm text-muted-foreground">招式特效</span>
-              <span class="text-sm">{{ martialArtAssetEffectLabel(martialArt.slash_effect_id) }}</span>
-            </div>
-            <div class="grid gap-2 rounded-md border p-4">
-              <span class="text-sm text-muted-foreground">命中特效</span>
-              <span class="text-sm">{{ martialArtAssetEffectLabel(martialArt.hit_effect_id) }}</span>
-            </div>
+          <CardContent class="grid justify-items-center gap-2">
+            <MartialArtEffectPreview
+              :effect="assetEffect('slash', martialArt.slash_effect_id)"
+              :layers="assetEffectPreviewLayers('slash', martialArt.slash_effect_id)"
+              class="w-full max-w-36"
+            />
           </CardContent>
         </Card>
       </div>
@@ -285,7 +295,7 @@ function levelEffectText(level: MartialArtLevelRow, slot: 1 | 2 | 3) {
             <Table class="[&_td]:text-center [&_th]:text-center">
               <TableHeader>
                 <TableRow>
-                  <TableHead rowspan="2">等级</TableHead>
+                  <TableHead rowspan="2">境界</TableHead>
                   <TableHead rowspan="2">威力</TableHead>
                   <TableHead rowspan="2">体力</TableHead>
                   <TableHead rowspan="2">真气恢复</TableHead>

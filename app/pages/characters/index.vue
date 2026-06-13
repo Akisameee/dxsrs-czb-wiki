@@ -10,46 +10,31 @@ import {
   characterName as getCharacterName,
   type CharacterSummaryRow,
 } from "~/lib/wiki/character";
-import { Badge } from "~/components/ui/badge";
-import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
+import WikiCard from "~/components/wiki/WikiCard.vue";
+import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
+import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
 useHead({ title: "人物" });
 
 type Character = CharacterSummaryRow;
 
-const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/character/HoverLink.vue"));
+const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki/character/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const sectFilter = ref("all");
 const regionFilter = ref("all");
 const rarityFilter = ref("all");
 const currentPage = ref(1);
+useWikiIndexRouteQuery({
+  search,
+  page: currentPage,
+  filters: [
+    { key: "sect", value: sectFilter },
+    { key: "region", value: regionFilter },
+    { key: "rarity", value: rarityFilter },
+  ],
+});
 const isSm = useMediaQuery("(min-width: 640px)");
 const isLg = useMediaQuery("(min-width: 1024px)");
 const isXl = useMediaQuery("(min-width: 1280px)");
@@ -84,19 +69,8 @@ function characterInitial(item: Character) {
   return getCharacterInitial(item, enums.value);
 }
 
-function characterCardClass(item: Character) {
-  const base = "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
-  return `${base} ${rarityCardClass(item.rarity_id)}`;
-}
-
 function goToCharacter(item: Character) {
   return navigateTo(characterDetailUrl(item.id));
-}
-
-function handleCharacterKeydown(event: KeyboardEvent, item: Character) {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  event.preventDefault();
-  void goToCharacter(item);
 }
 
 function enumOptions(type: string) {
@@ -108,6 +82,39 @@ function enumOptions(type: string) {
 const sectOptions = computed(() => enumOptions("LianSuo_MP"));
 const regionOptions = computed(() => enumOptions("DiDian"));
 const rarityOptions = computed(() => enumOptions("NPC_Rare"));
+
+const indexFilters = computed(() => [
+  {
+    id: "character-sect",
+    label: "门派",
+    modelValue: sectFilter.value,
+    placeholder: "全部门派",
+    allLabel: "全部门派",
+    options: sectOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "character-region",
+    label: "地点",
+    modelValue: regionFilter.value,
+    placeholder: "全部地点",
+    allLabel: "全部地点",
+    options: regionOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "character-rarity",
+    label: "资质",
+    modelValue: rarityFilter.value,
+    placeholder: "全部资质",
+    allLabel: "全部资质",
+    options: rarityOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+]);
+
+function updateFilter(id: string, value: string) {
+  if (id === "character-sect") sectFilter.value = value;
+  if (id === "character-region") regionFilter.value = value;
+  if (id === "character-rarity") rarityFilter.value = value;
+}
 
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
@@ -127,16 +134,6 @@ const pagedRows = computed(() => {
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)));
 
-watch([search, sectFilter, regionFilter, rarityFilter], () => {
-  currentPage.value = 1;
-});
-
-watch(pageSize, (size, oldSize) => {
-  if (!oldSize) return;
-  const firstVisibleIndex = (currentPage.value - 1) * oldSize;
-  currentPage.value = Math.floor(firstVisibleIndex / size) + 1;
-});
-
 watch(pageCount, (count) => {
   if (currentPage.value > count) currentPage.value = count;
 });
@@ -144,134 +141,49 @@ watch(pageCount, (count) => {
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <Card>
-      <CardHeader>
-        <CardTitle>人物</CardTitle>
-        <CardDescription>
-          {{ pending ? "读取中..." : `共 ${characters.length} 人，当前 ${filteredRows.length} 条` }}
-        </CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="grid gap-2">
-          <Label for="character-search">搜索</Label>
-          <Input id="character-search" v-model="search" type="search" placeholder="搜索人物" />
-        </div>
-        <div class="grid gap-2">
-          <Label for="character-sect">门派</Label>
-          <Select v-model="sectFilter">
-            <SelectTrigger id="character-sect" class="w-full">
-              <SelectValue placeholder="全部门派" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部门派</SelectItem>
-              <SelectItem v-for="option in sectOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="character-region">地点</Label>
-          <Select v-model="regionFilter">
-            <SelectTrigger id="character-region" class="w-full">
-              <SelectValue placeholder="全部地点" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部地点</SelectItem>
-              <SelectItem v-for="option in regionOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="character-rarity">资质</Label>
-          <Select v-model="rarityFilter">
-            <SelectTrigger id="character-rarity" class="w-full">
-              <SelectValue placeholder="全部资质" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部资质</SelectItem>
-              <SelectItem v-for="option in rarityOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-    </Card>
+    <WikiIndexHeader
+      title="人物"
+      :description="pending ? '读取中...' : `共 ${characters.length} 人，当前 ${filteredRows.length} 条`"
+      search-id="character-search"
+      search-placeholder="搜索人物"
+      :search="search"
+      :filters="indexFilters"
+      @update:search="search = $event"
+      @update:filter="updateFilter"
+    />
 
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
-
-    <template v-else>
-      <Pagination
-        v-slot="{ page }"
-        v-model:page="currentPage"
-        :items-per-page="pageSize"
-        :sibling-count="1"
-        :total="filteredRows.length"
-        show-edges
-      >
-        <PaginationContent v-slot="{ items }">
-          <PaginationFirst />
-          <PaginationPrevious />
-          <template v-for="(item, index) in items" :key="index">
-            <PaginationItem
-              v-if="item.type === 'page'"
-              :is-active="item.value === page"
-              :value="item.value"
-            >
-              {{ item.value }}
-            </PaginationItem>
-            <PaginationEllipsis v-else />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationContent>
-      </Pagination>
-
-      <div v-if="pagedRows.length" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <Card
+    <WikiCardGrid
+      v-model:page="currentPage"
+      :error="error"
+      :rows="pagedRows"
+      :total="filteredRows.length"
+      :page-size="pageSize"
+      empty-label="没有匹配的人物"
+    >
+        <WikiCard
           v-for="item in pagedRows"
           :key="item.id"
-          :class="characterCardClass(item)"
           role="link"
-          tabindex="0"
-          @click="goToCharacter(item)"
-          @keydown="handleCharacterKeydown($event, item)"
+          :title="characterName(item)"
+          :description="locationText(item)"
+          :badges="[
+            { label: enumLabel(enums, 'LianSuo_MP', item.sect_id), variant: 'outline' },
+            { label: enumLabel(enums, 'BingQiType', item.weapon_type_id), variant: 'secondary' },
+          ]"
+          :color="rarityCardClass(item.rarity_id)"
+          :on-click="() => goToCharacter(item)"
         >
-          <CardHeader>
-            <div class="flex items-start gap-3">
-              <CharacterPortrait
-                :ids="{ characterId: item.id, portrait: item.portrait }"
-                :fallback="characterInitial(item)"
-                :size="48"
-              />
-
-              <div class="min-w-0 flex-1">
-                <CardTitle class="truncate text-base">{{ characterName(item) }}</CardTitle>
-                <CardDescription class="truncate">{{ locationText(item) }}</CardDescription>
-                <Badge variant="outline" class="mt-2">
-                  {{ enumLabel(enums, "LianSuo_MP", item.sect_id) }}
-                </Badge>
-                <Badge variant="secondary" class="mt-2">
-                  {{ enumLabel(enums, "BingQiType", item.weapon_type_id) }}
-                </Badge>
-              </div>
-
-              <CharacterHoverLink :id="item.id" mode="button" />
-            </div>
-          </CardHeader>
-        </Card>
-      </div>
-
-      <Card v-else>
-        <CardContent class="py-12 text-center text-muted-foreground">
-          没有匹配的人物
-        </CardContent>
-      </Card>
-    </template>
+          <template #avatar>
+            <CharacterPortrait
+              :ids="{ characterId: item.id, portrait: item.portrait }"
+              :fallback="characterInitial(item)"
+              :size="48"
+            />
+          </template>
+          <template #action>
+            <CharacterHoverLink :id="item.id" mode="button" />
+          </template>
+        </WikiCard>
+    </WikiCardGrid>
   </main>
 </template>

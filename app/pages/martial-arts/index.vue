@@ -6,53 +6,37 @@ import { rarityCardClass } from "~/lib/rarity";
 import {
   martialArtRarityToneId,
   martialArtName,
-  martialArtRarityLabel,
   martialArtSectLabel,
   martialArtStyleLabel,
   martialArtTypeLabel,
   type MartialArtStyleRow,
   type MartialArtSummaryRow,
 } from "~/lib/wiki/martial-art";
-import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
+import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
+import WikiCard from "~/components/wiki/WikiCard.vue";
+import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
+import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
 useHead({ title: "武学" });
 
 type MartialArt = MartialArtSummaryRow;
 
-const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/martial-art/HoverLink.vue"));
+const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki/martial-art/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const sectFilter = ref("all");
 const typeFilter = ref("all");
 const rarityFilter = ref("all");
 const currentPage = ref(1);
+useWikiIndexRouteQuery({
+  search,
+  page: currentPage,
+  filters: [
+    { key: "sect", value: sectFilter },
+    { key: "type", value: typeFilter },
+    { key: "rarity", value: rarityFilter },
+  ],
+});
 const isSm = useMediaQuery("(min-width: 640px)");
 const isLg = useMediaQuery("(min-width: 1024px)");
 const isXl = useMediaQuery("(min-width: 1280px)");
@@ -110,6 +94,39 @@ const rarityOptions = computed(() =>
     .map(([id, label]) => ({ id, label: label || id })),
 );
 
+const indexFilters = computed(() => [
+  {
+    id: "martial-art-sect",
+    label: "门派",
+    modelValue: sectFilter.value,
+    placeholder: "全部门派",
+    allLabel: "全部门派",
+    options: sectOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "martial-art-type",
+    label: "类型",
+    modelValue: typeFilter.value,
+    placeholder: "全部类型",
+    allLabel: "全部类型",
+    options: typeOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "martial-art-rarity",
+    label: "稀有度",
+    modelValue: rarityFilter.value,
+    placeholder: "全部稀有度",
+    allLabel: "全部稀有度",
+    options: rarityOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+]);
+
+function updateFilter(id: string, value: string) {
+  if (id === "martial-art-sect") sectFilter.value = value;
+  if (id === "martial-art-type") typeFilter.value = value;
+  if (id === "martial-art-rarity") rarityFilter.value = value;
+}
+
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
   return arts.value.filter((item) => {
@@ -128,24 +145,9 @@ const pagedRows = computed(() => {
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)));
 
-watch([search, sectFilter, typeFilter, rarityFilter], () => {
-  currentPage.value = 1;
-});
-
-watch(pageSize, (size, oldSize) => {
-  if (!oldSize) return;
-  const firstVisibleIndex = (currentPage.value - 1) * oldSize;
-  currentPage.value = Math.floor(firstVisibleIndex / size) + 1;
-});
-
 watch(pageCount, (count) => {
   if (currentPage.value > count) currentPage.value = count;
 });
-
-function martialArtCardClass(item: MartialArt) {
-  const base = "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
-  return `${base} ${rarityCardClass(martialArtRarityToneId(item.rarity_id))}`;
-}
 
 function martialArtUrl(item: MartialArt) {
   return `/martial-arts/detail/?id=${item.id}`;
@@ -161,152 +163,54 @@ function goToMartialArt(item: MartialArt) {
   return navigateTo(martialArtUrl(item));
 }
 
-function handleMartialArtKeydown(event: KeyboardEvent, item: MartialArt) {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  event.preventDefault();
-  void goToMartialArt(item);
-}
 </script>
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <Card>
-      <CardHeader>
-        <CardTitle>武学</CardTitle>
-        <CardDescription>
-          {{ pending ? "读取中..." : `共 ${arts.length} 门武学，当前 ${filteredRows.length} 条` }}
-        </CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="grid gap-2">
-          <Label for="martial-art-search">搜索</Label>
-          <Input id="martial-art-search" v-model="search" type="search" placeholder="搜索武学" />
-        </div>
-        <div class="grid gap-2">
-          <Label for="martial-art-sect">门派</Label>
-          <Select v-model="sectFilter">
-            <SelectTrigger id="martial-art-sect" class="w-full">
-              <SelectValue placeholder="全部门派" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部门派</SelectItem>
-              <SelectItem v-for="option in sectOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="martial-art-type">类型</Label>
-          <Select v-model="typeFilter">
-            <SelectTrigger id="martial-art-type" class="w-full">
-              <SelectValue placeholder="全部类型" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部类型</SelectItem>
-              <SelectItem v-for="option in typeOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="martial-art-rarity">稀有度</Label>
-          <Select v-model="rarityFilter">
-            <SelectTrigger id="martial-art-rarity" class="w-full">
-              <SelectValue placeholder="全部稀有度" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部稀有度</SelectItem>
-              <SelectItem v-for="option in rarityOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-    </Card>
+    <WikiIndexHeader
+      title="武学"
+      :description="pending ? '读取中...' : `共 ${arts.length} 门武学，当前 ${filteredRows.length} 条`"
+      search-id="martial-art-search"
+      search-placeholder="搜索武学"
+      :search="search"
+      :filters="indexFilters"
+      @update:search="search = $event"
+      @update:filter="updateFilter"
+    />
 
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
-
-    <template v-else>
-      <Pagination
-        v-slot="{ page }"
-        v-model:page="currentPage"
-        :items-per-page="pageSize"
-        :sibling-count="1"
-        :total="filteredRows.length"
-        show-edges
-      >
-        <PaginationContent v-slot="{ items }">
-          <PaginationFirst />
-          <PaginationPrevious />
-          <template v-for="(item, index) in items" :key="index">
-            <PaginationItem
-              v-if="item.type === 'page'"
-              :is-active="item.value === page"
-              :value="item.value"
-            >
-              {{ item.value }}
-            </PaginationItem>
-            <PaginationEllipsis v-else />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationContent>
-      </Pagination>
-
-      <div v-if="pagedRows.length" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <Card
+    <WikiCardGrid
+      v-model:page="currentPage"
+      :error="error"
+      :rows="pagedRows"
+      :total="filteredRows.length"
+      :page-size="pageSize"
+      empty-label="没有匹配的武学"
+    >
+        <WikiCard
           v-for="item in pagedRows"
           :key="item.id"
-          :class="martialArtCardClass(item)"
           role="link"
-          tabindex="0"
-          @click="goToMartialArt(item)"
-          @keydown="handleMartialArtKeydown($event, item)"
+          :title="martialArtName(item, enums)"
+          :description="martialArtTypeLabel(item, enums)"
+          :badges="[
+            { label: martialArtSectLabel(item, enums), variant: 'outline' },
+            ...styleLabels(item).map((style) => ({ label: style, variant: 'secondary' as const })),
+          ]"
+          :color="rarityCardClass(item.rarity_id - 1)"
+          :on-click="() => goToMartialArt(item)"
         >
-          <CardHeader>
-            <div class="flex items-start gap-3">
-              <MartialArtIcon
-                :name="martialArtName(item, enums)"
-                :type-id="item.type_id"
-                :rarity-id="item.rarity_id"
-                :size="40"
-              />
-
-              <div class="min-w-0 flex-1">
-                <CardTitle class="truncate text-base">{{ martialArtName(item, enums) }}</CardTitle>
-                <CardDescription class="truncate">
-                  {{ martialArtTypeLabel(item, enums) }}
-                </CardDescription>
-                <div class="mt-2 flex flex-wrap gap-2">
-                  <Badge variant="outline">
-                    {{ martialArtSectLabel(item, enums) }}
-                  </Badge>
-                  <Badge
-                    v-for="style in styleLabels(item)"
-                    :key="style"
-                    variant="secondary"
-                  >
-                    {{ style }}
-                  </Badge>
-                </div>
-              </div>
-
-              <MartialArtHoverLink :id="item.id" mode="button" />
-            </div>
-          </CardHeader>
-        </Card>
-      </div>
-
-      <Card v-else>
-        <CardContent class="py-12 text-center text-muted-foreground">
-          没有匹配的武学
-        </CardContent>
-      </Card>
-    </template>
+          <template #avatar>
+            <MartialArtIcon
+              :name="martialArtName(item, enums)"
+              :type-id="item.type_id"
+              :rarity-id="item.rarity_id"
+              :size="40"
+            />
+          </template>
+          <template #action>
+            <MartialArtHoverLink :id="item.id" mode="button" />
+          </template>
+        </WikiCard>
+    </WikiCardGrid>
   </main>
 </template>

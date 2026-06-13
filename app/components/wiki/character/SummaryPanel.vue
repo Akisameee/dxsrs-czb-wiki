@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterSummary } from "~/lib/wiki/character";
-import { Badge } from "~/components/ui/badge";
-import CharacterPortrait from "~/components/wiki/CharacterPortrait.vue";
+import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
+import WikiSummaryPanel from "~/components/wiki/SummaryPanel.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{
@@ -12,49 +12,46 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="pending" class="text-sm text-muted-foreground">
-    读取中...
-  </div>
-  <div v-else-if="error" class="text-sm text-destructive">
-    {{ error.message }}
-  </div>
-  <div v-else-if="summary" class="grid gap-3">
-    <div class="flex items-start gap-3">
+  <WikiSummaryPanel
+    :summary="summary"
+    :pending="pending"
+    :error="error"
+    empty-label="未找到人物"
+    :title="summary?.name"
+    :description="summary?.location"
+    :badges="summary ? [{ label: summary.rarity, variant: 'outline' }] : []"
+  >
+    <template #avatar="{ summary: currentSummary }">
       <CharacterPortrait
-        :ids="{ characterId: summary.id, portrait: summary.portrait }"
-        :fallback="summary.initial"
+        :ids="{ characterId: currentSummary.id, portrait: currentSummary.portrait }"
+        :fallback="currentSummary.initial"
         :size="48"
       />
-      <div class="min-w-0">
-        <div class="font-medium">{{ summary.name }}</div>
-        <div class="text-sm text-muted-foreground">{{ summary.location }}</div>
-      </div>
-      <Badge variant="outline">{{ summary.rarity }}</Badge>
-    </div>
-
+    </template>
+    <template #default="{ summary: currentSummary }">
     <div class="grid gap-2 text-sm">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">门派</span>
-        <span>{{ summary.sect }}</span>
+        <span>{{ currentSummary.sect }}</span>
       </div>
     </div>
     <div class="grid gap-2 text-sm">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">资质</span>
-        <span>{{ summary.rarity }}</span>
+        <span>{{ currentSummary.rarity }}</span>
       </div>
     </div>
     <div class="grid gap-2 text-sm">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">武器类型</span>
-        <span>{{ summary.weaponType }}</span>
+        <span>{{ currentSummary.weaponType }}</span>
       </div>
     </div>
 
-    <div v-if="summary.quests.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="currentSummary.quests.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">心愿任务</div>
       <div
-        v-for="quest in summary.quests"
+        v-for="quest in currentSummary.quests"
         :key="quest.id"
       >
         <span class="text-muted-foreground">阶段 {{ quest.stage }}：</span>
@@ -64,8 +61,6 @@ defineProps<{
     <div v-else class="border-t pt-3 text-sm text-muted-foreground">
       无心愿任务
     </div>
-  </div>
-  <div v-else class="text-sm text-muted-foreground">
-    未找到人物
-  </div>
+    </template>
+  </WikiSummaryPanel>
 </template>

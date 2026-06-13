@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .builders.asset_effects import AssetEffectBuilder
 from .builders.characters import CharacterBuilder
 from .builders.custom_martial import CustomMartialBuilder
 from .builders.enums import EnumBuilder
@@ -23,6 +24,7 @@ def build_rows_from_source(source: Path, enum_source: Path) -> dict[str, list[di
         CharacterBuilder(ctx),
         ItemBuilder(ctx),
         MartialArtBuilder(ctx),
+        AssetEffectBuilder(ctx),
         PortraitBuilder(ctx),
         CustomMartialBuilder(ctx),
     ]:

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { MartialArtSummary } from "~/lib/wiki/martial-art";
 import { Badge } from "~/components/ui/badge";
-import MartialArtIcon from "~/components/wiki/MartialArtIcon.vue";
+import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
+import WikiSummaryPanel from "~/components/wiki/SummaryPanel.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{
@@ -12,37 +13,34 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="pending" class="text-sm text-muted-foreground">
-    读取中...
-  </div>
-  <div v-else-if="error" class="text-sm text-destructive">
-    {{ error.message }}
-  </div>
-  <div v-else-if="summary" class="grid gap-3">
-    <div class="flex items-start gap-3">
+  <WikiSummaryPanel
+    :summary="summary"
+    :pending="pending"
+    :error="error"
+    empty-label="未找到武学"
+    :title="summary?.name"
+    :description="summary?.type"
+    :badges="summary ? [{ label: summary.rarity, variant: 'outline' }] : []"
+  >
+    <template #avatar="{ summary: currentSummary }">
       <MartialArtIcon
-        :name="summary.name"
-        :type-id="summary.typeId"
-        :rarity-id="summary.rarityRawId"
+        :name="currentSummary.name"
+        :type-id="currentSummary.typeId"
+        :rarity-id="currentSummary.rarityRawId"
         :size="40"
       />
-      <div class="min-w-0">
-        <div class="font-medium">{{ summary.name }}</div>
-        <div class="text-sm text-muted-foreground">{{ summary.type }}</div>
-      </div>
-      <Badge variant="outline">{{ summary.rarity }}</Badge>
-    </div>
-
+    </template>
+    <template #default="{ summary: currentSummary }">
     <div class="grid gap-2 text-sm">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">门派</span>
-        <span class="tabular-nums">{{ summary.sect }}</span>
+        <span class="tabular-nums">{{ currentSummary.sect }}</span>
       </div>
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">风格</span>
         <div class="flex flex-wrap justify-end gap-2">
           <Badge
-            v-for="style in summary.styles"
+            v-for="style in currentSummary.styles"
             :key="style"
             variant="secondary"
           >
@@ -56,16 +54,16 @@ defineProps<{
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">获取</span>
         <span class="min-w-0 flex-1 text-right">
-          <WikiText :parts="summary.obtainMethodParts" />
+          <WikiText :parts="currentSummary.obtainMethodParts" />
         </span>
       </div>
     </div>
 
-    <div v-if="summary.effects.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="currentSummary.effects.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">效果</div>
       <div class="grid gap-1">
         <div
-          v-for="effect in summary.effects"
+          v-for="effect in currentSummary.effects"
           :key="effect.id"
           class="rounded-md border px-3 py-2"
         >
@@ -74,11 +72,11 @@ defineProps<{
       </div>
     </div>
 
-    <div v-if="summary.passives.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="currentSummary.passives.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">被动</div>
       <div class="grid gap-1">
         <div
-          v-for="passive in summary.passives"
+          v-for="passive in currentSummary.passives"
           :key="passive"
           class="rounded-md border px-3 py-2"
         >
@@ -86,8 +84,6 @@ defineProps<{
         </div>
       </div>
     </div>
-  </div>
-  <div v-else class="text-sm text-muted-foreground">
-    未找到武学
-  </div>
+    </template>
+  </WikiSummaryPanel>
 </template>

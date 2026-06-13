@@ -3,6 +3,8 @@ import {
   buildMartialArtSummary,
   martialArtPassiveTemplateMap,
   type MartialArtEffectRow,
+  type MartialArtAssetEffectLayerRow,
+  type MartialArtAssetEffectRow,
   type MartialArtLevelRow,
   type MartialArtPassiveTemplateMap,
   type MartialArtPassiveTemplateRow,
@@ -18,6 +20,8 @@ export type MartialArtDetailData = {
   martialArt: MartialArtSummaryRow | null;
   styles: MartialArtStyleRow[];
   effects: MartialArtEffectRow[];
+  assetEffects: MartialArtAssetEffectRow[];
+  assetEffectLayers: MartialArtAssetEffectLayerRow[];
   levels: MartialArtLevelRow[];
   passiveTemplates: MartialArtPassiveTemplateMap;
   enums: WikiEnums;
@@ -82,6 +86,51 @@ export function useMartialArtData() {
     );
   }
 
+  async function loadMartialArtAssetEffects(martialArt: MartialArtSummaryRow | null) {
+    const slashEffectId = Number(martialArt?.slash_effect_id);
+    const hitEffectId = Number(martialArt?.hit_effect_id);
+    const pairs = [
+      Number.isFinite(slashEffectId) && slashEffectId !== 999 ? { kind: "slash", id: slashEffectId } : null,
+      Number.isFinite(hitEffectId) && hitEffectId !== 999 ? { kind: "hit", id: hitEffectId } : null,
+    ].filter((item): item is { kind: "slash" | "hit"; id: number } => Boolean(item));
+
+    if (!pairs.length) return { assetEffects: [], assetEffectLayers: [] };
+
+    const conditions = pairs.map(() => "(kind = ? AND effect_id = ?)").join(" OR ");
+    const params = pairs.flatMap((pair) => [pair.kind, pair.id]);
+    const assetEffects = await queryRows<MartialArtAssetEffectRow>(
+      `SELECT kind, effect_id, array_name, array_index, prefab_source, prefab_path_id, prefab_name,
+        primary_texture_source, primary_texture_path_id, primary_texture_name, duration, layer_count
+       FROM asset_effects
+       WHERE ${conditions}
+       ORDER BY kind, effect_id`,
+      params,
+    );
+    const assetEffectLayers = await queryRows<MartialArtAssetEffectLayerRow>(
+      `SELECT kind, effect_id, layer_index, texture_slot, game_object_name, depth,
+        particle_system_path_id, renderer_path_id, renderer_type, sorting_order, material_name,
+        texture_property, texture_source, texture_path_id, texture_name, texture_width,
+        texture_height, duration, simulation_speed, looping, uv_enabled, tiles_x, tiles_y,
+        frame_count, fps, cycles, row_mode, row_index, start_frame, frame_curve, start_size,
+        start_lifetime, start_lifetime_curve, start_speed, start_speed_curve, start_color,
+        start_rotation, gravity_modifier, gravity_modifier_curve, max_particles, size_curve,
+        color_gradient, rotation_enabled, rotation_curve, burst_count, emission_rate,
+        emission_rate_curve, emission_bursts, shape_enabled, shape_type, shape_angle,
+        shape_radius, shape_arc, shape_length, shape_position_x, shape_position_y,
+        shape_position_z, shape_rotation_x, shape_rotation_y, shape_rotation_z,
+        shape_scale_x, shape_scale_y, shape_scale_z, random_direction_amount,
+        spherical_direction_amount, random_position_amount, velocity_enabled, velocity_x,
+        velocity_y, velocity_z, velocity_radial, velocity_orbital_x, velocity_orbital_y,
+        velocity_orbital_z, force_enabled, force_x, force_y, force_z
+       FROM asset_effect_layers
+       WHERE ${conditions}
+       ORDER BY kind, effect_id, sorting_order, layer_index, texture_slot`,
+      params,
+    );
+
+    return { assetEffects, assetEffectLayers };
+  }
+
   async function loadMartialArtDetail(id: number): Promise<MartialArtDetailData> {
     if (detailCache.has(id)) return detailCache.get(id)!;
 
@@ -93,8 +142,9 @@ export function useMartialArtData() {
       loadPassiveTemplates(),
       loadEnums(),
     ]);
+    const { assetEffects, assetEffectLayers } = await loadMartialArtAssetEffects(martialArt);
 
-    const detail = { martialArt, styles, effects, levels, passiveTemplates, enums };
+    const detail = { martialArt, styles, effects, assetEffects, assetEffectLayers, levels, passiveTemplates, enums };
     detailCache.set(id, detail);
     return detail;
   }
@@ -123,6 +173,7 @@ export function useMartialArtData() {
     loadMartialArt,
     loadMartialArtStyles,
     loadMartialArtEffects,
+    loadMartialArtAssetEffects,
     loadMartialArtLevels,
     loadMartialArtDetail,
     loadMartialArtSummary,

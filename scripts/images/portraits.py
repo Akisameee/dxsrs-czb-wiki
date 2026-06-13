@@ -5,7 +5,7 @@ import struct
 from pathlib import Path
 from typing import Any
 
-from .image_export import (
+from .unity_assets import (
     combine_path_id,
     file_for_pointer,
     iter_asset_files,

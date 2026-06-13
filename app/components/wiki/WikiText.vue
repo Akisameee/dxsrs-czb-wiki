@@ -2,9 +2,9 @@
 import { defineAsyncComponent } from "vue";
 import type { WikiTextPart } from "~/lib/wiki/text";
 
-const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/character/HoverLink.vue"));
-const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/item/HoverLink.vue"));
-const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/martial-art/HoverLink.vue"));
+const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki/character/HoverLink.vue"));
+const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki/item/HoverLink.vue"));
+const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki/martial-art/HoverLink.vue"));
 
 defineProps<{
   parts: WikiTextPart[];

@@ -8,8 +8,24 @@ const props = withDefaults(defineProps<{
   rarityId: number | string | null | undefined;
   size?: number;
   class?: string;
-}>(), {
-  size: 80,
+}>(), {});
+
+const root = ref<HTMLElement | null>(null);
+const measuredSize = ref(80);
+let resizeObserver: ResizeObserver | null = null;
+
+onMounted(() => {
+  resizeObserver = new ResizeObserver(([entry]) => {
+    const width = entry?.contentRect.width;
+    if (width && Number.isFinite(width)) {
+      measuredSize.value = width;
+    }
+  });
+  if (root.value) resizeObserver.observe(root.value);
+});
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
 });
 
 const typeIconNames: Record<number, string> = {
@@ -32,14 +48,15 @@ const typeIconName = computed(() => {
   const value = Number(props.typeId);
   return Number.isFinite(value) ? typeIconNames[value] || null : null;
 });
+const fallbackText = computed(() => props.name.slice(0, 1));
 
-const rootStyle = computed(() => ({
-  width: `${props.size}px`,
-  height: `${props.size}px`,
-}));
+const currentSize = computed(() => props.size || measuredSize.value);
+const rootStyle = computed(() => props.size
+  ? { width: `${props.size}px`, height: `${props.size}px` }
+  : { width: "100%", aspectRatio: "1 / 1" });
 
-const iconSize = computed(() => Math.round(props.size * 0.3));
-const textSize = computed(() => Math.round(props.size * 0.12));
+const iconSize = computed(() => Math.round(currentSize.value * 0.3));
+const textSize = computed(() => Math.round(currentSize.value * 0.12));
 const typeIconStyle = {
   filter: "brightness(0) saturate(100%) invert(15%) sepia(90%) saturate(3600%) hue-rotate(350deg) brightness(60%) contrast(100%)",
 };
@@ -47,6 +64,7 @@ const typeIconStyle = {
 
 <template>
   <span
+    ref="root"
     role="img"
     :aria-label="name"
     :class="cn('relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden', props.class)"
@@ -55,7 +73,8 @@ const typeIconStyle = {
     <GameImage
       :name="bookName"
       :alt="name"
-      :size="size"
+      :fallback="fallbackText"
+      :size="currentSize"
       fit="trim"
       class="absolute inset-0"
     />

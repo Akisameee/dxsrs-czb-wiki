@@ -6,7 +6,6 @@ import {
 import { useItemData } from "~/composables/useItemData";
 import GameImage from "~/components/wiki/GameImage.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -104,11 +103,13 @@ const rawValueRows = computed(() => {
             <CardTitle>基础信息</CardTitle>
           </CardHeader>
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
-            <div class="flex items-center justify-center rounded-md border border-dashed p-6">
-              <Avatar class="size-20 text-2xl">
-                <GameImage v-if="summary.icon" :name="summary.icon" :alt="summary.name" :size="80" />
-                <AvatarFallback v-else>{{ summary.initial }}</AvatarFallback>
-              </Avatar>
+            <div class="flex w-32 items-center justify-center rounded-md">
+              <GameImage
+                :name="summary.icon"
+                :alt="summary.name"
+                :fallback="summary.initial"
+                class="w-full text-2xl"
+              />
             </div>
             <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
               <div class="flex items-start justify-between gap-3">

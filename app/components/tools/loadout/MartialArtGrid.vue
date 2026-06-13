@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 import { rarityCardClass } from "~/lib/rarity";
 import type { SelectableMartialArt } from "./types";
-import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
+import WikiCard from "~/components/wiki/WikiCard.vue";
+import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 
-const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/martial-art/HoverLink.vue"));
+const MartialArtHoverLink = defineAsyncComponent(() => import("~/components/wiki/martial-art/HoverLink.vue"));
 
 const props = defineProps<{
   errorMessage: string;
@@ -25,75 +21,73 @@ const emit = defineEmits<{
   toggleMartialArt: [item: SelectableMartialArt, checked?: boolean];
 }>();
 
-function handleCardKeydown(event: KeyboardEvent, item: SelectableMartialArt) {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  event.preventDefault();
-  emit("toggleMartialArt", item);
-}
+const currentPage = ref(1);
+const isSm = useMediaQuery("(min-width: 640px)");
+const isLg = useMediaQuery("(min-width: 1024px)");
+const gridColumns = computed(() => {
+  if (isLg.value) return 3;
+  if (isSm.value) return 2;
+  return 1;
+});
+const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
+const pageCount = computed(() => Math.max(1, Math.ceil(props.rows.length / pageSize.value)));
+const pagedRows = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  return props.rows.slice(start, start + pageSize.value);
+});
 
-function cardClass(item: SelectableMartialArt) {
-  const classes = [
-    "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md",
-    "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
-    rarityCardClass(item.rarityToneId),
-  ];
-  if (props.isSelected(item)) classes.push("ring-2 ring-primary");
-  if (!props.canSelect(item)) classes.push("opacity-50");
-  return classes.join(" ");
-}
+watch(() => props.rows, () => {
+  currentPage.value = 1;
+});
+
+watch(pageSize, (size, oldSize) => {
+  if (!oldSize) return;
+  const firstVisibleIndex = (currentPage.value - 1) * oldSize;
+  currentPage.value = Math.floor(firstVisibleIndex / size) + 1;
+});
+
+watch(pageCount, (count) => {
+  if (currentPage.value > count) currentPage.value = count;
+});
 </script>
 
 <template>
-  <Card v-if="errorMessage">
-    <CardContent class="py-6 text-destructive">{{ errorMessage }}</CardContent>
-  </Card>
-
-  <Card v-else-if="rows.length === 0">
-    <CardContent class="py-12 text-center text-muted-foreground">
-      没有匹配的武学
-    </CardContent>
-  </Card>
-
-  <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    <Card
-      v-for="item in rows"
+  <WikiCardGrid
+    v-model:page="currentPage"
+    :error="errorMessage"
+    :rows="pagedRows"
+    :total="rows.length"
+    :page-size="pageSize"
+    empty-label="没有匹配的武学"
+    grid-class="xl:grid-cols-3"
+  >
+    <WikiCard
+      v-for="item in pagedRows"
       :key="item.id"
-      :class="cardClass(item)"
       role="button"
-      tabindex="0"
-      :aria-disabled="!canSelect(item)"
-      :title="disabledReason(item) || item.name"
-      @click="emit('toggleMartialArt', item)"
-      @keydown="handleCardKeydown($event, item)"
+      :title="item.name"
+      :description="item.type"
+      :badges="[
+        { label: item.sect, variant: 'outline' },
+        ...item.styles.map((style) => ({ label: style, variant: 'secondary' as const })),
+      ]"
+      :color="rarityCardClass(item.rarityToneId)"
+      :selected="isSelected(item)"
+      :disabled="!canSelect(item)"
+      :title-attr="disabledReason(item) || item.name"
+      :on-click="() => emit('toggleMartialArt', item)"
     >
-      <CardHeader>
-        <div class="flex items-start gap-3">
-          <div class="flex size-10 shrink-0 items-center justify-center rounded-full border text-sm font-medium text-muted-foreground">
-            {{ item.initial }}
-          </div>
-
-          <div class="min-w-0 flex-1">
-            <CardTitle class="truncate text-base">{{ item.name }}</CardTitle>
-            <CardDescription class="truncate">
-              {{ item.type }}
-            </CardDescription>
-            <div class="mt-2 flex flex-wrap gap-2">
-              <Badge variant="outline">{{ item.sect }}</Badge>
-              <Badge
-                v-for="style in item.styles"
-                :key="style"
-                variant="secondary"
-              >
-                {{ style }}
-              </Badge>
-            </div>
-          </div>
-
-          <div class="flex shrink-0 items-center gap-1">
-            <MartialArtHoverLink :id="item.id" mode="button" />
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
-  </div>
+      <template #avatar>
+        <MartialArtIcon
+          :name="item.name"
+          :type-id="item.typeId"
+          :rarity-id="item.rare"
+          :size="40"
+        />
+      </template>
+      <template #action>
+        <MartialArtHoverLink :id="item.id" mode="button" />
+      </template>
+    </WikiCard>
+  </WikiCardGrid>
 </template>

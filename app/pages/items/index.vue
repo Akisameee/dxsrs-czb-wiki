@@ -6,54 +6,35 @@ import { rarityCardClass } from "~/lib/rarity";
 import {
   itemDetailUrl,
   itemInitial,
-  itemMaterialText,
   itemName,
-  itemRarityLabel,
-  itemRarityToneId,
   itemTypeLabel,
   type ItemSummaryRow,
 } from "~/lib/wiki/item";
 import GameImage from "~/components/wiki/GameImage.vue";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+import WikiCard from "~/components/wiki/WikiCard.vue";
+import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
+import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
 useHead({ title: "道具" });
 
 type Item = ItemSummaryRow;
 
-const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki-summary/item/HoverLink.vue"));
+const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki/item/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const typeFilter = ref("all");
 const rarityFilter = ref("all");
 const materialFilter = ref("all");
 const currentPage = ref(1);
+useWikiIndexRouteQuery({
+  search,
+  page: currentPage,
+  filters: [
+    { key: "type", value: typeFilter },
+    { key: "rarity", value: rarityFilter },
+    { key: "material", value: materialFilter },
+  ],
+});
 const isSm = useMediaQuery("(min-width: 640px)");
 const isLg = useMediaQuery("(min-width: 1024px)");
 const isXl = useMediaQuery("(min-width: 1280px)");
@@ -92,6 +73,43 @@ function enumOptions(type: string) {
 
 const typeOptions = computed(() => enumOptions("ItemType"));
 const rarityOptions = computed(() => enumOptions("ItemRare"));
+const materialOptions = [
+  { value: "1", label: "仅材料" },
+  { value: "0", label: "非材料" },
+];
+
+const indexFilters = computed(() => [
+  {
+    id: "item-type",
+    label: "类型",
+    modelValue: typeFilter.value,
+    placeholder: "全部类型",
+    allLabel: "全部类型",
+    options: typeOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "item-rarity",
+    label: "稀有度",
+    modelValue: rarityFilter.value,
+    placeholder: "全部稀有度",
+    allLabel: "全部稀有度",
+    options: rarityOptions.value.map((option) => ({ value: option.id, label: option.label })),
+  },
+  {
+    id: "item-material",
+    label: "材料",
+    modelValue: materialFilter.value,
+    placeholder: "全部道具",
+    allLabel: "全部道具",
+    options: materialOptions,
+  },
+]);
+
+function updateFilter(id: string, value: string) {
+  if (id === "item-type") typeFilter.value = value;
+  if (id === "item-rarity") rarityFilter.value = value;
+  if (id === "item-material") materialFilter.value = value;
+}
 
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
@@ -111,158 +129,57 @@ const pagedRows = computed(() => {
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)));
 
-watch([search, typeFilter, rarityFilter, materialFilter], () => {
-  currentPage.value = 1;
-});
-
-watch(pageSize, (size, oldSize) => {
-  if (!oldSize) return;
-  const firstVisibleIndex = (currentPage.value - 1) * oldSize;
-  currentPage.value = Math.floor(firstVisibleIndex / size) + 1;
-});
-
 watch(pageCount, (count) => {
   if (currentPage.value > count) currentPage.value = count;
 });
 
-function itemCardClass(item: Item) {
-  const base = "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
-  return `${base} ${rarityCardClass(itemRarityToneId(item.rarity_id))}`;
-}
-
 function goToItem(item: Item) {
   return navigateTo(itemDetailUrl(item.id));
-}
-
-function handleItemKeydown(event: KeyboardEvent, item: Item) {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  event.preventDefault();
-  void goToItem(item);
 }
 </script>
 
 <template>
   <main class="container mx-auto grid gap-6 p-6">
-    <Card>
-      <CardHeader>
-        <CardTitle>道具</CardTitle>
-        <CardDescription>
-          {{ pending ? "读取中..." : `共 ${items.length} 个道具，当前 ${filteredRows.length} 条` }}
-        </CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="grid gap-2">
-          <Label for="item-search">搜索</Label>
-          <Input id="item-search" v-model="search" type="search" placeholder="搜索道具" />
-        </div>
-        <div class="grid gap-2">
-          <Label for="item-type">类型</Label>
-          <Select v-model="typeFilter">
-            <SelectTrigger id="item-type" class="w-full">
-              <SelectValue placeholder="全部类型" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部类型</SelectItem>
-              <SelectItem v-for="option in typeOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="item-rarity">稀有度</Label>
-          <Select v-model="rarityFilter">
-            <SelectTrigger id="item-rarity" class="w-full">
-              <SelectValue placeholder="全部稀有度" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部稀有度</SelectItem>
-              <SelectItem v-for="option in rarityOptions" :key="option.id" :value="option.id">
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="grid gap-2">
-          <Label for="item-material">材料</Label>
-          <Select v-model="materialFilter">
-            <SelectTrigger id="item-material" class="w-full">
-              <SelectValue placeholder="全部道具" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部道具</SelectItem>
-              <SelectItem value="1">仅材料</SelectItem>
-              <SelectItem value="0">非材料</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-    </Card>
+    <WikiIndexHeader
+      title="道具"
+      :description="pending ? '读取中...' : `共 ${items.length} 个道具，当前 ${filteredRows.length} 条`"
+      search-id="item-search"
+      search-placeholder="搜索道具"
+      :search="search"
+      :filters="indexFilters"
+      @update:search="search = $event"
+      @update:filter="updateFilter"
+    />
 
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
-
-    <template v-else>
-      <Pagination
-        v-slot="{ page }"
-        v-model:page="currentPage"
-        :items-per-page="pageSize"
-        :sibling-count="1"
-        :total="filteredRows.length"
-        show-edges
-      >
-        <PaginationContent v-slot="{ items: pageItems }">
-          <PaginationFirst />
-          <PaginationPrevious />
-          <template v-for="(pageItem, index) in pageItems" :key="index">
-            <PaginationItem
-              v-if="pageItem.type === 'page'"
-              :is-active="pageItem.value === page"
-              :value="pageItem.value"
-            >
-              {{ pageItem.value }}
-            </PaginationItem>
-            <PaginationEllipsis v-else />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationContent>
-      </Pagination>
-
-      <div v-if="pagedRows.length" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <Card
+    <WikiCardGrid
+      v-model:page="currentPage"
+      :error="error"
+      :rows="pagedRows"
+      :total="filteredRows.length"
+      :page-size="pageSize"
+      empty-label="没有匹配的道具"
+    >
+        <WikiCard
           v-for="item in pagedRows"
           :key="item.id"
-          :class="itemCardClass(item)"
           role="link"
-          tabindex="0"
-          @click="goToItem(item)"
-          @keydown="handleItemKeydown($event, item)"
+          :title="itemName(item, enums)"
+          :description="itemTypeLabel(item, enums)"
+          :color="rarityCardClass(item.rarity_id)"
+          :on-click="() => goToItem(item)"
         >
-          <CardHeader>
-            <div class="flex items-start gap-3">
-              <Avatar size="lg">
-                <GameImage v-if="item.icon" :name="item.icon" :alt="itemName(item, enums)" :size="40" />
-                <AvatarFallback v-else>{{ itemInitial(item, enums) }}</AvatarFallback>
-              </Avatar>
-
-              <div class="min-w-0 flex-1">
-                <CardTitle class="truncate text-base">{{ itemName(item, enums) }}</CardTitle>
-                <CardDescription class="truncate">{{ itemTypeLabel(item, enums) }}</CardDescription>
-              </div>
-
-              <ItemHoverLink :id="item.id" mode="button" />
-            </div>
-          </CardHeader>
-        </Card>
-      </div>
-
-      <Card v-else>
-        <CardContent class="py-12 text-center text-muted-foreground">
-          没有匹配的道具
-        </CardContent>
-      </Card>
-    </template>
+          <template #avatar>
+            <GameImage
+              :name="item.icon"
+              :alt="itemName(item, enums)"
+              :fallback="itemInitial(item, enums)"
+              :size="40"
+            />
+          </template>
+          <template #action>
+            <ItemHoverLink :id="item.id" mode="button" />
+          </template>
+        </WikiCard>
+    </WikiCardGrid>
   </main>
 </template>
