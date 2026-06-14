@@ -10,17 +10,23 @@ from .builders.enums import EnumBuilder
 from .builders.items import ItemBuilder
 from .builders.martial_arts import MartialArtBuilder
 from .builders.portraits import PortraitBuilder
+from .builders.sects import SectBuilder
 from .context import BuildContext
 from .paths import DEFAULT_ENUM_SOURCE, DEFAULT_SOURCE, OUTPUT, ROOT
 from .schema import INDEXES, TABLES
 from .writer import write_sqlite
 
 
-def build_rows_from_source(source: Path, enum_source: Path) -> dict[str, list[dict[str, Any]]]:
-    ctx = BuildContext.from_source(source, enum_source)
+def build_rows_from_source(
+    source: Path,
+    enum_source: Path,
+    image_id_by_name: dict[str, str] | None = None,
+) -> dict[str, list[dict[str, Any]]]:
+    ctx = BuildContext.from_source(source, enum_source, image_id_by_name=image_id_by_name)
     rows_by_table: dict[str, list[dict[str, Any]]] = {}
     for builder in [
         EnumBuilder(ctx),
+        SectBuilder(ctx),
         CharacterBuilder(ctx),
         ItemBuilder(ctx),
         MartialArtBuilder(ctx),
@@ -43,8 +49,9 @@ def build_sqlite(
     source: Path = DEFAULT_SOURCE,
     enum_source: Path = DEFAULT_ENUM_SOURCE,
     output: Path = OUTPUT,
+    image_id_by_name: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    rows_by_table = build_rows_from_source(source, enum_source)
+    rows_by_table = build_rows_from_source(source, enum_source, image_id_by_name=image_id_by_name)
     counts = write_sqlite(output=output, tables=TABLES, indexes=INDEXES, rows_by_table=rows_by_table)
     return {
         "source": relative_to_root(source),

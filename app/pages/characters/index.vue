@@ -49,18 +49,25 @@ const gridColumns = computed(() => {
 const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
 
 const { data, pending, error } = await useAsyncData("characters-index", async () => {
-  const [characters, enumRows] = await Promise.all([
-    queryRows<Character>("SELECT * FROM characters ORDER BY id"),
+  const [characters, sects, enumRows] = await Promise.all([
+    queryRows<Character>(
+      `SELECT c.*, s.name AS sect_name
+       FROM characters c
+       LEFT JOIN sects s ON s.id = c.sect_id
+       ORDER BY c.id`,
+    ),
+    queryRows<{ id: number; name: string | null }>("SELECT id, name FROM sects ORDER BY id"),
     queryRows<{ type: string; id: number; label: string | null }>("SELECT type, id, label FROM enums ORDER BY type, id"),
   ]);
-  return { characters, enums: enumMapFromRows(enumRows) };
+  return { characters, sects, enums: enumMapFromRows(enumRows) };
 }, { server: false });
 
 const enums = computed(() => data.value?.enums || {});
 const characters = computed(() => data.value?.characters || []);
+const sects = computed(() => data.value?.sects || []);
 
 function characterName(item: Character) {
-  return getCharacterName(item, enums.value);
+  return getCharacterName(item);
 }
 
 function locationText(item: Character) {
@@ -68,7 +75,7 @@ function locationText(item: Character) {
 }
 
 function characterInitial(item: Character) {
-  return getCharacterInitial(item, enums.value);
+  return getCharacterInitial(item);
 }
 
 function goToCharacter(item: Character) {
@@ -81,7 +88,9 @@ function enumOptions(type: string) {
     .map(([id, label]) => ({ id, label: label || id }));
 }
 
-const sectOptions = computed(() => enumOptions("LianSuo_MP"));
+const sectOptions = computed(() => sects.value
+  .filter((row) => row.name)
+  .map((row) => ({ id: String(row.id), label: row.name || String(row.id) })));
 const regionOptions = computed(() => enumOptions("DiDian"));
 const rarityOptions = computed(() => enumOptions("NPC_Rare"));
 
@@ -184,7 +193,7 @@ watch(pageCount, (count) => {
           <template #badges>
             <SectHoverLink
               :id="item.sect_id"
-              :label="enumLabel(enums, 'LianSuo_MP', item.sect_id)"
+              :label="item.sect_name || '无门派'"
             />
             <Badge variant="secondary">
               {{ enumLabel(enums, 'BingQiType', item.weapon_type_id) }}

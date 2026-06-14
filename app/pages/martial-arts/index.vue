@@ -45,13 +45,18 @@ const gridColumns = computed(() => {
 const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
 
 const { data, pending, error } = await useAsyncData("martial-arts-index", async () => {
-  const [arts, styles, enumRows] = await Promise.all([
+  const [arts, styles, sects, enumRows] = await Promise.all([
     queryRows<MartialArtSummaryRow>(
-      "SELECT id, sect_id, type_id, rarity_id, power, cost, obtain_method, is_sect_restricted FROM martial_arts ORDER BY id",
+      `SELECT art.id, art.name, art.sect_id, sect.name AS sect_name, art.type_id, art.rarity_id,
+        art.power, art.cost, art.obtain_method, art.is_sect_restricted
+       FROM martial_arts art
+       LEFT JOIN sects sect ON sect.id = art.sect_id
+       ORDER BY art.id`,
     ),
     queryRows<MartialArtStyleRow>(
       "SELECT martial_art_id, slot, style_id FROM martial_art_styles ORDER BY martial_art_id, slot",
     ),
+    queryRows<{ id: number; name: string | null }>("SELECT id, name FROM sects ORDER BY id"),
     queryRows<{ type: string; id: number; label: string | null }>(
       "SELECT type, id, label FROM enums ORDER BY type, id",
     ),
@@ -61,11 +66,13 @@ const { data, pending, error } = await useAsyncData("martial-arts-index", async 
     enums: enumMapFromRows(enumRows),
     arts,
     styles,
+    sects,
   };
 }, { server: false });
 
 const enums = computed(() => data.value?.enums || {});
 const arts = computed(() => data.value?.arts || []);
+const sects = computed(() => data.value?.sects || []);
 const stylesByMartialArt = computed(() => {
   const rows = new Map<number, MartialArtStyleRow[]>();
   for (const style of data.value?.styles || []) {
@@ -82,7 +89,9 @@ function enumOptions(type: string) {
     .map(([id, label]) => ({ id, label: label || id }));
 }
 
-const sectOptions = computed(() => enumOptions("LianSuo_MP"));
+const sectOptions = computed(() => sects.value
+  .filter((row) => row.name)
+  .map((row) => ({ id: String(row.id), label: row.name || String(row.id) })));
 const typeOptions = computed(() => enumOptions("BingQiType"));
 const rarityOptions = computed(() =>
   Object.entries(enums.value.WuGongRare || {})
@@ -126,7 +135,7 @@ function updateFilter(id: string, value: string) {
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
   return arts.value.filter((item) => {
-    if (keyword && !martialArtName(item, enums.value).toLowerCase().includes(keyword)) return false;
+    if (keyword && !martialArtName(item).toLowerCase().includes(keyword)) return false;
     if (sectFilter.value !== "all" && String(item.sect_id) !== sectFilter.value) return false;
     if (typeFilter.value !== "all" && String(item.type_id) !== typeFilter.value) return false;
     if (rarityFilter.value !== "all" && String(martialArtRarityToneId(item.rarity_id)) !== rarityFilter.value) return false;
@@ -190,13 +199,13 @@ function goToMartialArt(item: MartialArt) {
           :key="item.id"
           role="link"
           :id="item.id"
-          :name="martialArtName(item, enums)"
+          :name="martialArtName(item)"
           :type="martialArtTypeLabel(item, enums)"
           :type-id="item.type_id"
           :rarity-id="item.rarity_id"
           :rarity-tone-id="martialArtRarityToneId(item.rarity_id)"
           :sect-id="item.sect_id"
-          :sect-label="martialArtSectLabel(item, enums)"
+          :sect-label="martialArtSectLabel(item)"
           :styles="styleItems(item)"
           :on-click="() => goToMartialArt(item)"
         />

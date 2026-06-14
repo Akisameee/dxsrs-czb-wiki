@@ -1,4 +1,3 @@
-import { enumMapFromRows } from "~/lib/utils";
 import {
   buildMartialArtSummary,
   martialArtPassiveTemplateMap,
@@ -13,8 +12,7 @@ import {
   type MartialArtSummaryRow,
   type WikiEnums,
 } from "~/lib/wiki/martial-art";
-
-type EnumRow = { type: string; id: number; label: string | null };
+import { linkCharactersInText, type WikiTextPart } from "~/lib/wiki/text";
 
 export type MartialArtDetailData = {
   martialArt: MartialArtSummaryRow | null;
@@ -25,39 +23,70 @@ export type MartialArtDetailData = {
   levels: MartialArtLevelRow[];
   passiveTemplates: MartialArtPassiveTemplateMap;
   enums: WikiEnums;
+  obtainMethodParts: WikiTextPart[];
 };
+
+export type MartialArtFindQuery =
+  | { id: number }
+  | { name: string }
+  | { legacyName: string };
 
 const summaryCache = new Map<number, MartialArtSummary | null>();
 const detailCache = new Map<number, MartialArtDetailData>();
-let enumsPromise: Promise<WikiEnums> | null = null;
+const martialArtFindCache = new Map<string, MartialArtSummaryRow | null>();
 let passiveTemplatesPromise: Promise<MartialArtPassiveTemplateMap> | null = null;
 
 export function useMartialArtData() {
   const { queryRows } = useWikiDb();
-
-  async function loadEnums() {
-    enumsPromise ||= queryRows<EnumRow>("SELECT type, id, label FROM enums ORDER BY type, id")
-      .then((rows) => enumMapFromRows(rows));
-    return enumsPromise;
-  }
+  const { loadWikiEnums } = useWikiEnums();
 
   async function loadPassiveTemplates() {
     passiveTemplatesPromise ||= queryRows<PassiveRow>(
-      "SELECT id, template, icon FROM passives",
+      "SELECT id, template, image_id FROM passives",
     ).then((rows) => martialArtPassiveTemplateMap(rows));
     return passiveTemplatesPromise;
   }
 
   async function loadMartialArt(id: number) {
     const rows = await queryRows<MartialArtSummaryRow>(
-      `SELECT id, sect_id, type_id, rarity_id, attack_area_id, slash_effect_id, hit_effect_id,
-        power, cost, interval, accuracy, obtain_method, is_sect_restricted, is_custom_source,
-        passive_1_id, passive_1_value, passive_2_id, passive_2_value, passive_3_id, passive_3_value
-       FROM martial_arts
-       WHERE id = ?`,
+      `SELECT art.id, art.name, art.sect_id, sect.name AS sect_name, art.type_id, art.rarity_id,
+        art.attack_area_id, art.slash_effect_id, art.hit_effect_id, art.power, art.cost,
+        art.interval, art.accuracy, art.obtain_method, art.is_sect_restricted, art.is_custom_source,
+        art.passive_1_id, art.passive_1_value, art.passive_2_id, art.passive_2_value,
+        art.passive_3_id, art.passive_3_value
+       FROM martial_arts art
+       LEFT JOIN sects sect ON sect.id = art.sect_id
+       WHERE art.id = ?`,
       [id],
     );
     return rows[0] || null;
+  }
+
+  async function findMartialArt(query: MartialArtFindQuery) {
+    if ("id" in query) return loadMartialArt(query.id);
+
+    const field = "legacyName" in query ? "legacy_name" : "name";
+    const value = ("legacyName" in query ? query.legacyName : query.name).trim();
+    if (!value) return null;
+
+    const cacheKey = `${field}:${value}`;
+    if (martialArtFindCache.has(cacheKey)) return martialArtFindCache.get(cacheKey) || null;
+
+    const rows = await queryRows<MartialArtSummaryRow>(
+      `SELECT art.id, art.name, art.sect_id, sect.name AS sect_name, art.type_id, art.rarity_id,
+        art.attack_area_id, art.slash_effect_id, art.hit_effect_id, art.power, art.cost,
+        art.interval, art.accuracy, art.obtain_method, art.is_sect_restricted, art.is_custom_source,
+        art.passive_1_id, art.passive_1_value, art.passive_2_id, art.passive_2_value,
+        art.passive_3_id, art.passive_3_value
+       FROM martial_arts art
+       LEFT JOIN sects sect ON sect.id = art.sect_id
+       WHERE art.${field} = ?
+       LIMIT 1`,
+      [value],
+    );
+    const martialArt = rows[0] || null;
+    martialArtFindCache.set(cacheKey, martialArt);
+    return martialArt;
   }
 
   function loadMartialArtStyles(id: number) {
@@ -99,8 +128,8 @@ export function useMartialArtData() {
     const conditions = pairs.map(() => "(kind = ? AND effect_id = ?)").join(" OR ");
     const params = pairs.flatMap((pair) => [pair.kind, pair.id]);
     const assetEffects = await queryRows<MartialArtAssetEffectRow>(
-      `SELECT kind, effect_id, array_name, array_index, prefab_source, prefab_path_id, prefab_name,
-        primary_texture_source, primary_texture_path_id, primary_texture_name, duration, layer_count
+      `SELECT kind, effect_id, array_name, array_index, prefab_name,
+        image_id, duration, layer_count
        FROM asset_effects
        WHERE ${conditions}
        ORDER BY kind, effect_id`,
@@ -108,9 +137,8 @@ export function useMartialArtData() {
     );
     const assetEffectLayers = await queryRows<MartialArtAssetEffectLayerRow>(
       `SELECT kind, effect_id, layer_index, texture_slot, game_object_name, depth,
-        particle_system_path_id, renderer_path_id, renderer_type, sorting_order, material_name,
-        texture_property, texture_source, texture_path_id, texture_name, texture_width,
-        texture_height, duration, simulation_speed, looping, uv_enabled, tiles_x, tiles_y,
+        renderer_type, sorting_order, material_name,
+        texture_property, image_id, duration, simulation_speed, looping, uv_enabled, tiles_x, tiles_y,
         frame_count, fps, cycles, row_mode, row_index, start_frame, frame_curve, start_size,
         start_lifetime, start_lifetime_curve, start_speed, start_speed_curve, start_color,
         start_rotation, gravity_modifier, gravity_modifier_curve, max_particles, size_curve,
@@ -140,11 +168,24 @@ export function useMartialArtData() {
       loadMartialArtEffects(id),
       loadMartialArtLevels(id),
       loadPassiveTemplates(),
-      loadEnums(),
+      loadWikiEnums(),
     ]);
     const { assetEffects, assetEffectLayers } = await loadMartialArtAssetEffects(martialArt);
+    const obtainMethodParts = martialArt
+      ? await linkCharactersInText(martialArt.obtain_method)
+      : [];
 
-    const detail = { martialArt, styles, effects, assetEffects, assetEffectLayers, levels, passiveTemplates, enums };
+    const detail = {
+      martialArt,
+      styles,
+      effects,
+      assetEffects,
+      assetEffectLayers,
+      levels,
+      passiveTemplates,
+      enums,
+      obtainMethodParts,
+    };
     detailCache.set(id, detail);
     return detail;
   }
@@ -154,7 +195,7 @@ export function useMartialArtData() {
 
     const detail = await loadMartialArtDetail(id);
     const nextSummary = detail.martialArt
-      ? buildMartialArtSummary(
+      ? await buildMartialArtSummary(
         detail.martialArt,
         detail.styles,
         detail.effects,
@@ -168,9 +209,9 @@ export function useMartialArtData() {
   }
 
   return {
-    loadEnums,
     loadPassiveTemplates,
     loadMartialArt,
+    findMartialArt,
     loadMartialArtStyles,
     loadMartialArtEffects,
     loadMartialArtAssetEffects,

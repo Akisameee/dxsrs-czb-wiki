@@ -13,10 +13,12 @@ export type { WikiEnums } from "./text";
 
 export type CharacterSummaryRow = {
   id: number;
+  name: string | null;
   portrait: string | null;
   region_id: number | null;
   location_id: number | null;
-  sect_id: number;
+  sect_id: number | null;
+  sect_name?: string | null;
   rarity_id: number;
   weapon_type_id: number;
 };
@@ -28,6 +30,7 @@ export type CharacterQuestRow = {
   required_affinity: number;
   quest_type_id: number;
   reward_item_id: number | null;
+  reward_item_name?: string | null;
 };
 
 export type CharacterQuestTargetRow = {
@@ -37,6 +40,7 @@ export type CharacterQuestTargetRow = {
   target_kind: string;
   target_id: number | null;
   target_region_id: number | null;
+  target_name?: string | null;
 };
 
 export type CharacterQuestSummary = {
@@ -60,12 +64,12 @@ export type CharacterSummary = {
   quests: CharacterQuestSummary[];
 };
 
-export function characterName(item: Pick<CharacterSummaryRow, "id">, enums: WikiEnums) {
-  return enumLabel(enums, "Character", item.id, `人物 ${item.id}`);
+export function characterName(item: Pick<CharacterSummaryRow, "id" | "name">) {
+  return item.name || `人物 ${item.id}`;
 }
 
-export function characterInitial(item: Pick<CharacterSummaryRow, "id">, enums: WikiEnums) {
-  return characterName(item, enums).slice(0, 1);
+export function characterInitial(item: Pick<CharacterSummaryRow, "id" | "name">) {
+  return characterName(item).slice(0, 1);
 }
 
 export function characterDetailUrl(id: number) {
@@ -79,10 +83,10 @@ export function characterLocationText(item: CharacterSummaryRow, enums: WikiEnum
 
 export function questTargetLabel(target: CharacterQuestTargetRow, enums: WikiEnums) {
   if (target.target_kind === "character") {
-    return enumLabel(enums, "Character", target.target_id, "未知人物");
+    return target.target_name || `人物 ${target.target_id ?? "?"}`;
   }
   if (target.target_kind === "item") {
-    return enumLabel(enums, "Item", target.target_id, "未知道具");
+    return target.target_name || `道具 ${target.target_id ?? "?"}`;
   }
   if (target.target_kind === "location") {
     const region = enumLabel(enums, "DiDian", target.target_region_id, "未知地点");
@@ -90,7 +94,7 @@ export function questTargetLabel(target: CharacterQuestTargetRow, enums: WikiEnu
     return location ? `${region} / ${location}` : region;
   }
   if (target.target_kind === "sect") {
-    return enumLabel(enums, "LianSuo_MP", target.target_id, "未知门派");
+    return target.target_name || `门派 ${target.target_id ?? "?"}`;
   }
   return target.target_id === null ? "-" : String(target.target_id);
 }
@@ -112,12 +116,12 @@ function questTargetParts(
   return [wikiText(text)];
 }
 
-function withQuestReward(quest: CharacterQuestRow, parts: WikiTextPart[], enums: WikiEnums) {
+function withQuestReward(quest: CharacterQuestRow, parts: WikiTextPart[]) {
   if (quest.reward_item_id === null) return parts;
   return [
     ...parts,
     wikiText("，奖励 "),
-    wikiItem(quest.reward_item_id, enumLabel(enums, "Item", quest.reward_item_id, `道具 ${quest.reward_item_id}`)),
+    wikiItem(quest.reward_item_id, quest.reward_item_name || `道具 ${quest.reward_item_id}`),
   ];
 }
 
@@ -132,10 +136,10 @@ export function formatQuestParts(
   const extraGroups = (fallback: string) => extras.map((target) => questTargetParts(target, enums, fallback));
 
   if (quest.quest_type_id === 240) {
-    return withQuestReward(quest, [wikiText("交付"), ...main("指定物品")], enums);
+    return withQuestReward(quest, [wikiText("交付"), ...main("指定物品")]);
   }
   if (quest.quest_type_id === 241) {
-    return withQuestReward(quest, [wikiText("教训"), ...main("指定人物")], enums);
+    return withQuestReward(quest, [wikiText("教训"), ...main("指定人物")]);
   }
   if (quest.quest_type_id === 242) {
     const parts = [...main("指定地点"), wikiText("寻宝")];
@@ -143,19 +147,19 @@ export function formatQuestParts(
       parts.push(wikiText("，击败"));
       parts.push(...joinWikiPartGroups(extraGroups("未知人物"), "、"));
     }
-    return withQuestReward(quest, parts, enums);
+    return withQuestReward(quest, parts);
   }
   if (quest.quest_type_id === 243) {
-    return withQuestReward(quest, [wikiText("给"), ...main("指定人物"), wikiText("下挑战书")], enums);
+    return withQuestReward(quest, [wikiText("给"), ...main("指定人物"), wikiText("下挑战书")]);
   }
   if (quest.quest_type_id === 244) {
-    return withQuestReward(quest, [wikiText("赢得与"), ...main("指定人物"), wikiText("的比武")], enums);
+    return withQuestReward(quest, [wikiText("赢得与"), ...main("指定人物"), wikiText("的比武")]);
   }
   if (quest.quest_type_id === 720) {
     const sectParts = extras.length
       ? joinWikiPartGroups(extraGroups("指定门派"), "、")
       : main("指定门派");
-    return withQuestReward(quest, [wikiText("参加"), ...sectParts, wikiText("武林大会")], enums);
+    return withQuestReward(quest, [wikiText("参加"), ...sectParts, wikiText("武林大会")]);
   }
 
   const questType = enumLabel(enums, "QuestType", quest.quest_type_id, "任务").replace(/^情缘_/, "");
@@ -164,7 +168,6 @@ export function formatQuestParts(
   return withQuestReward(
     quest,
     targetText.length ? [wikiText(`${questType}：`), ...targetText] : [wikiText(questType)],
-    enums,
   );
 }
 
@@ -186,12 +189,12 @@ export function buildCharacterSummary(
   return {
     id: character.id,
     portrait: character.portrait,
-    name: characterName(character, enums),
-    initial: characterInitial(character, enums),
+    name: characterName(character),
+    initial: characterInitial(character),
     detailUrl: characterDetailUrl(character.id),
     rarityId: character.rarity_id,
     location: characterLocationText(character, enums),
-    sect: enumLabel(enums, "LianSuo_MP", character.sect_id, "无门派"),
+    sect: character.sect_name || "无门派",
     rarity: enumLabel(enums, "NPC_Rare", character.rarity_id, "资质"),
     weaponType: enumLabel(enums, "BingQiType", character.weapon_type_id, "未知"),
     quests: quests.map((quest) => {

@@ -14,7 +14,9 @@ const INTERNAL_MARTIAL_ART_TYPE_ID = 6;
 
 export type MartialArtSummaryRow = {
   id: number;
+  name: string | null;
   sect_id: number | null;
+  sect_name?: string | null;
   type_id: number | null;
   rarity_id: number;
   attack_area_id?: number | null;
@@ -71,12 +73,8 @@ export type MartialArtAssetEffectRow = {
   effect_id: number;
   array_name: string | null;
   array_index: number | null;
-  prefab_source: string | null;
-  prefab_path_id: number | null;
   prefab_name: string | null;
-  primary_texture_source: string | null;
-  primary_texture_path_id: number | null;
-  primary_texture_name: string | null;
+  image_id: string | null;
   duration: number | null;
   layer_count: number;
 };
@@ -88,17 +86,11 @@ export type MartialArtAssetEffectLayerRow = {
   texture_slot: number;
   game_object_name: string | null;
   depth: number;
-  particle_system_path_id: number | null;
-  renderer_path_id: number | null;
   renderer_type: string | null;
   sorting_order: number;
   material_name: string | null;
   texture_property: string | null;
-  texture_source: string;
-  texture_path_id: number;
-  texture_name: string | null;
-  texture_width: number | null;
-  texture_height: number | null;
+  image_id: string;
   duration: number | null;
   simulation_speed: number | null;
   looping: number;
@@ -171,7 +163,7 @@ export type MartialArtPassiveSlot = {
 export type PassiveRow = {
   id: string;
   template: string;
-  icon?: string | null;
+  image_id?: string | null;
 };
 
 export type MartialArtPassiveTemplateMap = Record<string, string>;
@@ -184,7 +176,7 @@ export type MartialArtPassiveChainRow = {
   template?: string | null;
   param1?: number | null;
   param2?: number | null;
-  icon?: string | null;
+  image_id?: string | null;
 };
 
 export type MartialArtEffectSummary = {
@@ -219,12 +211,12 @@ export function martialArtIsInternal(item: Pick<MartialArtSummaryRow, "type_id">
   return Number(item.type_id) === INTERNAL_MARTIAL_ART_TYPE_ID;
 }
 
-export function martialArtName(item: Pick<MartialArtSummaryRow, "id">, enums: WikiEnums) {
-  return enumLabel(enums, "MartialArt", item.id, `武学 ${item.id}`);
+export function martialArtName(item: Pick<MartialArtSummaryRow, "id" | "name">) {
+  return item.name || `武学 ${item.id}`;
 }
 
-export function martialArtInitial(item: Pick<MartialArtSummaryRow, "id">, enums: WikiEnums) {
-  return martialArtName(item, enums).slice(0, 1);
+export function martialArtInitial(item: Pick<MartialArtSummaryRow, "id" | "name">) {
+  return martialArtName(item).slice(0, 1);
 }
 
 export function martialArtDetailUrl(id: number) {
@@ -239,10 +231,9 @@ export function martialArtTypeLabel(
 }
 
 export function martialArtSectLabel(
-  item: Pick<MartialArtSummaryRow, "sect_id">,
-  enums: WikiEnums,
+  item: Pick<MartialArtSummaryRow, "sect_id" | "sect_name">,
 ) {
-  return enumLabel(enums, "LianSuo_MP", item.sect_id, "无门派");
+  return item.sect_name || "无门派";
 }
 
 export function martialArtRarityLabel(
@@ -407,27 +398,27 @@ export function formatMartialArtPercent(value: number | null | undefined) {
   return text === "-" ? "-" : `${text}%`;
 }
 
-export function buildMartialArtSummary(
+export async function buildMartialArtSummary(
   martialArt: MartialArtSummaryRow,
   styles: MartialArtStyleRow[],
   effects: MartialArtEffectRow[],
   levels: MartialArtLevelRow[],
   enums: WikiEnums,
   passiveTemplates: MartialArtPassiveTemplateMap = {},
-): MartialArtSummary {
+): Promise<MartialArtSummary> {
   const highestLevel = levels.at(-1) || null;
-  const obtainMethodParts = linkCharactersInText(martialArt.obtain_method, enums);
+  const obtainMethodParts = await linkCharactersInText(martialArt.obtain_method);
 
   return {
     id: martialArt.id,
-    name: martialArtName(martialArt, enums),
-    initial: martialArtInitial(martialArt, enums),
+    name: martialArtName(martialArt),
+    initial: martialArtInitial(martialArt),
     detailUrl: martialArtDetailUrl(martialArt.id),
     typeId: martialArt.type_id ?? null,
     rarityRawId: martialArt.rarity_id ?? null,
     rarityId: martialArtRarityToneId(martialArt.rarity_id),
     type: martialArtTypeLabel(martialArt, enums),
-    sect: martialArtSectLabel(martialArt, enums),
+    sect: martialArtSectLabel(martialArt),
     rarity: martialArtRarityLabel(martialArt, enums),
     styles: styles
       .map((row) => martialArtStyleLabel(row, enums))

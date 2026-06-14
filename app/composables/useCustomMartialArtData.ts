@@ -31,6 +31,7 @@ export function useCustomMartialArtData() {
       powerRanges,
       effectRates,
       effects,
+      martialNames,
       enumRows,
     ] = await Promise.all([
       queryRows<CustomMartialTemplateRow>("SELECT * FROM custom_martial_arts ORDER BY id"),
@@ -39,16 +40,18 @@ export function useCustomMartialArtData() {
       queryRows<CustomPowerRangeDbRow>("SELECT * FROM custom_martial_power_ranges ORDER BY id"),
       queryRows<CustomEffectRateDbRow>("SELECT * FROM custom_martial_effect_rates ORDER BY id"),
       queryRows<CustomStatusEffectDbRow>("SELECT id, value_per_level AS valuePerLevel, template FROM status_effects ORDER BY id"),
+      queryRows<{ id: number; name: string | null }>("SELECT id, name FROM martial_arts ORDER BY id"),
       queryRows<{ type: string; id: number; label: string | null }>("SELECT type, id, label FROM enums ORDER BY type, id"),
     ]);
 
     const enums = enumMapFromRows(enumRows);
+    const martialNameById = new Map(martialNames.map((row) => [Number(row.id), row.name]));
     const effectsByTemplate = groupBy(templateEffects, "custom_martial_art_id");
     const data: CustomMartialAlgorithmData = {
       wugongRows: templates.map((row) => {
         const effectSlots = new Map((effectsByTemplate.get(row.id) || []).map((item) => [Number(item.slot), item]));
         const output = {
-          chnname: enums.MartialArt?.[String(row.id)] || `武学 ${row.id}`,
+          chnname: martialNameById.get(Number(row.id)) || `武学 ${row.id}`,
           type: numberValue(row.type_id),
           rare: numberValue(row.rarity_id),
           cost: numberValue(row.cost),

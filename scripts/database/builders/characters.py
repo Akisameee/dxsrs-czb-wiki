@@ -6,6 +6,7 @@ from typing import Any
 from .enums import npc_name
 from .items import build_item_lookups
 from .martial_arts import martial_art_id_by_internal_name
+from .sects import sect_id_by_legacy_id
 from ..utils import bool_int, js_number
 
 
@@ -48,6 +49,7 @@ class CharacterBuilder:
         }
 
     def build_characters(self) -> list[dict[str, Any]]:
+        sect_id_by_old_id = sect_id_by_legacy_id(self.ctx.chain_rows, self.ctx.enum_types)
         word_by_name = {
             row["juesename"]: row.get("word")
             for row in self.ctx.npc_word_rows or []
@@ -57,12 +59,16 @@ class CharacterBuilder:
         for row in self.ctx.npc_rows:
             location = self.ctx.location_by_code.get(row.get("area")) if row.get("area") else None
             name = npc_name(row)
+            legacy_sect_id = int(js_number(row.get("menpai")))
             rows.append({
                 "id": int(js_number(row.get("index"))),
+                "name": name,
+                "legacy_id": int(js_number(row.get("index"))),
+                "legacy_name": row.get("name") or None,
                 "portrait": row.get("touxiang") or None,
                 "region_id": location.region_id if location else None,
                 "location_id": location.location_id if location else None,
-                "sect_id": int(js_number(row.get("menpai"))),
+                "sect_id": sect_id_by_old_id.get(legacy_sect_id),
                 "sex_id": int(js_number(row.get("sex"))),
                 "rarity_id": int(js_number(row.get("rare"))),
                 "rank_id": int(js_number(row.get("dengji"))),

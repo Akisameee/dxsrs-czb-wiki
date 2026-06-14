@@ -21,6 +21,7 @@ const links = [
 const toolLinks = [
   { label: "武学配装", to: "/tools/loadout/" },
   { label: "自创模拟", to: "/tools/custom-martial-art/" },
+  { label: "存档修改", to: "/tools/save-edit/" },
 ];
 
 function isActive(to: string) {

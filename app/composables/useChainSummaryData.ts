@@ -19,7 +19,7 @@ export type ChainSummaryDescription = {
 export type BasicChainSummary = {
   label: string;
   typeLabel: string;
-  icon?: string | null;
+  imageId?: string | null;
   blocks: ChainSummaryBlock[];
   descriptions: ChainSummaryDescription[];
 };
@@ -30,7 +30,7 @@ export function useChainSummaryData() {
   async function loadChainSummary(type: "sect" | "style", id: number | string, label: string): Promise<BasicChainSummary> {
     const chainRows = await queryRows<MartialArtPassiveChainRow>(
       `SELECT chain.id, chain.passive_type, chain.count, chain.passive_id,
-        chain.param1, chain.param2, passive.template, passive.icon
+        chain.param1, chain.param2, passive.template, passive.image_id
        FROM passive_chains chain
        JOIN passives passive ON passive.id = chain.passive_id
        WHERE chain.passive_type = ? AND chain.id = ?
@@ -43,7 +43,7 @@ export function useChainSummaryData() {
     return {
       label,
       typeLabel: type === "sect" ? "门派" : "风格",
-      icon: chainRows.find((row) => row.icon)?.icon || null,
+      imageId: chainRows.find((row) => row.image_id)?.image_id || null,
       descriptions: chainRows
         .map((row) => ({
           count: Number(row.count) || 0,

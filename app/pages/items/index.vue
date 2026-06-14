@@ -49,7 +49,7 @@ const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 1
 const { data, pending, error } = await useAsyncData("items-index", async () => {
   const [items, enumRows] = await Promise.all([
     queryRows<Item>(
-      `SELECT id, icon, description, type_id, rarity_id, use_type_id, use_text, use_value,
+      `SELECT id, name, image_id, description, type_id, rarity_id, use_type_id, use_text, use_value,
         use_value2, use_value3, cost, required_strength, required_constitution,
         required_physique, required_agility, required_cultivation, required_mastery, is_material
        FROM items
@@ -114,7 +114,7 @@ function updateFilter(id: string, value: string) {
 const filteredRows = computed(() => {
   const keyword = search.value.trim().toLowerCase();
   return items.value.filter((item) => {
-    if (keyword && !itemName(item, enums.value).toLowerCase().includes(keyword)) return false;
+    if (keyword && !itemName(item).toLowerCase().includes(keyword)) return false;
     if (typeFilter.value !== "all" && String(item.type_id) !== typeFilter.value) return false;
     if (rarityFilter.value !== "all" && String(item.rarity_id) !== rarityFilter.value) return false;
     if (materialFilter.value !== "all" && String(Number(item.is_material)) !== materialFilter.value) return false;
@@ -163,16 +163,16 @@ function goToItem(item: Item) {
           v-for="item in pagedRows"
           :key="item.id"
           role="link"
-          :title="itemName(item, enums)"
+          :title="itemName(item)"
           :description="itemTypeLabel(item, enums)"
           :color="rarityCardClass(item.rarity_id)"
           :on-click="() => goToItem(item)"
         >
           <template #avatar>
             <GameImage
-              :name="item.icon"
-              :alt="itemName(item, enums)"
-              :fallback="itemInitial(item, enums)"
+              :id="item.image_id"
+              :alt="itemName(item)"
+              :fallback="itemInitial(item)"
               :size="40"
             />
           </template>

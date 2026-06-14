@@ -5,6 +5,7 @@ import struct
 from pathlib import Path
 from typing import Any
 
+from .ids import image_id
 from .paths import DEFAULT_MARTIAL_ARTS_SOURCE
 from .unity_assets import (
     dependency_maps,
@@ -369,6 +370,7 @@ def effect_layer_rows_for_ref(ref: dict[str, Any]) -> list[dict[str, Any]]:
                     "texture_property": material_row["property"],
                     "texture_source": material_row["texture_source"],
                     "texture_path_id": material_row["texture_path_id"],
+                    "image_id": image_id(material_row["texture_source"], material_row["texture_path_id"]),
                     "texture_name": material_row["texture_name"],
                     "texture_width": material_row["texture_width"],
                     "texture_height": material_row["texture_height"],
@@ -478,6 +480,10 @@ def build_effect_assets(source: Path, martial_arts_source: Path = DEFAULT_MARTIA
             "prefab_name": ref.get("prefab_name"),
             "primary_texture_source": primary.get("texture_source") if primary else None,
             "primary_texture_path_id": primary.get("texture_path_id") if primary else None,
+            "image_id": image_id(
+                primary.get("texture_source") if primary else None,
+                primary.get("texture_path_id") if primary else None,
+            ),
             "primary_texture_name": primary.get("texture_name") if primary else None,
             "duration": duration,
             "layer_count": len({row["layer_index"] for row in layer_rows}),

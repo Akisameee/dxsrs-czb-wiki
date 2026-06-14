@@ -165,6 +165,9 @@ class MartialArtBuilder:
             row_id = int(js_number(row.get("index") if row.get("index") is not None else index))
             rows.append({
                 "id": row_id,
+                "name": row.get("chnname") or row.get("name") or None,
+                "legacy_id": row_id,
+                "legacy_name": row.get("name") or None,
                 "sect_id": int(js_number(row.get("liansuo_mp"))),
                 "type_id": type_id,
                 "rarity_id": int(js_number(row.get("rare"))),
@@ -239,17 +242,18 @@ class MartialArtBuilder:
 
     def build_passives(self) -> list[dict[str, Any]]:
         rows = [
-            {"id": str(row["id"]), "template": row["template"], "icon": None}
+            {"id": str(row["id"]), "template": row["template"], "image_id": None}
             for row in martial_art_passive_template_rows()
         ]
         for row in self.ctx.chain_rows:
             row_id = chain_passive_template_id(row)
             if not row_id:
                 continue
+            icon = clean_text(row.get("png")) or None
             rows.append({
                 "id": row_id,
                 "template": chain_template_and_params(row)["template"],
-                "icon": clean_text(row.get("png")) or None,
+                "image_id": self.ctx.image_id_by_name.get(icon),
             })
         return sorted(rows, key=lambda item: str(item["id"]))
 

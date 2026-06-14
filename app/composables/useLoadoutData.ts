@@ -40,7 +40,12 @@ function groupChainRows(rows: MartialArtPassiveChainRow[]) {
     const effect = martialArtPassiveChainDescription(row);
     const effectParts = martialArtPassiveChainDescriptionParts(row);
     const target = row.passive_type === "sect" ? sectGroups : styleGroups;
-    target.set(id, [...(target.get(id) || []), { count, effect, effectParts, icon: row.icon || null }]);
+    target.set(id, [...(target.get(id) || []), {
+      count,
+      effect,
+      effectParts,
+      imageId: row.image_id || null,
+    }]);
   }
 
   const sortChains = (chains: LoadoutPassiveChainRecord[]) => chains.sort((a, b) => a.count - b.count);
@@ -104,20 +109,25 @@ export function useLoadoutData() {
     const [
       martialArts,
       styles,
+      sectRows,
       enumRows,
     ] = await Promise.all([
       queryRows<MartialArtSummaryRow>(
-        `SELECT id, sect_id, type_id, rarity_id, power, cost, obtain_method, is_sect_restricted
-         FROM martial_arts
-         ORDER BY id`,
+        `SELECT art.id, art.name, art.sect_id, sect.name AS sect_name, art.type_id,
+          art.rarity_id, art.power, art.cost, art.obtain_method, art.is_sect_restricted
+         FROM martial_arts art
+         LEFT JOIN sects sect ON sect.id = art.sect_id
+         ORDER BY art.id`,
       ),
       queryRows<MartialArtStyleRow>(
         "SELECT martial_art_id, slot, style_id FROM martial_art_styles ORDER BY martial_art_id, slot",
       ),
+      queryRows<{ id: number; name: string | null }>("SELECT id, name FROM sects ORDER BY id"),
       queryRows<EnumRow>("SELECT type, id, label FROM enums ORDER BY type, id"),
     ]);
 
     const enums = enumMapFromRows(enumRows);
+    const sectNames = Object.fromEntries(sectRows.map((row) => [String(row.id), row.name]));
     const stylesByMartialArt = new Map<number, MartialArtStyleRow[]>();
     for (const row of styles) {
       const rows = stylesByMartialArt.get(row.martial_art_id) || [];
@@ -127,7 +137,7 @@ export function useLoadoutData() {
 
     const passiveChains = await optionalRows<MartialArtPassiveChainRow>(
       `SELECT chain.id, chain.passive_type, chain.count, chain.passive_id,
-        chain.param1, chain.param2, passive.template, passive.icon
+        chain.param1, chain.param2, passive.template, passive.image_id
        FROM passive_chains chain
        JOIN passives passive ON passive.id = chain.passive_id
        ORDER BY chain.passive_type, chain.id, chain.count`,
@@ -142,6 +152,7 @@ export function useLoadoutData() {
 
     return {
       enums,
+      sectNames,
       ...chainGroups,
       wuxue: martialArts.map((item) => {
         const itemStyles = stylesByMartialArt.get(item.id) || [];
@@ -150,10 +161,10 @@ export function useLoadoutData() {
         const rarity = numberValue(item.rarity_id);
         return {
           id: item.id,
-          name: martialArtName(item, enums),
-          initial: martialArtName(item, enums).slice(0, 1),
+          name: martialArtName(item),
+          initial: martialArtName(item).slice(0, 1),
           sectId,
-          sect: martialArtSectLabel(item, enums),
+          sect: martialArtSectLabel(item),
           styleIds: itemStyles.map((row) => row.style_id),
           styles: itemStyles.map((row) => martialArtStyleLabel(row, enums)),
           typeId,
@@ -172,4 +183,13 @@ export function useLoadoutData() {
 
 export function loadoutEnumLabel(enums: WikiEnums, type: string, id: number | string | null | undefined, fallback = "未知") {
   return enumLabel(enums, type, id, fallback);
+}
+
+export function loadoutSectLabel(
+  sectNames: Record<string, string | null>,
+  id: number | string | null | undefined,
+  fallback = "未知",
+) {
+  if (id === null || id === undefined || id === "") return fallback;
+  return sectNames[String(id)] || fallback;
 }

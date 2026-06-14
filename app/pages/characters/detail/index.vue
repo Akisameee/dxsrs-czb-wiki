@@ -102,7 +102,7 @@ const favoriteItems = computed(() => {
 });
 
 function characterName(item: CharacterDetailRow) {
-  return enumLabel(enums.value, "Character", item.id, `人物 ${item.id}`);
+  return item.name || `人物 ${item.id}`;
 }
 
 function characterInitial(item: CharacterDetailRow) {
@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
                 <SectHoverLink
                   mode="link"
                   :id="character.sect_id"
-                  :label="label('LianSuo_MP', character.sect_id, '无门派')"
+                  :label="character.sect_name || '无门派'"
                 />
               </div>
               <div class="flex justify-between gap-3">

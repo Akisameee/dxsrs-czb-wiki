@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from pathlib import PurePosixPath
 from typing import Any
 
+from scripts.images.ids import image_id
 from scripts.images.portraits import extract_portrait_layers
 
 from ..paths import DEFAULT_NPC_TABLE_JSON
@@ -36,17 +38,19 @@ class PortraitBuilder:
         return self._prefab_data
 
     def build_part_assets(self) -> list[dict[str, Any]]:
-        return [
-            {
+        rows: list[dict[str, Any]] = []
+        for row in self.ctx.portrait_part_rows:
+            if not row.get("name") or not row.get("path"):
+                continue
+            texture_name = PurePosixPath(row["path"]).name
+            rows.append({
                 "name": row["name"],
-                "path": row["path"],
+                "image_id": self.ctx.image_id_by_name.get(texture_name),
                 "slot_id": int(js_number(row.get("weizhi"))),
                 "sex": row.get("sex") or None,
                 "parent": row.get("parent") or None,
-            }
-            for row in self.ctx.portrait_part_rows
-            if row.get("name") and row.get("path")
-        ]
+            })
+        return rows
 
     def build_part_options(self) -> list[dict[str, Any]]:
         return [
@@ -85,7 +89,6 @@ class PortraitBuilder:
         return [
             {
                 "name": row["name"],
-                "source": row["source"],
                 "layer_count": int(js_number(row.get("layer_count"))),
                 "is_layered": bool_int(row.get("is_layered")),
             }
@@ -97,17 +100,9 @@ class PortraitBuilder:
         for row in layers or []:
             rows.append({
                 "portrait": row["portrait"],
-                "source": row["source"],
                 "slot": row["slot"],
                 "sort_order": int(js_number(row.get("sort_order"))),
-                "image_path_id": int(js_number(row.get("image_path_id"))),
-                "sprite_source": row.get("sprite_source") or None,
-                "sprite_path_id": None if row.get("sprite_path_id") is None else int(js_number(row.get("sprite_path_id"))),
-                "texture_source": row.get("texture_source") or None,
-                "texture_path_id": None if row.get("texture_path_id") is None else int(js_number(row.get("texture_path_id"))),
-                "texture_name": row.get("texture_name") or None,
-                "texture_width": None if row.get("texture_width") is None else int(js_number(row.get("texture_width"))),
-                "texture_height": None if row.get("texture_height") is None else int(js_number(row.get("texture_height"))),
+                "image_id": image_id(row.get("texture_source"), row.get("texture_path_id")),
                 "color_r": js_number(row.get("color_r")),
                 "color_g": js_number(row.get("color_g")),
                 "color_b": js_number(row.get("color_b")),

@@ -3,7 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 from .effects import effect_texture_refs, merge_texture_refs
-from .paths import DEFAULT_CHAINS_SOURCE, DEFAULT_ITEMS_SOURCE, DEFAULT_MARTIAL_ARTS_SOURCE, DEFAULT_PORTRAITS_SOURCE
+from .paths import (
+    DEFAULT_CHAINS_SOURCE,
+    DEFAULT_ITEMS_SOURCE,
+    DEFAULT_MARTIAL_ARTS_SOURCE,
+    DEFAULT_PORTRAIT_PARTS_SOURCE,
+    DEFAULT_PORTRAITS_SOURCE,
+)
 from .portraits import portrait_texture_refs
 from .unity_assets import load_table_rows
 
@@ -42,6 +48,14 @@ def chain_texture_names(chains_source: Path = DEFAULT_CHAINS_SOURCE) -> set[str]
     }
 
 
+def portrait_part_texture_names(portrait_parts_source: Path = DEFAULT_PORTRAIT_PARTS_SOURCE) -> set[str]:
+    return {
+        Path(row["path"]).name
+        for row in load_table_rows(portrait_parts_source)
+        if row.get("path")
+    }
+
+
 def build_texture_targets(
     *,
     source: Path,
@@ -49,6 +63,7 @@ def build_texture_targets(
     items_source: Path = DEFAULT_ITEMS_SOURCE,
     chains_source: Path = DEFAULT_CHAINS_SOURCE,
     portraits_source: Path = DEFAULT_PORTRAITS_SOURCE,
+    portrait_parts_source: Path = DEFAULT_PORTRAIT_PARTS_SOURCE,
     martial_arts_source: Path = DEFAULT_MARTIAL_ARTS_SOURCE,
     include_items: bool = True,
     include_chains: bool = True,
@@ -67,6 +82,7 @@ def build_texture_targets(
     if include_martial_art_icons:
         target_names.update(MARTIAL_ART_TEXTURE_NAMES)
     if include_portraits:
+        target_names.update(portrait_part_texture_names(portrait_parts_source))
         merge_texture_refs(texture_refs, portrait_texture_refs(source, portraits_source))
     if include_effects:
         effect_refs = effect_texture_refs(source, martial_arts_source)

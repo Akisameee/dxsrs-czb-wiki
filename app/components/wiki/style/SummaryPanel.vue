@@ -7,7 +7,7 @@ import type { ChainSummaryDescription } from "~/composables/useChainSummaryData"
 export type StyleChainSummary = {
   label: string;
   typeLabel: string;
-  icon?: string | null;
+  imageId?: string | null;
   descriptions?: ChainSummaryDescription[];
 };
 
@@ -25,7 +25,7 @@ defineProps<{
   >
     <template #avatar="{ summary: currentSummary }">
       <GameImage
-        :name="currentSummary.icon"
+        :id="currentSummary.imageId"
         :alt="currentSummary.label"
         :fallback="currentSummary.label.slice(0, 1)"
         :size="32"

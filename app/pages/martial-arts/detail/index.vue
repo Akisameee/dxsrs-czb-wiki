@@ -25,7 +25,6 @@ import {
   type MartialArtLevelRow,
   type MartialArtSummaryRow,
 } from "~/lib/wiki/martial-art";
-import { linkCharactersInText } from "~/lib/wiki/text";
 import { useMartialArtData } from "~/composables/useMartialArtData";
 
 useHead({ title: "武学详情" });
@@ -49,6 +48,7 @@ const { data, pending, error } = await useAsyncData(
         levels: [],
         passiveTemplates: {},
         enums: {},
+        obtainMethodParts: [],
       };
     }
 
@@ -89,7 +89,7 @@ const passiveLines = computed(() => [
   ...martialArtLevelPassiveDescriptions(highestLevel.value, passiveTemplates.value),
 ]);
 const obtainMethodParts = computed(() => {
-  const parts = linkCharactersInText(martialArt.value?.obtain_method, enums.value);
+  const parts = data.value?.obtainMethodParts || [];
   return parts.length ? parts : [{ type: "text" as const, text: "-" }];
 });
 const levelRows = computed(() =>
@@ -163,7 +163,7 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
         <CardHeader>
           <div class="grid gap-2">
             <div>
-              <CardTitle class="text-2xl">{{ martialArtName(martialArt, enums) }}</CardTitle>
+              <CardTitle class="text-2xl">{{ martialArtName(martialArt) }}</CardTitle>
               <CardDescription class="truncate">
                 {{ martialArtTypeLabel(martialArt, enums) }}
               </CardDescription>
@@ -180,7 +180,7 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
             <div class="flex w-32 items-center justify-center rounded-md">
               <MartialArtIcon
-                :name="martialArtName(martialArt, enums)"
+                :name="martialArtName(martialArt)"
                 :type-id="martialArt.type_id"
                 :rarity-id="martialArt.rarity_id"
                 class="w-full"
@@ -196,7 +196,7 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                 <SectHoverLink
                   mode="link"
                   :id="martialArt.sect_id"
-                  :label="martialArtSectLabel(martialArt, enums)"
+                  :label="martialArtSectLabel(martialArt)"
                 />
               </div>
               <div class="flex items-start justify-between gap-3">

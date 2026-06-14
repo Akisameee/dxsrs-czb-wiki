@@ -1,8 +1,5 @@
 export type GameImageAtlasEntry = {
-  name: string;
-  source: string;
-  pathId?: number;
-  key?: string;
+  id: string;
   atlas: string;
   atlasWidth: number;
   atlasHeight: number;
@@ -36,9 +33,7 @@ export type GameImageRenderEntry = {
 };
 
 export type GameImageLayer = {
-  name: string | null | undefined;
-  source?: string | null;
-  pathId?: number | null;
+  imageId: string | null | undefined;
   opacity?: number | null;
   x?: number;
   y?: number;
@@ -55,6 +50,10 @@ export type ComposedGameImage = GameImageRenderEntry & {
     height: number;
     trimmed: boolean;
   };
+};
+
+export type GameImageFindQuery = {
+  id?: string | null;
 };
 
 const atlasImageCache = new Map<string, Promise<HTMLImageElement>>();
@@ -102,52 +101,28 @@ export function useGameImageAtlas() {
     },
   );
 
-  const entries = computed(() => {
-    const map = new Map<string, GameImageAtlasEntry>();
+  const imageIndexes = computed(() => {
+    const byId = new Map<string, GameImageAtlasEntry>();
+
     for (const entry of data.value || []) {
-      if (entry.name && !map.has(entry.name)) map.set(entry.name, entry);
+      if (entry.id) byId.set(entry.id, entry);
     }
-    return map;
+
+    return { byId };
   });
 
-  const entriesBySource = computed(() => {
-    const map = new Map<string, GameImageAtlasEntry>();
-    for (const entry of data.value || []) {
-      if (entry.source) map.set(entry.source, entry);
-    }
-    return map;
-  });
-
-  const entriesByAssetKey = computed(() => {
-    const map = new Map<string, GameImageAtlasEntry>();
-    for (const entry of data.value || []) {
-      if (entry.key) map.set(entry.key, entry);
-      if (entry.source && entry.pathId !== undefined) map.set(`${entry.source}:${entry.pathId}`, entry);
-    }
-    return map;
-  });
-
-  function getImage(name: string | null | undefined) {
-    if (!name) return null;
-    return entries.value.get(name) || null;
+  function findImages(query: GameImageFindQuery) {
+    if (!query.id) return [];
+    const entry = imageIndexes.value.byId.get(query.id);
+    return entry ? [entry] : [];
   }
 
-  function getImageBySource(source: string | null | undefined) {
-    if (!source) return null;
-    return entriesBySource.value.get(source) || null;
+  function findImage(query: GameImageFindQuery) {
+    return findImages(query)[0] || null;
   }
 
-  function getImageByAsset(source: string | null | undefined, pathId: number | null | undefined) {
-    if (!source || pathId === null || pathId === undefined) return null;
-    return entriesByAssetKey.value.get(`${source}:${pathId}`) || null;
-  }
-
-  function getRenderEntry(
-    name: string | null | undefined,
-    source?: string | null,
-    pathId?: number | null,
-  ): GameImageRenderEntry | null {
-    const entry = getImageByAsset(source, pathId) || getImageBySource(source) || getImage(name);
+  function renderImage(query: GameImageFindQuery): GameImageRenderEntry | null {
+    const entry = findImage(query);
     if (!entry) return null;
 
     return {
@@ -170,7 +145,7 @@ export function useGameImageAtlas() {
 
     const resolvedLayers = layers
       .map((layer) => {
-        const entry = getImageByAsset(layer.source, layer.pathId) || getImageBySource(layer.source) || getImage(layer.name);
+        const entry = findImage({ id: layer.imageId });
         return entry ? { ...layer, entry } : null;
       })
       .filter((layer): layer is GameImageLayer & { entry: GameImageAtlasEntry } => Boolean(layer));
@@ -257,15 +232,12 @@ export function useGameImageAtlas() {
   }
 
   return {
-    entries,
-    entriesBySource,
-    entriesByAssetKey,
+    imageIndexes,
     pending,
     error,
-    getImage,
-    getImageBySource,
-    getImageByAsset,
-    getRenderEntry,
+    findImage,
+    findImages,
+    renderImage,
     composeImageLayers,
   };
 }

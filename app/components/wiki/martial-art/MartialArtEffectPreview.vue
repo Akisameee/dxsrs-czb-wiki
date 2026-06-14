@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
   size?: number;
 }>(), {});
 
-const { getImageByAsset } = useGameImageAtlas();
+const { findImage } = useGameImageAtlas();
 const root = ref<HTMLElement | null>(null);
 const tick = ref(0);
 const measuredSize = ref(96);
@@ -53,7 +53,7 @@ const rootStyle = computed(() => props.size
   : { width: "100%", aspectRatio: "1 / 1" });
 
 const fallbackLayers = computed<MartialArtAssetEffectLayerRow[]>(() => {
-  if (props.layers.length || !props.effect?.primary_texture_source || !props.effect.primary_texture_path_id) {
+  if (props.layers.length || !props.effect?.image_id) {
     return props.layers;
   }
 
@@ -64,17 +64,11 @@ const fallbackLayers = computed<MartialArtAssetEffectLayerRow[]>(() => {
     texture_slot: 0,
     game_object_name: props.effect.prefab_name,
     depth: 0,
-    particle_system_path_id: null,
-    renderer_path_id: null,
     renderer_type: null,
     sorting_order: 0,
     material_name: null,
     texture_property: null,
-    texture_source: props.effect.primary_texture_source,
-    texture_path_id: props.effect.primary_texture_path_id,
-    texture_name: props.effect.primary_texture_name,
-    texture_width: null,
-    texture_height: null,
+    image_id: props.effect.image_id,
     duration: props.effect.duration,
     simulation_speed: 1,
     looping: 1,
@@ -142,7 +136,7 @@ const fallbackLayers = computed<MartialArtAssetEffectLayerRow[]>(() => {
 const renderLayers = computed(() =>
   fallbackLayers.value
     .map((layer) => {
-      const entry = getImageByAsset(layer.texture_source, layer.texture_path_id);
+      const entry = findImage({ id: layer.image_id });
       if (!entry) return null;
       const tilesX = Math.max(1, Number(layer.tiles_x) || 1);
       const tilesY = Math.max(1, Number(layer.tiles_y) || 1);
@@ -231,7 +225,7 @@ function layerStyle(item: EffectRenderLayer): CSSProperties {
   >
     <span
       v-for="item in renderLayers"
-      :key="`${item.layer.layer_index}-${item.layer.texture_slot}-${item.layer.texture_source}-${item.layer.texture_path_id}`"
+      :key="`${item.layer.layer_index}-${item.layer.texture_slot}-${item.layer.image_id}`"
       class="absolute bg-no-repeat"
       :style="layerStyle(item)"
     />

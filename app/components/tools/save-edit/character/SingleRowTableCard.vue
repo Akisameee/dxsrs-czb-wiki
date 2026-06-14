@@ -1,0 +1,66 @@
+<script setup lang="ts">
+import {
+  fieldDraftKey,
+  formatSaveValue,
+  isEditableSaveValue,
+  saveEditEnumOptions,
+  type SaveEditDraft,
+} from "~/components/tools/save-edit/model";
+import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
+import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/bgdatabase";
+import type { WikiEnums } from "~/lib/wiki/text";
+
+const props = defineProps<{
+  table: BgDatabaseTable;
+  draft: SaveEditDraft;
+  enums: WikiEnums;
+}>();
+
+const emit = defineEmits<{
+  updateField: [field: BgDatabaseField, value: string, rowIndex: number];
+}>();
+
+const fields = computed(() =>
+  props.table.fieldNames
+    .map((fieldName) => props.table.fields[fieldName])
+    .filter((field): field is BgDatabaseField => Boolean(field?.parsed && isEditableSaveValue(field.values[0] ?? null))),
+);
+
+function fieldValue(field: BgDatabaseField): BgDatabaseValue {
+  const key = fieldDraftKey(field, 0);
+  return props.draft[key] ?? field.values[0] ?? null;
+}
+
+function enumOptions(fieldName: string) {
+  return saveEditEnumOptions(props.enums, props.table.name, fieldName);
+}
+</script>
+
+<template>
+  <Card>
+    <CardHeader>
+      <CardTitle>{{ table.name }}</CardTitle>
+      <CardDescription>单行表，适合直接编辑</CardDescription>
+    </CardHeader>
+    <CardContent class="grid auto-rows-min gap-3 sm:grid-cols-2">
+      <div
+        v-for="field in fields"
+        :key="field.name"
+        class="grid gap-1"
+      >
+        <Label class="text-muted-foreground">{{ field.name }}</Label>
+        <WikiEnumSelect
+          v-if="enumOptions(field.name).length"
+          :model-value="formatSaveValue(fieldValue(field))"
+          :options="enumOptions(field.name)"
+          @update:model-value="emit('updateField', field, $event, 0)"
+        />
+        <Input
+          v-else
+          :model-value="formatSaveValue(fieldValue(field))"
+          @update:model-value="emit('updateField', field, String($event), 0)"
+        />
+      </div>
+    </CardContent>
+  </Card>
+</template>

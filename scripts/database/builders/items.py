@@ -32,7 +32,9 @@ class ItemBuilder:
         return [
             {
                 "id": int(js_number(row.get("index"))),
-                "icon": row.get("png") or None,
+                "name": row.get("chnname") or row.get("name") or None,
+                "legacy_name": row.get("name") or None,
+                "image_id": self.ctx.image_id_by_name.get(row.get("png")),
                 "description": clean_text(row.get("desc")),
                 "type_id": int(js_number(row.get("type"))),
                 "rarity_id": int(js_number(row.get("rare"))),

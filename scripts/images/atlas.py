@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .ids import image_id
 from .textures import TextureExport
 
 
@@ -26,7 +27,7 @@ def save_image(image: Any, path: Path, image_format: str, quality: int, lossy_we
 
 
 def write_manifest(output: Path, manifest: list[dict[str, Any]]) -> None:
-    manifest.sort(key=lambda item: (item.get("name") or "", item.get("source") or ""))
+    manifest.sort(key=lambda item: item.get("id") or "")
     (output / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2),
         encoding="utf-8",
@@ -34,21 +35,24 @@ def write_manifest(output: Path, manifest: list[dict[str, Any]]) -> None:
 
 
 def texture_manifest_entry(texture: TextureExport, extra: dict[str, Any]) -> dict[str, Any]:
+    texture_id = image_id(texture.source, texture.path_id)
     return {
-        "name": texture.name,
+        "id": texture_id,
         **extra,
-        "source": texture.source,
-        "pathId": texture.path_id,
-        "key": f"{texture.source}:{texture.path_id}",
         "width": texture.image.width,
         "height": texture.image.height,
         "textureWidth": texture.texture_width,
         "textureHeight": texture.texture_height,
-        "originalTextureWidth": texture.original_texture_width,
-        "originalTextureHeight": texture.original_texture_height,
-        "scale": texture.scale,
         "trim": texture.trim,
-        "format": texture.texture_format,
+    }
+
+
+def texture_index_entry(texture: TextureExport) -> dict[str, Any]:
+    return {
+        "id": image_id(texture.source, texture.path_id),
+        "name": texture.name,
+        "source": texture.source,
+        "pathId": texture.path_id,
     }
 
 
@@ -62,7 +66,7 @@ def export_atlas(
     atlas_size: int,
     padding: int,
     overwrite: bool,
-) -> tuple[int, int]:
+) -> tuple[int, int, list[dict[str, Any]]]:
     from PIL import Image
 
     if overwrite:
@@ -71,6 +75,7 @@ def export_atlas(
 
     pages: list[dict[str, Any]] = []
     manifest: list[dict[str, Any]] = []
+    image_index: list[dict[str, Any]] = []
 
     def new_page() -> dict[str, Any]:
         page = {
@@ -128,6 +133,7 @@ def export_atlas(
             "x": x,
             "y": y,
         }))
+        image_index.append(texture_index_entry(texture))
 
     exported = 0
     skipped = 0
@@ -157,6 +163,5 @@ def export_atlas(
             entry["atlasWidth"] = size["width"]
             entry["atlasHeight"] = size["height"]
 
-    manifest.extend(failures)
     write_manifest(output, manifest)
-    return exported, skipped
+    return exported, skipped, sorted(image_index, key=lambda item: item["id"])

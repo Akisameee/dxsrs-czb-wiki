@@ -11,7 +11,8 @@ export type { WikiEnums } from "./text";
 
 export type ItemSummaryRow = {
   id: number;
-  icon: string | null;
+  name: string | null;
+  image_id: string | null;
   description: string | null;
   type_id: number | null;
   rarity_id: number | null;
@@ -42,7 +43,7 @@ export type ItemSummary = {
   initial: string;
   detailUrl: string;
   rarityId: number | null;
-  icon: string | null;
+  imageId: string | null;
   type: string;
   rarity: string;
   useType: string;
@@ -62,12 +63,12 @@ export function itemRarityToneId(id: number | string | null | undefined) {
   return Number.isFinite(value) ? value : null;
 }
 
-export function itemName(item: Pick<ItemSummaryRow, "id">, enums: WikiEnums) {
-  return enumLabel(enums, "Item", item.id, `道具 ${item.id}`);
+export function itemName(item: Pick<ItemSummaryRow, "id" | "name">) {
+  return item.name || `道具 ${item.id}`;
 }
 
-export function itemInitial(item: Pick<ItemSummaryRow, "id">, enums: WikiEnums) {
-  return itemName(item, enums).slice(0, 1);
+export function itemInitial(item: Pick<ItemSummaryRow, "id" | "name">) {
+  return itemName(item).slice(0, 1);
 }
 
 export function itemDetailUrl(id: number) {
@@ -169,19 +170,22 @@ export function itemRequirements(item: ItemSummaryRow): ItemRequirementSummary[]
     }));
 }
 
-export function buildItemSummary(item: ItemSummaryRow, enums: WikiEnums): ItemSummary {
+export async function buildItemSummary(
+  item: ItemSummaryRow,
+  enums: WikiEnums,
+): Promise<ItemSummary> {
   const description = item.description || "无说明";
-  const descriptionParts = linkMartialArtsInText(description, enums);
+  const descriptionParts = await linkMartialArtsInText(description);
   const useEffectText = itemUseEffectText(item);
-  const useEffectParts = linkMartialArtsInText(useEffectText, enums);
+  const useEffectParts = await linkMartialArtsInText(useEffectText);
 
   return {
     id: item.id,
-    name: itemName(item, enums),
-    initial: itemInitial(item, enums),
+    name: itemName(item),
+    initial: itemInitial(item),
     detailUrl: itemDetailUrl(item.id),
     rarityId: itemRarityToneId(item.rarity_id),
-    icon: item.icon,
+    imageId: item.image_id,
     type: itemTypeLabel(item, enums),
     rarity: itemRarityLabel(item, enums),
     useType: itemUseTypeLabel(item, enums),

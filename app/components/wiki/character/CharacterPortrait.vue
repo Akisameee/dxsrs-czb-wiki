@@ -16,9 +16,7 @@ import { cn } from "~/lib/utils";
 type PortraitLayerRow = {
   slot: string;
   sort_order: number;
-  texture_source: string | null;
-  texture_path_id: number | null;
-  texture_name: string | null;
+  image_id: string | null;
   color_a: number;
   active: number;
 };
@@ -60,20 +58,17 @@ async function loadPresetPortrait(portrait: string) {
   if (!portraitCache.has(cacheKey)) {
     portraitCache.set(cacheKey, (async () => {
       const rows = await queryRows<PortraitLayerRow>(
-        `SELECT slot, sort_order, texture_source, texture_path_id, texture_name, color_a, active
+        `SELECT slot, sort_order, image_id, color_a, active
          FROM portrait_prefab_layers
          WHERE portrait = ?
            AND active = 1
-           AND texture_source IS NOT NULL
-           AND texture_path_id IS NOT NULL
-         ORDER BY sort_order, image_path_id`,
+           AND image_id IS NOT NULL
+         ORDER BY sort_order, slot`,
         [portrait],
       );
 
       const layers: GameImageLayer[] = rows.map((row) => ({
-        name: row.texture_name,
-        source: row.texture_source,
-        pathId: row.texture_path_id,
+        imageId: row.image_id,
         opacity: row.color_a,
       }));
 

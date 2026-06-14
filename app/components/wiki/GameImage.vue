@@ -3,9 +3,7 @@ import type { GameImageRenderEntry } from "~/composables/useGameImageAtlas";
 import { cn } from "~/lib/utils";
 
 const props = withDefaults(defineProps<{
-  name: string | null | undefined;
-  source?: string | null;
-  pathId?: number | null;
+  id: string | null | undefined;
   image?: GameImageRenderEntry | null;
   alt?: string;
   fallback?: string;
@@ -34,8 +32,8 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect();
 });
 
-const { getRenderEntry } = useGameImageAtlas();
-const image = computed(() => props.image || getRenderEntry(props.name, props.source, props.pathId));
+const { renderImage } = useGameImageAtlas();
+const image = computed(() => props.image || renderImage({ id: props.id }));
 const currentSize = computed(() => props.size || measuredSize.value);
 const scale = computed(() => {
   const value = image.value;

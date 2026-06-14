@@ -13,17 +13,18 @@ except ModuleNotFoundError:
     )
     raise
 
-from .atlas import export_atlas, normalize_format
+from .atlas import normalize_format
+from .build import build_images
 from .paths import (
     DEFAULT_ITEMS_SOURCE,
     DEFAULT_CHAINS_SOURCE,
     DEFAULT_MARTIAL_ARTS_SOURCE,
     DEFAULT_OUTPUT,
+    DEFAULT_PORTRAIT_PARTS_SOURCE,
     DEFAULT_PORTRAITS_SOURCE,
     DEFAULT_SOURCE,
 )
-from .targets import build_texture_targets
-from .textures import collect_textures, normalize_scale
+from .textures import normalize_scale
 
 
 def main() -> int:
@@ -56,6 +57,7 @@ def main() -> int:
     parser.add_argument("--items-source", type=Path, default=DEFAULT_ITEMS_SOURCE)
     parser.add_argument("--chains-source", type=Path, default=DEFAULT_CHAINS_SOURCE)
     parser.add_argument("--portraits-source", type=Path, default=DEFAULT_PORTRAITS_SOURCE)
+    parser.add_argument("--portrait-parts-source", type=Path, default=DEFAULT_PORTRAIT_PARTS_SOURCE)
     parser.add_argument("--martial-arts-source", type=Path, default=DEFAULT_MARTIAL_ARTS_SOURCE)
     parser.add_argument("--no-items", action="store_true")
     parser.add_argument("--no-chains", action="store_true")
@@ -64,50 +66,39 @@ def main() -> int:
     parser.add_argument("--no-effects", action="store_true")
     args = parser.parse_args()
 
-    if not args.source.exists():
-        print(f"Source directory does not exist: {args.source}", file=sys.stderr)
+    try:
+        result = build_images(
+            source=args.source,
+            output=args.output,
+            image_format=args.format,
+            quality=args.quality,
+            scale=args.scale,
+            lossy_webp=args.lossy_webp,
+            atlas_size=args.atlas_size,
+            padding=args.padding,
+            names=set(args.names or []),
+            overwrite=args.overwrite,
+            items_source=args.items_source,
+            chains_source=args.chains_source,
+            portraits_source=args.portraits_source,
+            portrait_parts_source=args.portrait_parts_source,
+            martial_arts_source=args.martial_arts_source,
+            include_items=not args.no_items,
+            include_chains=not args.no_chains,
+            include_martial_art_icons=not args.no_martial_art_icons,
+            include_portraits=not args.no_portraits,
+            include_effects=not args.no_effects,
+        )
+    except RuntimeError as exc:
+        print(str(exc), file=sys.stderr)
         return 1
 
-    args.output.mkdir(parents=True, exist_ok=True)
-    target_names, refs, texture_scales = build_texture_targets(
-        source=args.source,
-        names=set(args.names or []),
-        items_source=args.items_source,
-        chains_source=args.chains_source,
-        portraits_source=args.portraits_source,
-        martial_arts_source=args.martial_arts_source,
-        include_items=not args.no_items,
-        include_chains=not args.no_chains,
-        include_martial_art_icons=not args.no_martial_art_icons,
-        include_portraits=not args.no_portraits,
-        include_effects=not args.no_effects,
-    )
-    result = collect_textures(
-        source=args.source,
-        targets=target_names,
-        trim_transparent=True,
-        texture_refs=refs,
-        texture_scales=texture_scales,
-        scale=args.scale,
-    )
-    exported, output_skipped = export_atlas(
-        textures=result.textures,
-        failures=result.failures,
-        output=args.output,
-        image_format=args.format,
-        quality=args.quality,
-        lossy_webp=args.lossy_webp,
-        atlas_size=args.atlas_size,
-        padding=args.padding,
-        overwrite=args.overwrite,
-    )
-
     print(
-        f"Exported {exported} atlas pages from {len(result.textures)} textures, "
-        f"skipped {result.skipped + output_skipped}, failed {len(result.failures)}. "
-        f"Manifest: {args.output / 'manifest.json'}"
+        f"Exported {result.exported} atlas pages from {result.texture_count} textures, "
+        f"skipped {result.skipped}, failed {result.failed}. "
+        f"Manifest: {result.manifest}"
     )
-    return 0 if len(result.failures) == 0 else 2
+    return 0 if result.failed == 0 else 2
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ export type LoadoutPassiveChainRecord = {
   count: number;
   effect: string;
   effectParts: WikiTextPart[];
-  icon?: string | null;
+  imageId?: string | null;
 };
 
 export type LoadoutMartialArt = {
@@ -41,6 +41,7 @@ export type LoadoutData = {
   sectChains: LoadoutChainGroup[];
   styleChains: LoadoutChainGroup[];
   enums: Record<string, Record<string, string | null>>;
+  sectNames: Record<string, string | null>;
 };
 
 export type CustomMartialState = {

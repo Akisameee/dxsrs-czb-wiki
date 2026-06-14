@@ -21,7 +21,7 @@ import FilterCard from "~/components/tools/loadout/FilterCard.vue";
 import InscriptionCard from "~/components/tools/loadout/InscriptionCard.vue";
 import MartialArtGrid from "~/components/tools/loadout/MartialArtGrid.vue";
 import SelectedArtsCard from "~/components/tools/loadout/SelectedArtsCard.vue";
-import { loadoutEnumLabel, useLoadoutData } from "~/composables/useLoadoutData";
+import { loadoutEnumLabel, loadoutSectLabel, useLoadoutData } from "~/composables/useLoadoutData";
 import type {
   ChainRecordView,
   CustomMartialState,
@@ -55,6 +55,7 @@ const customMartial = reactive<CustomMartialState>({
 
 const wuxue = computed(() => data.value?.wuxue || []);
 const enums = computed(() => data.value?.enums || {});
+const sectNames = computed(() => data.value?.sectNames || {});
 const sectChains = computed(() => data.value?.sectChains || []);
 const styleChains = computed(() => data.value?.styleChains || []);
 const errorMessage = computed(() => error.value?.message || "");
@@ -91,6 +92,10 @@ function enumName(type: string, id: number | string | null | undefined, fallback
   return loadoutEnumLabel(enums.value, type, id, fallback);
 }
 
+function sectName(id: number | string | null | undefined, fallback = "未知") {
+  return loadoutSectLabel(sectNames.value, id, fallback);
+}
+
 function selectionKey(item: LoadoutMartialArt) {
   return item.id;
 }
@@ -118,10 +123,10 @@ const visibleChainRecords = computed<LoadoutVisibleChainRecord[]>(() => buildVis
   basicUnlocked.value,
 ));
 const lockedSect = computed(() => getLockedSect(loadoutState.value));
-const lockedSectLabel = computed(() => lockedSect.value === "" ? "" : enumName("LianSuo_MP", lockedSect.value));
+const lockedSectLabel = computed(() => lockedSect.value === "" ? "" : sectName(lockedSect.value));
 const customConflictSect = computed(() => getCustomMartialConflictSect(loadoutState.value));
 const customConflictSectLabel = computed(() => (
-  customConflictSect.value === "" ? "" : enumName("LianSuo_MP", customConflictSect.value)
+  customConflictSect.value === "" ? "" : sectName(customConflictSect.value)
 ));
 const customCanBeEnabled = computed(() => canEnableCustomMartial(loadoutState.value, MAX_SELECTION));
 
@@ -135,14 +140,14 @@ const filteredRows = computed(() => {
 
 const sectOptions = computed(() => [...new Set(wuxue.value.map((item) => item.sectId).filter((id) => id !== null))]
   .sort((a, b) => Number(a) - Number(b))
-  .map((id) => ({ id: String(id), label: enumName("LianSuo_MP", id, "无门派") })));
+  .map((id) => ({ id: String(id), label: sectName(id, "无门派") })));
 
 const styleOptions = computed(() => [...new Set(wuxue.value.flatMap((item) => item.styleIds))]
   .sort((a, b) => a - b)
   .map((id) => ({ id: String(id), label: enumName("LianSuo_FG", id, `风格 ${id}`) })));
 
 const joinableSectOptions = computed(() => getJoinableSects()
-  .map((id) => ({ id: String(id), label: enumName("LianSuo_MP", id, `门派 ${id}`) })));
+  .map((id) => ({ id: String(id), label: sectName(id, `门派 ${id}`) })));
 
 const customStyleOptions = computed(() => styleChains.value
   .map((record) => Number(record.styleId))
@@ -157,7 +162,7 @@ const equipmentStyleOptions = computed(() => EQUIPMENT_STYLE_OPTION_IDS.map((id)
 
 const sectCountRows = computed(() => [...sectCounts.value.entries()].map(([id, count]) => ({
   id,
-  label: enumName("LianSuo_MP", id),
+  label: sectName(id),
   count,
 })));
 
@@ -170,7 +175,7 @@ const styleCountRows = computed(() => [...styleCounts.value.entries()].map(([id,
 const chainRecordViews = computed<ChainRecordView[]>(() => visibleChainRecords.value.map((record) => ({
   key: `${record.groupType}-${record.groupName}`,
   label: record.groupType === "sect"
-    ? enumName("LianSuo_MP", record.groupName, `门派 ${record.groupName}`)
+    ? sectName(record.groupName, `门派 ${record.groupName}`)
     : enumName("LianSuo_FG", record.groupName, `风格 ${record.groupName}`),
   typeLabel: record.groupType === "sect" ? "门派" : "风格",
   groupType: record.groupType,
@@ -180,7 +185,7 @@ const chainRecordViews = computed<ChainRecordView[]>(() => visibleChainRecords.v
   met: record.met,
   activeEffect: record.activeEffect,
   activeEffectParts: record.activeEffectParts,
-  icon: record.activeChain?.chain.icon || record.chains[0]?.icon || null,
+  imageId: record.activeChain?.chain.imageId || record.chains[0]?.imageId || null,
   descriptions: record.chains.map((chain) => chain.effect).filter(Boolean),
   blocks: record.blocks.map((block) => ({
     value: block.value,
@@ -200,7 +205,7 @@ function canSelect(item: LoadoutMartialArt) {
 function disabledReason(item: LoadoutMartialArt) {
   if (canSelect(item)) return "";
   const conflictSect = getMartialConflictSect(loadoutState.value, item);
-  if (conflictSect !== "") return `当前已加入${enumName("LianSuo_MP", conflictSect)}，不能选择其它门派限定武学`;
+  if (conflictSect !== "") return `当前已加入${sectName(conflictSect)}，不能选择其它门派限定武学`;
   return `最多选择 ${MAX_SELECTION} 个武学`;
 }
 

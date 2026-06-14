@@ -1,4 +1,3 @@
-import { enumMapFromRows } from "~/lib/utils";
 import {
   buildCharacterSummary,
   type CharacterQuestRow,
@@ -7,8 +6,6 @@ import {
   type CharacterSummaryRow,
   type WikiEnums,
 } from "~/lib/wiki/character";
-
-type EnumRow = { type: string; id: number; label: string | null };
 
 export type CharacterDetailRow = CharacterSummaryRow & {
   portrait: string | null;
@@ -58,36 +55,74 @@ export type CharacterDetailData = {
   enums: WikiEnums;
 };
 
+export type CharacterFindQuery =
+  | { id: number }
+  | { name: string }
+  | { legacyName: string };
+
 const summaryCache = new Map<number, CharacterSummary | null>();
 const detailCache = new Map<number, CharacterDetailData>();
-let enumsPromise: Promise<WikiEnums> | null = null;
+const characterFindCache = new Map<string, CharacterDetailRow | null>();
 
 export function useCharacterData() {
   const { queryRows } = useWikiDb();
-
-  async function loadEnums() {
-    enumsPromise ||= queryRows<EnumRow>("SELECT type, id, label FROM enums ORDER BY type, id")
-      .then((rows) => enumMapFromRows(rows));
-    return enumsPromise;
-  }
+  const { loadWikiEnums } = useWikiEnums();
 
   async function loadCharacter(id: number) {
-    const rows = await queryRows<CharacterDetailRow>("SELECT * FROM characters WHERE id = ?", [id]);
+    const rows = await queryRows<CharacterDetailRow>(
+      `SELECT c.*, s.name AS sect_name
+       FROM characters c
+       LEFT JOIN sects s ON s.id = c.sect_id
+       WHERE c.id = ?`,
+      [id],
+    );
     return rows[0] || null;
+  }
+
+  async function findCharacter(query: CharacterFindQuery) {
+    if ("id" in query) return loadCharacter(query.id);
+
+    const field = "legacyName" in query ? "legacy_name" : "name";
+    const value = ("legacyName" in query ? query.legacyName : query.name).trim();
+    if (!value) return null;
+
+    const cacheKey = `${field}:${value}`;
+    if (characterFindCache.has(cacheKey)) return characterFindCache.get(cacheKey) || null;
+
+    const rows = await queryRows<CharacterDetailRow>(
+      `SELECT c.*, s.name AS sect_name
+       FROM characters c
+       LEFT JOIN sects s ON s.id = c.sect_id
+       WHERE c.${field} = ?
+       LIMIT 1`,
+      [value],
+    );
+    const character = rows[0] || null;
+    characterFindCache.set(cacheKey, character);
+    return character;
   }
 
   function loadCharacterQuests(id: number) {
     return queryRows<CharacterQuestRow>(
-      "SELECT id, character_id, stage, required_affinity, quest_type_id, reward_item_id FROM character_quests WHERE character_id = ? ORDER BY stage",
+      `SELECT q.id, q.character_id, q.stage, q.required_affinity, q.quest_type_id,
+        q.reward_item_id, item.name AS reward_item_name
+       FROM character_quests q
+       LEFT JOIN items item ON item.id = q.reward_item_id
+       WHERE q.character_id = ?
+       ORDER BY q.stage`,
       [id],
     );
   }
 
   function loadCharacterQuestTargets(id: number) {
     return queryRows<CharacterQuestTargetRow>(
-      `SELECT t.quest_id, t.slot, t.target_role, t.target_kind, t.target_id, t.target_region_id
+      `SELECT t.quest_id, t.slot, t.target_role, t.target_kind, t.target_id, t.target_region_id,
+        COALESCE(character.name, item.name, sect.name) AS target_name
        FROM character_quest_targets t
        JOIN character_quests q ON q.id = t.quest_id
+       LEFT JOIN characters character ON t.target_kind = 'character' AND character.id = t.target_id
+       LEFT JOIN items item ON t.target_kind = 'item' AND item.id = t.target_id
+       LEFT JOIN sects sect ON t.target_kind = 'sect' AND sect.id = t.target_id
        WHERE q.character_id = ?
        ORDER BY t.quest_id, t.slot`,
       [id],
@@ -101,7 +136,7 @@ export function useCharacterData() {
       loadCharacter(id),
       loadCharacterQuests(id),
       loadCharacterQuestTargets(id),
-      loadEnums(),
+      loadWikiEnums(),
     ]);
 
     const detail = { character, quests, questTargets, enums };
@@ -121,8 +156,8 @@ export function useCharacterData() {
   }
 
   return {
-    loadEnums,
     loadCharacter,
+    findCharacter,
     loadCharacterQuests,
     loadCharacterQuestTargets,
     loadCharacterDetail,

@@ -12,12 +12,26 @@ TABLES = {
       "label": "TEXT"
     }
   },
+  "sects": {
+    "primaryKey": [
+      "id"
+    ],
+    "columns": {
+      "id": "INTEGER NOT NULL",
+      "name": "TEXT",
+      "legacy_id": "INTEGER",
+      "legacy_name": "TEXT"
+    }
+  },
   "characters": {
     "primaryKey": [
       "id"
     ],
     "columns": {
       "id": "INTEGER NOT NULL",
+      "name": "TEXT",
+      "legacy_id": "INTEGER",
+      "legacy_name": "TEXT",
       "portrait": "TEXT",
       "region_id": "INTEGER",
       "location_id": "INTEGER",
@@ -189,7 +203,9 @@ TABLES = {
     ],
     "columns": {
       "id": "INTEGER NOT NULL",
-      "icon": "TEXT",
+      "name": "TEXT",
+      "legacy_name": "TEXT",
+      "image_id": "TEXT",
       "description": "TEXT",
       "type_id": "INTEGER",
       "rarity_id": "INTEGER",
@@ -214,6 +230,9 @@ TABLES = {
     ],
     "columns": {
       "id": "INTEGER NOT NULL",
+      "name": "TEXT",
+      "legacy_id": "INTEGER",
+      "legacy_name": "TEXT",
       "sect_id": "INTEGER",
       "type_id": "INTEGER",
       "rarity_id": "INTEGER",
@@ -288,7 +307,7 @@ TABLES = {
     "columns": {
       "id": "TEXT NOT NULL",
       "template": "TEXT NOT NULL",
-      "icon": "TEXT"
+      "image_id": "TEXT"
     }
   },
   "status_effects": {
@@ -311,12 +330,8 @@ TABLES = {
       "effect_id": "INTEGER NOT NULL",
       "array_name": "TEXT",
       "array_index": "INTEGER",
-      "prefab_source": "TEXT",
-      "prefab_path_id": "INTEGER",
       "prefab_name": "TEXT",
-      "primary_texture_source": "TEXT",
-      "primary_texture_path_id": "INTEGER",
-      "primary_texture_name": "TEXT",
+      "image_id": "TEXT",
       "duration": "REAL",
       "layer_count": "INTEGER NOT NULL"
     }
@@ -335,17 +350,11 @@ TABLES = {
       "texture_slot": "INTEGER NOT NULL",
       "game_object_name": "TEXT",
       "depth": "INTEGER NOT NULL",
-      "particle_system_path_id": "INTEGER",
-      "renderer_path_id": "INTEGER",
       "renderer_type": "TEXT",
       "sorting_order": "INTEGER NOT NULL",
       "material_name": "TEXT",
       "texture_property": "TEXT",
-      "texture_source": "TEXT NOT NULL",
-      "texture_path_id": "INTEGER NOT NULL",
-      "texture_name": "TEXT",
-      "texture_width": "INTEGER",
-      "texture_height": "INTEGER",
+      "image_id": "TEXT NOT NULL",
       "duration": "REAL",
       "simulation_speed": "REAL",
       "looping": "INTEGER NOT NULL",
@@ -430,7 +439,7 @@ TABLES = {
     ],
     "columns": {
       "name": "TEXT NOT NULL",
-      "path": "TEXT NOT NULL",
+      "image_id": "TEXT",
       "slot_id": "INTEGER NOT NULL",
       "sex": "TEXT",
       "parent": "TEXT"
@@ -474,7 +483,6 @@ TABLES = {
     ],
     "columns": {
       "name": "TEXT NOT NULL",
-      "source": "TEXT NOT NULL",
       "layer_count": "INTEGER NOT NULL",
       "is_layered": "INTEGER NOT NULL"
     }
@@ -487,17 +495,9 @@ TABLES = {
     ],
     "columns": {
       "portrait": "TEXT NOT NULL",
-      "source": "TEXT NOT NULL",
       "slot": "TEXT NOT NULL",
       "sort_order": "INTEGER NOT NULL",
-      "image_path_id": "INTEGER NOT NULL",
-      "sprite_source": "TEXT",
-      "sprite_path_id": "INTEGER",
-      "texture_source": "TEXT",
-      "texture_path_id": "INTEGER",
-      "texture_name": "TEXT",
-      "texture_width": "INTEGER",
-      "texture_height": "INTEGER",
+      "image_id": "TEXT",
       "color_r": "REAL NOT NULL",
       "color_g": "REAL NOT NULL",
       "color_b": "REAL NOT NULL",
@@ -574,6 +574,7 @@ TABLES = {
 
 INDEXES = [
   "CREATE INDEX idx_characters_location ON characters(region_id, location_id)",
+  "CREATE INDEX idx_characters_legacy_name ON characters(legacy_name)",
   "CREATE INDEX idx_characters_sect ON characters(sect_id)",
   "CREATE INDEX idx_characters_rarity ON characters(rarity_id)",
   "CREATE INDEX idx_characters_weapon ON characters(weapon_type_id)",
@@ -586,19 +587,24 @@ INDEXES = [
   "CREATE INDEX idx_character_quests_reward_item ON character_quests(reward_item_id)",
   "CREATE INDEX idx_character_quest_targets_quest ON character_quest_targets(quest_id)",
   "CREATE INDEX idx_items_type ON items(type_id)",
+  "CREATE INDEX idx_items_image ON items(image_id)",
+  "CREATE INDEX idx_items_legacy_name ON items(legacy_name)",
   "CREATE INDEX idx_items_rarity ON items(rarity_id)",
+  "CREATE INDEX idx_sects_legacy_name ON sects(legacy_name)",
   "CREATE INDEX idx_martial_arts_sect ON martial_arts(sect_id)",
+  "CREATE INDEX idx_martial_arts_legacy_name ON martial_arts(legacy_name)",
   "CREATE INDEX idx_martial_arts_type ON martial_arts(type_id)",
   "CREATE INDEX idx_martial_arts_rarity ON martial_arts(rarity_id)",
   "CREATE INDEX idx_martial_art_styles_style ON martial_art_styles(style_id)",
   "CREATE INDEX idx_martial_art_effects_effect ON martial_art_effects(effect_id)",
   "CREATE INDEX idx_martial_art_levels_martial ON martial_art_levels(martial_art_id)",
   "CREATE INDEX idx_asset_effect_layers_effect ON asset_effect_layers(kind, effect_id, sorting_order, layer_index)",
-  "CREATE INDEX idx_asset_effect_layers_texture ON asset_effect_layers(texture_source, texture_path_id)",
+  "CREATE INDEX idx_asset_effect_layers_image ON asset_effect_layers(image_id)",
   "CREATE INDEX idx_portrait_part_assets_slot ON portrait_part_assets(slot_id)",
+  "CREATE INDEX idx_portrait_part_assets_image ON portrait_part_assets(image_id)",
   "CREATE INDEX idx_portrait_part_options_type ON portrait_part_options(type_id)",
   "CREATE INDEX idx_portrait_part_options_sex ON portrait_part_options(sex_id)",
   "CREATE INDEX idx_portrait_weapon_parts_weapon ON portrait_weapon_parts(weapon_type_id)",
-  "CREATE INDEX idx_portrait_prefab_layers_texture ON portrait_prefab_layers(texture_source, texture_path_id)",
+  "CREATE INDEX idx_portrait_prefab_layers_image ON portrait_prefab_layers(image_id)",
   "CREATE INDEX idx_custom_martial_effect_rates_effect ON custom_martial_effect_rates(effect_id)"
 ]

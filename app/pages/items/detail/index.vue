@@ -93,7 +93,7 @@ const rawValueRows = computed(() => {
           <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
             <div class="flex w-32 items-center justify-center rounded-md">
               <GameImage
-                :name="summary.icon"
+                :id="summary.imageId"
                 :alt="summary.name"
                 :fallback="summary.initial"
                 class="w-full text-2xl"

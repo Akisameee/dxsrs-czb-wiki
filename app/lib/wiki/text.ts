@@ -1,4 +1,5 @@
 export type WikiEnums = Record<string, Record<string, string | null>>;
+export type WikiNameMap = Record<string, string | null>;
 
 export type WikiTextPart =
   | { type: "text"; text: string }
@@ -41,12 +42,11 @@ type WikiLinkEntry = {
   part: (id: number, text: string) => WikiTextPart;
 };
 
-function enumLinkEntries(
-  enums: WikiEnums,
-  enumType: string,
+function nameMapLinkEntries(
+  names: WikiNameMap | null | undefined,
   part: (id: number, text: string) => WikiTextPart,
 ) {
-  return Object.entries(enums[enumType] || {})
+  return Object.entries(names || {})
     .filter((entry): entry is [string, string] => Boolean(entry[1]))
     .map(([id, label]) => ({ id: Number(id), label, part }))
     .filter((item) => Number.isFinite(item.id) && item.label.length > 1);
@@ -83,14 +83,20 @@ export function linkWikiEntriesInText(text: string | null | undefined, entries: 
   return parts;
 }
 
-export function linkCharactersInText(text: string | null | undefined, enums: WikiEnums) {
-  return linkWikiEntriesInText(text, enumLinkEntries(enums, "Character", wikiCharacter));
+export async function linkCharactersInText(text: string | null | undefined) {
+  const { loadWikiTextLinkNames } = useWikiTextLinks();
+  const names = await loadWikiTextLinkNames("characters");
+  return linkWikiEntriesInText(text, nameMapLinkEntries(names, wikiCharacter));
 }
 
-export function linkMartialArtsInText(text: string | null | undefined, enums: WikiEnums) {
-  return linkWikiEntriesInText(text, enumLinkEntries(enums, "MartialArt", wikiMartialArt));
+export async function linkMartialArtsInText(text: string | null | undefined) {
+  const { loadWikiTextLinkNames } = useWikiTextLinks();
+  const names = await loadWikiTextLinkNames("martialArts");
+  return linkWikiEntriesInText(text, nameMapLinkEntries(names, wikiMartialArt));
 }
 
-export function linkItemsInText(text: string | null | undefined, enums: WikiEnums) {
-  return linkWikiEntriesInText(text, enumLinkEntries(enums, "Item", wikiItem));
+export async function linkItemsInText(text: string | null | undefined) {
+  const { loadWikiTextLinkNames } = useWikiTextLinks();
+  const names = await loadWikiTextLinkNames("items");
+  return linkWikiEntriesInText(text, nameMapLinkEntries(names, wikiItem));
 }

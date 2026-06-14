@@ -14,7 +14,7 @@ const props = defineProps<{
   record: ChainRecordView | null;
 }>();
 
-const iconName = computed(() => props.record?.icon || null);
+const imageId = computed(() => props.record?.imageId || null);
 const blocks = computed(() => props.record?.blocks || []);
 const activeEffect = computed(() => props.record?.activeEffect || "");
 const activeEffectParts = computed(() => props.record?.activeEffectParts || []);
@@ -35,7 +35,7 @@ function blockClass(state: string) {
   <div class="grid gap-2 rounded-md border px-3 py-2 text-sm">
     <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
       <GameImage
-        :name="iconName"
+        :id="imageId"
         :alt="row.label"
         :fallback="row.label.slice(0, 1)"
         :size="24"

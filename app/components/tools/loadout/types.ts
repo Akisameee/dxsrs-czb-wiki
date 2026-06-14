@@ -44,7 +44,7 @@ export type ChainRecordView = {
   met: boolean;
   activeEffect: string;
   activeEffectParts: WikiTextPart[];
-  icon?: string | null;
+  imageId?: string | null;
   descriptions?: string[];
   blocks: ChainBlockView[];
 };

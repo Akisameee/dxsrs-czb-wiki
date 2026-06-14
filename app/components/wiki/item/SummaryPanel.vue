@@ -23,7 +23,7 @@ defineProps<{
   >
     <template #avatar="{ summary: currentSummary }">
       <GameImage
-        :name="currentSummary.icon"
+        :id="currentSummary.imageId"
         :alt="currentSummary.name"
         :fallback="currentSummary.initial"
         :size="40"
