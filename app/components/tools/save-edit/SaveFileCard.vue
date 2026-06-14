@@ -18,7 +18,6 @@ defineProps<{
   tableCount?: number;
   parsedFieldCount?: number;
   fieldCount?: number;
-  changedCount?: number;
   active?: boolean;
   errorMessage: string;
 }>();
@@ -50,7 +49,6 @@ const emit = defineEmits<{
       <div v-else class="flex flex-wrap gap-2">
         <Badge variant="secondary">{{ tableCount }} 张表</Badge>
         <Badge variant="secondary">{{ parsedFieldCount }} / {{ fieldCount }} 字段</Badge>
-        <Badge v-if="changedCount" variant="default">{{ changedCount }} 处修改</Badge>
       </div>
 
       <div v-if="!errorMessage" class="flex flex-wrap gap-2">

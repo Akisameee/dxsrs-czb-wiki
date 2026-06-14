@@ -5,6 +5,7 @@ import { Badge, type BadgeVariants } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -118,5 +119,14 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
       </div>
     </CardHeader>
+
+    <CardContent
+      v-if="$slots.footer"
+      class="pt-0"
+      @click.stop
+      @keydown.stop
+    >
+      <slot name="footer" />
+    </CardContent>
   </Card>
 </template>

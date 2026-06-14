@@ -59,6 +59,7 @@ def main() -> int:
         enum_source=args.enum_source,
         output=args.db_output,
         image_id_by_name=image_id_by_name,
+        image_id_by_resource_path=images.image_id_by_resource_path,
     )
     print(f"Wrote {ROOT / sqlite['output']}")
     for name, count in sqlite["tables"].items():

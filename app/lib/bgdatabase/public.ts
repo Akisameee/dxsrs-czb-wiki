@@ -54,6 +54,7 @@ export function parseBgDatabase(input: ArrayBuffer | Uint8Array): BgDatabaseFile
     const parsedFieldCount = Object.values(fields).filter((field) => field.parsed).length;
     return {
       name: tableRecord.meta.name,
+      tableIndex,
       start: 0,
       end: 0,
       fields,

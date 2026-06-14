@@ -120,7 +120,7 @@ function withQuestReward(quest: CharacterQuestRow, parts: WikiTextPart[]) {
   if (quest.reward_item_id === null) return parts;
   return [
     ...parts,
-    wikiText("，奖励 "),
+    wikiText("，奖励"),
     wikiItem(quest.reward_item_id, quest.reward_item_name || `道具 ${quest.reward_item_id}`),
   ];
 }

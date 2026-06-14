@@ -12,7 +12,6 @@ defineProps<{
   characterName: string;
   fileName: string;
   tableCount?: number;
-  changedCount: number;
   hasSave: boolean;
   viewMode: "normal" | "database";
 }>();
@@ -31,7 +30,7 @@ const emit = defineEmits<{
           <CardTitle class="text-2xl">{{ characterName }}</CardTitle>
           <CardDescription>
             {{ fileName || "没有选择文件" }}
-            <template v-if="hasSave"> · {{ tableCount }} 张表 · {{ changedCount }} 处修改</template>
+            <template v-if="hasSave"> · {{ tableCount }} 张表</template>
           </CardDescription>
         </div>
 

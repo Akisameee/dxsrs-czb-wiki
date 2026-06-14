@@ -10,7 +10,6 @@ from .paths import (
     DEFAULT_ITEMS_SOURCE,
     DEFAULT_MARTIAL_ARTS_SOURCE,
     DEFAULT_OUTPUT,
-    DEFAULT_PORTRAIT_PARTS_SOURCE,
     DEFAULT_PORTRAITS_SOURCE,
     DEFAULT_SOURCE,
 )
@@ -26,6 +25,7 @@ class ImageBuildResult:
     texture_count: int
     manifest: Path
     image_index: list[dict[str, Any]]
+    image_id_by_resource_path: dict[str, str]
 
 
 def image_id_by_unique_name(rows: list[dict[str, Any]]) -> dict[str, str]:
@@ -55,7 +55,6 @@ def build_images(
     items_source: Path = DEFAULT_ITEMS_SOURCE,
     chains_source: Path = DEFAULT_CHAINS_SOURCE,
     portraits_source: Path = DEFAULT_PORTRAITS_SOURCE,
-    portrait_parts_source: Path = DEFAULT_PORTRAIT_PARTS_SOURCE,
     martial_arts_source: Path = DEFAULT_MARTIAL_ARTS_SOURCE,
     include_items: bool = True,
     include_chains: bool = True,
@@ -67,13 +66,12 @@ def build_images(
         raise RuntimeError(f"Source directory does not exist: {source}")
 
     output.mkdir(parents=True, exist_ok=True)
-    target_names, refs, texture_scales = build_texture_targets(
+    target_names, refs, texture_scales, image_id_by_resource_path = build_texture_targets(
         source=source,
         names=names or set(),
         items_source=items_source,
         chains_source=chains_source,
         portraits_source=portraits_source,
-        portrait_parts_source=portrait_parts_source,
         martial_arts_source=martial_arts_source,
         include_items=include_items,
         include_chains=include_chains,
@@ -107,4 +105,5 @@ def build_images(
         texture_count=len(result.textures),
         manifest=output / "manifest.json",
         image_index=image_index,
+        image_id_by_resource_path=image_id_by_resource_path,
     )

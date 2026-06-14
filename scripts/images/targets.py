@@ -7,10 +7,10 @@ from .paths import (
     DEFAULT_CHAINS_SOURCE,
     DEFAULT_ITEMS_SOURCE,
     DEFAULT_MARTIAL_ARTS_SOURCE,
-    DEFAULT_PORTRAIT_PARTS_SOURCE,
     DEFAULT_PORTRAITS_SOURCE,
 )
 from .portraits import portrait_texture_refs
+from .resources import portrait_part_resource_textures
 from .unity_assets import load_table_rows
 
 
@@ -31,6 +31,12 @@ MARTIAL_ART_TEXTURE_NAMES = {
     "内功icon",
 }
 
+LIFE_SKILL_TEXTURE_NAMES = {
+    f"{skill}{level:02d}"
+    for skill in ("挖矿", "采药", "打猎", "锻造", "炼丹", "裁缝")
+    for level in range(6)
+}
+
 
 def wiki_texture_names(items_source: Path = DEFAULT_ITEMS_SOURCE) -> set[str]:
     return {
@@ -48,14 +54,6 @@ def chain_texture_names(chains_source: Path = DEFAULT_CHAINS_SOURCE) -> set[str]
     }
 
 
-def portrait_part_texture_names(portrait_parts_source: Path = DEFAULT_PORTRAIT_PARTS_SOURCE) -> set[str]:
-    return {
-        Path(row["path"]).name
-        for row in load_table_rows(portrait_parts_source)
-        if row.get("path")
-    }
-
-
 def build_texture_targets(
     *,
     source: Path,
@@ -63,17 +61,17 @@ def build_texture_targets(
     items_source: Path = DEFAULT_ITEMS_SOURCE,
     chains_source: Path = DEFAULT_CHAINS_SOURCE,
     portraits_source: Path = DEFAULT_PORTRAITS_SOURCE,
-    portrait_parts_source: Path = DEFAULT_PORTRAIT_PARTS_SOURCE,
     martial_arts_source: Path = DEFAULT_MARTIAL_ARTS_SOURCE,
     include_items: bool = True,
     include_chains: bool = True,
     include_martial_art_icons: bool = True,
     include_portraits: bool = True,
     include_effects: bool = True,
-) -> tuple[set[str], dict[str, set[int]], dict[str, dict[int, float]]]:
+) -> tuple[set[str], dict[str, set[int]], dict[str, dict[int, float]], dict[str, str]]:
     target_names = set(names or [])
     texture_refs: dict[str, set[int]] = {}
     texture_scales: dict[str, dict[int, float]] = {}
+    image_id_by_resource_path: dict[str, str] = {}
 
     if include_items:
         target_names.update(wiki_texture_names(items_source))
@@ -81,8 +79,11 @@ def build_texture_targets(
         target_names.update(chain_texture_names(chains_source))
     if include_martial_art_icons:
         target_names.update(MARTIAL_ART_TEXTURE_NAMES)
+        target_names.update(LIFE_SKILL_TEXTURE_NAMES)
     if include_portraits:
-        target_names.update(portrait_part_texture_names(portrait_parts_source))
+        part_resources = portrait_part_resource_textures(source)
+        merge_texture_refs(texture_refs, part_resources.refs)
+        image_id_by_resource_path.update(part_resources.image_id_by_resource_path)
         merge_texture_refs(texture_refs, portrait_texture_refs(source, portraits_source))
     if include_effects:
         effect_refs = effect_texture_refs(source, martial_arts_source)
@@ -93,4 +94,4 @@ def build_texture_targets(
                 for path_id in path_ids
             })
 
-    return target_names, texture_refs, texture_scales
+    return target_names, texture_refs, texture_scales, image_id_by_resource_path

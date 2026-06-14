@@ -8,7 +8,6 @@ import {
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import {
   Pagination,
   PaginationContent,
@@ -60,7 +59,7 @@ const emit = defineEmits<{
 
 const page = ref(1);
 const search = ref("");
-const pageSize = 50;
+const pageSize = 20;
 
 const table = computed(() => props.save.tables[props.selectedTableIndex] ?? props.save.zhuJue);
 const parsedFields = computed(() =>
@@ -83,6 +82,14 @@ const rowIndexes = computed(() => {
   return filteredRowIndexes.value.slice(start, start + pageSize);
 });
 const parsedFieldCount = computed(() => parsedFields.value.length);
+const enumOptionsByField = computed(() => {
+  const result = new Map<string, ReturnType<typeof saveEditEnumOptions>>();
+  for (const field of parsedFields.value) {
+    const options = saveEditEnumOptions(props.enums, table.value.name, field.name);
+    if (options.length) result.set(field.name, options);
+  }
+  return result;
+});
 
 watch(
   () => props.selectedTableIndex,
@@ -114,7 +121,11 @@ function updateCell(field: BgDatabaseField, rowIndex: number, value: string) {
 }
 
 function enumOptions(field: BgDatabaseField) {
-  return saveEditEnumOptions(props.enums, table.value.name, field.name);
+  return enumOptionsByField.value.get(field.name) || [];
+}
+
+function selectValue(event: Event) {
+  return String((event.target as HTMLSelectElement).value);
 }
 </script>
 
@@ -214,12 +225,20 @@ function enumOptions(field: BgDatabaseField) {
                   :key="field.name"
                   class="align-top"
                 >
-                  <WikiEnumSelect
+                  <select
                     v-if="enumOptions(field).length"
-                    :model-value="formatSaveValue(cellValue(field, rowIndex))"
-                    :options="enumOptions(field)"
-                    @update:model-value="updateCell(field, rowIndex, $event)"
-                  />
+                    class="h-8 w-36 rounded-md border border-input bg-background px-2 text-sm"
+                    :value="formatSaveValue(cellValue(field, rowIndex))"
+                    @change="updateCell(field, rowIndex, selectValue($event))"
+                  >
+                    <option
+                      v-for="option in enumOptions(field)"
+                      :key="option.id"
+                      :value="option.id"
+                    >
+                      {{ option.label }}
+                    </option>
+                  </select>
                   <Input
                     v-else-if="isEditableSaveValue(cellValue(field, rowIndex))"
                     class="h-8 w-36"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GameImage from "~/components/wiki/GameImage.vue";
+import GameImage from "~/components/wiki/WikiImage.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
   Tooltip,

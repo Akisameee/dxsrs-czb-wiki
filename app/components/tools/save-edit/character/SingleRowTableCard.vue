@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import EditableTableCardHeader from "./EditableTableCardHeader.vue";
 import {
   fieldDraftKey,
   formatSaveValue,
   isEditableSaveValue,
+  parseFieldDraftKey,
   saveEditEnumOptions,
   type SaveEditDraft,
 } from "~/components/tools/save-edit/model";
@@ -31,6 +33,21 @@ function fieldValue(field: BgDatabaseField): BgDatabaseValue {
   return props.draft[key] ?? field.values[0] ?? null;
 }
 
+function initialFieldText(field: BgDatabaseField) {
+  return formatSaveValue(field.values[0]);
+}
+
+const dirty = computed(() =>
+  Object.keys(props.draft).some((key) => parseFieldDraftKey(key)?.tableIndex === props.table.tableIndex),
+);
+
+function resetTable() {
+  for (const field of fields.value) {
+    const initialValue = initialFieldText(field);
+    if (fieldDraftKey(field, 0) in props.draft) emit("updateField", field, initialValue, 0);
+  }
+}
+
 function enumOptions(fieldName: string) {
   return saveEditEnumOptions(props.enums, props.table.name, fieldName);
 }
@@ -38,10 +55,12 @@ function enumOptions(fieldName: string) {
 
 <template>
   <Card>
-    <CardHeader>
-      <CardTitle>{{ table.name }}</CardTitle>
-      <CardDescription>单行表，适合直接编辑</CardDescription>
-    </CardHeader>
+    <EditableTableCardHeader
+      :title="table.name"
+      description="单行表，适合直接编辑"
+      :dirty="dirty"
+      @reset="resetTable"
+    />
     <CardContent class="grid auto-rows-min gap-3 sm:grid-cols-2">
       <div
         v-for="field in fields"

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import CharacterEditHeaderCard from "~/components/tools/save-edit/character/CharacterEditHeaderCard.vue";
+import InventoryTableCard from "~/components/tools/save-edit/character/inventory/TableCard.vue";
+import MartialArtsTableCard from "~/components/tools/save-edit/character/martial-arts/TableCard.vue";
+import ZhuJueTableCard from "~/components/tools/save-edit/character/player/TableCard.vue";
 import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
 import SingleRowTableCard from "~/components/tools/save-edit/character/SingleRowTableCard.vue";
-import ZhuJueTableCard from "~/components/tools/save-edit/character/ZhuJueTableCard.vue";
 import SaveTableEditor from "~/components/tools/save-edit/SaveTableEditor.vue";
 import {
   fieldDraftKey,
+  formatSaveValue,
+  parseFieldDraftKey,
   saveEditCharacterName,
   writeSaveEditFile,
 } from "~/components/tools/save-edit/model";
@@ -56,11 +60,27 @@ const easyTables = computed(() => {
     .map((name) => save.value?.tables.find((table) => table.name === name))
     .filter((table): table is BgDatabaseTable => Boolean(table && table.rowCount <= 1));
 });
+const inventoryTable = computed(() => save.value?.tables.find((table) => table.name === "XingNang") || null);
+const jsWugongTable = computed(() => save.value?.tables.find((table) => table.name === "JSWugong") || null);
+const gWugongTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGong") || null);
+const gWugongDetailTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGongDetail") || null);
+const equippedUids = computed(() => ({
+  weapon1: zhuJueFieldText("wq1_uid"),
+  weapon2: zhuJueFieldText("wq2_uid"),
+  armor: zhuJueFieldText("fj_uid"),
+}));
+
+function zhuJueFieldText(fieldName: string) {
+  const field = save.value?.zhuJue.fields[fieldName];
+  if (!field) return "";
+  const key = fieldDraftKey(field, 0);
+  return String(draft.value[key] ?? field.values[0] ?? "");
+}
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
   if (!item.value) return;
   const key = fieldDraftKey(field, rowIndex);
-  updateItem(item.value.id, { draft: { ...item.value.draft, [key]: value } });
+  updateDraftValue(key, field, rowIndex, value);
 }
 
 function updateActiveTable(tableIndex: number) {
@@ -70,7 +90,32 @@ function updateActiveTable(tableIndex: number) {
 
 function updateDatabaseCell(key: string, value: string) {
   if (!item.value) return;
-  updateItem(item.value.id, { draft: { ...item.value.draft, [key]: value } });
+  const parsed = parseFieldDraftKey(key);
+  const table = save.value?.tables.find((candidate) => candidate.tableIndex === parsed?.tableIndex);
+  const field = table?.fieldNames
+    .map((fieldName) => table.fields[fieldName])
+    .find((candidate) => candidate?.fieldIndex === parsed?.fieldIndex);
+  if (!parsed || !field) {
+    updateItem(item.value.id, { draft: { ...item.value.draft, [key]: value } });
+    return;
+  }
+  updateDraftValue(key, field, parsed.rowIndex, value);
+}
+
+function updateDraftValue(key: string, field: BgDatabaseField, rowIndex: number, value: string) {
+  if (!item.value) return;
+  const initialValue = formatSaveValue(field.values[rowIndex]);
+  const currentDraftValue = item.value.draft[key];
+  if (value === initialValue && currentDraftValue === undefined) return;
+  if (value !== initialValue && currentDraftValue === value) return;
+
+  const nextDraft = { ...item.value.draft };
+  if (value === initialValue) {
+    delete nextDraft[key];
+  } else {
+    nextDraft[key] = value;
+  }
+  updateItem(item.value.id, { draft: nextDraft });
 }
 
 function downloadSave() {
@@ -106,7 +151,6 @@ function editedFileName(name: string) {
       :character-name="characterName"
       :file-name="headerFileName"
       :table-count="save?.tables.length"
-      :changed-count="Object.keys(draft).length"
       :has-save="Boolean(save)"
       :view-mode="viewMode"
       @update-view-mode="viewMode = $event"
@@ -130,6 +174,25 @@ function editedFileName(name: string) {
       <ZhuJueTableCard
         :save="save"
         :table="save.zhuJue"
+        :draft="draft"
+        :enums="enums"
+        @update-field="updateField"
+      />
+
+      <MartialArtsTableCard
+        v-if="jsWugongTable && gWugongTable && gWugongDetailTable"
+        :js-table="jsWugongTable"
+        :base-table="gWugongTable"
+        :detail-table="gWugongDetailTable"
+        :draft="draft"
+        :enums="enums"
+        @update-field="updateField"
+      />
+
+      <InventoryTableCard
+        v-if="inventoryTable"
+        :table="inventoryTable"
+        :equipped-uids="equippedUids"
         :draft="draft"
         :enums="enums"
         @update-field="updateField"

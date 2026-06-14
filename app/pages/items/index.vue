@@ -10,7 +10,7 @@ import {
   itemTypeLabel,
   type ItemSummaryRow,
 } from "~/lib/wiki/item";
-import GameImage from "~/components/wiki/GameImage.vue";
+import GameImage from "~/components/wiki/WikiImage.vue";
 import WikiCard from "~/components/wiki/WikiCard.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";

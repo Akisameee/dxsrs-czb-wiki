@@ -87,6 +87,7 @@ export type BgDatabaseField = {
 
 export type BgDatabaseTable = {
   name: string;
+  tableIndex: number;
   start: number;
   end: number;
   fields: Record<string, BgDatabaseField>;

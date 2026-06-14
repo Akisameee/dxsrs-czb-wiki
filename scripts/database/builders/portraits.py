@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from pathlib import PurePosixPath
 from typing import Any
 
 from scripts.images.ids import image_id
 from scripts.images.portraits import extract_portrait_layers
+from scripts.images.resources import normalize_resource_path
 
 from ..paths import DEFAULT_NPC_TABLE_JSON
 from ..utils import bool_int, json_list, js_number
@@ -42,10 +42,10 @@ class PortraitBuilder:
         for row in self.ctx.portrait_part_rows:
             if not row.get("name") or not row.get("path"):
                 continue
-            texture_name = PurePosixPath(row["path"]).name
+            resource_path = normalize_resource_path(f"texture/{row['path']}")
             rows.append({
                 "name": row["name"],
-                "image_id": self.ctx.image_id_by_name.get(texture_name),
+                "image_id": self.ctx.image_id_by_resource_path.get(resource_path),
                 "slot_id": int(js_number(row.get("weizhi"))),
                 "sex": row.get("sex") or None,
                 "parent": row.get("parent") or None,

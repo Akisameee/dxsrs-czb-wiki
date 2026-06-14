@@ -92,19 +92,11 @@ function editedFileName(name: string) {
         :table-count="item.save?.tables.length"
         :parsed-field-count="item.save?.tables.reduce((sum, table) => sum + table.parsedFieldCount, 0)"
         :field-count="item.save?.tables.reduce((sum, table) => sum + table.fieldCount, 0)"
-        :changed-count="Object.keys(item.draft).length"
         :error-message="item.errorMessage"
         @edit="editSave(item)"
         @download="downloadSave(item)"
         @remove="removeSave(item.id)"
       />
     </section>
-
-    <Card v-else>
-      <CardHeader>
-        <CardTitle>等待导入</CardTitle>
-        <CardDescription>导入后，每个文件会在这里生成一个独立卡片</CardDescription>
-      </CardHeader>
-    </Card>
   </main>
 </template>

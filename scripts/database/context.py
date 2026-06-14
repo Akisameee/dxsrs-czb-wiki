@@ -77,6 +77,7 @@ class BuildContext:
     attack_area_enums: list[dict[str, Any]]
     enum_types: dict[str, dict[Any, Any]]
     image_id_by_name: dict[str, str]
+    image_id_by_resource_path: dict[str, str]
 
     @classmethod
     def from_source(
@@ -84,6 +85,7 @@ class BuildContext:
         source: Path,
         enum_source: Path,
         image_id_by_name: dict[str, str] | None = None,
+        image_id_by_resource_path: dict[str, str] | None = None,
     ) -> "BuildContext":
         if not source.exists():
             raise RuntimeError(f"找不到原始数据库文件：{source}")
@@ -99,6 +101,8 @@ class BuildContext:
         enum_types = build_enum_types(enum_source=enum_source, area_rows=area_rows, chain_rows=chain_rows)
         if image_id_by_name is None:
             image_id_by_name = {}
+        if image_id_by_resource_path is None:
+            image_id_by_resource_path = {}
         return cls(
             source=source,
             enum_source=enum_source,
@@ -124,4 +128,5 @@ class BuildContext:
             attack_area_enums=attack_area_enums,
             enum_types=enum_types,
             image_id_by_name=image_id_by_name,
+            image_id_by_resource_path=image_id_by_resource_path,
         )

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ItemSummary } from "~/lib/wiki/item";
-import GameImage from "~/components/wiki/GameImage.vue";
-import WikiSummaryPanel from "~/components/wiki/SummaryPanel.vue";
+import GameImage from "~/components/wiki/WikiImage.vue";
+import WikiSummaryPanel from "~/components/wiki/WikiSummaryPanel.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{

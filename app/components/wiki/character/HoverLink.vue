@@ -2,7 +2,7 @@
 import { CircleHelp } from "@lucide/vue";
 import CharacterSummaryPanel from "./SummaryPanel.vue";
 import { useCharacterData } from "~/composables/useCharacterData";
-import WikiHoverLink from "~/components/wiki/HoverLink.vue";
+import WikiHoverLink from "~/components/wiki/WikiHoverLink.vue";
 import { rarityTextClass } from "~/lib/rarity";
 import { characterDetailUrl, type CharacterSummary } from "~/lib/wiki/character";
 

@@ -21,8 +21,14 @@ def build_rows_from_source(
     source: Path,
     enum_source: Path,
     image_id_by_name: dict[str, str] | None = None,
+    image_id_by_resource_path: dict[str, str] | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
-    ctx = BuildContext.from_source(source, enum_source, image_id_by_name=image_id_by_name)
+    ctx = BuildContext.from_source(
+        source,
+        enum_source,
+        image_id_by_name=image_id_by_name,
+        image_id_by_resource_path=image_id_by_resource_path,
+    )
     rows_by_table: dict[str, list[dict[str, Any]]] = {}
     for builder in [
         EnumBuilder(ctx),
@@ -50,8 +56,14 @@ def build_sqlite(
     enum_source: Path = DEFAULT_ENUM_SOURCE,
     output: Path = OUTPUT,
     image_id_by_name: dict[str, str] | None = None,
+    image_id_by_resource_path: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    rows_by_table = build_rows_from_source(source, enum_source, image_id_by_name=image_id_by_name)
+    rows_by_table = build_rows_from_source(
+        source,
+        enum_source,
+        image_id_by_name=image_id_by_name,
+        image_id_by_resource_path=image_id_by_resource_path,
+    )
     counts = write_sqlite(output=output, tables=TABLES, indexes=INDEXES, rows_by_table=rows_by_table)
     return {
         "source": relative_to_root(source),

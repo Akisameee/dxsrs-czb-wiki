@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { FlaskConical, Hammer, Leaf, Pickaxe, Scissors, Swords } from "@lucide/vue";
 import { enumLabel } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
 import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
+import LifeSkillRankImages from "~/components/wiki/character/LifeSkillRankImages.vue";
 import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
@@ -14,6 +14,7 @@ import {
   useCharacterData,
   type CharacterDetailRow,
 } from "~/composables/useCharacterData";
+import type { LifeSkillType } from "~/lib/wiki/life-skills";
 
 useHead({ title: "人物详情" });
 
@@ -79,13 +80,13 @@ const lifeSkills = computed(() => {
   const item = character.value;
   if (!item) return [];
   return [
-    { label: "挖矿", value: item.mining, icon: Pickaxe },
-    { label: "采药", value: item.herb_gathering, icon: Leaf },
-    { label: "打猎", value: item.hunting, icon: Swords },
-    { label: "锻造", value: item.forging, icon: Hammer },
-    { label: "炼丹", value: item.alchemy, icon: FlaskConical },
-    { label: "裁缝", value: item.sewing, icon: Scissors },
-  ];
+    { label: "挖矿", type: "mining", value: item.mining },
+    { label: "采药", type: "herbGathering", value: item.herb_gathering },
+    { label: "打猎", type: "hunting", value: item.hunting },
+    { label: "锻造", type: "forging", value: item.forging },
+    { label: "炼丹", type: "alchemy", value: item.alchemy },
+    { label: "裁缝", type: "sewing", value: item.sewing },
+  ] satisfies Array<{ label: string; type: LifeSkillType; value: number | null | undefined }>;
 });
 
 const favoriteItems = computed(() => {
@@ -129,11 +130,6 @@ function questTargets(quest: CharacterQuestRow) {
 
 function questSummaryParts(quest: CharacterQuestRow) {
   return formatQuestParts(quest, questTargets(quest), enums.value);
-}
-
-function skillIconClass(value: number, index: number) {
-  const active = index < Number(value || 0);
-  return active ? "text-primary" : "text-muted-foreground/25";
 }
 
 function themeColor(name: string, fallback: string) {
@@ -367,15 +363,11 @@ onBeforeUnmount(() => {
               class="flex items-center justify-between rounded-md border px-3 py-2"
             >
               <span>{{ skill.label }}</span>
-              <span class="flex gap-1">
-                <component
-                  :is="skill.icon"
-                  v-for="index in 5"
-                  :key="index"
-                  class="size-5"
-                  :class="skillIconClass(skill.value, index - 1)"
-                />
-              </span>
+              <LifeSkillRankImages
+                :type="skill.type"
+                :value="skill.value"
+                :label="skill.label"
+              />
             </div>
           </CardContent>
         </Card>

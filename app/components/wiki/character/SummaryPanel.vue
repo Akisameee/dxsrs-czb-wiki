@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterSummary } from "~/lib/wiki/character";
 import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
-import WikiSummaryPanel from "~/components/wiki/SummaryPanel.vue";
+import WikiSummaryPanel from "~/components/wiki/WikiSummaryPanel.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{

@@ -2,7 +2,7 @@
 import type { MartialArtSummary } from "~/lib/wiki/martial-art";
 import { Badge } from "~/components/ui/badge";
 import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
-import WikiSummaryPanel from "~/components/wiki/SummaryPanel.vue";
+import WikiSummaryPanel from "~/components/wiki/WikiSummaryPanel.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 
 defineProps<{

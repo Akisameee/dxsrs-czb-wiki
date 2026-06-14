@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 import { CircleHelp } from "@lucide/vue";
-import WikiHoverLink from "~/components/wiki/HoverLink.vue";
+import WikiHoverLink from "~/components/wiki/WikiHoverLink.vue";
 import { rarityTextClass } from "~/lib/rarity";
 import { useItemData } from "~/composables/useItemData";
 import type { ItemSummary } from "~/lib/wiki/item";
