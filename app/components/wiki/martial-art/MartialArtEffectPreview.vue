@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
   size?: number;
 }>(), {});
 
-const { findImage } = useGameImageAtlas();
+const { findImage, imageAssetUrl } = useGameImageAtlas();
 const root = ref<HTMLElement | null>(null);
 const tick = ref(0);
 const measuredSize = ref(96);
@@ -209,7 +209,7 @@ function layerStyle(item: EffectRenderLayer): CSSProperties {
     top: `${top}px`,
     width: `${width}px`,
     height: `${height}px`,
-    backgroundImage: `url(/images/${item.entry.atlas})`,
+    backgroundImage: `url(${imageAssetUrl(item.entry.atlas)})`,
     backgroundPosition: `-${atlasX * scale}px -${atlasY * scale}px`,
     backgroundSize: `${item.entry.atlasWidth * scale}px ${item.entry.atlasHeight * scale}px`,
   };

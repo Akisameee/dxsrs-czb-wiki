@@ -58,6 +58,11 @@ export type GameImageFindQuery = {
 
 const atlasImageCache = new Map<string, Promise<HTMLImageElement>>();
 
+function publicAssetUrl(baseURL: string, path: string) {
+  const base = baseURL.endsWith("/") ? baseURL : `${baseURL}/`;
+  return `${base}${path.replace(/^\/+/, "")}`;
+}
+
 function loadAtlasImage(src: string) {
   if (atlasImageCache.has(src)) return atlasImageCache.get(src)!;
 
@@ -93,8 +98,10 @@ function imageDataBounds(data: ImageData) {
 }
 
 export function useGameImageAtlas() {
+  const config = useRuntimeConfig();
+  const imageAssetUrl = (path: string) => publicAssetUrl(config.app.baseURL, `images/${path}`);
   const { data, pending, error } = useFetch<GameImageAtlasEntry[]>(
-    "/images/manifest.json",
+    imageAssetUrl("manifest.json"),
     {
       key: "game-image-atlas-manifest",
       server: false,
@@ -126,7 +133,7 @@ export function useGameImageAtlas() {
     if (!entry) return null;
 
     return {
-      src: `/images/${entry.atlas}`,
+      src: imageAssetUrl(entry.atlas),
       x: entry.x,
       y: entry.y,
       offsetX: entry.trim.x,
@@ -167,7 +174,7 @@ export function useGameImageAtlas() {
 
     for (const layer of resolvedLayers) {
       const entry = layer.entry;
-      const atlas = await loadAtlasImage(`/images/${entry.atlas}`);
+      const atlas = await loadAtlasImage(imageAssetUrl(entry.atlas));
       context.globalAlpha = layer.opacity ?? 1;
       context.drawImage(
         atlas,
@@ -237,6 +244,7 @@ export function useGameImageAtlas() {
     error,
     findImage,
     findImages,
+    imageAssetUrl,
     renderImage,
     composeImageLayers,
   };
