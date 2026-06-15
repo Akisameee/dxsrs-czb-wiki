@@ -18,7 +18,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <CardHeader class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+  <AppCardHeader class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
     <div class="min-w-0">
       <CardTitle>{{ title }}</CardTitle>
       <CardDescription v-if="description">
@@ -26,7 +26,7 @@ const emit = defineEmits<{
       </CardDescription>
     </div>
 
-    <Button
+    <AppButton
       v-if="dirty"
       type="button"
       variant="ghost"
@@ -37,6 +37,6 @@ const emit = defineEmits<{
     >
       <RotateCcwIcon class="size-3.5" />
       <span class="sr-only">重置所有修改</span>
-    </Button>
-  </CardHeader>
+    </AppButton>
+  </AppCardHeader>
 </template>

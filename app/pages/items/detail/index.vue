@@ -54,44 +54,44 @@ const rawValueRows = computed(() => {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
+  <AppPageContainer>
+    <AppCard v-if="error">
+      <AppCardContent class="text-destructive">{{ error.message }}</AppCardContent>
+    </AppCard>
 
-    <Card v-else-if="pending">
-      <CardHeader>
+    <AppCard v-else-if="pending">
+      <AppCardHeader>
         <CardTitle>道具详情</CardTitle>
         <CardDescription>读取中...</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
-    <Card v-else-if="!summary">
-      <CardHeader>
+    <AppCard v-else-if="!summary">
+      <AppCardHeader>
         <CardTitle>道具详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
     <template v-else>
-      <Card :class="rarityCardClass(summary.rarityId)">
-        <CardHeader>
+      <AppCard :class="rarityCardClass(summary.rarityId)">
+        <AppCardHeader>
           <div class="grid gap-2">
             <div>
               <CardTitle class="text-2xl">{{ summary.name }}</CardTitle>
               <CardDescription>{{ summary.type }}</CardDescription>
             </div>
           </div>
-        </CardHeader>
-      </Card>
+        </AppCardHeader>
+      </AppCard>
 
       <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>基础信息</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
-            <div class="flex w-32 items-center justify-center rounded-md">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
+            <div class="flex w-32 items-center justify-center justify-self-center rounded-md md:justify-self-start">
               <GameImage
                 :id="summary.imageId"
                 :alt="summary.name"
@@ -99,7 +99,7 @@ const rawValueRows = computed(() => {
                 class="w-full text-2xl"
               />
             </div>
-            <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
+            <div class="grid content-start items-start gap-3 text-sm grid-cols-2">
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">类型</span>
                 <span>{{ summary.type }}</span>
@@ -121,14 +121,14 @@ const rawValueRows = computed(() => {
                 <span>{{ summary.useType }}</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
 
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>需求</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-2 text-sm">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-2 text-sm">
             <div v-if="summary.requirements.length" class="grid gap-2">
               <div
                 v-for="requirement in summary.requirements"
@@ -140,29 +140,29 @@ const rawValueRows = computed(() => {
               </div>
             </div>
             <span v-else class="text-muted-foreground">无需求</span>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <AppCard>
+        <AppCardHeader>
           <CardTitle>说明</CardTitle>
-        </CardHeader>
-        <CardContent class="text-sm leading-7">
+        </AppCardHeader>
+        <AppCardContent class="text-sm leading-7">
           <WikiText :parts="summary.descriptionParts" />
-        </CardContent>
-      </Card>
+        </AppCardContent>
+      </AppCard>
 
-      <Card>
-        <CardHeader>
+      <AppCard>
+        <AppCardHeader>
           <CardTitle>使用效果</CardTitle>
-        </CardHeader>
-        <CardContent class="grid gap-4 text-sm">
+        </AppCardHeader>
+        <AppCardContent class="grid gap-4 text-sm">
           <div><WikiText :parts="summary.useEffectParts" /></div>
           <template v-if="rawValueRows.length">
           </template>
-        </CardContent>
-      </Card>
+        </AppCardContent>
+      </AppCard>
     </template>
-  </main>
+  </AppPageContainer>
 </template>

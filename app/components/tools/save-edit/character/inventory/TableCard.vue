@@ -290,17 +290,17 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
 </script>
 
 <template>
-  <Card>
+  <AppCard>
     <EditableTableCardHeader
       title="行囊"
       :description="`${table.rowCount} 行，已映射 ${matchedRows} 条，当前 ${totalRows} 条`"
       :dirty="tableDirty"
       @reset="resetTable"
     />
-    <CardContent class="grid gap-4">
+    <AppCardContent class="grid gap-4">
       <div v-if="equippedUids || hasEquippedRows" class="grid gap-3">
         <div class="text-sm font-medium">已装备</div>
-        <div class="grid gap-3 md:grid-cols-3">
+        <div class="grid gap-3 lg:grid-cols-3">
           <template v-for="slot in equippedRowIndexes" :key="slot.key">
             <EditableItemCard
               v-if="slot.rowIndex !== null"
@@ -327,14 +327,14 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
         </div>
       </div>
 
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="grid gap-4 grid-cols-4">
         <div class="grid gap-2">
           <Label for="save-edit-inventory-search">搜索</Label>
-          <Input
+          <AppInput
             id="save-edit-inventory-search"
             v-model="search"
             type="search"
-            placeholder="搜索道具、UID"
+            placeholder="搜索道具"
           />
         </div>
 
@@ -344,9 +344,9 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
             :model-value="filter.modelValue"
             @update:model-value="updateFilter(filter.id, String($event))"
           >
-            <SelectTrigger :id="filter.id" class="w-full">
+            <AppSelectTrigger :id="filter.id" class="w-full">
               <SelectValue :placeholder="filter.placeholder" />
-            </SelectTrigger>
+            </AppSelectTrigger>
             <SelectContent>
               <SelectItem value="all">
                 {{ filter.allLabel }}
@@ -395,7 +395,7 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
         没有匹配的行囊物品
       </div>
 
-      <div v-else class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div v-else class="grid gap-3 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <EditableItemCard
           v-for="rowIndex in pagedRowIndexes"
           :key="rowIndex"
@@ -416,6 +416,6 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
           @reset="resetRow(rowIndex)"
         />
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

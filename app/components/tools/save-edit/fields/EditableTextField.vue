@@ -36,7 +36,7 @@ const dirty = computed(() => props.modelValue !== props.initialValue);
     :compact="compact"
     @reset="emit('update', initialValue)"
   >
-    <Input
+    <AppInput
       :model-value="modelValue"
       :placeholder="placeholder"
       :disabled="disabled"

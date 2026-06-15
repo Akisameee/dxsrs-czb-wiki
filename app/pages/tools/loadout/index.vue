@@ -246,7 +246,7 @@ watch(customCanBeEnabled, (value) => {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <FilterCard
       :pending="pending"
       :total="wuxue.length"
@@ -261,7 +261,7 @@ watch(customCanBeEnabled, (value) => {
 
     <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
       <section class="grid min-w-0 content-start gap-6">
-        <div class="grid gap-6 lg:grid-cols-2">
+        <div class="grid gap-6 grid-cols-2">
           <InscriptionCard
             :equipment-styles="equipmentStyles"
             :equipment-style-options="equipmentStyleOptions"
@@ -304,5 +304,5 @@ watch(customCanBeEnabled, (value) => {
         />
       </aside>
     </div>
-  </main>
+  </AppPageContainer>
 </template>

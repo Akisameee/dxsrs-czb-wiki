@@ -65,19 +65,19 @@ watch(pageCount, (count) => {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
-    <Card>
-      <CardHeader>
+  <AppPageContainer>
+    <AppCard>
+      <AppCardHeader>
         <CardTitle>数据总览</CardTitle>
         <CardDescription>{{ pending ? "读取中..." : `${table || "-"}：${totalRows} 行` }}</CardDescription>
-      </CardHeader>
-      <CardContent class="grid gap-4 md:grid-cols-2">
+      </AppCardHeader>
+      <AppCardContent class="grid gap-4 grid-cols-2">
         <Label class="grid gap-2">
           表
           <Select v-model="table">
-            <SelectTrigger class="w-full">
+            <AppSelectTrigger class="w-full">
               <SelectValue placeholder="选择表" />
-            </SelectTrigger>
+            </AppSelectTrigger>
             <SelectContent>
               <SelectItem v-for="name in data?.tables || []" :key="name" :value="name">
                 {{ name }}
@@ -87,17 +87,17 @@ watch(pageCount, (count) => {
         </Label>
         <Label class="grid gap-2">
           搜索
-          <Input v-model="search" type="search" placeholder="搜索当前表" />
+          <AppInput v-model="search" type="search" placeholder="搜索当前表" />
         </Label>
-      </CardContent>
-    </Card>
+      </AppCardContent>
+    </AppCard>
 
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
+    <AppCard v-if="error">
+      <AppCardContent class="text-destructive">{{ error.message }}</AppCardContent>
+    </AppCard>
 
-    <Card v-else>
-      <CardContent class="grid gap-4">
+    <AppCard v-else>
+      <AppCardContent class="grid gap-4">
         <Pagination
           v-slot="{ page }"
           v-model:page="currentPage"
@@ -140,7 +140,7 @@ watch(pageCount, (count) => {
           </TableBody>
         </Table>
         </div>
-      </CardContent>
-    </Card>
-  </main>
+      </AppCardContent>
+    </AppCard>
+  </AppPageContainer>
 </template>

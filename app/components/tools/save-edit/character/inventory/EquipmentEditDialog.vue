@@ -97,7 +97,7 @@ function fieldInput(field: EquipmentEditField) {
 
       <DialogFooter>
         <DialogClose as-child>
-          <Button type="button">完成</Button>
+          <AppButton type="button">完成</AppButton>
         </DialogClose>
       </DialogFooter>
     </DialogContent>

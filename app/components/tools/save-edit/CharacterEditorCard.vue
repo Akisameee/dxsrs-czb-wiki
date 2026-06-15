@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
@@ -29,12 +28,12 @@ function valueOf(key: string) {
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>{{ title }}</CardTitle>
       <CardDescription>{{ description }}</CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <div
         v-for="field in fields"
         :key="field.key"
@@ -59,13 +58,13 @@ function valueOf(key: string) {
           :step="field.step || 1"
           @update:model-value="emit('updateField', field.key, $event)"
         />
-        <Input
+        <AppInput
           v-else
           :id="`save-edit-${field.key}`"
           :model-value="valueOf(field.key)"
           @update:model-value="emit('updateField', field.key, String($event))"
         />
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

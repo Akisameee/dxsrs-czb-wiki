@@ -352,15 +352,15 @@ function cardRarityId(row: PlayerMartialRow) {
 </script>
 
 <template>
-  <Card>
+  <AppCard>
     <EditableTableCardHeader
       title="武学"
       :description="`${playerRows.length} 个玩家武学`"
       :dirty="tableDirty"
       @reset="resetTable"
     />
-    <CardContent>
-      <div v-if="playerRows.length" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <AppCardContent>
+      <div v-if="playerRows.length" class="grid gap-3 grid-cols-2 xl:grid-cols-4">
         <template
           v-for="row in playerRows"
           :key="row.rowIndex"
@@ -384,14 +384,14 @@ function cardRarityId(row: PlayerMartialRow) {
                 :dirty="martialRowDirty(row.rowIndex)"
                 @reset="resetMartial(row.rowIndex)"
               >
-                <Button
+                <AppButton
                   type="button"
                   variant="outline"
                   class="h-9"
                   @click="openRow = row.rowIndex"
                 >
                   编辑
-                </Button>
+                </AppButton>
               </EditableFieldFrame>
               <MartialArtHoverLink
                 v-if="row.martialArt"
@@ -420,6 +420,6 @@ function cardRarityId(row: PlayerMartialRow) {
       <div v-else class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">
         没有找到玩家武学
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

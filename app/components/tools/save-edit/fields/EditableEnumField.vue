@@ -3,7 +3,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 import EditableFieldFrame from "./EditableFieldFrame.vue";
@@ -52,13 +51,13 @@ const selectedLabel = computed(() => props.options.find((option) => option.value
       :disabled="disabled || readonly"
       @update:model-value="emit('update', String($event))"
     >
-      <SelectTrigger
+      <AppSelectTrigger
         class="w-full min-w-0"
       >
         <SelectValue :placeholder="placeholder">
           {{ selectedLabel || placeholder }}
         </SelectValue>
-      </SelectTrigger>
+      </AppSelectTrigger>
       <SelectContent>
         <SelectItem v-for="option in options" :key="option.value" :value="option.value">
           {{ option.label }}

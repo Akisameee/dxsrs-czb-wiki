@@ -203,43 +203,43 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
+  <AppPageContainer>
+    <AppCard v-if="error">
+      <AppCardContent class="text-destructive">{{ error.message }}</AppCardContent>
+    </AppCard>
 
-    <Card v-else-if="pending">
-      <CardHeader>
+    <AppCard v-else-if="pending">
+      <AppCardHeader>
         <CardTitle>人物详情</CardTitle>
         <CardDescription>读取中...</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
-    <Card v-else-if="!character">
-      <CardHeader>
+    <AppCard v-else-if="!character">
+      <AppCardHeader>
         <CardTitle>人物详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
     <template v-else>
-      <Card :class="rarityCardClass(character.rarity_id)">
-        <CardHeader>
+      <AppCard :class="rarityCardClass(character.rarity_id)">
+        <AppCardHeader>
           <div class="grid gap-2">
             <div>
               <CardTitle class="text-2xl">{{ characterName(character) }}</CardTitle>
               <CardDescription>{{ locationText(character) }}</CardDescription>
             </div>
           </div>
-        </CardHeader>
-      </Card>
+        </AppCardHeader>
+      </AppCard>
 
       <div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>基础信息</CardTitle>
-          </CardHeader>
-          <CardContent class="grid items-start gap-6 text-sm md:grid-cols-[auto_1fr]">
+          </AppCardHeader>
+          <AppCardContent class="grid items-start gap-6 text-sm md:grid-cols-[auto_1fr]">
             <div class="flex justify-center rounded-md">
               <CharacterPortrait
                 :ids="{ characterId: character.id, portrait: character.portrait }"
@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
                 :size="180"
               />
             </div>
-            <div class="grid auto-rows-min content-start gap-3 text-sm sm:grid-cols-2">
+            <div class="grid auto-rows-min content-start gap-3 text-sm grid-cols-2">
               <div class="flex justify-between gap-3">
                 <span class="text-muted-foreground">门派</span>
                 <SectHoverLink
@@ -309,15 +309,15 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
 
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>四维数值</CardTitle>
-          </CardHeader>
-          <CardContent class="grid min-w-0 gap-6 overflow-hidden text-sm md:grid-cols-[minmax(9rem,12rem)_minmax(0,1fr)]">
-            <div class="grid auto-rows-min content-start gap-3">
+          </AppCardHeader>
+          <AppCardContent class="grid min-w-0 gap-6 overflow-hidden text-sm md:grid-cols-[minmax(9rem,12rem)_minmax(0,1fr)]">
+            <div class="grid auto-rows-min content-start gap-3 grid-cols-2 md:grid-cols-1">
               <div
                 v-for="item in attributeStats"
                 :key="item.key"
@@ -330,17 +330,17 @@ onBeforeUnmount(() => {
             <div class="relative h-47 w-full min-w-0 overflow-hidden">
               <canvas ref="radarCanvas" class="block h-full w-full" aria-label="四维雷达图" />
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
       </div>
 
       <div class="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>武器修为</CardTitle>
             <CardDescription>武学修为 {{ formatNumber(character.cultivation) }}</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-3 sm:grid-cols-2">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-3 grid-cols-2">
             <div
               v-for="item in weaponCultivations"
               :key="item.label"
@@ -349,14 +349,14 @@ onBeforeUnmount(() => {
               <span>{{ item.label }}</span>
               <span class="tabular-nums">{{ formatNumber(item.value) }}/100</span>
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
 
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>生活技艺</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-3 sm:grid-cols-2">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-3 grid-cols-2">
             <div
               v-for="skill in lifeSkills"
               :key="skill.label"
@@ -369,15 +369,15 @@ onBeforeUnmount(() => {
                 :label="skill.label"
               />
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <AppCard>
+        <AppCardHeader>
           <CardTitle>心愿任务</CardTitle>
-        </CardHeader>
-        <CardContent class="grid gap-3">
+        </AppCardHeader>
+        <AppCardContent class="grid gap-3">
           <div
             v-for="quest in data?.quests || []"
             :key="quest.id"
@@ -392,8 +392,8 @@ onBeforeUnmount(() => {
           <div v-if="!(data?.quests || []).length" class="text-sm text-muted-foreground">
             无心愿任务
           </div>
-        </CardContent>
-      </Card>
+        </AppCardContent>
+      </AppCard>
     </template>
-  </main>
+  </AppPageContainer>
 </template>

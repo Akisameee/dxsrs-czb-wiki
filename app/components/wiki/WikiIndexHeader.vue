@@ -6,13 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 
@@ -61,17 +59,17 @@ function updateFilter(id: string, value: unknown) {
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>{{ title }}</CardTitle>
       <CardDescription v-if="description">
         {{ description }}
       </CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="grid gap-2">
+    </AppCardHeader>
+    <AppCardContent class="grid grid-cols-[repeat(4,minmax(0,1fr))] gap-4">
+      <div class="grid min-w-0 gap-2">
         <Label :for="searchId">{{ searchLabel }}</Label>
-        <Input
+        <AppInput
           :id="searchId"
           type="search"
           :model-value="search"
@@ -80,15 +78,18 @@ function updateFilter(id: string, value: unknown) {
         />
       </div>
 
-      <div v-for="filter in filters" :key="filter.id" class="grid gap-2">
+      <div v-for="filter in filters" :key="filter.id" class="grid min-w-0 gap-2">
         <Label :for="filter.id">{{ filter.label }}</Label>
         <Select
           :model-value="filter.modelValue"
           @update:model-value="updateFilter(filter.id, $event)"
         >
-          <SelectTrigger :id="filter.id" class="w-full">
+          <AppSelectTrigger
+            :id="filter.id"
+            class="min-w-0 w-full [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:truncate"
+          >
             <SelectValue :placeholder="filter.placeholder" />
-          </SelectTrigger>
+          </AppSelectTrigger>
           <SelectContent>
             <SelectItem :value="filter.allValue || 'all'">
               {{ filter.allLabel || "全部" }}
@@ -103,6 +104,6 @@ function updateFilter(id: string, value: unknown) {
           </SelectContent>
         </Select>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

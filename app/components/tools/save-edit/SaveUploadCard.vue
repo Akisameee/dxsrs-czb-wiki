@@ -7,8 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
   Tooltip,
@@ -30,14 +28,14 @@ function onFileChange(event: Event) {
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle class="flex items-center gap-2">
         存档导入
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button
+              <AppButton
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -45,7 +43,7 @@ function onFileChange(event: Event) {
               >
                 <CircleHelp class="size-4" />
                 <span class="sr-only">存档位置</span>
-              </Button>
+              </AppButton>
             </TooltipTrigger>
             <TooltipContent class="max-w-sm border bg-white text-slate-950 shadow-md">
               <div class="grid gap-2 text-sm">
@@ -63,18 +61,18 @@ function onFileChange(event: Event) {
         </TooltipProvider>
       </CardTitle>
       <CardDescription>可以一次导入多个 BGDatabase 存档文件</CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-2">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-2">
       <Label class="text-muted-foreground" for="save-edit-files">
         <Upload class="inline size-4 align-text-bottom" />
         选择存档文件
       </Label>
-      <Input
+      <AppInput
         id="save-edit-files"
         type="file"
         multiple
         @change="onFileChange"
       />
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

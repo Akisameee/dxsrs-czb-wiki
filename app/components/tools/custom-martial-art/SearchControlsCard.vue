@@ -23,7 +23,7 @@ const props = defineProps<{
   trials: string;
   status: string;
   pending: boolean;
-  busy: boolean;
+  isSearching: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -48,15 +48,16 @@ const effectSelectOptions = computed(() => [
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>初始搜索</CardTitle>
       <CardDescription>
         <span v-if="status" class="text-muted-foreground">{{ status }}</span>
-        <span v-else class="text-muted-foreground">选择目标词条后，枚举四维组合并估算贪心锁定命中概率。</span>
+        <span v-else class="text-muted-foreground">枚举初始组合并估算贪心锁定目标词条的命中概率</span>
       </CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-4 lg:grid-cols-[repeat(5,minmax(0,1fr))_minmax(0,2fr)] lg:items-end">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,2fr)]">
+      <div class="grid gap-2 grid-cols-5">
         <div class="grid gap-2">
           <Label class="text-muted-foreground" for="search-weapon">武器</Label>
           <WikiEnumSelect
@@ -64,6 +65,7 @@ const effectSelectOptions = computed(() => [
             :model-value="target.weaponType"
             :options="visibleWeaponOptions"
             placeholder="读取中"
+            :disabled="isSearching"
             @update:model-value="emit('updateTarget', { weaponType: $event })"
           />
         </div>
@@ -75,6 +77,7 @@ const effectSelectOptions = computed(() => [
             :model-value="target.styleId"
             :options="styleSelectOptions"
             placeholder="不指定"
+            :disabled="isSearching"
             @update:model-value="emit('updateTarget', { styleId: $event })"
           />
         </div>
@@ -86,6 +89,7 @@ const effectSelectOptions = computed(() => [
             :model-value="target.areaName"
             :options="areaSelectOptions"
             placeholder="不指定"
+            :disabled="isSearching"
             @update:model-value="emit('updateTarget', { areaName: $event })"
           />
         </div>
@@ -97,6 +101,7 @@ const effectSelectOptions = computed(() => [
             :model-value="target.effectType"
             :options="effectSelectOptions"
             placeholder="不指定"
+            :disabled="isSearching"
             @update:model-value="emit('updateTarget', { effectType: $event })"
           />
         </div>
@@ -108,23 +113,23 @@ const effectSelectOptions = computed(() => [
             :model-value="target.effectLevel"
             min="1"
             :max="effectMaxLevel || undefined"
-            :disabled="effectMaxLevel <= 0"
+            :disabled="isSearching || effectMaxLevel <= 0"
             @update:model-value="emit('updateTarget', { effectLevel: $event })"
           />
         </div>
-
+      </div>
       <RunControls
         input-id="search-trials"
         label="模拟次数"
         :model-value="trials"
         step="32"
         :disabled="pending"
-        :busy="busy"
+        :busy="isSearching"
         action-label="搜索"
         busy-label="搜索中"
         @update-model-value="emit('updateTrials', $event)"
         @run="emit('search')"
       />
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

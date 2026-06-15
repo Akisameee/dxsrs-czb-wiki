@@ -54,14 +54,14 @@ function enumOptions(fieldName: string) {
 </script>
 
 <template>
-  <Card>
+  <AppCard>
     <EditableTableCardHeader
       :title="table.name"
       description="单行表，适合直接编辑"
       :dirty="dirty"
       @reset="resetTable"
     />
-    <CardContent class="grid auto-rows-min gap-3 sm:grid-cols-2">
+    <AppCardContent class="grid auto-rows-min gap-3 grid-cols-2">
       <div
         v-for="field in fields"
         :key="field.name"
@@ -74,12 +74,12 @@ function enumOptions(fieldName: string) {
           :options="enumOptions(field.name)"
           @update:model-value="emit('updateField', field, $event, 0)"
         />
-        <Input
+        <AppInput
           v-else
           :model-value="formatSaveValue(fieldValue(field))"
           @update:model-value="emit('updateField', field, String($event), 0)"
         />
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

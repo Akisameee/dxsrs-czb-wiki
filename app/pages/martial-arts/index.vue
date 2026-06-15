@@ -174,12 +174,12 @@ function goToMartialArt(item: MartialArt) {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <WikiIndexHeader
       title="武学"
       :description="pending ? '读取中...' : `共 ${arts.length} 门武学，当前 ${filteredRows.length} 条`"
       search-id="martial-art-search"
-      search-placeholder="搜索武学"
+      search-placeholder=""
       :search="search"
       :filters="indexFilters"
       @update:search="search = $event"
@@ -210,5 +210,5 @@ function goToMartialArt(item: MartialArt) {
           :on-click="() => goToMartialArt(item)"
         />
     </WikiCardGrid>
-  </main>
+  </AppPageContainer>
 </template>

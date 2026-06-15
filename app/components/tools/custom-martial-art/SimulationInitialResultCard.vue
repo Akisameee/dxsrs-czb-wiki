@@ -28,20 +28,20 @@ function formatNumber(value: number | string | null | undefined, digits = 2) {
 </script>
 
 <template>
-  <Card :class="summary ? rarityCardClass(rarityId) : undefined">
-    <CardHeader>
+  <AppCard :class="summary ? rarityCardClass(rarityId) : undefined">
+    <AppCardHeader>
       <div class="flex justify-between gap-3">
         <CardTitle>初始模拟结果</CardTitle>
         <Badge v-if="currentSeed !== null" variant="outline">seed {{ currentSeed }}</Badge>
       </div>
-    </CardHeader>
-    <CardContent v-if="!attributesValid" class="text-sm text-muted-foreground">
+    </AppCardHeader>
+    <AppCardContent v-if="!attributesValid" class="text-sm text-muted-foreground">
       四维总和必须为 {{ attributeTarget }} 后才能自创。
-    </CardContent>
-    <CardContent v-else-if="!summary" class="text-sm text-muted-foreground">
+    </AppCardContent>
+    <AppCardContent v-else-if="!summary" class="text-sm text-muted-foreground">
       暂无结果。
-    </CardContent>
-    <CardContent v-else class="grid gap-3">
+    </AppCardContent>
+    <AppCardContent v-else class="grid gap-3">
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">品阶</span>
         <span>{{ rareLabel }}</span>
@@ -68,8 +68,8 @@ function formatNumber(value: number | string | null | undefined, digits = 2) {
       </div>
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">改良空间</span>
-        <span>{{ improveLimit ?? summary.gailiangkongjian }}</span>
+        <span>{{ improveLimit ?? summary.gailiangkongjian }} ({{ formatNumber(summary.percent) }}/{{ formatNumber(summary.percentTarget) }})</span>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

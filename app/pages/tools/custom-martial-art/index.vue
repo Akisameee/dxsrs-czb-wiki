@@ -6,11 +6,17 @@ import {
   searchCustomMartialArtInitials,
   summarizeFinalValueDistributions,
 } from "~/lib/custom-martial-art";
-import InitialInputCard from "~/components/tools/custom-martial-art/InitialInputCard.vue";
-import InitialResultCard from "~/components/tools/custom-martial-art/InitialResultCard.vue";
+import SimulationInputCard from "~/components/tools/custom-martial-art/SimulationInputCard.vue";
+import SimulationInitialResultCard from "~/components/tools/custom-martial-art/SimulationInitialResultCard.vue";
 import SearchControlsCard from "~/components/tools/custom-martial-art/SearchControlsCard.vue";
 import SearchResultsCard from "~/components/tools/custom-martial-art/SearchResultsCard.vue";
 import SimulationStatsCard from "~/components/tools/custom-martial-art/SimulationStatsCard.vue";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/ui/tabs";
 import type {
   CustomBuffRow,
   CustomEffectOption,
@@ -37,8 +43,11 @@ const EMPTY_OPTION = "none";
 const SEARCH_SORT_FIELDS = [
   { id: "styleMatch", label: "风格概率" },
   { id: "effectLevel", label: "效果概率" },
-  { id: "averagePower", label: "威力均值" },
+  { id: "averageFinalPercent", label: "平均成长" },
+  { id: "maxFinalPercent", label: "最大成长" },
+  { id: "medianPower", label: "中位威力" },
   { id: "maxPower", label: "最大威力" },
+  { id: "initialImproveSpace", label: "改良空间" },
 ];
 const DEFAULT_SEARCH_SORT_ORDER = SEARCH_SORT_FIELDS.map((field) => field.id);
 
@@ -71,6 +80,7 @@ const searchBusy = ref(false);
 const searchResults = ref<SearchResultRoute[]>([]);
 const searchPage = ref(1);
 const searchSort = ref("styleMatch");
+const activeMobileTab = ref("search");
 
 const enums = computed(() => context.value?.enums || {});
 const algorithmData = computed(() => context.value?.data || null);
@@ -146,7 +156,7 @@ const searchTargetPayload = computed(() => ({
 const sortedSearchResults = computed(() => sortSearchResults(searchResults.value, searchSort.value));
 const searchPageCount = computed(() => Math.max(1, Math.ceil(sortedSearchResults.value.length / SEARCH_PAGE_SIZE)));
 const searchSortLabel = computed(() => (
-  SEARCH_SORT_FIELDS.find((field) => field.id === searchSort.value)?.label || "威力均值"
+  SEARCH_SORT_FIELDS.find((field) => field.id === searchSort.value)?.label || "中位威力"
 ));
 
 watch(() => input, () => {
@@ -199,6 +209,15 @@ function effectText(effect: CustomMartialEffect | null) {
   return `${name} ${effect.value}`;
 }
 
+function effectTypeText(value: number | string | null | undefined) {
+  if (Number(value) === 99) return "无特殊效果";
+  return effectNames.value.get(Number(value)) || `效果 ${value}`;
+}
+
+function styleText(value: number | string | null | undefined) {
+  return enumName("LianSuo_FG", value, `风格 ${value}`);
+}
+
 function weaponTypeText(value: number | string | null | undefined) {
   return enumName("BingQiType", value, "");
 }
@@ -247,7 +266,7 @@ function hasInitial(route: SearchResultCandidate): route is SearchResultRoute {
 }
 
 async function runAnalysis() {
-  if (!algorithmData.value || !currentRoute.value) return;
+  if (analysisBusy.value || !algorithmData.value || !currentRoute.value) return;
 
   analysisBusy.value = true;
   analysisStatus.value = "模拟中...";
@@ -259,6 +278,14 @@ async function runAnalysis() {
     const areas: ProbabilityRow[] = [];
     const effects: ProbabilityRow[] = [];
     const powerSamples: number[] = [];
+    const finalPercentStats: SearchResultStats = await estimateCustomMartialArtStats(simulation, {}, {
+      trials,
+      styleNames: styleNames.value,
+      includeSamples: true,
+      yieldEvery: 32,
+      yieldToMain: waitForPaint,
+    });
+    const finalPercentSamples = finalPercentStats.samples?.finalPercent || [];
 
     const styleTargets = styleOptions.value.map((style) => ({ id: Number(style.id), label: style.label }));
     for (const [index, style] of styleTargets.entries()) {
@@ -311,7 +338,7 @@ async function runAnalysis() {
       styles: styles.sort((a, b) => Number(b.value) - Number(a.value)),
       areas: areas.sort((a, b) => Number(b.value) - Number(a.value)),
       effects: effects.sort((a, b) => Number(b.value) - Number(a.value)),
-      finalValues: summarizeFinalValueDistributions(powerSamples, []),
+      finalValues: summarizeFinalValueDistributions(powerSamples, [], finalPercentSamples),
     };
     analysisStatus.value = "";
   } catch (err: unknown) {
@@ -322,7 +349,7 @@ async function runAnalysis() {
 }
 
 async function runSearch() {
-  if (!algorithmData.value) return;
+  if (searchBusy.value || !algorithmData.value) return;
 
   searchBusy.value = true;
   searchStatus.value = "搜索中...";
@@ -363,8 +390,11 @@ function sortSearchResults(results: SearchResultRoute[], primary: string) {
     const comparisons: Record<string, number> = {
       styleMatch: Number(statsB.styleProbability || 0) - Number(statsA.styleProbability || 0),
       effectLevel: Number(statsB.effectProbability || 0) - Number(statsA.effectProbability || 0),
-      averagePower: Number(statsB.averagePower || 0) - Number(statsA.averagePower || 0),
+      averageFinalPercent: Number(statsB.averageFinalPercent || 0) - Number(statsA.averageFinalPercent || 0),
+      maxFinalPercent: Number(statsB.maxFinalPercent || 0) - Number(statsA.maxFinalPercent || 0),
+      medianPower: Number(statsB.medianPower || 0) - Number(statsA.medianPower || 0),
       maxPower: Number(statsB.maxPower || 0) - Number(statsA.maxPower || 0),
+      initialImproveSpace: Number(b.initial?.gailiangkongjian || 0) - Number(a.initial?.gailiangkongjian || 0),
     };
     const sortOrder = [
       primary,
@@ -380,7 +410,7 @@ function sortSearchResults(results: SearchResultRoute[], primary: string) {
 
 function cycleSearchSort() {
   const index = SEARCH_SORT_FIELDS.findIndex((field) => field.id === searchSort.value);
-  searchSort.value = SEARCH_SORT_FIELDS[(index + 1) % SEARCH_SORT_FIELDS.length]?.id || "averagePower";
+  searchSort.value = SEARCH_SORT_FIELDS[(index + 1) % SEARCH_SORT_FIELDS.length]?.id || "medianPower";
   searchPage.value = 1;
 }
 
@@ -397,6 +427,8 @@ function updateSearchPage(page: number) {
 }
 
 async function applySearchResult(route: SearchResultRoute) {
+  if (analysisBusy.value) return;
+
   const source = route?.input || {};
   updateInput({
     yi: String(numberValue(source.yi)),
@@ -405,76 +437,95 @@ async function applySearchResult(route: SearchResultRoute) {
     shen: String(numberValue(source.shen)),
     weaponType: String(numberValue(source.weaponType, numberValue(searchTarget.weaponType))),
   });
+  activeMobileTab.value = "simulation";
   await nextTick();
   await runAnalysis();
 }
 </script>
 
 <template>
-  <main class="container mx-auto grid items-start gap-6 p-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-    <section class="grid min-w-0 content-start gap-6">
-      <SearchControlsCard
-        :target="searchTarget"
-        :weapon-options="weaponOptions"
-        :style-options="styleOptions"
-        :area-options="areaOptions"
-        :effect-options="effectOptions"
-        :empty-option="EMPTY_OPTION"
-        :effect-max-level="selectedEffectMaxLevel"
-        :trials="searchTrials"
-        :status="searchStatus"
-        :pending="pending"
-        :busy="searchBusy"
-        @update-target="updateSearchTarget"
-        @update-trials="searchTrials = $event"
-        @search="runSearch"
-      />
+  <AppPageContainer class="items-start lg:grid-cols-[minmax(0,1fr)_380px]">
+    <Tabs v-model="activeMobileTab" class="contents">
+      <TabsList class="grid w-full grid-cols-2 lg:hidden">
+        <TabsTrigger value="search">搜索</TabsTrigger>
+        <TabsTrigger value="simulation">模拟</TabsTrigger>
+      </TabsList>
 
-      <SearchResultsCard
-        :results="sortedSearchResults"
-        :page="searchPage"
-        :page-size="SEARCH_PAGE_SIZE"
-        :sort-label="searchSortLabel"
-        :effect-text="effectText"
-        :weapon-type-text="weaponTypeText"
-        @sort="cycleSearchSort"
-        @update-page="updateSearchPage"
-        @apply="applySearchResult"
-      />
-    </section>
+      <TabsContent
+        value="search"
+        force-mount
+        class="mt-0 grid min-w-0 content-start gap-6 max-lg:data-[state=inactive]:hidden"
+      >
+        <SearchControlsCard
+          :target="searchTarget"
+          :weapon-options="weaponOptions"
+          :style-options="styleOptions"
+          :area-options="areaOptions"
+          :effect-options="effectOptions"
+          :empty-option="EMPTY_OPTION"
+          :effect-max-level="selectedEffectMaxLevel"
+          :trials="searchTrials"
+          :status="searchStatus"
+          :pending="pending"
+          :is-searching="searchBusy"
+          @update-target="updateSearchTarget"
+          @update-trials="searchTrials = $event"
+          @search="runSearch"
+        />
 
-    <aside class="grid min-w-0 content-start gap-6">
-      <InitialInputCard
-        :input="input"
-        :weapon-options="weaponOptions"
-        :attribute-total="attributeTotal"
-        :attribute-target="ATTRIBUTE_TOTAL"
-        :attributes-valid="attributesValid"
-        :trials="analysisTrials"
-        :status="analysisStatus"
-        :busy="analysisBusy"
-        :can-run="Boolean(currentRoute)"
-        :pending="pending"
-        :error-message="errorMessage"
-        @update-input="updateInput"
-        @update-trials="analysisTrials = $event"
-        @run="runAnalysis"
-      />
+        <SearchResultsCard
+          :results="sortedSearchResults"
+          :page="searchPage"
+          :page-size="SEARCH_PAGE_SIZE"
+          :sort-label="searchSortLabel"
+          :is-simulating="analysisBusy"
+          :effect-text="effectText"
+          :effect-type-text="effectTypeText"
+          :style-text="styleText"
+          :weapon-type-text="weaponTypeText"
+          @sort="cycleSearchSort"
+          @update-page="updateSearchPage"
+          @apply="applySearchResult"
+        />
+      </TabsContent>
 
-      <InitialResultCard
-        :current-seed="currentSeed"
-        :attributes-valid="attributesValid"
-        :attribute-target="ATTRIBUTE_TOTAL"
-        :summary="currentSummary"
-        :improve-limit="currentRoute?.initialImproveLimit ?? null"
-        :rarity-id="currentRarityId"
-        :rare-label="currentRareLabel"
-        :effect-label="currentEffectLabel"
-      />
+      <TabsContent
+        value="simulation"
+        force-mount
+        class="mt-0 grid min-w-0 content-start gap-6 max-lg:data-[state=inactive]:hidden"
+      >
+        <SimulationInputCard
+          :input="input"
+          :weapon-options="weaponOptions"
+          :attribute-total="attributeTotal"
+          :attribute-target="ATTRIBUTE_TOTAL"
+          :attributes-valid="attributesValid"
+          :trials="analysisTrials"
+          :status="analysisStatus"
+          :is-simulating="analysisBusy"
+          :can-run="Boolean(currentRoute)"
+          :pending="pending"
+          :error-message="errorMessage"
+          @update-input="updateInput"
+          @update-trials="analysisTrials = $event"
+          @run="runAnalysis"
+        />
 
-      <SimulationStatsCard
-        :analysis="analysis"
-      />
-    </aside>
-  </main>
+        <SimulationInitialResultCard
+          :current-seed="currentSeed"
+          :attributes-valid="attributesValid"
+          :attribute-target="ATTRIBUTE_TOTAL"
+          :summary="currentSummary"
+          :improve-limit="currentRoute?.initialImproveLimit ?? null"
+          :rarity-id="currentRarityId"
+          :rare-label="currentRareLabel"
+          :effect-label="currentEffectLabel"
+        />
+
+        <SimulationStatsCard
+          :analysis="analysis"
+        />
+      </TabsContent>
+    </Tabs>
+  </AppPageContainer>
 </template>

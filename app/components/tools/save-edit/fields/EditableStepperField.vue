@@ -54,7 +54,7 @@ function stepBy(offset: number) {
     @reset="emit('update', initialValue)"
   >
     <div class="grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2 rounded-md border bg-background px-2">
-      <Button
+      <AppButton
         type="button"
         variant="ghost"
         size="icon"
@@ -63,11 +63,11 @@ function stepBy(offset: number) {
         @click="stepBy(-1)"
       >
         <ChevronLeftIcon class="size-4" />
-      </Button>
+      </AppButton>
       <div class="text-center">
         {{ displayValue }}
       </div>
-      <Button
+      <AppButton
         type="button"
         variant="ghost"
         size="icon"
@@ -76,7 +76,7 @@ function stepBy(offset: number) {
         @click="stepBy(1)"
       >
         <ChevronRightIcon class="size-4" />
-      </Button>
+      </AppButton>
     </div>
   </EditableFieldFrame>
 </template>

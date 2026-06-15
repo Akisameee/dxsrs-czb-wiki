@@ -2,7 +2,6 @@
 import { CircleHelp } from "@lucide/vue";
 import type { HTMLAttributes } from "vue";
 import { Badge, type BadgeVariants } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -48,6 +47,7 @@ const emit = defineEmits<{
 const clickable = computed(() => Boolean(props.onClick));
 const cardClass = computed(() => cn(
   props.color,
+  "gap-4 py-4 md:gap-6 md:py-6",
   clickable.value && "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
   props.selected && "ring-2 ring-primary",
   props.disabled && "opacity-50",
@@ -68,7 +68,7 @@ function handleKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <Card
+  <AppCard
     :class="cardClass"
     :role="clickable ? role : undefined"
     :tabindex="clickable ? 0 : undefined"
@@ -77,16 +77,22 @@ function handleKeydown(event: KeyboardEvent) {
     @click="handleClick"
     @keydown="handleKeydown"
   >
-    <CardHeader>
-      <div class="flex items-start gap-3">
+    <AppCardHeader class="px-3 md:px-6">
+      <div class="flex items-start gap-2 md:gap-3">
         <slot name="avatar" />
 
         <div class="min-w-0 flex-1">
-          <CardTitle class="truncate text-base">{{ title }}</CardTitle>
-          <CardDescription v-if="description" class="truncate">
+          <CardTitle class="truncate text-sm md:text-base">{{ title }}</CardTitle>
+          <CardDescription
+            v-if="description"
+            class="truncate text-xs md:text-sm"
+          >
             {{ description }}
           </CardDescription>
-          <div v-if="$slots.badges || badges.length" class="mt-2 flex flex-wrap gap-2">
+          <div
+            v-if="$slots.badges || badges.length"
+            class="mt-1 flex flex-wrap gap-1 md:mt-2 md:gap-2"
+          >
             <slot name="badges" />
             <Badge
               v-for="badge in badges"
@@ -101,16 +107,16 @@ function handleKeydown(event: KeyboardEvent) {
 
         <div
           v-if="$slots.action || tip || $slots.tip"
-          class="flex shrink-0 items-center gap-1"
+          class="flex shrink-0 items-center gap-1 self-start"
           @click.stop
           @keydown.stop
         >
           <slot name="action" />
           <HoverCard v-if="tip || $slots.tip">
             <HoverCardTrigger as-child>
-              <Button variant="ghost" size="icon-sm" aria-label="查看说明">
+              <AppButton variant="ghost" size="icon-sm" aria-label="查看说明">
                 <CircleHelp />
-              </Button>
+              </AppButton>
             </HoverCardTrigger>
             <HoverCardContent class="w-72 max-w-[calc(100vw-2rem)] text-sm">
               <slot name="tip">{{ tip }}</slot>
@@ -118,15 +124,15 @@ function handleKeydown(event: KeyboardEvent) {
           </HoverCard>
         </div>
       </div>
-    </CardHeader>
+    </AppCardHeader>
 
-    <CardContent
+    <AppCardContent
       v-if="$slots.footer"
-      class="pt-0"
+      class="px-3 pt-0 md:px-6"
       @click.stop
       @keydown.stop
     >
       <slot name="footer" />
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

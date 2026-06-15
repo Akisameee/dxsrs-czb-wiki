@@ -5,6 +5,9 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant data-open (&:is([data-state="open"], [data-open]));
+@custom-variant data-closed (&:is([data-state="closed"], [data-closed]));
+@custom-variant data-active (&:is([data-state="active"], [data-active]));
 
 :root {
   --card: oklch(1 0 0);
@@ -119,6 +122,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    font-size: 15px;
+  }
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
   }
   body {
     @apply bg-background text-foreground;

@@ -369,6 +369,7 @@ export function summarizeZiChuangStep(
     changed: step.changed || null,
     rare: step.gWuGong.rare,
     percent: Number(step.zichuang.percent.toFixed(4)),
+    percentTarget: Number(step.zichuang.percentTarget.toFixed(4)),
     gailiangkongjian: step.zichuang.gailiangkongjian,
     style: {
       id: step.gWuGong.liansuo_fg1,

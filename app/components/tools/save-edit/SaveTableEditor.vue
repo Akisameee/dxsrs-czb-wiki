@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
   Pagination,
@@ -22,7 +21,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 import {
@@ -130,18 +128,18 @@ function selectValue(event: Event) {
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>数据表编辑</CardTitle>
       <CardDescription>{{ saveEditCharacterName(save, draft) }}：{{ table.name }}：{{ totalRows }} 行</CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-4 md:grid-cols-2">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-4 grid-cols-2">
       <Label class="grid gap-2">
         表
         <Select :model-value="String(selectedTableIndex)" @update:model-value="setTable">
-          <SelectTrigger class="w-full">
+          <AppSelectTrigger class="w-full">
             <SelectValue placeholder="选择数据表" />
-          </SelectTrigger>
+          </AppSelectTrigger>
           <SelectContent>
             <SelectItem
               v-for="(item, index) in save.tables"
@@ -156,13 +154,13 @@ function selectValue(event: Event) {
 
       <Label class="grid gap-2">
         搜索
-        <Input v-model="search" type="search" placeholder="搜索当前表" />
+        <AppInput v-model="search" type="search" placeholder="搜索当前表" />
       </Label>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 
-  <Card>
-    <CardContent class="grid gap-4">
+  <AppCard>
+    <AppCardContent class="grid gap-4">
       <Pagination
         v-slot="{ page: currentPage }"
         v-model:page="page"
@@ -239,7 +237,7 @@ function selectValue(event: Event) {
                       {{ option.label }}
                     </option>
                   </select>
-                  <Input
+                  <AppInput
                     v-else-if="isEditableSaveValue(cellValue(field, rowIndex))"
                     class="h-8 w-36"
                     :model-value="formatSaveValue(cellValue(field, rowIndex))"
@@ -258,6 +256,6 @@ function selectValue(event: Event) {
           </Table>
         </div>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

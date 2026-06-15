@@ -128,6 +128,8 @@ export type CustomMartialEffect = {
 
 export type CustomMartialSummary = {
   rare: number | string;
+  percent: number | string;
+  percentTarget: number | string;
   style: {
     name: string;
   };
@@ -141,24 +143,30 @@ export type CustomMartialSummary = {
 };
 
 export type SearchResultStats = {
+  success?: number | string;
   target?: {
     styleId?: number | string | null;
     areaName?: string | null;
     effectType?: number | string | null;
+    minEffectValue?: number | string | null;
   };
   styleProbability?: number | string;
   areaProbability?: number | string;
   effectProbability?: number | string;
   effectWeightedLevel?: number | string;
   averagePower?: number | string;
+  medianPower?: number | string;
   maxPower?: number | string;
   averageCost?: number | string;
+  averageFinalPercent?: number | string;
+  maxFinalPercent?: number | string;
   averageImproveSpace?: number | string;
   averageSteps?: number | string;
   bestMatchCount?: number | string;
   samples?: {
     power?: number[];
     cost?: number[];
+    finalPercent?: number[];
   };
 };
 
@@ -198,6 +206,8 @@ export type SimulationAnalysis = {
   areas: ProbabilityRow[];
   effects: ProbabilityRow[];
   finalValues: {
+    finalPercentDensity: PowerDensityPoint[];
+    finalPercentSummary: PowerSummary;
     powerDensity: PowerDensityPoint[];
     powerSummary: PowerSummary;
   };

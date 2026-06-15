@@ -139,28 +139,28 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
-    <Card v-if="error">
-      <CardContent class="text-destructive">{{ error.message }}</CardContent>
-    </Card>
+  <AppPageContainer>
+    <AppCard v-if="error">
+      <AppCardContent class="text-destructive">{{ error.message }}</AppCardContent>
+    </AppCard>
 
-    <Card v-else-if="pending">
-      <CardHeader>
+    <AppCard v-else-if="pending">
+      <AppCardHeader>
         <CardTitle>武学详情</CardTitle>
         <CardDescription>读取中...</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
-    <Card v-else-if="!martialArt">
-      <CardHeader>
+    <AppCard v-else-if="!martialArt">
+      <AppCardHeader>
         <CardTitle>武学详情</CardTitle>
         <CardDescription>没有找到 id: {{ route.query.id || "-" }}</CardDescription>
-      </CardHeader>
-    </Card>
+      </AppCardHeader>
+    </AppCard>
 
     <template v-else>
-      <Card :class="rarityCardClass(martialArtRarityToneId(martialArt.rarity_id))">
-        <CardHeader>
+      <AppCard :class="rarityCardClass(martialArtRarityToneId(martialArt.rarity_id))">
+        <AppCardHeader>
           <div class="grid gap-2">
             <div>
               <CardTitle class="text-2xl">{{ martialArtName(martialArt) }}</CardTitle>
@@ -169,16 +169,16 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
               </CardDescription>
             </div>
           </div>
-        </CardHeader>
-      </Card>
+        </AppCardHeader>
+      </AppCard>
 
       <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-        <Card>
-          <CardHeader>
+        <AppCard>
+          <AppCardHeader>
             <CardTitle>基础信息</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
-            <div class="flex w-32 items-center justify-center rounded-md">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-6 text-sm md:grid-cols-[auto_1fr]">
+            <div class="flex w-32 items-center justify-center justify-self-center rounded-md md:justify-self-start">
               <MartialArtIcon
                 :name="martialArtName(martialArt)"
                 :type-id="martialArt.type_id"
@@ -186,7 +186,7 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                 class="w-full"
               />
             </div>
-            <div class="grid content-start items-start gap-3 text-sm sm:grid-cols-2">
+            <div class="grid content-start items-start gap-3 text-sm grid-cols-2">
               <div class="flex items-start justify-between gap-3">
                 <span class="text-muted-foreground">类型</span>
                 <span>{{ martialArtTypeLabel(martialArt, enums) }}</span>
@@ -249,14 +249,14 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                 <span v-else>无效果</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
 
-        <Card v-if="isInternalMartialArt">
-          <CardHeader>
+        <AppCard v-if="isInternalMartialArt">
+          <AppCardHeader>
             <CardTitle>被动</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-2 text-sm">
+          </AppCardHeader>
+          <AppCardContent class="grid gap-2 text-sm">
             <div v-if="passiveLines.length" class="grid gap-1">
               <div
                 v-for="item in passiveLines"
@@ -267,37 +267,37 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
               </div>
             </div>
             <span v-else class="text-muted-foreground">无被动</span>
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
 
-        <Card v-else>
-          <CardHeader>
+        <AppCard v-else>
+          <AppCardHeader>
             <CardTitle>招式特效</CardTitle>
-          </CardHeader>
-          <CardContent class="grid justify-items-center gap-2">
+          </AppCardHeader>
+          <AppCardContent class="grid justify-items-center gap-2">
             <MartialArtEffectPreview
               :effect="assetEffect('slash', martialArt.slash_effect_id)"
               :layers="assetEffectPreviewLayers('slash', martialArt.slash_effect_id)"
               class="w-full max-w-36"
             />
-          </CardContent>
-        </Card>
+          </AppCardContent>
+        </AppCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <AppCard>
+        <AppCardHeader>
           <CardTitle>获取方式</CardTitle>
-        </CardHeader>
-        <CardContent class="text-sm leading-7">
+        </AppCardHeader>
+        <AppCardContent class="text-sm leading-7">
           <WikiText :parts="obtainMethodParts" />
-        </CardContent>
-      </Card>
+        </AppCardContent>
+      </AppCard>
 
-      <Card>
-        <CardHeader>
+      <AppCard>
+        <AppCardHeader>
           <CardTitle>等级成长</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </AppCardHeader>
+        <AppCardContent>
           <div v-if="levelRows.length" class="overflow-auto">
             <Table class="[&_td]:text-center [&_th]:text-center">
               <TableHeader>
@@ -341,9 +341,9 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
           <div v-else class="text-sm text-muted-foreground">
             无等级成长数据
           </div>
-        </CardContent>
-      </Card>
+        </AppCardContent>
+      </AppCard>
 
     </template>
-  </main>
+  </AppPageContainer>
 </template>

@@ -16,15 +16,15 @@ defineProps<{
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>解析结果</CardTitle>
       <CardDescription>
         <template v-if="save">主角：{{ characterName }}</template>
         <template v-else>上传存档后会显示可解析的数据表</template>
       </CardDescription>
-    </CardHeader>
-    <CardContent v-if="save" class="grid gap-4">
+    </AppCardHeader>
+    <AppCardContent v-if="save" class="grid gap-4">
       <div class="grid gap-2 text-sm">
         <div class="flex justify-between gap-3 rounded-md border px-3 py-2">
           <span class="text-muted-foreground">数据表</span>
@@ -69,6 +69,6 @@ defineProps<{
           </div>
         </div>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

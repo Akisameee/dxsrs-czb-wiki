@@ -61,7 +61,7 @@ function updateEquipmentField(field: BgDatabaseField, value: string) {
     </template>
 
     <template #action>
-      <div v-if="!isEquipment" class="flex h-9 max-w-20 items-center gap-2">
+      <div v-if="!isEquipment" class="max-w-12 md:max-w-16 gap-2">
         <EditableNumberField
           :initial-value="initialQuantity"
           :model-value="quantity"
@@ -75,14 +75,13 @@ function updateEquipmentField(field: BgDatabaseField, value: string) {
         :dirty="dirty"
         @reset="emit('reset')"
       >
-        <Button
+        <AppButton
           variant="outline"
-          class="h-9"
           type="button"
           @click="equipmentDialogOpen = true"
         >
           编辑
-        </Button>
+        </AppButton>
       </EditableFieldFrame>
       <ItemHoverLink
         v-if="item"

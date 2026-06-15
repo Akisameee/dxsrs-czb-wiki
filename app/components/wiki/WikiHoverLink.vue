@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { CircleHelp } from "@lucide/vue";
-import { Button } from "~/components/ui/button";
 import {
   HoverCard,
   HoverCardContent,
@@ -24,7 +23,7 @@ const open = defineModel<boolean>("open", { default: false });
 <template>
   <HoverCard v-model:open="open">
     <HoverCardTrigger as-child>
-      <Button
+      <AppButton
         v-if="mode === 'button'"
         variant="ghost"
         size="icon-sm"
@@ -35,7 +34,7 @@ const open = defineModel<boolean>("open", { default: false });
         <slot name="trigger">
           <CircleHelp />
         </slot>
-      </Button>
+      </AppButton>
       <NuxtLink
         v-else
         :to="to"

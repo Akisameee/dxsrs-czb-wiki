@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Chart as ChartInstance, Plugin, TooltipItem } from "chart.js";
 import type { PowerSummary, SimulationAnalysis } from "~/components/tools/custom-martial-art/types";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,6 +17,7 @@ const props = defineProps<{
   analysis: SimulationAnalysis | null;
 }>();
 
+const finalPercentCanvas = useTemplateRef<HTMLCanvasElement>("finalPercentCanvas");
 const powerCanvas = useTemplateRef<HTMLCanvasElement>("powerCanvas");
 
 type PowerMarker = {
@@ -26,23 +26,39 @@ type PowerMarker = {
   color: string;
 };
 
-type PowerChartPoint = {
+type ChartPoint = {
   x: number;
   y: number;
 };
 
-let powerChart: ChartInstance<"line", PowerChartPoint[]> | null = null;
-let hoveredPowerMarker: PowerMarker | null = null;
+type ChartKey = "finalPercent" | "power";
 
-async function renderPowerChart() {
+const charts: Record<ChartKey, ChartInstance<"line", ChartPoint[]> | null> = {
+  finalPercent: null,
+  power: null,
+};
+const hoveredMarkers: Record<ChartKey, PowerMarker | null> = {
+  finalPercent: null,
+  power: null,
+};
+let renderVersion = 0;
+
+async function renderDistributionChart(options: {
+  key: ChartKey;
+  version: number;
+  canvas: HTMLCanvasElement | null | undefined;
+  points: Array<{ x: number | string; y: number | string }>;
+  summary: PowerSummary | null | undefined;
+  label: string;
+}) {
   await nextTick();
-  if (!import.meta.client || !powerCanvas.value) return;
+  if (options.version !== renderVersion) return;
+  if (!import.meta.client || !options.canvas) return;
 
-  const points = props.analysis?.finalValues?.powerDensity || [];
-  const summary = props.analysis?.finalValues?.powerSummary;
+  const { key, points, summary, label } = options;
   if (!points.length || !summary) {
-    powerChart?.destroy();
-    powerChart = null;
+    charts[key]?.destroy();
+    charts[key] = null;
     return;
   }
   const chartPoints = points
@@ -60,16 +76,13 @@ async function renderPowerChart() {
   const background = styles.getPropertyValue("--background").trim() || "#fff";
   const muted = styles.getPropertyValue("--muted-foreground").trim() || "#666";
   const markerPlugin: Plugin<"line"> = {
-    id: "power-summary-markers",
+    id: `${key}-summary-markers`,
     afterEvent(chart, args) {
-      const powerSummary = props.analysis?.finalValues?.powerSummary;
-      if (!powerSummary) return;
-
       const { chartArea } = chart;
       const xScale = chart.scales.x;
       const { x: eventX, y: eventY } = args.event;
       if (!xScale || typeof eventX !== "number" || typeof eventY !== "number") return;
-      const markers = powerMarkers(powerSummary, primary, foreground);
+      const markers = summaryMarkers(summary, primary, foreground, muted);
       const hovered = markers.find((marker) => {
         const x = xScale.getPixelForValue(marker.value);
         return (
@@ -81,19 +94,16 @@ async function renderPowerChart() {
         );
       }) || null;
 
-      if (hoveredPowerMarker?.label !== hovered?.label) {
-        hoveredPowerMarker = hovered;
+      if (hoveredMarkers[key]?.label !== hovered?.label) {
+        hoveredMarkers[key] = hovered;
         args.changed = true;
       }
     },
     afterDatasetsDraw(chart) {
-      const powerSummary = props.analysis?.finalValues?.powerSummary;
-      if (!powerSummary) return;
-
       const { ctx, chartArea } = chart;
       const xScale = chart.scales.x;
       if (!xScale) return;
-      const markers = powerMarkers(powerSummary, primary, foreground);
+      const markers = summaryMarkers(summary, primary, foreground, muted);
 
       ctx.save();
       ctx.font = "12px sans-serif";
@@ -112,9 +122,10 @@ async function renderPowerChart() {
         ctx.setLineDash([]);
       }
 
-      if (hoveredPowerMarker) {
-        const x = xScale.getPixelForValue(hoveredPowerMarker.value);
-        const text = `${hoveredPowerMarker.label} ${formatNumber(hoveredPowerMarker.value)}`;
+      const hoveredMarker = hoveredMarkers[key];
+      if (hoveredMarker) {
+        const x = xScale.getPixelForValue(hoveredMarker.value);
+        const text = `${hoveredMarker.label} ${formatNumber(hoveredMarker.value)}`;
         const paddingX = 6;
         const paddingY = 4;
         const width = ctx.measureText(text).width + paddingX * 2;
@@ -133,13 +144,13 @@ async function renderPowerChart() {
       ctx.restore();
     },
   };
-  powerChart?.destroy();
-  powerChart = new Chart(powerCanvas.value, {
+  charts[key]?.destroy();
+  charts[key] = new Chart(options.canvas, {
     type: "line",
     data: {
       datasets: [
         {
-          label: "威力",
+          label,
           data: chartPoints,
           parsing: false,
           borderColor: primary,
@@ -171,7 +182,7 @@ async function renderPowerChart() {
               return [];
             },
             label(context: TooltipItem<"line">) {
-              return `威力 ${formatNumber(context.parsed.x)}`;
+              return `${label} ${formatNumber(context.parsed.x)}`;
             },
           },
         },
@@ -207,18 +218,42 @@ async function renderPowerChart() {
     },
     plugins: [markerPlugin],
   });
+  requestAnimationFrame(() => {
+    charts[key]?.resize();
+  });
 }
 
-watch(() => props.analysis?.finalValues?.powerDensity, () => {
-  void renderPowerChart();
+function renderCharts() {
+  const version = ++renderVersion;
+  void renderDistributionChart({
+    key: "finalPercent",
+    version,
+    canvas: finalPercentCanvas.value,
+    points: props.analysis?.finalValues?.finalPercentDensity || [],
+    summary: props.analysis?.finalValues?.finalPercentSummary,
+    label: "成长",
+  });
+  void renderDistributionChart({
+    key: "power",
+    version,
+    canvas: powerCanvas.value,
+    points: props.analysis?.finalValues?.powerDensity || [],
+    summary: props.analysis?.finalValues?.powerSummary,
+    label: "威力",
+  });
+}
+
+watch(() => props.analysis?.finalValues, () => {
+  renderCharts();
 }, { deep: true });
 
 onMounted(() => {
-  void renderPowerChart();
+  renderCharts();
 });
 
 onBeforeUnmount(() => {
-  powerChart?.destroy();
+  charts.finalPercent?.destroy();
+  charts.power?.destroy();
 });
 
 function formatPercent(value: number | string | null | undefined) {
@@ -240,10 +275,12 @@ function barWidth(value: number | string | null | undefined) {
   return `${Math.max(2, Math.min(100, number * 100))}%`;
 }
 
-function powerMarkers(powerSummary: PowerSummary, primary: string, foreground: string) {
+function summaryMarkers(summary: PowerSummary, primary: string, foreground: string, muted: string) {
   return [
-    { label: "中位", value: Number(powerSummary.median), color: primary },
-    { label: "均值", value: Number(powerSummary.mean), color: foreground },
+    { label: "最小", value: Number(summary.min), color: muted },
+    { label: "中位", value: Number(summary.median), color: primary },
+    { label: "均值", value: Number(summary.mean), color: foreground },
+    { label: "最大", value: Number(summary.max), color: muted },
   ].filter((item) => Number.isFinite(item.value));
 }
 
@@ -255,11 +292,11 @@ const sections = computed(() => [
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <CardTitle>统计结果</CardTitle>
-    </CardHeader>
-    <CardContent class="grid gap-4">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-4">
       <div v-if="!analysis" class="py-8 text-center text-sm text-muted-foreground">
         点击模拟查看当前初始输入的分布。
       </div>
@@ -299,11 +336,18 @@ const sections = computed(() => [
                 </div>
               </CollapsibleContent>
               <CollapsibleTrigger as-child>
-                <Button variant="outline" size="sm" class="mt-1 w-fit">
+                <AppButton variant="outline" size="sm" class="mt-1 w-fit">
                   {{ open ? "收起" : `展开全部 ${section.rows.length}` }}
-                </Button>
+                </AppButton>
               </CollapsibleTrigger>
             </Collapsible>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          <div class="text-sm text-muted-foreground">最终成长进度</div>
+          <div class="h-40 bg-background">
+            <canvas ref="finalPercentCanvas" class="h-full w-full" aria-label="最终成长进度概率分布" />
           </div>
         </div>
 
@@ -314,6 +358,6 @@ const sections = computed(() => [
           </div>
         </div>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

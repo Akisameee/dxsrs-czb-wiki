@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Input } from "~/components/ui/input";
-
 const props = withDefaults(defineProps<{
   id?: string;
   modelValue: string | number;
@@ -50,7 +48,7 @@ function onWheel(event: WheelEvent) {
 </script>
 
 <template>
-  <Input
+  <AppInput
     :id="id"
     :model-value="modelValue"
     type="number"

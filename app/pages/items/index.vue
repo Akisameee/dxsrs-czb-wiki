@@ -139,7 +139,7 @@ function goToItem(item: Item) {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <WikiIndexHeader
       title="道具"
       :description="pending ? '读取中...' : `共 ${items.length} 个道具，当前 ${filteredRows.length} 条`"
@@ -181,5 +181,5 @@ function goToItem(item: Item) {
           </template>
         </WikiCard>
     </WikiCardGrid>
-  </main>
+  </AppPageContainer>
 </template>

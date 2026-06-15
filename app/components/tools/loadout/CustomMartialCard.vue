@@ -12,7 +12,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 
@@ -58,7 +57,7 @@ function cardClass() {
 </script>
 
 <template>
-  <Card
+  <AppCard
     :class="cardClass()"
     role="button"
     tabindex="0"
@@ -67,29 +66,26 @@ function cardClass() {
     @click="toggleCustomMartial"
     @keydown="handleCardKeydown"
   >
-    <CardHeader>
+    <AppCardHeader>
       <div>
         <CardTitle>自创</CardTitle>
         <CardDescription :class="customConflictSectLabel ? 'text-destructive' : undefined">
           <template v-if="customConflictSectLabel">
             当前已加入{{ customConflictSectLabel }}，自创外功不能选择其它门派。
           </template>
-          <template v-else>
-            启用后，自创外功会按所选门派和风格参与计算。
-          </template>
         </CardDescription>
       </div>
-    </CardHeader>
-    <CardContent class="grid gap-3 sm:grid-cols-2" @click.stop @keydown.stop>
+    </AppCardHeader>
+    <AppCardContent class="grid gap-3 grid-cols-2" @click.stop @keydown.stop>
       <div class="grid gap-2">
         <Label class="text-muted-foreground" for="custom-sect">门派</Label>
         <Select
           :model-value="customMartial.sectId"
           @update:model-value="emit('updateCustomMartial', { sectId: String($event) })"
         >
-          <SelectTrigger id="custom-sect" class="w-full">
+          <AppSelectTrigger id="custom-sect" class="w-full">
             <SelectValue placeholder="选择门派" />
-          </SelectTrigger>
+          </AppSelectTrigger>
           <SelectContent>
             <SelectItem :value="emptyOption">选择门派</SelectItem>
             <SelectItem v-for="option in joinableSectOptions" :key="option.id" :value="option.id">
@@ -105,9 +101,9 @@ function cardClass() {
           :model-value="customMartial.styleId"
           @update:model-value="emit('updateCustomMartial', { styleId: String($event) })"
         >
-          <SelectTrigger id="custom-style" class="w-full">
+          <AppSelectTrigger id="custom-style" class="w-full">
             <SelectValue placeholder="选择风格" />
-          </SelectTrigger>
+          </AppSelectTrigger>
           <SelectContent>
             <SelectItem :value="emptyOption">选择风格</SelectItem>
             <SelectItem v-for="option in customStyleOptions" :key="option.id" :value="option.id">
@@ -116,6 +112,6 @@ function cardClass() {
           </SelectContent>
         </Select>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

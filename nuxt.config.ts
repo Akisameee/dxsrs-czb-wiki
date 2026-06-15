@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2026-06-09",
   devtools: { enabled: false },
   modules: ["shadcn-nuxt"],
+  components: [
+    { path: "~/components/layout", pathPrefix: false },
+    "~/components",
+  ],
   css: ["~/assets/css/tailwind.css"],
   app: {
     baseURL: siteBase.endsWith("/") ? siteBase : `${siteBase}/`,

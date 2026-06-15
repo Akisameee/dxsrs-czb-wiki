@@ -146,7 +146,7 @@ function editedFileName(name: string) {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <CharacterEditHeaderCard
       :character-name="characterName"
       :file-name="headerFileName"
@@ -209,5 +209,5 @@ function editedFileName(name: string) {
         />
       </div>
     </template>
-  </main>
+  </AppPageContainer>
 </template>

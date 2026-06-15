@@ -40,7 +40,7 @@ const emit = defineEmits<{
       <slot />
     </div>
 
-    <Button
+    <AppButton
       v-if="dirty && !readonly && !disabled"
       type="button"
       variant="ghost"
@@ -49,7 +49,7 @@ const emit = defineEmits<{
       @click="emit('reset')"
     >
       <RotateCcwIcon class="size-3.5" />
-    </Button>
+    </AppButton>
 
     <div v-if="error || hint" :class="cn('text-xs', error ? 'text-destructive' : 'text-muted-foreground')">
       {{ error || hint }}

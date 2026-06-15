@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Loader } from "@lucide/vue";
-import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
 
@@ -22,7 +21,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+  <div class="grid gap-3 grid-cols-[minmax(0,1fr)_auto] items-end">
     <div class="grid gap-2">
       <Label class="text-muted-foreground" :for="inputId">{{ label }}</Label>
       <WikiNumberInput
@@ -31,12 +30,13 @@ const emit = defineEmits<{
         min="1"
         max="10000"
         :step="step"
+        :disabled="disabled || busy"
         @update:model-value="emit('updateModelValue', $event)"
       />
     </div>
-    <Button :disabled="disabled || busy" @click="emit('run')">
+    <AppButton :disabled="disabled || busy" @click="emit('run')">
       <Loader v-if="busy" class="animate-spin" />
       {{ busy ? busyLabel : actionLabel }}
-    </Button>
+    </AppButton>
   </div>
 </template>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Download, Pencil, Trash2 } from "@lucide/vue";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardAction,
@@ -30,20 +29,20 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <Card :class="active ? 'border-primary' : undefined">
-    <CardHeader class="gap-2">
+  <AppCard :class="active ? 'border-primary' : undefined">
+    <AppCardHeader class="gap-2">
       <CardTitle class="break-all text-base">{{ fileName }}</CardTitle>
       <CardDescription>
         <template v-if="errorMessage">解析失败 · {{ fileSize }}</template>
         <template v-else>{{ characterName }} · {{ fileSize }}</template>
       </CardDescription>
       <CardAction>
-        <Button type="button" variant="ghost" size="icon" @click="emit('remove')">
+        <AppButton type="button" variant="ghost" size="icon" @click="emit('remove')">
           <Trash2 class="size-4" />
-        </Button>
+        </AppButton>
       </CardAction>
-    </CardHeader>
-    <CardContent class="grid gap-4">
+    </AppCardHeader>
+    <AppCardContent class="grid gap-4">
       <p v-if="errorMessage" class="text-sm text-destructive">{{ errorMessage }}</p>
 
       <div v-else class="flex flex-wrap gap-2">
@@ -52,15 +51,15 @@ const emit = defineEmits<{
       </div>
 
       <div v-if="!errorMessage" class="flex flex-wrap gap-2">
-        <Button type="button" @click="emit('edit')">
+        <AppButton type="button" @click="emit('edit')">
           <Pencil class="size-4" />
           修改
-        </Button>
-        <Button type="button" variant="outline" @click="emit('download')">
+        </AppButton>
+        <AppButton type="button" variant="outline" @click="emit('download')">
           <Download class="size-4" />
           下载
-        </Button>
+        </AppButton>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

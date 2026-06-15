@@ -168,6 +168,9 @@ export async function estimateGreedyImprovementStats(
   let maxPower = 0;
   const powerValues: number[] = [];
   const costValues: number[] = [];
+  const finalPercentValues: number[] = [];
+  let finalPercentSum = 0;
+  let maxFinalPercent = 0;
   let improveSpaceSum = 0;
   let totalSteps = 0;
   let bestMatchCount = 0;
@@ -191,11 +194,17 @@ export async function estimateGreedyImprovementStats(
     effectWeightedLevelSum += targetEffectWeightedLevel(final, target);
     const power = Number(final?.power || 0);
     const cost = Number(final?.cost || 0);
-    powerValues.push(power);
+    const finalPercent = Number(final?.percent || 0);
+    finalPercentValues.push(finalPercent);
+    finalPercentSum += finalPercent;
+    maxFinalPercent = Math.max(maxFinalPercent, finalPercent);
     costValues.push(cost);
-    powerSum += power;
     costSum += cost;
-    maxPower = Math.max(maxPower, power);
+    if (result.success) {
+      powerValues.push(power);
+      powerSum += power;
+      maxPower = Math.max(maxPower, power);
+    }
     improveSpaceSum += Number(final?.gailiangkongjian || 0);
     totalSteps += result.steps;
     bestMatchCount = Math.max(bestMatchCount, matchedCount);
@@ -205,6 +214,9 @@ export async function estimateGreedyImprovementStats(
       await yieldToMain();
     }
   }
+
+  const powerSummary = distributionSummary(powerValues);
+  const costSummary = distributionSummary(costValues);
 
   const stats: CustomMartialStats = {
     trials,
@@ -217,11 +229,14 @@ export async function estimateGreedyImprovementStats(
     effectHitCount: effectHits,
     effectProbability: effectHits / trials,
     effectWeightedLevel: effectWeightedLevelSum / trials,
-    averagePower: powerSum / trials,
+    averagePower: powerValues.length ? powerSum / powerValues.length : 0,
+    medianPower: powerSummary.median,
     maxPower,
     averageCost: costSum / trials,
-    powerSummary: distributionSummary(powerValues),
-    costSummary: distributionSummary(costValues),
+    powerSummary,
+    costSummary,
+    averageFinalPercent: finalPercentSum / trials,
+    maxFinalPercent,
     averageImproveSpace: improveSpaceSum / trials,
     averageSteps: totalSteps / trials,
     bestMatchCount,
@@ -233,6 +248,7 @@ export async function estimateGreedyImprovementStats(
     stats.samples = {
       power: powerValues,
       cost: costValues,
+      finalPercent: finalPercentValues,
     };
   }
 
@@ -329,15 +345,20 @@ function massPoints(values: number[]): CustomMartialDensityPoint[] {
 export function summarizeFinalValueDistributions(
   powerValues: Array<number | string>,
   costValues: Array<number | string>,
+  finalPercentValues: Array<number | string> = [],
 ): CustomMartialFinalValueDistributions {
   const powers = powerValues.map(Number).filter(Number.isFinite);
   const costs = costValues.map(Number).filter(Number.isFinite);
+  const finalPercents = finalPercentValues.map(Number).filter(Number.isFinite);
   return {
-    trials: Math.min(powers.length, costs.length),
+    trials: Math.max(powers.length, costs.length, finalPercents.length),
+    averageFinalPercent: finalPercents.length ? finalPercents.reduce((sum, value) => sum + value, 0) / finalPercents.length : 0,
     averagePower: powers.length ? powers.reduce((sum, value) => sum + value, 0) / powers.length : 0,
     averageCost: costs.length ? costs.reduce((sum, value) => sum + value, 0) / costs.length : 0,
+    finalPercentSummary: distributionSummary(finalPercents),
     powerSummary: distributionSummary(powers),
     costSummary: distributionSummary(costs),
+    finalPercentDensity: densityPoints(finalPercents),
     powerDensity: densityPoints(powers),
     costMass: massPoints(costs),
   };

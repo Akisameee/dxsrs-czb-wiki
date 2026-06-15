@@ -145,6 +145,7 @@ export type CustomMartialSummary = {
   changed: CustomMartialChanged | null;
   rare: number | string;
   percent: number;
+  percentTarget: number;
   gailiangkongjian: number;
   style: {
     id: number | string | null | undefined;
@@ -209,10 +210,13 @@ export type CustomMartialStats = {
   effectProbability: number;
   effectWeightedLevel: number;
   averagePower: number;
+  medianPower: number;
   maxPower: number;
   averageCost: number;
   powerSummary: CustomMartialDistributionSummary;
   costSummary: CustomMartialDistributionSummary;
+  averageFinalPercent: number;
+  maxFinalPercent: number;
   averageImproveSpace: number;
   averageSteps: number;
   bestMatchCount: number;
@@ -221,6 +225,7 @@ export type CustomMartialStats = {
   samples?: {
     power: number[];
     cost: number[];
+    finalPercent: number[];
   };
 };
 
@@ -240,10 +245,13 @@ export type CustomMartialDensityPoint = {
 
 export type CustomMartialFinalValueDistributions = {
   trials: number;
+  averageFinalPercent: number;
   averagePower: number;
   averageCost: number;
+  finalPercentSummary: CustomMartialDistributionSummary;
   powerSummary: CustomMartialDistributionSummary;
   costSummary: CustomMartialDistributionSummary;
+  finalPercentDensity: CustomMartialDensityPoint[];
   powerDensity: CustomMartialDensityPoint[];
   costMass: CustomMartialDensityPoint[];
 };

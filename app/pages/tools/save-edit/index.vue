@@ -79,7 +79,7 @@ function editedFileName(name: string) {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <SaveUploadCard @upload="uploadSaves" />
 
     <section v-if="files.length" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -98,5 +98,5 @@ function editedFileName(name: string) {
         @remove="removeSave(item.id)"
       />
     </section>
-  </main>
+  </AppPageContainer>
 </template>

@@ -257,17 +257,14 @@ function setPortraitOption(control: PortraitControl, value: string) {
 </script>
 
 <template>
-  <Card>
+  <AppCard>
     <EditableTableCardHeader
       title="主角信息"
       :dirty="tableDirty"
       @reset="resetTable"
     />
-    <CardContent :class="hasPortraitFields ? 'grid gap-6 lg:grid-cols-[240px_1fr]' : 'grid gap-6'">
-      <div
-        v-if="hasPortraitFields"
-        class="grid auto-rows-min gap-4"
-      >
+    <AppCardContent :class="hasPortraitFields ? 'grid gap-6 lg:grid-cols-[240px_1fr]' : 'grid gap-6'">
+      <div v-if="hasPortraitFields" class="grid auto-rows-min gap-4">
         <div class="grid justify-items-center gap-3 rounded-md border bg-muted/10 p-3">
           <PlayerPortrait
             class="h-[260px] w-full max-w-[210px]"
@@ -284,22 +281,22 @@ function setPortraitOption(control: PortraitControl, value: string) {
           />
 
           <div class="grid w-full grid-cols-2 gap-2">
-            <Button
+            <AppButton
               type="button"
               :variant="sexId === 0 ? 'default' : 'outline'"
               size="sm"
               @click="setSex(0)"
             >
               男
-            </Button>
-            <Button
+            </AppButton>
+            <AppButton
               type="button"
               :variant="sexId === 1 ? 'default' : 'outline'"
               size="sm"
               @click="setSex(1)"
             >
               女
-            </Button>
+            </AppButton>
           </div>
         </div>
 
@@ -326,7 +323,7 @@ function setPortraitOption(control: PortraitControl, value: string) {
       <div class="grid auto-rows-min gap-5">
         <div v-if="hasBasicFields" class="grid gap-3">
           <div class="text-sm font-medium">基础信息</div>
-          <div class="grid auto-rows-min gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <div v-if="hasField('xing')" class="grid gap-1">
               <Label class="text-muted-foreground">姓 / 名</Label>
               <div class="flex items-center gap-2">
@@ -457,7 +454,7 @@ function setPortraitOption(control: PortraitControl, value: string) {
 
         <div v-if="hasAttributeFields" class="grid gap-3">
           <div class="text-sm font-medium">基础属性</div>
-          <div class="grid auto-rows-min gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <div v-if="hasField('lvli')" class="grid gap-1">
               <Label class="text-muted-foreground">膂力 / 额外膂力</Label>
               <div class="flex items-center gap-2">
@@ -539,7 +536,7 @@ function setPortraitOption(control: PortraitControl, value: string) {
 
         <div v-if="hasMartialFields" class="grid gap-3">
           <div class="text-sm font-medium">武艺</div>
-          <div class="grid auto-rows-min gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <div v-if="hasField('wuxuexiuwei')" class="grid gap-1">
               <Label class="text-muted-foreground">武学修为</Label>
               <SaveFieldEditor
@@ -625,7 +622,7 @@ function setPortraitOption(control: PortraitControl, value: string) {
 
         <div v-if="hasLifeFields" class="grid gap-3">
           <div class="text-sm font-medium">技艺</div>
-          <div class="grid auto-rows-min gap-3 sm:grid-cols-2 xl:grid-cols-2">
+          <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-2">
             <div v-if="hasField('wakuang')" class="grid gap-1">
               <LifeSkillFieldEditor
                 type="mining"
@@ -683,6 +680,6 @@ function setPortraitOption(control: PortraitControl, value: string) {
           </div>
         </div>
       </div>
-    </CardContent>
-  </Card>
+    </AppCardContent>
+  </AppCard>
 </template>

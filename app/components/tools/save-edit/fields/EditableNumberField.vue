@@ -45,7 +45,7 @@ const error = computed(() => {
     :compact="compact"
     @reset="emit('update', initialValue)"
   >
-    <Input
+    <AppInput
       type="number"
       :model-value="modelValue"
       :min="min"

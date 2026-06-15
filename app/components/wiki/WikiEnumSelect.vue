@@ -3,7 +3,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 
@@ -52,11 +51,11 @@ function onWheel(event: WheelEvent) {
     :disabled="disabled"
     @update:model-value="emit('update:modelValue', String($event))"
   >
-    <SelectTrigger :id="id" class="w-full" @wheel="onWheel">
+    <AppSelectTrigger :id="id" @wheel="onWheel">
       <SelectValue :placeholder="placeholder">
         {{ selectedLabel || placeholder }}
       </SelectValue>
-    </SelectTrigger>
+    </AppSelectTrigger>
     <SelectContent>
       <SelectItem v-for="option in options" :key="option.id" :value="option.id">
         {{ option.label }}

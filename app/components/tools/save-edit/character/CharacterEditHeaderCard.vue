@@ -6,25 +6,36 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "~/components/ui/tabs";
 
-defineProps<{
+type ViewMode = "normal" | "database";
+
+const props = defineProps<{
   characterName: string;
   fileName: string;
   tableCount?: number;
   hasSave: boolean;
-  viewMode: "normal" | "database";
+  viewMode: ViewMode;
 }>();
 
 const emit = defineEmits<{
-  updateViewMode: [value: "normal" | "database"];
+  updateViewMode: [value: ViewMode];
   download: [];
 }>();
+
+const viewModeModel = computed<ViewMode>({
+  get: () => props.viewMode,
+  set: (value) => emit("updateViewMode", value),
+});
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
+  <AppCard>
+    <AppCardHeader>
       <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div class="grid gap-1">
           <CardTitle class="text-2xl">{{ characterName }}</CardTitle>
@@ -35,38 +46,30 @@ const emit = defineEmits<{
         </div>
 
         <div class="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" as-child>
+          <AppButton type="button" variant="outline" as-child>
             <NuxtLink to="/tools/save-edit">
               <ArrowLeft class="size-4" />
               返回
             </NuxtLink>
-          </Button>
-          <div class="flex rounded-md border p-1">
-            <Button
-              type="button"
-              size="sm"
-              :variant="viewMode === 'normal' ? 'default' : 'ghost'"
-              @click="emit('updateViewMode', 'normal')"
-            >
-              <UserRound class="size-4" />
-              正常视图
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              :variant="viewMode === 'database' ? 'default' : 'ghost'"
-              @click="emit('updateViewMode', 'database')"
-            >
-              <Database class="size-4" />
-              数据库视图
-            </Button>
-          </div>
-          <Button v-if="hasSave" type="button" @click="emit('download')">
+          </AppButton>
+          <Tabs v-model="viewModeModel">
+            <TabsList class="grid w-full grid-cols-2 sm:w-auto">
+              <TabsTrigger value="normal" class="gap-1.5">
+                <UserRound class="size-4" />
+                正常视图
+              </TabsTrigger>
+              <TabsTrigger value="database" class="gap-1.5">
+                <Database class="size-4" />
+                数据库视图
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <AppButton v-if="hasSave" type="button" @click="emit('download')">
             <Download class="size-4" />
             下载
-          </Button>
+          </AppButton>
         </div>
       </div>
-    </CardHeader>
-  </Card>
+    </AppCardHeader>
+  </AppCard>
 </template>

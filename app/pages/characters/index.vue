@@ -151,7 +151,7 @@ watch(pageCount, (count) => {
 </script>
 
 <template>
-  <main class="container mx-auto grid gap-6 p-6">
+  <AppPageContainer>
     <WikiIndexHeader
       title="人物"
       :description="pending ? '读取中...' : `共 ${characters.length} 人，当前 ${filteredRows.length} 条`"
@@ -201,5 +201,5 @@ watch(pageCount, (count) => {
           </template>
         </WikiCard>
     </WikiCardGrid>
-  </main>
+  </AppPageContainer>
 </template>

@@ -37,9 +37,9 @@ const errorMessage = computed(() => {
 </script>
 
 <template>
-  <Card v-if="errorMessage">
-    <CardContent class="text-destructive">{{ errorMessage }}</CardContent>
-  </Card>
+  <AppCard v-if="errorMessage">
+    <AppCardContent class="text-destructive">{{ errorMessage }}</AppCardContent>
+  </AppCard>
 
   <template v-else>
     <Pagination
@@ -70,15 +70,15 @@ const errorMessage = computed(() => {
 
     <div
       v-if="rows.length"
-      :class="cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4', gridClass)"
+      :class="cn('grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4', gridClass)"
     >
       <slot />
     </div>
 
-    <Card v-else>
-      <CardContent class="py-12 text-center text-muted-foreground">
+    <AppCard v-else>
+      <AppCardContent class="py-12 text-center text-muted-foreground">
         {{ emptyLabel }}
-      </CardContent>
-    </Card>
+      </AppCardContent>
+    </AppCard>
   </template>
 </template>
