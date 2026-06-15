@@ -261,7 +261,7 @@ function mobileLinkClass(to: string) {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <Sheet v-model:open="mobileNavOpen">
+        <Sheet v-model:open="mobileNavOpen" :modal="false">
           <SheetTrigger as-child>
             <AppButton
               type="button"
@@ -279,7 +279,6 @@ function mobileLinkClass(to: string) {
           >
             <SheetHeader>
               <SheetTitle>导航</SheetTitle>
-              <SheetDescription>大侠式人生重制版 Wiki</SheetDescription>
             </SheetHeader>
 
             <nav class="grid gap-6 px-4">

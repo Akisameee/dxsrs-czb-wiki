@@ -42,6 +42,8 @@ const hoveredMarkers: Record<ChartKey, PowerMarker | null> = {
   power: null,
 };
 let renderVersion = 0;
+let renderFrame: number | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
 async function renderDistributionChart(options: {
   key: ChartKey;
@@ -61,6 +63,8 @@ async function renderDistributionChart(options: {
     charts[key] = null;
     return;
   }
+  if (options.canvas.clientWidth <= 0 || options.canvas.clientHeight <= 0) return;
+
   const chartPoints = points
     .map((point) => ({ x: Number(point.x), y: Number(point.y) }))
     .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
@@ -69,6 +73,8 @@ async function renderDistributionChart(options: {
   const xMax = xValues.length ? Math.max(...xValues) : undefined;
 
   const { default: Chart } = await import("chart.js/auto");
+  if (options.version !== renderVersion) return;
+
   const styles = getComputedStyle(document.documentElement);
   const primary = styles.getPropertyValue("--primary").trim() || "#111";
   const border = styles.getPropertyValue("--border").trim() || "#ddd";
@@ -243,15 +249,38 @@ function renderCharts() {
   });
 }
 
+function scheduleRenderCharts() {
+  if (!import.meta.client) return;
+  if (renderFrame !== null) cancelAnimationFrame(renderFrame);
+  renderFrame = requestAnimationFrame(() => {
+    renderFrame = null;
+    renderCharts();
+  });
+}
+
 watch(() => props.analysis?.finalValues, () => {
-  renderCharts();
+  scheduleRenderCharts();
 }, { deep: true });
 
 onMounted(() => {
-  renderCharts();
+  scheduleRenderCharts();
+  if (!import.meta.client || typeof ResizeObserver === "undefined") return;
+
+  resizeObserver = new ResizeObserver((entries) => {
+    if (entries.some((entry) => entry.contentRect.width > 0 && entry.contentRect.height > 0)) {
+      scheduleRenderCharts();
+    }
+  });
+
+  void nextTick(() => {
+    if (finalPercentCanvas.value) resizeObserver?.observe(finalPercentCanvas.value);
+    if (powerCanvas.value) resizeObserver?.observe(powerCanvas.value);
+  });
 });
 
 onBeforeUnmount(() => {
+  if (renderFrame !== null) cancelAnimationFrame(renderFrame);
+  resizeObserver?.disconnect();
   charts.finalPercent?.destroy();
   charts.power?.destroy();
 });

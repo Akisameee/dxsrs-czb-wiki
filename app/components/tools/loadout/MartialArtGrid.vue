@@ -79,6 +79,7 @@ function styleRows(item: SelectableMartialArt) {
       :selected="isSelected(item)"
       :disabled="!canSelect(item)"
       :title-attr="disabledReason(item) || item.name"
+      :interactive-badges="false"
       :on-click="() => emit('toggleMartialArt', item)"
     />
   </WikiCardGrid>

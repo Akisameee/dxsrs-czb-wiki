@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { Badge } from "~/components/ui/badge";
 import { rarityCardClass } from "~/lib/rarity";
 import MartialArtHoverLink from "~/components/wiki/martial-art/HoverLink.vue";
 import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
@@ -26,12 +27,14 @@ const props = withDefaults(defineProps<{
   selected?: boolean;
   disabled?: boolean;
   titleAttr?: string;
+  interactiveBadges?: boolean;
   onClick?: (event: MouseEvent) => void;
 }>(), {
   styles: () => [],
   role: "link",
   selected: false,
   disabled: false,
+  interactiveBadges: true,
 });
 
 const cardColor = computed<HTMLAttributes["class"]>(() => rarityCardClass(props.rarityToneId));
@@ -63,17 +66,24 @@ const styleItems = computed(() => props.styles.filter((style) => style.label));
     </template>
 
     <template #badges>
-      <div class="flex flex-wrap gap-2" @click.stop @keydown.stop>
-        <SectHoverLink
-          :id="sectId"
-          :label="sectLabel"
-        />
-        <StyleHoverLink
+      <div
+        v-if="interactiveBadges"
+        class="flex flex-wrap gap-2"
+        @click.stop
+        @keydown.stop
+      >
+        <SectHoverLink :id="sectId" :label="sectLabel" />
+        <StyleHoverLink v-for="style in styleItems" :key="`${style.id}-${style.label}`" :id="style.id" :label="style.label" />
+      </div>
+      <div v-else class="flex flex-wrap gap-2">
+        <Badge variant="outline">{{ sectLabel }}</Badge>
+        <Badge
           v-for="style in styleItems"
           :key="`${style.id}-${style.label}`"
-          :id="style.id"
-          :label="style.label"
-        />
+          variant="outline"
+        >
+          {{ style.label }}
+        </Badge>
       </div>
     </template>
   </WikiCard>
