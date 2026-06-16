@@ -1,18 +1,50 @@
 import {
+  parseBgDatabase,
   writeBgDatabaseUpdates,
   type BgDatabaseField,
   type BgDatabaseFieldUpdate,
   type BgDatabaseFile,
   type BgDatabaseTable,
   type BgDatabaseValue,
-} from "~/lib/bgdatabase";
-import type { WikiEnums } from "~/lib/wiki/text";
+} from "../bgdatabase";
+import { ES2_TYPE_HASHES, parseEs2, writeEs2, type Es2File, type Es2Value } from "../es2";
+import type { WikiEnums } from "../wiki/text";
+import { detectSaveEditFileKind } from "./detect";
+import { decodeSaveEditEs2FileName } from "./es2-file-name";
+import { applyEs2Draft } from "./es2-draft";
 
 export type SaveEditDraft = Record<string, string>;
 
 export type SaveEditFile = BgDatabaseFile & {
+  kind: "bgdatabase";
   zhuJue: BgDatabaseTable;
 };
+
+export type SaveEditEs2File = {
+  kind: "es2";
+  es2: Es2File;
+};
+
+export type AnySaveEditFile = SaveEditFile | SaveEditEs2File;
+
+export function saveEditFileTypeLabel(save: AnySaveEditFile | null | undefined, fileName?: string) {
+  if (!save) return "未知";
+  if (save.kind === "bgdatabase") return "人物存档";
+
+  const dbKey = fileName ? decodeSaveEditEs2FileName(fileName) : null;
+  if (dbKey) return dbKey.label;
+
+  const value = save.es2.value;
+  if (value.type === "list") {
+    if (value.elementTypeHash.name === "CunDang") return "存档槽索引";
+    if (value.elementTypeHash.name === "string") return "进度列表存档";
+    return "附属列表存档";
+  }
+  if (value.type === "string") return "路径/标识存档";
+  if (value.type === "int" || value.type === "bool") return "游戏设置存档";
+  if (value.type === "cunDang") return "存档槽索引";
+  return "附属存档";
+}
 
 export type SaveEditFieldDefinition = {
   key: string;
@@ -216,7 +248,21 @@ export function asSaveEditFile(database: BgDatabaseFile): SaveEditFile {
   if (!zhuJue) {
     throw new Error("没有找到主角表 ZhuJue");
   }
-  return { ...database, zhuJue };
+  return { ...database, kind: "bgdatabase", zhuJue };
+}
+
+export function parseSaveEditFile(input: ArrayBuffer | Uint8Array): SaveEditFile {
+  const kind = detectSaveEditFileKind(input);
+  if (kind === "bgdatabase") return asSaveEditFile(parseBgDatabase(input));
+  if (kind === "es2") throw new Error("这是 ES2 小存档，当前存档编辑器暂未支持解析");
+  throw new Error("无法识别这个存档文件格式");
+}
+
+export function parseAnySaveEditFile(input: ArrayBuffer | Uint8Array): AnySaveEditFile {
+  const kind = detectSaveEditFileKind(input);
+  if (kind === "bgdatabase") return asSaveEditFile(parseBgDatabase(input));
+  if (kind === "es2") return { kind: "es2", es2: parseEs2(input) };
+  throw new Error("无法识别这个存档文件格式");
 }
 
 export function createSaveEditDraft(save: SaveEditFile): SaveEditDraft {
@@ -233,6 +279,11 @@ export function createSaveEditDraft(save: SaveEditFile): SaveEditDraft {
 
 export function writeSaveEditFile(save: SaveEditFile, draft: SaveEditDraft): Uint8Array {
   return writeBgDatabaseUpdates(save, draftToUpdates(save, draft));
+}
+
+export function writeAnySaveEditFile(save: AnySaveEditFile, draft: SaveEditDraft = {}): Uint8Array {
+  if (save.kind === "bgdatabase") return writeSaveEditFile(save, draft);
+  return writeEs2(applyEs2Draft(save, draft).es2);
 }
 
 export function draftToUpdates(save: SaveEditFile, draft: SaveEditDraft) {
@@ -273,6 +324,33 @@ export function valueWithDraft(field: BgDatabaseField | undefined, rowIndex: num
   return draft[key] ?? field.values[rowIndex] ?? null;
 }
 
+export function isSaveEditStringListFile(save: AnySaveEditFile | null | undefined): save is SaveEditEs2File {
+  return save?.kind === "es2" && isSaveEditStringListValue(save.es2.value);
+}
+
+export function saveEditStringListValues(save: SaveEditEs2File | null | undefined) {
+  if (!save || !isSaveEditStringListValue(save.es2.value)) return [];
+  return save.es2.value.values.map((value) => (value.type === "string" ? value.value : ""));
+}
+
+export function withSaveEditStringListValues(save: SaveEditEs2File, values: string[]): SaveEditEs2File {
+  return {
+    ...save,
+    es2: {
+      ...save.es2,
+      value: {
+        type: "list",
+        elementTypeHash: ES2_TYPE_HASHES.string,
+        values: values.map<Es2Value>((value) => ({
+          type: "string",
+          value,
+          typeHash: ES2_TYPE_HASHES.string,
+        })),
+      },
+    },
+  };
+}
+
 export function isEditableSaveValue(value: BgDatabaseValue) {
   return value === null || ["string", "number", "boolean"].includes(typeof value);
 }
@@ -310,4 +388,8 @@ function optionRows(values: Record<number, string>) {
   return Object.entries(values)
     .sort(([a], [b]) => Number(a) - Number(b))
     .map(([id, label]) => ({ id, label }));
+}
+
+function isSaveEditStringListValue(value: Es2Value) {
+  return value.type === "list" && value.elementTypeHash.name === "string";
 }

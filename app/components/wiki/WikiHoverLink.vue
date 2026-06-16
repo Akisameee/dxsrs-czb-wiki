@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { CircleHelp } from "@lucide/vue";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "~/components/ui/hover-card";
 
 withDefaults(defineProps<{
   mode?: "link" | "button";
@@ -21,8 +16,12 @@ const open = defineModel<boolean>("open", { default: false });
 </script>
 
 <template>
-  <HoverCard v-model:open="open">
-    <HoverCardTrigger as-child>
+  <AppHoverCard
+    v-model:open="open"
+    content-class="grid w-96 max-w-[calc(100vw-2rem)] gap-3"
+    :prevent-click-default="mode !== 'button'"
+  >
+    <template #trigger>
       <AppButton
         v-if="mode === 'button'"
         variant="ghost"
@@ -42,9 +41,7 @@ const open = defineModel<boolean>("open", { default: false });
       >
         <slot name="trigger">{{ label }}</slot>
       </NuxtLink>
-    </HoverCardTrigger>
-    <HoverCardContent class="grid w-96 max-w-[calc(100vw-2rem)] gap-3">
-      <slot />
-    </HoverCardContent>
-  </HoverCard>
+    </template>
+    <slot />
+  </AppHoverCard>
 </template>

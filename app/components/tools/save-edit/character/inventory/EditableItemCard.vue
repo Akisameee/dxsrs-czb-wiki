@@ -5,7 +5,7 @@ import ItemHoverLink from "~/components/wiki/item/HoverLink.vue";
 import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
 import EditableNumberField from "~/components/tools/save-edit/fields/EditableNumberField.vue";
 import EquipmentEditDialog, { type EquipmentEditField } from "./EquipmentEditDialog.vue";
-import type { BgDatabaseField } from "~/lib/bgdatabase";
+import type { BgDatabaseField } from "~/lib/save-edit";
 
 const props = defineProps<{
   rowIndex: number;

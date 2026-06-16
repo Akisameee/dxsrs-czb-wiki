@@ -39,8 +39,8 @@ import {
   saveEditCharacterName,
   type SaveEditDraft,
   type SaveEditFile,
-} from "./model";
-import type { BgDatabaseField, BgDatabaseValue } from "~/lib/bgdatabase";
+} from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 const props = defineProps<{

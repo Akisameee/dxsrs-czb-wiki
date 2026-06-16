@@ -11,11 +11,11 @@ import {
   parseFieldDraftKey,
   saveEditEnumOptions,
   type SaveEditDraft,
-} from "~/components/tools/save-edit/model";
+} from "~/lib/save-edit";
 import { rarityCardClass } from "~/lib/rarity";
 import { martialArtRarityToneId } from "~/lib/wiki/martial-art";
 import { enumLabel } from "~/lib/utils";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/bgdatabase";
+import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 type MartialArtRow = {
@@ -387,7 +387,6 @@ function cardRarityId(row: PlayerMartialRow) {
                 <AppButton
                   type="button"
                   variant="outline"
-                  class="h-9"
                   @click="openRow = row.rowIndex"
                 >
                   编辑

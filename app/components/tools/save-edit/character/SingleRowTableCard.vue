@@ -7,9 +7,9 @@ import {
   parseFieldDraftKey,
   saveEditEnumOptions,
   type SaveEditDraft,
-} from "~/components/tools/save-edit/model";
+} from "~/lib/save-edit";
 import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/bgdatabase";
+import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 const props = defineProps<{

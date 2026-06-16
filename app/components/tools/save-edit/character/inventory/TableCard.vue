@@ -6,10 +6,10 @@ import {
   formatSaveValue,
   parseFieldDraftKey,
   type SaveEditDraft,
-} from "~/components/tools/save-edit/model";
+} from "~/lib/save-edit";
 import { itemRarityLabel, itemTypeLabel } from "~/lib/wiki/item";
 import { rarityCardClass } from "~/lib/rarity";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/bgdatabase";
+import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 type InventoryItemRow = {

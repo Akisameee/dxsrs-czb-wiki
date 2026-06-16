@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import { Badge } from "~/components/ui/badge";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "~/components/ui/hover-card";
 import StyleSummaryPanel, { type StyleChainSummary } from "./SummaryPanel.vue";
 import { useChainSummaryData } from "~/composables/useChainSummaryData";
 
@@ -36,8 +31,11 @@ watch(open, (value) => {
 </script>
 
 <template>
-  <HoverCard v-model:open="open">
-    <HoverCardTrigger as-child>
+  <AppHoverCard
+    v-model:open="open"
+    content-class="grid w-72 gap-3"
+  >
+    <template #trigger>
       <Badge
         v-if="mode !== 'link'"
         variant="outline"
@@ -52,9 +50,7 @@ watch(open, (value) => {
       >
         {{ label }}
       </span>
-    </HoverCardTrigger>
-    <HoverCardContent class="grid w-72 gap-3">
-      <StyleSummaryPanel :summary="displaySummary" />
-    </HoverCardContent>
-  </HoverCard>
+    </template>
+    <StyleSummaryPanel :summary="displaySummary" />
+  </AppHoverCard>
 </template>

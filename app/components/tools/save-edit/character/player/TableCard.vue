@@ -12,8 +12,8 @@ import {
   saveEditCharacterName,
   type SaveEditDraft,
   type SaveEditFile,
-} from "~/components/tools/save-edit/model";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/bgdatabase";
+} from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 type PortraitOption = {

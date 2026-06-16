@@ -3,8 +3,8 @@ import {
   fieldDraftKey,
   formatSaveValue,
   type SaveEditDraft,
-} from "~/components/tools/save-edit/model";
-import type { BgDatabaseField, BgDatabaseValue } from "~/lib/bgdatabase";
+} from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseValue } from "~/lib/save-edit";
 import EditableBooleanField from "./EditableBooleanField.vue";
 import EditableEnumField from "./EditableEnumField.vue";
 import EditableJsonField from "./EditableJsonField.vue";

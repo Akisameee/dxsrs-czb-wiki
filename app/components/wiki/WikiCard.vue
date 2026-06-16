@@ -3,17 +3,9 @@ import { CircleHelp } from "@lucide/vue";
 import type { HTMLAttributes } from "vue";
 import { Badge, type BadgeVariants } from "~/components/ui/badge";
 import {
-  Card,
-  CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "~/components/ui/hover-card";
 import { cn } from "~/lib/utils";
 
 export type WikiCardBadge = {
@@ -112,16 +104,17 @@ function handleKeydown(event: KeyboardEvent) {
           @keydown.stop
         >
           <slot name="action" />
-          <HoverCard v-if="tip || $slots.tip">
-            <HoverCardTrigger as-child>
+          <AppHoverCard
+            v-if="tip || $slots.tip"
+            content-class="w-72 max-w-[calc(100vw-2rem)] text-sm"
+          >
+            <template #trigger>
               <AppButton variant="ghost" size="icon-sm" aria-label="查看说明">
                 <CircleHelp />
               </AppButton>
-            </HoverCardTrigger>
-            <HoverCardContent class="w-72 max-w-[calc(100vw-2rem)] text-sm">
-              <slot name="tip">{{ tip }}</slot>
-            </HoverCardContent>
-          </HoverCard>
+            </template>
+            <slot name="tip">{{ tip }}</slot>
+          </AppHoverCard>
         </div>
       </div>
     </AppCardHeader>

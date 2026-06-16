@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import type { BgDatabaseField } from "~/lib/bgdatabase";
+import type { BgDatabaseField } from "~/lib/save-edit";
 import { martialArtIsInternal } from "~/lib/wiki/martial-art";
 
 export type MartialSaveField = {

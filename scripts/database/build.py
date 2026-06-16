@@ -9,6 +9,7 @@ from .builders.custom_martial import CustomMartialBuilder
 from .builders.enums import EnumBuilder
 from .builders.items import ItemBuilder
 from .builders.martial_arts import MartialArtBuilder
+from .builders.meridians import MeridianBuilder
 from .builders.portraits import PortraitBuilder
 from .builders.sects import SectBuilder
 from .context import BuildContext
@@ -39,6 +40,7 @@ def build_rows_from_source(
         AssetEffectBuilder(ctx),
         PortraitBuilder(ctx),
         CustomMartialBuilder(ctx),
+        MeridianBuilder(ctx),
     ]:
         rows_by_table.update(builder.rows())
     return rows_by_table

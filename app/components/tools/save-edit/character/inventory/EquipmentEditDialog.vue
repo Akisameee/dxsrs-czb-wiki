@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import type { BgDatabaseField } from "~/lib/bgdatabase";
+import type { BgDatabaseField } from "~/lib/save-edit";
 
 export type EquipmentEditField = {
   key: string;

@@ -569,6 +569,26 @@ TABLES = {
       "level": "INTEGER NOT NULL",
       "percent": "REAL NOT NULL"
     }
+  },
+  "meridians": {
+    "primaryKey": [
+      "name"
+    ],
+    "columns": {
+      "name": "TEXT NOT NULL",
+      "meridian_id": "INTEGER NOT NULL",
+      "point_index": "INTEGER NOT NULL",
+      "strength": "INTEGER NOT NULL",
+      "constitution": "INTEGER NOT NULL",
+      "physique": "INTEGER NOT NULL",
+      "agility": "INTEGER NOT NULL",
+      "action_points": "INTEGER NOT NULL",
+      "lifespan": "INTEGER NOT NULL",
+      "martial_art_limit": "INTEGER NOT NULL",
+      "cost": "INTEGER NOT NULL",
+      "is_acupoint": "INTEGER NOT NULL",
+      "parent": "TEXT"
+    }
   }
 }
 
@@ -606,5 +626,6 @@ INDEXES = [
   "CREATE INDEX idx_portrait_part_options_sex ON portrait_part_options(sex_id)",
   "CREATE INDEX idx_portrait_weapon_parts_weapon ON portrait_weapon_parts(weapon_type_id)",
   "CREATE INDEX idx_portrait_prefab_layers_image ON portrait_prefab_layers(image_id)",
-  "CREATE INDEX idx_custom_martial_effect_rates_effect ON custom_martial_effect_rates(effect_id)"
+  "CREATE INDEX idx_custom_martial_effect_rates_effect ON custom_martial_effect_rates(effect_id)",
+  "CREATE INDEX idx_meridians_meridian ON meridians(meridian_id, point_index)"
 ]

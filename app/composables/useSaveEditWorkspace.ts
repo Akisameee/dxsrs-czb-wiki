@@ -1,10 +1,11 @@
-import type { SaveEditDraft, SaveEditFile } from "~/components/tools/save-edit/model";
+import type { AnySaveEditFile, SaveEditDraft, SaveEditFile } from "~/lib/save-edit";
 
 export type ImportedSaveItem = {
   id: number;
   fileName: string;
   fileSize: string;
-  save: SaveEditFile | null;
+  fileType: string;
+  save: AnySaveEditFile | null;
   draft: SaveEditDraft;
   selectedTableIndex: number;
   errorMessage: string;
@@ -29,6 +30,11 @@ export function useSaveEditWorkspace() {
   }
 
   function findByFileName(fileName: string) {
+    const item = files.value.find((candidate) => candidate.fileName === fileName && candidate.save?.kind === "bgdatabase");
+    return item ? { ...item, save: item.save as SaveEditFile } : null;
+  }
+
+  function findAnyByFileName(fileName: string) {
     return files.value.find((item) => item.fileName === fileName && item.save) || null;
   }
 
@@ -38,5 +44,6 @@ export function useSaveEditWorkspace() {
     updateItem,
     removeItem,
     findByFileName,
+    findAnyByFileName,
   };
 }

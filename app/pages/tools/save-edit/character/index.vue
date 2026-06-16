@@ -12,9 +12,9 @@ import {
   parseFieldDraftKey,
   saveEditCharacterName,
   writeSaveEditFile,
-} from "~/components/tools/save-edit/model";
+} from "~/lib/save-edit";
 import { enumMapFromRows } from "~/lib/utils";
-import type { BgDatabaseField, BgDatabaseTable } from "~/lib/bgdatabase";
+import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 
 useHead({ title: "人物存档修改" });
 
@@ -128,7 +128,7 @@ function downloadSave() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = editedFileName(item.value.fileName);
+    link.download = item.value.fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -138,11 +138,6 @@ function downloadSave() {
   }
 }
 
-function editedFileName(name: string) {
-  const dot = name.lastIndexOf(".");
-  if (dot <= 0) return `${name}-edited`;
-  return `${name.slice(0, dot)}-edited${name.slice(dot)}`;
-}
 </script>
 
 <template>

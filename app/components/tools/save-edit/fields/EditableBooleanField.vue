@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CheckIcon, XIcon } from "@lucide/vue";
+import { cn } from "~/lib/utils";
 import EditableFieldFrame from "./EditableFieldFrame.vue";
 
 const props = withDefaults(defineProps<{
@@ -6,6 +8,8 @@ const props = withDefaults(defineProps<{
   modelValue: string;
   trueValue?: string;
   falseValue?: string;
+  trueLabel?: string;
+  falseLabel?: string;
   disabled?: boolean;
   readonly?: boolean;
   hint?: string;
@@ -13,6 +17,8 @@ const props = withDefaults(defineProps<{
 }>(), {
   trueValue: "true",
   falseValue: "false",
+  trueLabel: "是",
+  falseLabel: "否",
   disabled: false,
   readonly: false,
   hint: "",
@@ -26,9 +32,9 @@ const emit = defineEmits<{
 const dirty = computed(() => props.modelValue !== props.initialValue);
 const checked = computed(() => props.modelValue === props.trueValue || props.modelValue === "1");
 
-function updateChecked(value: boolean | "indeterminate") {
-  if (props.readonly || props.disabled || value === "indeterminate") return;
-  emit("update", value ? props.trueValue : props.falseValue);
+function toggle() {
+  if (props.readonly || props.disabled) return;
+  emit("update", checked.value ? props.falseValue : props.trueValue);
 }
 </script>
 
@@ -41,13 +47,21 @@ function updateChecked(value: boolean | "indeterminate") {
     :compact="compact"
     @reset="emit('update', initialValue)"
   >
-    <div class="flex h-9 items-center gap-2 rounded-md border px-3">
-      <Checkbox
-        :checked="checked"
-        :disabled="disabled || readonly"
-        @update:checked="updateChecked"
-      />
-      <span class="text-sm text-muted-foreground">{{ checked ? "是" : "否" }}</span>
-    </div>
+    <AppButton
+      type="button"
+      variant="outline"
+      size="default"
+      :aria-pressed="checked"
+      :disabled="disabled || readonly"
+      :class="cn(
+        'w-full justify-start gap-2 font-normal',
+        checked ? 'border-primary/50 bg-primary/10 text-foreground' : 'text-muted-foreground',
+      )"
+      @click="toggle"
+    >
+      <CheckIcon v-if="checked" class="size-4 shrink-0" />
+      <XIcon v-else class="size-4 shrink-0" />
+      <span class="text-sm text-muted-foreground">{{ checked ? trueLabel : falseLabel }}</span>
+    </AppButton>
   </EditableFieldFrame>
 </template>

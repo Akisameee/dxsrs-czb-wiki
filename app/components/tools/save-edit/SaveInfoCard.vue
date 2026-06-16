@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import type { SaveEditFile } from "./model";
+import type { SaveEditFile } from "~/lib/save-edit";
 
 defineProps<{
   save: SaveEditFile | null;

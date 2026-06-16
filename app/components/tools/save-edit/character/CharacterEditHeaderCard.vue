@@ -38,7 +38,10 @@ const viewModeModel = computed<ViewMode>({
     <AppCardHeader>
       <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div class="grid gap-1">
-          <CardTitle class="text-2xl">{{ characterName }}</CardTitle>
+          <CardTitle class="flex items-center gap-2 text-2xl">
+            <UserRound class="size-5" />
+            {{ characterName }}
+          </CardTitle>
           <CardDescription>
             {{ fileName || "没有选择文件" }}
             <template v-if="hasSave"> · {{ tableCount }} 张表</template>

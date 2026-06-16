@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import GameImage from "~/components/wiki/WikiImage.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 import type { ChainRecordView, CountRow } from "./types";
 
 const props = defineProps<{
@@ -43,35 +37,34 @@ function blockClass(state: string) {
       <div class="min-w-0 truncate font-medium">{{ row.label }}</div>
       <div class="flex items-center gap-3">
         <span class="tabular-nums text-muted-foreground">x{{ row.count }}</span>
-        <TooltipProvider>
-          <div v-if="blocks.length" class="flex flex-wrap justify-end gap-1.5">
-            <template
-              v-for="block in blocks"
-              :key="block.value"
+        <div v-if="blocks.length" class="flex flex-wrap justify-end gap-1.5">
+          <template
+            v-for="block in blocks"
+            :key="block.value"
+          >
+            <AppTooltip
+              v-if="block.effect"
+              content-class="border bg-background text-foreground shadow-md"
             >
-              <Tooltip v-if="block.effect">
-                <TooltipTrigger as-child>
-                  <span
-                    class="size-4 rounded-sm"
-                    :class="blockClass(block.state)"
-                  />
-                </TooltipTrigger>
-                <TooltipContent class="border bg-background text-foreground shadow-md">
-                  <WikiText
-                    v-if="block.effectParts.length"
-                    :parts="[{ type: 'text', text: `${block.value}: ` }, ...block.effectParts]"
-                  />
-                  <template v-else>{{ block.tooltip }}</template>
-                </TooltipContent>
-              </Tooltip>
-              <span
-                v-else
-                class="size-4 rounded-sm"
-                :class="blockClass(block.state)"
+              <template #trigger>
+                <span
+                  class="size-4 rounded-sm"
+                  :class="blockClass(block.state)"
+                />
+              </template>
+              <WikiText
+                v-if="block.effectParts.length"
+                :parts="[{ type: 'text', text: `${block.value}: ` }, ...block.effectParts]"
               />
-            </template>
-          </div>
-        </TooltipProvider>
+              <template v-else>{{ block.tooltip }}</template>
+            </AppTooltip>
+            <span
+              v-else
+              class="size-4 rounded-sm"
+              :class="blockClass(block.state)"
+            />
+          </template>
+        </div>
       </div>
     </div>
     <div v-if="activeEffect" class="pl-9 text-xs text-muted-foreground">

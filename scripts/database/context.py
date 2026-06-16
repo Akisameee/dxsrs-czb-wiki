@@ -6,7 +6,8 @@ from pathlib import Path
 from typing import Any
 
 from .bgdatabase import extract_tables
-from .utils import js_number, table_by_name
+from .paths import DEFAULT_MERIDIAN_TABLE_JSON
+from .utils import js_number, load_json, table_by_name
 
 
 @dataclass
@@ -61,6 +62,7 @@ class BuildContext:
     chain_rows: list[dict[str, Any]]
     custom_power_rows: list[dict[str, Any]]
     custom_buff_rows: list[dict[str, Any]]
+    meridian_rows: list[dict[str, Any]]
     npc_rows: list[dict[str, Any]]
     area_rows: list[dict[str, Any]]
     npc_martial_rows: list[dict[str, Any]]
@@ -93,6 +95,7 @@ class BuildContext:
         wugong_rows = table_by_name(extracted, "GWuGong")
         area_rows = table_by_name(extracted, "Area")
         chain_rows = table_by_name(extracted, "GLianSuo")
+        meridian_rows = load_json(DEFAULT_MERIDIAN_TABLE_JSON).get("rows") or []
         location_by_code, location_by_id = build_location_lookups(area_rows)
         attack_area_by_name, attack_area_enums = attack_area_lookups(wugong_rows)
 
@@ -112,6 +115,7 @@ class BuildContext:
             chain_rows=chain_rows,
             custom_power_rows=table_by_name(extracted, "GZiChuangWeiLi"),
             custom_buff_rows=table_by_name(extracted, "GZiChuangBuff"),
+            meridian_rows=meridian_rows,
             npc_rows=table_by_name(extracted, "Npc"),
             area_rows=area_rows,
             npc_martial_rows=table_by_name(extracted, "GNpcWuGong"),
