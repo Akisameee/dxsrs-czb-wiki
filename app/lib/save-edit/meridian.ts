@@ -1,5 +1,5 @@
 import { ES2_TYPE_HASHES } from "../es2";
-import type { Es2Value } from "../es2";
+import type { Es2ListValue, Es2Value } from "../es2";
 import { decodeSaveEditEs2FileName } from "./es2-file-name";
 import type { AnySaveEditFile, SaveEditEs2File } from "./model";
 
@@ -57,6 +57,6 @@ function meridianGroup(name: string, count: number): SaveEditMeridianGroup {
   };
 }
 
-function isStringListValue(value: Es2Value) {
+function isStringListValue(value: Es2Value): value is Es2ListValue {
   return value.type === "list" && value.elementTypeHash.name === "string";
 }

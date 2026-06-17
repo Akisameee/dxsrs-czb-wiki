@@ -3,12 +3,7 @@ import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveC
 import CharacterSlotsEditHeaderCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditHeaderCard.vue";
 import CharacterSlotsEditorCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditorCard.vue";
 import {
-  applyEs2Draft,
   isSaveEditCharacterSlotsFile,
-  isSaveEditNewestCharacterSlotFile,
-  saveEditCharacterSlotsValues,
-  updateEs2CunDangsDraft,
-  updateEs2ScalarDraft,
   writeAnySaveEditFile,
 } from "~/lib/save-edit";
 import type { Es2CunDang } from "~/lib/es2";
@@ -16,7 +11,14 @@ import type { Es2CunDang } from "~/lib/es2";
 useHead({ title: "存档槽修改" });
 
 const route = useRoute();
-const { files, findAnyByFileName, updateItem } = useSaveEditWorkspace();
+const {
+  findAnyByFileName,
+  updateItem,
+  characterSlotsState,
+  updateCharacterSlots,
+  resetItem,
+  isItemDirty,
+} = useSaveEditWorkspace();
 
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findAnyByFileName(editFileName.value));
@@ -25,34 +27,20 @@ const slotsSave = computed(() => {
   if (!isSaveEditCharacterSlotsFile(save.value, editFileName.value) || save.value?.kind !== "es2") return null;
   return save.value;
 });
-const newestSlotItem = computed(() =>
-  files.value.find((candidate) => isSaveEditNewestCharacterSlotFile(candidate.save, candidate.fileName)) || null,
-);
-const currentSlotsSave = computed(() =>
-  slotsSave.value && item.value ? applyEs2Draft(slotsSave.value, item.value.draft) : null,
-);
-const slots = computed(() => saveEditCharacterSlotsValues(currentSlotsSave.value));
-const initialSlots = computed(() => cloneSlots(saveEditCharacterSlotsValues(slotsSave.value)));
+const state = computed(() => characterSlotsState(item.value));
+const slots = computed(() => state.value.slots);
+const initialSlots = computed(() => state.value.initialSlots);
 const activeSlots = computed(() => slots.value.filter((slot) => slot.player || slot.savepath));
+const dirty = computed(() => item.value ? isItemDirty(item.value) : false);
 
 function updateSlots(values: Es2CunDang[]) {
   if (!item.value || !slotsSave.value) return;
-  updateItem(item.value.id, { draft: updateEs2CunDangsDraft(slotsSave.value, item.value.draft, values) });
-
-  const currentUid = values.find((slot) => slot.isplaying)?.uid || "";
-  if (newestSlotItem.value?.save?.kind === "es2") {
-    updateItem(newestSlotItem.value.id, {
-      draft: updateEs2ScalarDraft(newestSlotItem.value.save, newestSlotItem.value.draft, currentUid),
-    });
-  }
+  updateCharacterSlots(item.value.id, values);
 }
 
 function resetSlots() {
-  updateSlots(cloneSlots(initialSlots.value));
-}
-
-function cloneSlots(values: Es2CunDang[]) {
-  return values.map((slot) => ({ ...slot }));
+  if (!item.value || !slotsSave.value) return;
+  resetItem(item.value.id);
 }
 
 function downloadSave() {
@@ -92,6 +80,7 @@ function downloadSave() {
       v-else
       :slots="slots"
       :initial-slots="initialSlots"
+      :dirty="dirty"
       @update-slots="updateSlots"
       @reset="resetSlots"
     />

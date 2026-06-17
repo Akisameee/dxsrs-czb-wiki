@@ -1,4 +1,4 @@
-import { ES2_TYPE_HASHES, type Es2CunDang, type Es2Value } from "../es2";
+import { ES2_TYPE_HASHES, type Es2CunDang, type Es2ListValue, type Es2Value } from "../es2";
 import type { SaveEditDraft, SaveEditEs2File } from "./model";
 
 export const ES2_DRAFT_PREFIX = "es2:";
@@ -144,10 +144,10 @@ function readCunDangArrayDraft(value: string) {
   }
 }
 
-function isStringListValue(value: Es2Value) {
+function isStringListValue(value: Es2Value): value is Es2ListValue {
   return value.type === "list" && value.elementTypeHash.name === "string";
 }
 
-function isCunDangListValue(value: Es2Value) {
+function isCunDangListValue(value: Es2Value): value is Es2ListValue {
   return value.type === "list" && value.elementTypeHash.name === "CunDang";
 }

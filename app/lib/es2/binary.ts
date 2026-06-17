@@ -18,7 +18,7 @@ export class Es2BinaryReader {
 
   readByte() {
     this.ensure(1);
-    return this.bytes[this.offset++];
+    return this.bytes[this.offset++]!;
   }
 
   readBool() {

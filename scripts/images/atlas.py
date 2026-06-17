@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Any
 
@@ -24,14 +23,6 @@ def save_image(image: Any, path: Path, image_format: str, quality: int, lossy_we
         return
 
     image.save(path, "WEBP", lossless=not lossy_webp, quality=quality, method=6)
-
-
-def write_manifest(output: Path, manifest: list[dict[str, Any]]) -> None:
-    manifest.sort(key=lambda item: item.get("id") or "")
-    (output / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
 
 
 def texture_manifest_entry(texture: TextureExport, extra: dict[str, Any]) -> dict[str, Any]:
@@ -66,7 +57,7 @@ def export_atlas(
     atlas_size: int,
     padding: int,
     overwrite: bool,
-) -> tuple[int, int, list[dict[str, Any]]]:
+) -> tuple[int, int, list[dict[str, Any]], list[dict[str, Any]]]:
     from PIL import Image
 
     if overwrite:
@@ -163,5 +154,5 @@ def export_atlas(
             entry["atlasWidth"] = size["width"]
             entry["atlasHeight"] = size["height"]
 
-    write_manifest(output, manifest)
-    return exported, skipped, sorted(image_index, key=lambda item: item["id"])
+    manifest = sorted(manifest, key=lambda item: item.get("id") or "")
+    return exported, skipped, manifest, sorted(image_index, key=lambda item: item["id"])

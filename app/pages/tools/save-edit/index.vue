@@ -17,20 +17,21 @@ import {
 useHead({ title: "存档修改" });
 
 const router = useRouter();
-const { files, allocateId, updateItem, removeItem } = useSaveEditWorkspace();
+const { files, allocateId, updateItem, removeItem, setFiles, resetItem } = useSaveEditWorkspace();
 
 async function uploadSaves(uploadedFiles: File[]) {
   const items = await Promise.all(uploadedFiles.map(readSaveFile));
   const remainingItems = [...items];
-  const replacedFiles = files.value.map((currentItem) => {
+  const replacedFiles: ImportedSaveItem[] = files.value.map((currentItem) => {
     const replacementIndex = remainingItems.findIndex((item) => item.fileName === currentItem.fileName);
     if (replacementIndex === -1) return currentItem;
 
-    const [replacement] = remainingItems.splice(replacementIndex, 1);
+    const replacement = remainingItems.splice(replacementIndex, 1)[0];
+    if (!replacement) return currentItem;
     return { ...replacement, id: currentItem.id };
   });
 
-  files.value = [...remainingItems, ...replacedFiles];
+  setFiles([...remainingItems, ...replacedFiles]);
 }
 
 async function readSaveFile(file: File): Promise<ImportedSaveItem> {
@@ -82,7 +83,7 @@ function removeSave(id: number) {
 }
 
 function removeAllSaves() {
-  files.value = [];
+  setFiles([]);
 }
 
 function downloadSave(item: ImportedSaveItem) {
@@ -122,7 +123,7 @@ function updateStringListSave(item: ImportedSaveItem, values: string[]) {
 }
 
 function resetSave(item: ImportedSaveItem) {
-  updateItem(item.id, { draft: {} });
+  resetItem(item.id);
 }
 
 </script>

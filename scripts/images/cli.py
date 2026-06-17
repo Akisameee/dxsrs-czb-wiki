@@ -28,7 +28,7 @@ from .textures import normalize_scale
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Export game Texture2D assets into a single atlas manifest for the Nuxt app."
+        description="Export game Texture2D assets into atlas images for the Nuxt app."
     )
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
@@ -92,8 +92,7 @@ def main() -> int:
 
     print(
         f"Exported {result.exported} atlas pages from {result.texture_count} textures, "
-        f"skipped {result.skipped}, failed {result.failed}. "
-        f"Manifest: {result.manifest}"
+        f"skipped {result.skipped}, failed {result.failed}."
     )
     return 0 if result.failed == 0 else 2
 

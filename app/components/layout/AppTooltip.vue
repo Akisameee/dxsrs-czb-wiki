@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   contentClass?: HTMLAttributes["class"];
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
@@ -22,32 +16,24 @@ const props = withDefaults(defineProps<{
 });
 
 const open = defineModel<boolean>("open", { default: false });
-const route = useRoute();
-
-watch(() => route.fullPath, () => {
-  open.value = false;
-});
-
-function toggle(event: MouseEvent) {
-  if (props.preventClickDefault) event.preventDefault();
-  open.value = !open.value;
-}
 </script>
 
 <template>
-  <TooltipProvider>
-    <Tooltip v-model:open="open">
-      <TooltipTrigger as-child @click="toggle">
-        <slot name="trigger" :open="open" />
-      </TooltipTrigger>
-      <TooltipContent
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :class="contentClass"
-      >
-        <slot :open="open" />
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
+  <AppHoverCard
+    v-model:open="open"
+    :side="side"
+    :align="align"
+    :side-offset="sideOffset"
+    :prevent-click-default="preventClickDefault"
+    :open-delay="0"
+    :content-class="[
+      'inline-flex w-fit max-w-xs items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md ring-0',
+      contentClass,
+    ]"
+  >
+    <template #trigger>
+      <slot name="trigger" :open="open" />
+    </template>
+    <slot :open="open" />
+  </AppHoverCard>
 </template>

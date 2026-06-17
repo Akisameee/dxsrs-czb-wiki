@@ -47,8 +47,7 @@ def main() -> int:
     )
     print(
         f"Exported {images.exported} atlas pages from {images.texture_count} textures, "
-        f"skipped {images.skipped}, failed {images.failed}. "
-        f"Manifest: {images.manifest}"
+        f"skipped {images.skipped}, failed {images.failed}."
     )
     if images.failed:
         return 2
@@ -60,6 +59,7 @@ def main() -> int:
         output=args.db_output,
         image_id_by_name=image_id_by_name,
         image_id_by_resource_path=images.image_id_by_resource_path,
+        image_manifest=images.manifest,
     )
     print(f"Wrote {ROOT / sqlite['output']}")
     for name, count in sqlite["tables"].items():

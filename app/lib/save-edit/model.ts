@@ -7,7 +7,7 @@ import {
   type BgDatabaseTable,
   type BgDatabaseValue,
 } from "../bgdatabase";
-import { ES2_TYPE_HASHES, parseEs2, writeEs2, type Es2File, type Es2Value } from "../es2";
+import { ES2_TYPE_HASHES, parseEs2, writeEs2, type Es2File, type Es2ListValue, type Es2Value } from "../es2";
 import type { WikiEnums } from "../wiki/text";
 import { detectSaveEditFileKind } from "./detect";
 import { decodeSaveEditEs2FileName } from "./es2-file-name";
@@ -390,6 +390,6 @@ function optionRows(values: Record<number, string>) {
     .map(([id, label]) => ({ id, label }));
 }
 
-function isSaveEditStringListValue(value: Es2Value) {
+function isSaveEditStringListValue(value: Es2Value): value is Es2ListValue {
   return value.type === "list" && value.elementTypeHash.name === "string";
 }

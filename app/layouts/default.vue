@@ -142,7 +142,7 @@ const breadcrumbs = computed<NavBreadcrumbItem[]>(() => {
 
   if (path === "/tools/save-edit/character") {
     return [
-      ...routeBreadcrumbs["/tools/save-edit"],
+      ...(routeBreadcrumbs["/tools/save-edit"] || []),
       { label: String(route.query.edit || "人物存档"), to: route.fullPath },
     ];
   }

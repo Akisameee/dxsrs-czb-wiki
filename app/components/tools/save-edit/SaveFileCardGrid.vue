@@ -10,8 +10,8 @@ import type { ImportedSaveItem } from "~/composables/useSaveEditWorkspace";
 import {
   applyEs2Draft,
   decodeSaveEditEs2FileName,
-  hasSaveEditDraft,
   isSaveEditCharacterSlotsFile,
+  isSaveEditNewestCharacterSlotFile,
   isSaveEditMeridianFile,
   isSaveEditStringListFile,
   isSaveEditTrackingFile,
@@ -119,6 +119,23 @@ const difficultyOptions = computed<EditableEnumOption[]>(() =>
     label: row.label || String(row.id),
   })),
 );
+const { characterSlotsState, isItemDirty } = useSaveEditWorkspace();
+const characterSlotsItem = computed(() =>
+  props.files.find((item) => isSaveEditCharacterSlotsFile(item.save, item.fileName)) || null,
+);
+const newestCharacterSlotOptions = computed<EditableEnumOption[]>(() => {
+  const slots = characterSlotsState(characterSlotsItem.value).slots;
+  return slots
+    .filter((slot) => slot.uid && (slot.player || slot.savepath))
+    .map((slot) => ({
+      value: slot.uid,
+      label: [
+        slot.isNormalMode ? "人生剧" : "侠客传",
+        `槽 ${slot.slotid + 1}`,
+        slot.player || slot.savepath || slot.uid,
+      ].join(" · "),
+    }));
+});
 
 function categoryOf(item: ImportedSaveItem): SaveFileCategoryId {
   if (item.save?.kind === "bgdatabase") return "character";
@@ -140,15 +157,21 @@ function saveFileIcon(item: ImportedSaveItem) {
 function isInlineEditableSave(item: ImportedSaveItem) {
   const save = item.save;
   if (save?.kind !== "es2") return false;
-  if (isSaveEditCharacterSlotsFile(save, item.fileName)) return false;
-  if (isSaveEditTrackingFile(save, item.fileName)) return false;
-  if (isSaveEditStringListFile(save)) return !isSaveEditMeridianFile(save, item.fileName);
   const type = save.es2.value.type;
+  if (type === "list") {
+    if (isSaveEditCharacterSlotsFile(save, item.fileName)) return false;
+    if (isSaveEditTrackingFile(save, item.fileName)) return false;
+    return isSaveEditStringListFile(save) && !isSaveEditMeridianFile(save, item.fileName);
+  }
   return type === "int" || type === "bool" || type === "string";
 }
 
 function isDifficultySave(item: ImportedSaveItem) {
   return difficultyKeys.has(decodeSaveEditEs2FileName(item.fileName)?.key || "");
+}
+
+function isNewestCharacterSlotSave(item: ImportedSaveItem) {
+  return isSaveEditNewestCharacterSlotFile(item.save, item.fileName);
 }
 
 function scalarValue(save: AnySaveEditFile | null) {
@@ -209,7 +232,7 @@ function currentSave(item: ImportedSaveItem): AnySaveEditFile | null {
           :file-icon="saveFileIcon(item)"
           :character-name="item.save?.kind === 'bgdatabase' ? saveEditCharacterName(item.save, item.draft) : undefined"
           :can-edit="false"
-          :dirty="hasSaveEditDraft(item.draft)"
+          :dirty="isItemDirty(item)"
           :error-message="item.errorMessage"
           @edit="emit('edit', item)"
           @download="emit('download', item)"
@@ -218,8 +241,17 @@ function currentSave(item: ImportedSaveItem): AnySaveEditFile | null {
         >
           <template #actions>
             <div v-if="isInlineEditableSave(item)" class="grid gap-2 grid-cols-[minmax(0,1fr)_auto]">
+              <EditableEnumField
+                v-if="isNewestCharacterSlotSave(item)"
+                :initial-value="initialScalarModelValue(item)"
+                :model-value="scalarModelValue(item)"
+                :options="newestCharacterSlotOptions"
+                placeholder="需要先导入存档槽索引"
+                :disabled="!newestCharacterSlotOptions.length"
+                @update="emit('updateScalar', item, $event)"
+              />
               <EditableBooleanField
-                v-if="item.save?.kind === 'es2' && item.save.es2.value.type === 'bool'"
+                v-else-if="item.save?.kind === 'es2' && item.save.es2.value.type === 'bool'"
                 true-label="已开启"
                 false-label="已关闭"
                 :initial-value="initialScalarModelValue(item)"

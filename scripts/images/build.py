@@ -23,7 +23,7 @@ class ImageBuildResult:
     skipped: int
     failed: int
     texture_count: int
-    manifest: Path
+    manifest: list[dict[str, Any]]
     image_index: list[dict[str, Any]]
     image_id_by_resource_path: dict[str, str]
 
@@ -87,7 +87,7 @@ def build_images(
         texture_scales=texture_scales,
         scale=scale,
     )
-    exported, output_skipped, image_index = export_atlas(
+    exported, output_skipped, manifest, image_index = export_atlas(
         textures=result.textures,
         failures=result.failures,
         output=output,
@@ -103,7 +103,7 @@ def build_images(
         skipped=result.skipped + output_skipped,
         failed=len(result.failures),
         texture_count=len(result.textures),
-        manifest=output / "manifest.json",
+        manifest=manifest,
         image_index=image_index,
         image_id_by_resource_path=image_id_by_resource_path,
     )

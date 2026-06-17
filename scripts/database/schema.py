@@ -224,6 +224,28 @@ TABLES = {
       "is_material": "INTEGER NOT NULL"
     }
   },
+  "image_manifest": {
+    "primaryKey": [
+      "id"
+    ],
+    "columns": {
+      "id": "TEXT NOT NULL",
+      "atlas": "TEXT NOT NULL",
+      "atlas_width": "INTEGER NOT NULL",
+      "atlas_height": "INTEGER NOT NULL",
+      "x": "INTEGER NOT NULL",
+      "y": "INTEGER NOT NULL",
+      "width": "INTEGER NOT NULL",
+      "height": "INTEGER NOT NULL",
+      "texture_width": "INTEGER NOT NULL",
+      "texture_height": "INTEGER NOT NULL",
+      "trim_x": "INTEGER NOT NULL",
+      "trim_y": "INTEGER NOT NULL",
+      "trim_width": "INTEGER NOT NULL",
+      "trim_height": "INTEGER NOT NULL",
+      "trim_trimmed": "INTEGER NOT NULL"
+    }
+  },
   "martial_arts": {
     "primaryKey": [
       "id"
@@ -608,6 +630,7 @@ INDEXES = [
   "CREATE INDEX idx_character_quest_targets_quest ON character_quest_targets(quest_id)",
   "CREATE INDEX idx_items_type ON items(type_id)",
   "CREATE INDEX idx_items_image ON items(image_id)",
+  "CREATE INDEX idx_image_manifest_atlas ON image_manifest(atlas)",
   "CREATE INDEX idx_items_legacy_name ON items(legacy_name)",
   "CREATE INDEX idx_items_rarity ON items(rarity_id)",
   "CREATE INDEX idx_sects_legacy_name ON sects(legacy_name)",

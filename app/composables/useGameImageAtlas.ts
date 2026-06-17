@@ -18,6 +18,24 @@ export type GameImageAtlasEntry = {
   };
 };
 
+type GameImageAtlasRow = {
+  id: string;
+  atlas: string;
+  atlas_width: number;
+  atlas_height: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  texture_width: number;
+  texture_height: number;
+  trim_x: number;
+  trim_y: number;
+  trim_width: number;
+  trim_height: number;
+  trim_trimmed: number;
+};
+
 export type GameImageRenderEntry = {
   src: string;
   x: number;
@@ -99,12 +117,42 @@ function imageDataBounds(data: ImageData) {
 
 export function useGameImageAtlas() {
   const config = useRuntimeConfig();
+  const { queryRows } = useWikiDb();
   const imageAssetUrl = (path: string) => publicAssetUrl(config.app.baseURL, `images/${path}`);
-  const { data, pending, error } = useFetch<GameImageAtlasEntry[]>(
-    imageAssetUrl("manifest.json"),
+  const { data, pending, error } = useAsyncData<GameImageAtlasEntry[]>(
+    "game-image-atlas-manifest",
+    async () => {
+      const rows = await queryRows<GameImageAtlasRow>(
+        `SELECT id, atlas, atlas_width, atlas_height, x, y, width, height,
+                texture_width, texture_height, trim_x, trim_y, trim_width,
+                trim_height, trim_trimmed
+           FROM image_manifest
+          ORDER BY id`,
+      );
+
+      return rows.map((row) => ({
+        id: row.id,
+        atlas: row.atlas,
+        atlasWidth: row.atlas_width,
+        atlasHeight: row.atlas_height,
+        x: row.x,
+        y: row.y,
+        width: row.width,
+        height: row.height,
+        textureWidth: row.texture_width,
+        textureHeight: row.texture_height,
+        trim: {
+          x: row.trim_x,
+          y: row.trim_y,
+          width: row.trim_width,
+          height: row.trim_height,
+          trimmed: Boolean(row.trim_trimmed),
+        },
+      }));
+    },
     {
-      key: "game-image-atlas-manifest",
       server: false,
+      default: () => [],
     },
   );
 

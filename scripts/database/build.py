@@ -18,11 +18,36 @@ from .schema import INDEXES, TABLES
 from .writer import write_sqlite
 
 
+def image_manifest_rows(image_manifest: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for entry in image_manifest or []:
+        trim = entry.get("trim") or {}
+        rows.append({
+            "id": entry.get("id"),
+            "atlas": entry.get("atlas"),
+            "atlas_width": entry.get("atlasWidth"),
+            "atlas_height": entry.get("atlasHeight"),
+            "x": entry.get("x"),
+            "y": entry.get("y"),
+            "width": entry.get("width"),
+            "height": entry.get("height"),
+            "texture_width": entry.get("textureWidth"),
+            "texture_height": entry.get("textureHeight"),
+            "trim_x": trim.get("x"),
+            "trim_y": trim.get("y"),
+            "trim_width": trim.get("width"),
+            "trim_height": trim.get("height"),
+            "trim_trimmed": 1 if trim.get("trimmed") else 0,
+        })
+    return rows
+
+
 def build_rows_from_source(
     source: Path,
     enum_source: Path,
     image_id_by_name: dict[str, str] | None = None,
     image_id_by_resource_path: dict[str, str] | None = None,
+    image_manifest: list[dict[str, Any]] | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     ctx = BuildContext.from_source(
         source,
@@ -43,6 +68,7 @@ def build_rows_from_source(
         MeridianBuilder(ctx),
     ]:
         rows_by_table.update(builder.rows())
+    rows_by_table["image_manifest"] = image_manifest_rows(image_manifest)
     return rows_by_table
 
 
@@ -59,12 +85,14 @@ def build_sqlite(
     output: Path = OUTPUT,
     image_id_by_name: dict[str, str] | None = None,
     image_id_by_resource_path: dict[str, str] | None = None,
+    image_manifest: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     rows_by_table = build_rows_from_source(
         source,
         enum_source,
         image_id_by_name=image_id_by_name,
         image_id_by_resource_path=image_id_by_resource_path,
+        image_manifest=image_manifest,
     )
     counts = write_sqlite(output=output, tables=TABLES, indexes=INDEXES, rows_by_table=rows_by_table)
     return {
