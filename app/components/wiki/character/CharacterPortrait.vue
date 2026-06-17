@@ -35,6 +35,7 @@ const { queryOne, queryRows } = useWikiDb();
 const { composeImageLayers, pending: atlasPending } = useGameImageAtlas();
 const image = shallowRef<ComposedGameImage | null>(null);
 const loading = ref(false);
+const active = ref(false);
 
 const resolvedPortrait = computed(() => props.ids.portrait || null);
 const characterId = computed(() => {
@@ -80,9 +81,15 @@ async function loadPresetPortrait(portrait: string) {
 }
 
 watch(
-  [() => props.ids, atlasPending],
+  [() => props.ids, atlasPending, active],
   async () => {
-    if (atlasPending.value) return;
+    if (!active.value || atlasPending.value) {
+      if (!active.value) {
+        image.value = null;
+        loading.value = false;
+      }
+      return;
+    }
 
     const requestKey = JSON.stringify(props.ids);
     loading.value = true;
@@ -106,7 +113,10 @@ const rootStyle = computed(() => ({
 </script>
 
 <template>
-  <span
+  <AppImageFrame
+    v-model:active="active"
+    role="img"
+    :aria-label="fallback"
     :class="cn('inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted/20 text-muted-foreground', props.class)"
     :style="rootStyle"
   >
@@ -120,5 +130,8 @@ const rootStyle = computed(() => ({
     <span v-else class="text-sm font-medium">
       {{ loading ? "" : fallback }}
     </span>
-  </span>
+    <template #fallback>
+      <span class="text-sm font-medium">{{ fallback }}</span>
+    </template>
+  </AppImageFrame>
 </template>

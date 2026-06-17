@@ -70,36 +70,43 @@ function handleKeydown(event: KeyboardEvent) {
     @keydown="handleKeydown"
   >
     <AppCardHeader class="px-3 md:px-6">
-      <div class="flex items-start gap-2 md:gap-3">
-        <slot name="avatar" />
+      <div class="relative min-w-0">
+        <div
+          :class="cn(
+            'flex min-w-0 items-start gap-2 md:gap-3',
+            ($slots.action || tip || $slots.tip) && 'pr-9',
+          )"
+        >
+          <slot name="avatar" />
 
-        <div class="min-w-0 flex-1">
-          <CardTitle class="truncate text-sm md:text-base">{{ title }}</CardTitle>
-          <CardDescription
-            v-if="description"
-            class="truncate text-xs md:text-sm"
-          >
-            {{ description }}
-          </CardDescription>
-          <div
-            v-if="$slots.badges || badges.length"
-            class="mt-1 flex flex-wrap gap-1 md:mt-2 md:gap-2"
-          >
-            <slot name="badges" />
-            <Badge
-              v-for="badge in badges"
-              :key="badge.label"
-              :variant="badge.variant || 'outline'"
-              :class="badge.class"
+          <div class="min-w-0 flex-1">
+            <CardTitle class="truncate text-sm md:text-base">{{ title }}</CardTitle>
+            <CardDescription
+              v-if="description"
+              class="truncate text-xs md:text-sm"
             >
-              {{ badge.label }}
-            </Badge>
+              {{ description }}
+            </CardDescription>
+            <div
+              v-if="$slots.badges || badges.length"
+              class="mt-1 flex flex-wrap gap-1 md:mt-2 md:gap-2"
+            >
+              <slot name="badges" />
+              <Badge
+                v-for="badge in badges"
+                :key="badge.label"
+                :variant="badge.variant || 'outline'"
+                :class="badge.class"
+              >
+                {{ badge.label }}
+              </Badge>
+            </div>
           </div>
         </div>
 
         <div
           v-if="$slots.action || tip || $slots.tip"
-          class="flex shrink-0 items-center gap-1 self-start"
+          class="absolute right-0 top-0 flex items-center gap-1"
           @click.stop
           @keydown.stop
         >

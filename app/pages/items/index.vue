@@ -46,7 +46,7 @@ const gridColumns = computed(() => {
 });
 const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
 
-const { data, pending, error } = await useAsyncData("items-index", async () => {
+const { data, pending, error } = useLazyAsyncData("items-index", async () => {
   const [items, enumRows] = await Promise.all([
     queryRows<Item>(
       `SELECT id, name, image_id, description, type_id, rarity_id, use_type_id, use_text, use_value,

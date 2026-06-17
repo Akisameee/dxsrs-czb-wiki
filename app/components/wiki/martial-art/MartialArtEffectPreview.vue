@@ -22,29 +22,31 @@ const props = withDefaults(defineProps<{
 }>(), {});
 
 const { findImage, imageAssetUrl } = useGameImageAtlas();
-const root = ref<HTMLElement | null>(null);
+const active = ref(false);
 const tick = ref(0);
 const measuredSize = ref(96);
 let timer: number | null = null;
-let resizeObserver: ResizeObserver | null = null;
 
-onMounted(() => {
+function startTimer() {
+  if (timer || !import.meta.client) return;
   timer = window.setInterval(() => {
     tick.value = performance.now();
   }, 1000 / 24);
+}
 
-  resizeObserver = new ResizeObserver(([entry]) => {
-    const width = entry?.contentRect.width;
-    if (width && Number.isFinite(width)) {
-      measuredSize.value = width;
-    }
-  });
-  if (root.value) resizeObserver.observe(root.value);
-});
+function stopTimer() {
+  if (!timer) return;
+  window.clearInterval(timer);
+  timer = null;
+}
+
+watch(active, (value) => {
+  if (value) startTimer();
+  else stopTimer();
+}, { immediate: true });
 
 onBeforeUnmount(() => {
-  if (timer) window.clearInterval(timer);
-  resizeObserver?.disconnect();
+  stopTimer();
 });
 
 const previewSize = computed(() => props.size || measuredSize.value);
@@ -133,8 +135,9 @@ const fallbackLayers = computed<MartialArtAssetEffectLayerRow[]>(() => {
   }];
 });
 
-const renderLayers = computed(() =>
-  fallbackLayers.value
+const renderLayers = computed(() => {
+  if (!active.value) return [];
+  return fallbackLayers.value
     .map((layer) => {
       const entry = findImage({ id: layer.image_id });
       if (!entry) return null;
@@ -149,8 +152,8 @@ const renderLayers = computed(() =>
         frameHeight: entry.textureHeight / tilesY,
       };
     })
-    .filter((item): item is EffectRenderLayer => Boolean(item)),
-);
+    .filter((item): item is EffectRenderLayer => Boolean(item));
+});
 
 const previewScale = computed(() => {
   const maxFrame = renderLayers.value.reduce(
@@ -217,8 +220,9 @@ function layerStyle(item: EffectRenderLayer): CSSProperties {
 </script>
 
 <template>
-  <span
-    ref="root"
+  <AppImageFrame
+    v-model:active="active"
+    v-model:measured-size="measuredSize"
     class="relative inline-block overflow-hidden rounded-md border bg-black"
     :style="rootStyle"
     :title="effect?.prefab_name || undefined"
@@ -229,5 +233,5 @@ function layerStyle(item: EffectRenderLayer): CSSProperties {
       class="absolute bg-no-repeat"
       :style="layerStyle(item)"
     />
-  </span>
+  </AppImageFrame>
 </template>

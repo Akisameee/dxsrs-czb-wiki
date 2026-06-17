@@ -22,7 +22,7 @@ const { loadItemDetail } = useItemData();
 
 const itemId = computed(() => Number(route.query.id));
 
-const { data, pending, error } = await useAsyncData(
+const { data, pending, error } = useLazyAsyncData(
   () => `items-detail-${route.query.id || "empty"}`,
   async () => {
     const id = Number(route.query.id);

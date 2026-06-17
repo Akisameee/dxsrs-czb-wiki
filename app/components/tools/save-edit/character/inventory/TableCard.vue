@@ -347,7 +347,7 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
             <AppSelectTrigger :id="filter.id" class="w-full">
               <SelectValue :placeholder="filter.placeholder" />
             </AppSelectTrigger>
-            <SelectContent>
+            <AppSelectContent>
               <SelectItem value="all">
                 {{ filter.allLabel }}
               </SelectItem>
@@ -358,44 +358,24 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
               >
                 {{ option.label }}
               </SelectItem>
-            </SelectContent>
+            </AppSelectContent>
           </Select>
         </div>
       </div>
 
-      <div class="flex justify-end">
-        <Pagination
-          v-slot="{ page: currentPage }"
+      <div class="flex justify-center">
+        <AppPagination
           v-model:page="page"
-          :items-per-page="pageSize"
-          :sibling-count="1"
           :total="totalRows"
-          show-edges
-        >
-          <PaginationContent v-slot="{ items: paginationItems }">
-            <PaginationFirst />
-            <PaginationPrevious />
-            <template v-for="(item, index) in paginationItems" :key="index">
-              <PaginationItem
-                v-if="item.type === 'page'"
-                :is-active="item.value === currentPage"
-                :value="item.value"
-              >
-                {{ item.value }}
-              </PaginationItem>
-              <PaginationEllipsis v-else />
-            </template>
-            <PaginationNext />
-            <PaginationLast />
-          </PaginationContent>
-        </Pagination>
+          :page-size="pageSize"
+        />
       </div>
 
       <div v-if="!pagedRowIndexes.length" class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">
         没有匹配的行囊物品
       </div>
 
-      <div v-else class="grid gap-3 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <EditableItemCard
           v-for="rowIndex in pagedRowIndexes"
           :key="rowIndex"

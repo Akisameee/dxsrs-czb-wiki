@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useMediaQuery } from "@vueuse/core";
 import GameImage from "~/components/wiki/WikiImage.vue";
 import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
-import { lifeSkillImageId, lifeSkillLevel, type LifeSkillType } from "~/lib/wiki/life-skills";
+import { lifeSkillIconSize, lifeSkillIconSizeKey, lifeSkillImageId, lifeSkillLevel, type LifeSkillIconSize, type LifeSkillIconSizeValue, type LifeSkillType } from "~/lib/wiki/life-skills";
 
 const props = withDefaults(defineProps<{
   type: LifeSkillType;
@@ -10,12 +11,11 @@ const props = withDefaults(defineProps<{
   label?: string;
   disabled?: boolean;
   readonly?: boolean;
-  size?: number;
+  size?: LifeSkillIconSizeValue;
 }>(), {
   label: "",
   disabled: false,
   readonly: false,
-  size: 20,
 });
 
 const emit = defineEmits<{
@@ -25,6 +25,26 @@ const emit = defineEmits<{
 const dirty = computed(() => props.modelValue !== props.initialValue);
 const level = computed(() => lifeSkillLevel(props.modelValue));
 const slots = [1, 2, 3, 4, 5];
+const isSm = useMediaQuery("(min-width: 640px)");
+const isLg = useMediaQuery("(min-width: 1024px)");
+const autoSize = computed<LifeSkillIconSize>(() => {
+  if (isLg.value) return "lg";
+  if (isSm.value) return "md";
+  return "sm";
+});
+const resolvedSize = computed(() => props.size ?? autoSize.value);
+const iconSize = computed(() => lifeSkillIconSize(resolvedSize.value));
+const sizeKey = computed(() => lifeSkillIconSizeKey(resolvedSize.value));
+const frameClass = computed(() => ({
+  sm: "h-8 gap-2 px-2",
+  md: "h-9 gap-3 px-2",
+  lg: "h-10 gap-3 px-2.5",
+}[sizeKey.value]));
+const buttonClass = computed(() => ({
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-6",
+}[sizeKey.value]));
 
 function setLevel(value: number) {
   if (props.disabled || props.readonly) return;
@@ -46,16 +66,22 @@ function onWheel(event: WheelEvent) {
     @reset="emit('update', initialValue)"
   >
     <div
-      class="flex h-9 justify-between items-center gap-3 rounded-md border bg-background px-2"
+      :class="[
+        'flex min-w-0 items-center rounded-md border bg-background',
+        frameClass,
+      ]"
       @wheel="onWheel"
     >
-      <span v-if="label" class="text-sm text-muted-foreground">{{ label }}</span>
-      <div class="flex justify-between">
+      <span v-if="label" class="shrink-0 whitespace-nowrap text-sm text-muted-foreground">{{ label }}</span>
+      <div class="ml-auto flex shrink-0 items-center gap-1">
         <button
           v-for="index in slots"
           :key="index"
           type="button"
-          class="inline-flex size-7 items-center justify-center rounded-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          :class="[
+            'inline-flex items-center justify-center rounded-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+            buttonClass,
+          ]"
           :disabled="disabled || readonly"
           :aria-pressed="level === index"
           :aria-label="label ? `${label}${index}级` : `${index}级`"
@@ -65,7 +91,7 @@ function onWheel(event: WheelEvent) {
             :id="lifeSkillImageId(type, modelValue, index)"
             :alt="label ? `${label}${index}` : undefined"
             :fallback="label.slice(0, 1)"
-            :size="size"
+            :size="iconSize"
             class="rounded-none"
           />
         </button>

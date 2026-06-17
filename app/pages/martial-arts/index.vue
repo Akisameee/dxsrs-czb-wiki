@@ -44,7 +44,7 @@ const gridColumns = computed(() => {
 });
 const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
 
-const { data, pending, error } = await useAsyncData("martial-arts-index", async () => {
+const { data, pending, error } = useLazyAsyncData("martial-arts-index", async () => {
   const [arts, styles, sects, enumRows] = await Promise.all([
     queryRows<MartialArtSummaryRow>(
       `SELECT art.id, art.name, art.sect_id, sect.name AS sect_name, art.type_id, art.rarity_id,
@@ -179,7 +179,7 @@ function goToMartialArt(item: MartialArt) {
       title="武学"
       :description="pending ? '读取中...' : `共 ${arts.length} 门武学，当前 ${filteredRows.length} 条`"
       search-id="martial-art-search"
-      search-placeholder=""
+      search-placeholder="搜索武学"
       :search="search"
       :filters="indexFilters"
       @update:search="search = $event"

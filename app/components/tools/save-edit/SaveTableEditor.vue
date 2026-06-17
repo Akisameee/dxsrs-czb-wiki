@@ -8,18 +8,7 @@ import {
 } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
-import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -140,7 +129,7 @@ function selectValue(event: Event) {
           <AppSelectTrigger class="w-full">
             <SelectValue placeholder="选择数据表" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem
               v-for="(item, index) in save.tables"
               :key="item.name"
@@ -148,7 +137,7 @@ function selectValue(event: Event) {
             >
               {{ item.name }} · {{ item.rowCount }} 行
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </Label>
 
@@ -161,31 +150,11 @@ function selectValue(event: Event) {
 
   <AppCard>
     <AppCardContent class="grid gap-4">
-      <Pagination
-        v-slot="{ page: currentPage }"
+      <AppPagination
         v-model:page="page"
-        :items-per-page="pageSize"
-        :sibling-count="1"
         :total="totalRows"
-        show-edges
-      >
-        <PaginationContent v-slot="{ items }">
-          <PaginationFirst />
-          <PaginationPrevious />
-          <template v-for="(item, index) in items" :key="index">
-            <PaginationItem
-              v-if="item.type === 'page'"
-              :is-active="item.value === currentPage"
-              :value="item.value"
-            >
-              {{ item.value }}
-            </PaginationItem>
-            <PaginationEllipsis v-else />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationContent>
-      </Pagination>
+        :page-size="pageSize"
+      />
 
       <div class="text-sm text-muted-foreground">
         {{ table.name }}：{{ table.rowCount }} 行，{{ parsedFieldCount }} / {{ table.fieldCount }} 字段可读

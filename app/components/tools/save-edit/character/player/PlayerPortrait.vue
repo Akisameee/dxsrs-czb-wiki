@@ -78,6 +78,7 @@ const { queryRows } = useWikiDb();
 const { composeImageLayers, pending: atlasPending } = useGameImageAtlas();
 const image = shallowRef<ComposedGameImage | null>(null);
 const loading = ref(false);
+const active = ref(false);
 
 const { data: portraitData } = await useAsyncData(
   "save-edit-player-portrait-data",
@@ -103,9 +104,15 @@ const assetByName = computed(() => new Map((portraitData.value?.assets || []).ma
 const sexLabel = computed(() => (props.sex === 1 ? "女" : "男"));
 
 watch(
-  [() => props.sex, () => props.qianfa, () => props.houfa, () => props.maozi, () => props.meimao, () => props.lianshi, () => props.yifu, () => props.houbei, () => props.huzi, atlasPending],
+  [() => props.sex, () => props.qianfa, () => props.houfa, () => props.maozi, () => props.meimao, () => props.lianshi, () => props.yifu, () => props.houbei, () => props.huzi, atlasPending, active],
   async () => {
-    if (atlasPending.value) return;
+    if (!active.value || atlasPending.value) {
+      if (!active.value) {
+        image.value = null;
+        loading.value = false;
+      }
+      return;
+    }
 
     const requestKey = portraitRequestKey();
     loading.value = true;
@@ -236,7 +243,12 @@ function portraitLayers() {
 </script>
 
 <template>
-  <div :class="cn('grid size-full place-items-center overflow-hidden bg-background text-muted-foreground', props.class)">
+  <AppImageFrame
+    v-model:active="active"
+    role="img"
+    :aria-label="fallback"
+    :class="cn('grid size-full place-items-center overflow-hidden bg-background text-muted-foreground', props.class)"
+  >
     <img
       v-if="image"
       :src="image.src"
@@ -247,5 +259,8 @@ function portraitLayers() {
     <div v-else class="px-4 text-center text-sm">
       {{ loading ? "" : fallback }}
     </div>
-  </div>
+    <template #fallback>
+      <div class="px-4 text-center text-sm">{{ fallback }}</div>
+    </template>
+  </AppImageFrame>
 </template>

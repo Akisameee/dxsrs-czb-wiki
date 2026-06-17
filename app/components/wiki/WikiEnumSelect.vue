@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -56,10 +55,10 @@ function onWheel(event: WheelEvent) {
         {{ selectedLabel || placeholder }}
       </SelectValue>
     </AppSelectTrigger>
-    <SelectContent>
+    <AppSelectContent>
       <SelectItem v-for="option in options" :key="option.id" :value="option.id">
         {{ option.label }}
       </SelectItem>
-    </SelectContent>
+    </AppSelectContent>
   </Select>
 </template>

@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { Card, CardContent } from "~/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
 import { cn } from "~/lib/utils";
 
 type WikiCardGridError = string | { message?: string } | null;
@@ -42,35 +32,15 @@ const errorMessage = computed(() => {
   </AppCard>
 
   <template v-else>
-    <Pagination
-      v-slot="{ page: activePage }"
+    <AppPagination
       v-model:page="page"
-      :items-per-page="pageSize"
-      :sibling-count="1"
       :total="total"
-      show-edges
-    >
-      <PaginationContent v-slot="{ items }">
-        <PaginationFirst />
-        <PaginationPrevious />
-        <template v-for="(item, index) in items" :key="index">
-          <PaginationItem
-            v-if="item.type === 'page'"
-            :is-active="item.value === activePage"
-            :value="item.value"
-          >
-            {{ item.value }}
-          </PaginationItem>
-          <PaginationEllipsis v-else />
-        </template>
-        <PaginationNext />
-        <PaginationLast />
-      </PaginationContent>
-    </Pagination>
+      :page-size="pageSize"
+    />
 
     <div
       v-if="rows.length"
-      :class="cn('grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4', gridClass)"
+      :class="cn('grid grid-cols-2 gap-2 md:gap-3 lg:grid-cols-3 xl:grid-cols-4', gridClass)"
     >
       <slot />
     </div>

@@ -10,7 +10,6 @@ import {
 import { Label } from "~/components/ui/label";
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -86,12 +85,12 @@ function cardClass() {
           <AppSelectTrigger id="custom-sect" class="w-full">
             <SelectValue placeholder="选择门派" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="emptyOption">选择门派</SelectItem>
             <SelectItem v-for="option in joinableSectOptions" :key="option.id" :value="option.id">
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
 
@@ -104,12 +103,12 @@ function cardClass() {
           <AppSelectTrigger id="custom-style" class="w-full">
             <SelectValue placeholder="选择风格" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="emptyOption">选择风格</SelectItem>
             <SelectItem v-for="option in customStyleOptions" :key="option.id" :value="option.id">
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
     </AppCardContent>

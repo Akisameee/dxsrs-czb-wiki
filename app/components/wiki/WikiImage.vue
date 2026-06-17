@@ -9,31 +9,20 @@ const props = withDefaults(defineProps<{
   fallback?: string;
   size?: number;
   fit?: "trim" | "canvas";
+  eager?: boolean;
   class?: string;
   style?: Record<string, string | number> | string;
 }>(), {
   alt: "",
   fit: "trim",
+  eager: false,
 });
 
-const root = ref<HTMLElement | null>(null);
+const active = ref(false);
 const measuredSize = ref(64);
-let resizeObserver: ResizeObserver | null = null;
-
-onMounted(() => {
-  resizeObserver = new ResizeObserver(([entry]) => {
-    const width = entry?.contentRect.width;
-    if (width && Number.isFinite(width)) measuredSize.value = width;
-  });
-  if (root.value) resizeObserver.observe(root.value);
-});
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-});
 
 const { renderImage } = useGameImageAtlas();
-const image = computed(() => props.image || renderImage({ id: props.id }));
+const image = computed(() => (active.value ? props.image || renderImage({ id: props.id }) : null));
 const currentSize = computed(() => props.size || measuredSize.value);
 const scale = computed(() => {
   const value = image.value;
@@ -96,23 +85,20 @@ const spriteStyle = computed(() => {
 </script>
 
 <template>
-  <span
-    v-if="image"
-    ref="root"
+  <AppImageFrame
+    v-model:active="active"
+    v-model:measured-size="measuredSize"
     role="img"
-    :aria-label="alt || undefined"
-    :class="cn('relative inline-block overflow-hidden rounded-md', props.class)"
+    :aria-label="alt"
+    :eager="eager"
+    :class="cn(
+      image ? 'rounded-md' : 'rounded-md bg-muted text-sm font-medium text-muted-foreground',
+      props.class,
+    )"
     :style="[outerStyle, props.style]"
   >
-    <span class="absolute bg-no-repeat" :style="spriteStyle" />
-  </span>
-  <span
-    ref="root"
-    v-else
-    :class="cn('inline-flex items-center justify-center overflow-hidden rounded-md bg-muted text-sm font-medium text-muted-foreground', props.class)"
-    :style="[outerStyle, props.style]"
-    :aria-hidden="fallback ? undefined : true"
-  >
-    {{ fallback }}
-  </span>
+    <span v-if="image" class="absolute bg-no-repeat" :style="spriteStyle" />
+    <template v-else>{{ fallback }}</template>
+    <template #fallback>{{ fallback }}</template>
+  </AppImageFrame>
 </template>

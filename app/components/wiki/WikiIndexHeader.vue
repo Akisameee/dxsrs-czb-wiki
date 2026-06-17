@@ -9,7 +9,6 @@ import {
 import { Label } from "~/components/ui/label";
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -90,7 +89,7 @@ function updateFilter(id: string, value: unknown) {
           >
             <SelectValue :placeholder="filter.placeholder" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="filter.allValue || 'all'">
               {{ filter.allLabel || "全部" }}
             </SelectItem>
@@ -101,7 +100,7 @@ function updateFilter(id: string, value: unknown) {
             >
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
     </AppCardContent>

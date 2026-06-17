@@ -23,7 +23,7 @@ const { loadCharacterDetail } = useCharacterData();
 
 const characterId = computed(() => Number(route.query.id));
 
-const { data, pending, error } = await useAsyncData(
+const { data, pending, error } = useLazyAsyncData(
   () => `characters-detail-${route.query.id || "empty"}`,
   async () => {
     const id = Number(route.query.id);

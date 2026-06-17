@@ -10,7 +10,6 @@ import {
 import { Label } from "~/components/ui/label";
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -42,12 +41,12 @@ const emit = defineEmits<{
           <AppSelectTrigger id="equipment-weapon1" class="w-full">
             <SelectValue placeholder="无" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="emptyOption">无</SelectItem>
             <SelectItem v-for="option in equipmentStyleOptions" :key="option.id" :value="option.id">
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
 
@@ -60,12 +59,12 @@ const emit = defineEmits<{
           <AppSelectTrigger id="equipment-weapon2" class="w-full">
             <SelectValue placeholder="无" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="emptyOption">无</SelectItem>
             <SelectItem v-for="option in equipmentStyleOptions" :key="option.id" :value="option.id">
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
 
@@ -78,12 +77,12 @@ const emit = defineEmits<{
           <AppSelectTrigger id="equipment-armor" class="w-full">
             <SelectValue placeholder="无" />
           </AppSelectTrigger>
-          <SelectContent>
+          <AppSelectContent>
             <SelectItem :value="emptyOption">无</SelectItem>
             <SelectItem v-for="option in equipmentStyleOptions" :key="option.id" :value="option.id">
               {{ option.label }}
             </SelectItem>
-          </SelectContent>
+          </AppSelectContent>
         </Select>
       </div>
     </AppCardContent>

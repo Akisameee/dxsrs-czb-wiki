@@ -7,16 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
 
 const props = defineProps<{
   results: SearchResultRoute[];
@@ -38,7 +28,6 @@ const emit = defineEmits<{
 
 const ATTRIBUTE_NAMES = ["yi", "qi", "xing", "shen"] as const;
 
-const pageCount = computed(() => Math.max(1, Math.ceil(props.results.length / props.pageSize)));
 const visibleResults = computed(() => {
   const start = (props.page - 1) * props.pageSize;
   return props.results.slice(start, start + props.pageSize);
@@ -94,34 +83,15 @@ function hasSuccessfulPowerStats(stats: SearchResultStats) {
         </AppButton>
       </div>
 
-      <div v-if="results.length" class="overflow-x-auto">
-        <Pagination
-          class="mx-0 w-full justify-center"
+      <div v-if="results.length">
+        <AppPagination
           :page="page"
-          :items-per-page="pageSize"
-          :sibling-count="0"
+          :page-size="pageSize"
           :total="results.length"
-          show-edges
+          :sibling-count="0"
           @update:page="emit('updatePage', $event)"
-        >
-          <PaginationContent v-slot="{ items }" class="min-w-max">
-            <PaginationFirst class="max-sm:hidden" />
-            <PaginationPrevious />
-            <template v-for="(item, index) in items" :key="index">
-              <PaginationItem
-                v-if="item.type === 'page'"
-                :is-active="item.value === page"
-                :value="item.value"
-                size="sm"
-              >
-                {{ item.value }}
-              </PaginationItem>
-              <PaginationEllipsis v-else />
-            </template>
-            <PaginationNext />
-            <PaginationLast class="max-sm:hidden" />
-          </PaginationContent>
-        </Pagination>
+          class="mx-0 w-full justify-center"
+        />
       </div>
     </AppCardHeader>
     <AppCardContent>

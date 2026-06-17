@@ -78,11 +78,11 @@ watch(pageCount, (count) => {
             <AppSelectTrigger class="w-full">
               <SelectValue placeholder="选择表" />
             </AppSelectTrigger>
-            <SelectContent>
+            <AppSelectContent>
               <SelectItem v-for="name in data?.tables || []" :key="name" :value="name">
                 {{ name }}
               </SelectItem>
-            </SelectContent>
+            </AppSelectContent>
           </Select>
         </Label>
         <Label class="grid gap-2">
@@ -98,31 +98,11 @@ watch(pageCount, (count) => {
 
     <AppCard v-else>
       <AppCardContent class="grid gap-4">
-        <Pagination
-          v-slot="{ page }"
+        <AppPagination
           v-model:page="currentPage"
-          :items-per-page="pageSize"
-          :sibling-count="1"
           :total="totalRows"
-          show-edges
-        >
-          <PaginationContent v-slot="{ items }">
-            <PaginationFirst />
-            <PaginationPrevious />
-            <template v-for="(item, index) in items" :key="index">
-              <PaginationItem
-                v-if="item.type === 'page'"
-                :is-active="item.value === page"
-                :value="item.value"
-              >
-                {{ item.value }}
-              </PaginationItem>
-              <PaginationEllipsis v-else />
-            </template>
-            <PaginationNext />
-            <PaginationLast />
-          </PaginationContent>
-        </Pagination>
+          :page-size="pageSize"
+        />
 
         <div class="overflow-auto">
         <Table>

@@ -7,26 +7,12 @@ const props = withDefaults(defineProps<{
   typeId: number | string | null | undefined;
   rarityId: number | string | null | undefined;
   size?: number;
+  eager?: boolean;
   class?: string;
 }>(), {});
 
-const root = ref<HTMLElement | null>(null);
+const active = ref(false);
 const measuredSize = ref(80);
-let resizeObserver: ResizeObserver | null = null;
-
-onMounted(() => {
-  resizeObserver = new ResizeObserver(([entry]) => {
-    const width = entry?.contentRect.width;
-    if (width && Number.isFinite(width)) {
-      measuredSize.value = width;
-    }
-  });
-  if (root.value) resizeObserver.observe(root.value);
-});
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-});
 
 const typeIconIds: Record<number, string> = {
   0: "a95224fc19f8ed940ad0babc27a52282:1",
@@ -71,40 +57,49 @@ const typeIconStyle = {
 </script>
 
 <template>
-  <span
-    ref="root"
+  <AppImageFrame
+    v-model:active="active"
+    v-model:measured-size="measuredSize"
     role="img"
     :aria-label="name"
+    :eager="eager"
     :class="cn('relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden', props.class)"
     :style="rootStyle"
   >
-    <GameImage
-      :id="bookImageId"
-      :alt="name"
-      :fallback="fallbackText"
-      :size="currentSize"
-      fit="trim"
-      class="absolute inset-0"
-    />
-    <GameImage
-      v-if="typeIconImageId"
-      :id="typeIconImageId"
-      :alt="name"
-      :size="iconSize"
-      fit="trim"
-      :style="typeIconStyle"
-      class="absolute inset-x-[55%] bottom-[15%] -translate-x-1/2"
-    />
-    <span
-      class="absolute left-[24%] top-[-3%] h-[100%] text-center leading-none"
-      :style="{
-        fontSize: `${textSize}px`,
-        writingMode: 'vertical-rl',
-        textOrientation: 'upright',
-        fontFamily: `'KaiTi', 'STKaiti', serif`
-      }"
-    >
-      {{ name }}
-    </span>
-  </span>
+    <template v-if="active">
+      <GameImage
+        :id="bookImageId"
+        :alt="name"
+        :fallback="fallbackText"
+        :size="currentSize"
+        fit="trim"
+        eager
+        class="absolute inset-0"
+      />
+      <GameImage
+        v-if="typeIconImageId"
+        :id="typeIconImageId"
+        :alt="name"
+        :size="iconSize"
+        fit="trim"
+        eager
+        :style="typeIconStyle"
+        class="absolute inset-x-[55%] bottom-[15%] -translate-x-1/2"
+      />
+      <span
+        class="absolute left-[24%] top-[-3%] h-[100%] text-center leading-none"
+        :style="{
+          fontSize: `${textSize}px`,
+          writingMode: 'vertical-rl',
+          textOrientation: 'upright',
+          fontFamily: `'KaiTi', 'STKaiti', serif`
+        }"
+      >
+        {{ name }}
+      </span>
+    </template>
+    <template #fallback>
+      <span class="text-sm font-medium text-muted-foreground">{{ fallbackText }}</span>
+    </template>
+  </AppImageFrame>
 </template>

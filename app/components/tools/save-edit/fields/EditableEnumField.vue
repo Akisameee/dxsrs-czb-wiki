@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectValue,
 } from "~/components/ui/select";
@@ -58,11 +57,11 @@ const selectedLabel = computed(() => props.options.find((option) => option.value
           {{ selectedLabel || placeholder }}
         </SelectValue>
       </AppSelectTrigger>
-      <SelectContent>
+      <AppSelectContent>
         <SelectItem v-for="option in options" :key="option.value" :value="option.value">
           {{ option.label }}
         </SelectItem>
-      </SelectContent>
+      </AppSelectContent>
     </Select>
   </EditableFieldFrame>
 </template>

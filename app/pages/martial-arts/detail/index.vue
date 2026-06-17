@@ -34,7 +34,7 @@ const { loadMartialArtDetail } = useMartialArtData();
 
 const martialArtId = computed(() => Number(route.query.id));
 
-const { data, pending, error } = await useAsyncData(
+const { data, pending, error } = useLazyAsyncData(
   () => `martial-arts-detail-${route.query.id || "empty"}`,
   async () => {
     const id = Number(route.query.id);

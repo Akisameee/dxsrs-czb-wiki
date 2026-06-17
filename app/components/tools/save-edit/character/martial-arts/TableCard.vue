@@ -360,7 +360,7 @@ function cardRarityId(row: PlayerMartialRow) {
       @reset="resetTable"
     />
     <AppCardContent>
-      <div v-if="playerRows.length" class="grid gap-3 grid-cols-2 xl:grid-cols-4">
+      <div v-if="playerRows.length" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <template
           v-for="row in playerRows"
           :key="row.rowIndex"

@@ -1,4 +1,12 @@
 export type LifeSkillType = "mining" | "herbGathering" | "hunting" | "forging" | "alchemy" | "sewing";
+export type LifeSkillIconSize = "sm" | "md" | "lg";
+export type LifeSkillIconSizeValue = LifeSkillIconSize | number;
+
+export const lifeSkillIconSizes: Record<LifeSkillIconSize, number> = {
+  sm: 16,
+  md: 20,
+  lg: 24,
+};
 
 export const lifeSkillImageIds: Record<LifeSkillType, string[]> = {
   mining: [
@@ -59,4 +67,13 @@ export function lifeSkillImageId(type: LifeSkillType, value: number | string | n
   const imageIds = lifeSkillImageIds[type] || [];
   const level = lifeSkillLevel(value);
   return imageIds[index <= level ? index : 0] || imageIds[0] || null;
+}
+
+export function lifeSkillIconSize(value: LifeSkillIconSizeValue | null | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return lifeSkillIconSizes[value || "md"] || lifeSkillIconSizes.md;
+}
+
+export function lifeSkillIconSizeKey(value: LifeSkillIconSizeValue | null | undefined): LifeSkillIconSize {
+  return typeof value === "string" && value in lifeSkillIconSizes ? value : "md";
 }
