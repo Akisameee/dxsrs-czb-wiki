@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 
-const siteBase = process.env.SITE_BASE ?? "/dxsrs-czb-wiki/";
+const siteBase = process.env.SITE_BASE ?? "/";
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-06-09",
