@@ -27,8 +27,18 @@ def character_id_lookup(npc_rows: list[dict[str, Any]]) -> dict[str, int]:
         row_id = int(js_number(row.get("index")))
         if row.get("name"):
             id_by_name[row["name"]] = row_id
-        id_by_name[npc_name(row)] = row_id
+            id_by_name[npc_name(row)] = row_id
     return id_by_name
+
+
+def character_display_name_lookup(npc_rows: list[dict[str, Any]]) -> dict[str, str]:
+    name_by_name: dict[str, str] = {}
+    for row in npc_rows:
+        display_name = npc_name(row)
+        if row.get("name"):
+            name_by_name[row["name"]] = display_name
+        name_by_name[display_name] = display_name
+    return name_by_name
 
 
 class CharacterBuilder:
@@ -43,6 +53,7 @@ class CharacterBuilder:
             "character_attribute_snapshots": self.build_attribute_snapshots(),
             "character_quests": quest_data["quests"],
             "character_quest_targets": quest_data["targets"],
+            "character_invitation_requirements": self.build_invitation_requirements(),
             "locations": self.build_locations(),
             "location_characters": self.build_location_characters(),
             "unplaced_characters": self.build_unplaced_characters(),
@@ -274,6 +285,39 @@ class CharacterBuilder:
                     **self.resolve_quest_target(item["value"], lookups),
                 })
         return {"quests": quests, "targets": targets}
+
+    def build_invitation_requirements(self) -> list[dict[str, Any]]:
+        character_id_by_name = character_id_lookup(self.ctx.npc_rows)
+        character_name_by_name = character_display_name_lookup(self.ctx.npc_rows)
+        rows = [
+            row for row in self.ctx.yaoqing_rows or []
+            if row.get("juesename") in character_id_by_name
+        ]
+        rows.sort(key=lambda row: (
+            character_id_by_name[row["juesename"]],
+            js_number(row.get("index")),
+        ))
+
+        slot_by_character: dict[int, int] = defaultdict(int)
+        requirements: list[dict[str, Any]] = []
+        for sort_order, row in enumerate(rows):
+            character_id = character_id_by_name[row["juesename"]]
+            slot = slot_by_character[character_id]
+            slot_by_character[character_id] += 1
+            string_value = row.get("stringvalue") or None
+            type_id = int(js_number(row.get("yaoqingtype")))
+            if type_id == 20 and string_value:
+                string_value = character_name_by_name.get(string_value, string_value)
+            requirements.append({
+                "character_id": character_id,
+                "slot": slot,
+                "legacy_name": row.get("name") or None,
+                "type_id": type_id,
+                "int_value": int(js_number(row.get("intvalue"))),
+                "string_value": string_value,
+                "sort_order": sort_order,
+            })
+        return requirements
 
     def build_locations(self) -> list[dict[str, Any]]:
         counts: dict[str, int] = defaultdict(int)

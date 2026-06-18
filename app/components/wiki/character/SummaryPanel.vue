@@ -48,6 +48,20 @@ defineProps<{
       </div>
     </div>
 
+    <div v-if="currentSummary.invitationRequirements.length" class="grid gap-2 border-t pt-3 text-sm">
+      <div class="text-muted-foreground">邀请条件</div>
+      <div
+        v-for="requirement in currentSummary.invitationRequirements"
+        :key="requirement.slot"
+      >
+        <span class="text-muted-foreground">条件 {{ requirement.slot + 1 }}：</span>
+        <WikiText :parts="requirement.parts" />
+      </div>
+    </div>
+    <div v-else class="border-t pt-3 text-sm text-muted-foreground">
+      无邀请条件
+    </div>
+
     <div v-if="currentSummary.quests.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">心愿任务</div>
       <div

@@ -71,7 +71,8 @@ export function lifeSkillImageId(type: LifeSkillType, value: number | string | n
 
 export function lifeSkillIconSize(value: LifeSkillIconSizeValue | null | undefined) {
   if (typeof value === "number" && Number.isFinite(value)) return value;
-  return lifeSkillIconSizes[value || "md"] || lifeSkillIconSizes.md;
+  const key = typeof value === "string" && value in lifeSkillIconSizes ? value : "md";
+  return lifeSkillIconSizes[key];
 }
 
 export function lifeSkillIconSizeKey(value: LifeSkillIconSizeValue | null | undefined): LifeSkillIconSize {

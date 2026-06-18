@@ -69,6 +69,7 @@ class BuildContext:
     npc_attribute_rows: list[dict[str, Any]]
     npc_word_rows: list[dict[str, Any]]
     qing_yuan_rows: list[dict[str, Any]]
+    yaoqing_rows: list[dict[str, Any]]
     item_rows: list[dict[str, Any]]
     portrait_part_rows: list[dict[str, Any]]
     portrait_option_rows: list[dict[str, Any]]
@@ -122,6 +123,7 @@ class BuildContext:
             npc_attribute_rows=table_by_name(extracted, "GNpcAttribute"),
             npc_word_rows=table_by_name(extracted, "NPC_Word"),
             qing_yuan_rows=table_by_name(extracted, "QingYuan"),
+            yaoqing_rows=table_by_name(extracted, "GYaoQing"),
             item_rows=table_by_name(extracted, "GItem"),
             portrait_part_rows=table_by_name(extracted, "RemakeTouXiangParts"),
             portrait_option_rows=table_by_name(extracted, "RemakeTouXiangBuWei"),

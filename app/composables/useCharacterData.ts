@@ -1,5 +1,8 @@
 import {
   buildCharacterSummary,
+  buildInvitationRequirementSummaries,
+  type CharacterInvitationRequirementRow,
+  type CharacterInvitationRequirementSummary,
   type CharacterQuestRow,
   type CharacterQuestTargetRow,
   type CharacterSummary,
@@ -52,6 +55,8 @@ export type CharacterDetailData = {
   character: CharacterDetailRow | null;
   quests: CharacterQuestRow[];
   questTargets: CharacterQuestTargetRow[];
+  invitationRequirements: CharacterInvitationRequirementRow[];
+  invitationRequirementSummaries: CharacterInvitationRequirementSummary[];
   enums: WikiEnums;
 };
 
@@ -129,17 +134,29 @@ export function useCharacterData() {
     );
   }
 
+  function loadCharacterInvitationRequirements(id: number) {
+    return queryRows<CharacterInvitationRequirementRow>(
+      `SELECT r.character_id, r.slot, r.legacy_name, r.type_id, r.int_value, r.string_value
+       FROM character_invitation_requirements r
+       WHERE r.character_id = ?
+       ORDER BY r.slot`,
+      [id],
+    );
+  }
+
   async function loadCharacterDetail(id: number): Promise<CharacterDetailData> {
     if (detailCache.has(id)) return detailCache.get(id)!;
 
-    const [character, quests, questTargets, enums] = await Promise.all([
+    const [character, quests, questTargets, invitationRequirements, enums] = await Promise.all([
       loadCharacter(id),
       loadCharacterQuests(id),
       loadCharacterQuestTargets(id),
+      loadCharacterInvitationRequirements(id),
       loadWikiEnums(),
     ]);
 
-    const detail = { character, quests, questTargets, enums };
+    const invitationRequirementSummaries = await buildInvitationRequirementSummaries(invitationRequirements, enums);
+    const detail = { character, quests, questTargets, invitationRequirements, invitationRequirementSummaries, enums };
     detailCache.set(id, detail);
     return detail;
   }
@@ -149,7 +166,13 @@ export function useCharacterData() {
 
     const detail = await loadCharacterDetail(id);
     const nextSummary = detail.character
-      ? buildCharacterSummary(detail.character, detail.quests, detail.questTargets, detail.enums)
+      ? await buildCharacterSummary(
+          detail.character,
+          detail.quests,
+          detail.questTargets,
+          detail.invitationRequirements,
+          detail.enums,
+        )
       : null;
     summaryCache.set(id, nextSummary);
     return nextSummary;
@@ -160,6 +183,7 @@ export function useCharacterData() {
     findCharacter,
     loadCharacterQuests,
     loadCharacterQuestTargets,
+    loadCharacterInvitationRequirements,
     loadCharacterDetail,
     loadCharacterSummary,
   };

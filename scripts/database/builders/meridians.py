@@ -1,8 +1,17 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from ..utils import bool_int, js_int
+
+
+def text_value(value: Any) -> str | None:
+    if value in ("", None):
+        return None
+    if isinstance(value, (list, dict)):
+        return json.dumps(value, ensure_ascii=False)
+    return str(value)
 
 
 class MeridianBuilder:
@@ -27,7 +36,7 @@ class MeridianBuilder:
                 "martial_art_limit": js_int(row.get("wugongshu")),
                 "cost": js_int(row.get("cost")),
                 "is_acupoint": bool_int(row.get("ischongxue")),
-                "parent": row.get("parent") or None,
+                "parent": text_value(row.get("parent")),
             }
             for row in self.ctx.meridian_rows
             if row.get("name")

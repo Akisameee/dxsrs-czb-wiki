@@ -28,7 +28,7 @@ const { data, pending, error } = useLazyAsyncData(
   async () => {
     const id = Number(route.query.id);
     if (!Number.isFinite(id)) {
-      return { character: null, quests: [], questTargets: [], enums: {} };
+      return { character: null, quests: [], questTargets: [], invitationRequirements: [], invitationRequirementSummaries: [], enums: {} };
     }
 
     return loadCharacterDetail(id);
@@ -372,6 +372,25 @@ onBeforeUnmount(() => {
           </AppCardContent>
         </AppCard>
       </div>
+
+      <AppCard>
+        <AppCardHeader>
+          <CardTitle>邀请条件</CardTitle>
+        </AppCardHeader>
+        <AppCardContent class="grid gap-3">
+          <div
+            v-for="requirement in data?.invitationRequirementSummaries || []"
+            :key="requirement.slot"
+            class="rounded-md border px-3 py-2"
+          >
+            <span class="text-muted-foreground">条件 {{ requirement.slot + 1 }}：</span>
+            <WikiText :parts="requirement.parts" />
+          </div>
+          <div v-if="!(data?.invitationRequirementSummaries || []).length" class="text-sm text-muted-foreground">
+            无邀请条件
+          </div>
+        </AppCardContent>
+      </AppCard>
 
       <AppCard>
         <AppCardHeader>

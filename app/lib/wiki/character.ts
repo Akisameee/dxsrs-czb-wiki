@@ -1,9 +1,11 @@
 import { enumLabel, groupBy } from "../utils";
 import {
+  linkCharactersInText,
   joinWikiPartGroups,
   wikiCharacter,
   type WikiEnums,
   wikiItem,
+  wikiStrong,
   type WikiTextPart,
   wikiPartsToText,
   wikiText,
@@ -43,9 +45,24 @@ export type CharacterQuestTargetRow = {
   target_name?: string | null;
 };
 
+export type CharacterInvitationRequirementRow = {
+  character_id: number;
+  slot: number;
+  legacy_name: string | null;
+  type_id: number;
+  int_value: number | null;
+  string_value: string | null;
+};
+
 export type CharacterQuestSummary = {
   id: number;
   stage: number;
+  text: string;
+  parts: WikiTextPart[];
+};
+
+export type CharacterInvitationRequirementSummary = {
+  slot: number;
   text: string;
   parts: WikiTextPart[];
 };
@@ -61,6 +78,7 @@ export type CharacterSummary = {
   sect: string;
   rarity: string;
   weaponType: string;
+  invitationRequirements: CharacterInvitationRequirementSummary[];
   quests: CharacterQuestSummary[];
 };
 
@@ -125,6 +143,117 @@ function withQuestReward(quest: CharacterQuestRow, parts: WikiTextPart[]) {
   ];
 }
 
+type InvitationTemplateParam = string | number | null | undefined | WikiTextPart | WikiTextPart[];
+type InvitationFormatOptions = {
+  linkedStringValue?: WikiTextPart[];
+};
+
+function isWikiTextPart(value: InvitationTemplateParam): value is WikiTextPart {
+  return Boolean(
+    value
+      && typeof value === "object"
+      && !Array.isArray(value)
+      && "type" in value
+      && "text" in value,
+  );
+}
+
+function formatInvitationTemplateParts(
+  template: string,
+  params: InvitationTemplateParam[] = [],
+): WikiTextPart[] {
+  const parts: WikiTextPart[] = [];
+  let index = 0;
+  const pattern = /\{param(\d*)\}/g;
+  for (const match of template.matchAll(pattern)) {
+    if (match.index === undefined) continue;
+    if (match.index > index) parts.push(wikiText(template.slice(index, match.index)));
+
+    const valueIndex = match[1] ? Number(match[1]) - 1 : 0;
+    const value = params[valueIndex];
+    if (Array.isArray(value)) {
+      parts.push(...value);
+    } else if (isWikiTextPart(value)) {
+      parts.push(value);
+    } else {
+      parts.push(wikiStrong(String(value ?? "-")));
+    }
+    index = match.index + match[0].length;
+  }
+  if (index < template.length) parts.push(wikiText(template.slice(index)));
+  return parts;
+}
+
+type InvitationRequirementTemplate = {
+  template: string;
+  params?: (row: CharacterInvitationRequirementRow, options: InvitationFormatOptions) => InvitationTemplateParam[];
+};
+
+const invitationRequirementTemplates: Record<number, InvitationRequirementTemplate> = {
+  0: { template: "成为门派的{param}", params: (row) => [row.string_value || "-"] },
+  1: { template: "功力达到{param}" },
+  2: { template: "名声达到{param}" },
+  3: { template: "侠义值大于{param}" },
+  4: { template: "侠义值小于{param}" },
+  5: { template: "膂力达到{param}" },
+  6: { template: "根骨达到{param}" },
+  7: { template: "体魄达到{param}" },
+  8: { template: "身法达到{param}" },
+  9: { template: "拥有{param}名或以上队友" },
+  10: { template: "拥有{param}名或以上男性队友" },
+  11: { template: "拥有{param}名或以上女性队友" },
+  12: { template: "挖矿达到{param}级" },
+  13: { template: "采药达到{param}级" },
+  14: { template: "打猎达到{param}级" },
+  15: { template: "锻造达到{param}级" },
+  16: { template: "炼丹达到{param}级" },
+  17: { template: "裁缝达到{param}级" },
+  18: { template: "财富达到{param}" },
+  19: { template: "等级达到{param}" },
+  20: {
+    template: "将{param}邀请成为你的队友",
+    params: (row, options) => [options.linkedStringValue?.length ? options.linkedStringValue : row.string_value || "指定人物"],
+  },
+};
+
+export function formatInvitationRequirementParts(
+  row: CharacterInvitationRequirementRow,
+  enums: WikiEnums,
+  options: InvitationFormatOptions = {},
+): WikiTextPart[] {
+  const intValue = row.int_value ?? 0;
+  const item = invitationRequirementTemplates[Number(row.type_id)];
+  if (item) return formatInvitationTemplateParts(item.template, item.params?.(row, options) || [intValue]);
+
+  return formatInvitationTemplateParts(`${enumLabel(enums, "YaoQingType", row.type_id, "邀请条件")}：{param}`, [
+    row.string_value || intValue,
+  ]);
+}
+
+export async function formatInvitationRequirementLinkedParts(
+  row: CharacterInvitationRequirementRow,
+  enums: WikiEnums,
+): Promise<WikiTextPart[]> {
+  const linkedStringValue = Number(row.type_id) === 20
+    ? await linkCharactersInText(row.string_value)
+    : [];
+  return formatInvitationRequirementParts(row, enums, { linkedStringValue });
+}
+
+export async function buildInvitationRequirementSummaries(
+  invitationRequirements: CharacterInvitationRequirementRow[],
+  enums: WikiEnums,
+): Promise<CharacterInvitationRequirementSummary[]> {
+  return Promise.all(invitationRequirements.map(async (requirement) => {
+    const parts = await formatInvitationRequirementLinkedParts(requirement, enums);
+    return {
+      slot: requirement.slot,
+      parts,
+      text: wikiPartsToText(parts),
+    };
+  }));
+}
+
 export function formatQuestParts(
   quest: CharacterQuestRow,
   targets: CharacterQuestTargetRow[],
@@ -179,13 +308,15 @@ export function questSummary(
   return wikiPartsToText(formatQuestParts(quest, targets, enums));
 }
 
-export function buildCharacterSummary(
+export async function buildCharacterSummary(
   character: CharacterSummaryRow,
   quests: CharacterQuestRow[],
   questTargets: CharacterQuestTargetRow[],
+  invitationRequirements: CharacterInvitationRequirementRow[],
   enums: WikiEnums,
-): CharacterSummary {
+): Promise<CharacterSummary> {
   const targetsByQuest = groupBy(questTargets, "quest_id");
+  const invitationRequirementSummaries = await buildInvitationRequirementSummaries(invitationRequirements, enums);
   return {
     id: character.id,
     portrait: character.portrait,
@@ -197,6 +328,7 @@ export function buildCharacterSummary(
     sect: character.sect_name || "无门派",
     rarity: enumLabel(enums, "NPC_Rare", character.rarity_id, "资质"),
     weaponType: enumLabel(enums, "BingQiType", character.weapon_type_id, "未知"),
+    invitationRequirements: invitationRequirementSummaries,
     quests: quests.map((quest) => {
       const parts = formatQuestParts(quest, targetsByQuest.get(quest.id) || [], enums);
       return {

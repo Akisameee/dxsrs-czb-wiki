@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CharacterEditHeaderCard from "~/components/tools/save-edit/character/CharacterEditHeaderCard.vue";
+import InjuriesTableCard from "~/components/tools/save-edit/character/injuries/TableCard.vue";
 import InventoryTableCard from "~/components/tools/save-edit/character/inventory/TableCard.vue";
 import MartialArtsTableCard from "~/components/tools/save-edit/character/martial-arts/TableCard.vue";
 import ZhuJueTableCard from "~/components/tools/save-edit/character/player/TableCard.vue";
@@ -60,6 +61,7 @@ const easyTables = computed(() => {
     .map((name) => save.value?.tables.find((table) => table.name === name))
     .filter((table): table is BgDatabaseTable => Boolean(table && table.rowCount <= 1));
 });
+const injuryTable = computed(() => save.value?.tables.find((table) => table.name === "ShangBing") || null);
 const inventoryTable = computed(() => save.value?.tables.find((table) => table.name === "XingNang") || null);
 const jsWugongTable = computed(() => save.value?.tables.find((table) => table.name === "JSWugong") || null);
 const gWugongTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGong") || null);
@@ -169,6 +171,14 @@ function downloadSave() {
       <ZhuJueTableCard
         :save="save"
         :table="save.zhuJue"
+        :draft="draft"
+        :enums="enums"
+        @update-field="updateField"
+      />
+
+      <InjuriesTableCard
+        v-if="injuryTable"
+        :table="injuryTable"
         :draft="draft"
         :enums="enums"
         @update-field="updateField"

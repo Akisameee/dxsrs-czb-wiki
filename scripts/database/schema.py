@@ -164,6 +164,21 @@ TABLES = {
       "target_region_id": "INTEGER"
     }
   },
+  "character_invitation_requirements": {
+    "primaryKey": [
+      "character_id",
+      "slot"
+    ],
+    "columns": {
+      "character_id": "INTEGER NOT NULL",
+      "slot": "INTEGER NOT NULL",
+      "legacy_name": "TEXT",
+      "type_id": "INTEGER NOT NULL",
+      "int_value": "INTEGER",
+      "string_value": "TEXT",
+      "sort_order": "INTEGER NOT NULL"
+    }
+  },
   "locations": {
     "primaryKey": [
       "region_id",
@@ -628,6 +643,8 @@ INDEXES = [
   "CREATE INDEX idx_character_quests_type ON character_quests(quest_type_id)",
   "CREATE INDEX idx_character_quests_reward_item ON character_quests(reward_item_id)",
   "CREATE INDEX idx_character_quest_targets_quest ON character_quest_targets(quest_id)",
+  "CREATE INDEX idx_character_invitation_requirements_character ON character_invitation_requirements(character_id)",
+  "CREATE INDEX idx_character_invitation_requirements_type ON character_invitation_requirements(type_id)",
   "CREATE INDEX idx_items_type ON items(type_id)",
   "CREATE INDEX idx_items_image ON items(image_id)",
   "CREATE INDEX idx_image_manifest_atlas ON image_manifest(atlas)",
