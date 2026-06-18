@@ -162,9 +162,8 @@ function portraitFieldValues(initial: boolean) {
         <div v-if="hasBasicFields" class="grid gap-3">
           <div class="text-sm font-medium">基础信息</div>
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
-            <div v-if="hasField('xing')" class="grid gap-1">
-              <Label class="text-muted-foreground">姓 / 名</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('xing')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="姓">
                 <SaveFieldEditor
                   :field="field('xing')"
                   :draft="draft"
@@ -172,6 +171,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="名">
                 <SaveFieldEditor
                   :field="field('ming')"
                   :draft="draft"
@@ -179,11 +180,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('old')" class="grid gap-1">
-              <Label class="text-muted-foreground">年龄 / 寿命</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('old')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="年龄">
                 <SaveFieldEditor
                   :field="field('old')"
                   :draft="draft"
@@ -191,6 +191,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="寿命">
                 <SaveFieldEditor
                   :field="field('maxold')"
                   :draft="draft"
@@ -198,11 +200,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('menpai')" class="grid gap-1">
-              <Label class="text-muted-foreground">门派 / 地位</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('menpai')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="门派">
                 <SaveFieldEditor
                   :field="field('menpai')"
                   :draft="draft"
@@ -210,6 +211,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="地位">
                 <SaveFieldEditor
                   :field="field('diwei')"
                   :draft="draft"
@@ -217,11 +220,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('mingsheng')" class="grid gap-1">
-              <Label class="text-muted-foreground">名声 / 侠义</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('mingsheng')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="名声">
                 <SaveFieldEditor
                   :field="field('mingsheng')"
                   :draft="draft"
@@ -229,6 +231,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="侠义">
                 <SaveFieldEditor
                   :field="field('xiayi')"
                   :draft="draft"
@@ -236,11 +240,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('xingdongli')" class="grid gap-1">
-              <Label class="text-muted-foreground">行动力 / 最大行动力</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('xingdongli')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="行动力">
                 <SaveFieldEditor
                   :field="field('xingdongli')"
                   :draft="draft"
@@ -248,6 +251,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="最大行动力">
                 <SaveFieldEditor
                   :field="field('maxxingdongli')"
                   :draft="draft"
@@ -255,10 +260,9 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('gold')" class="grid gap-1">
-              <Label class="text-muted-foreground">银两</Label>
+            <AppFieldStack v-if="hasField('gold')" label="银两">
               <SaveFieldEditor
                 :field="field('gold')"
                 :draft="draft"
@@ -266,9 +270,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('gongxian')" class="grid gap-1">
-              <Label class="text-muted-foreground">贡献</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('gongxian')" label="贡献">
               <SaveFieldEditor
                 :field="field('gongxian')"
                 :draft="draft"
@@ -276,9 +279,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('chenghao')" class="grid gap-1">
-              <Label class="text-muted-foreground">称号</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('chenghao')" label="称号">
               <SaveFieldEditor
                 :field="field('chenghao')"
                 :draft="draft"
@@ -286,16 +288,15 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
+            </AppFieldStack>
           </div>
         </div>
 
         <div v-if="hasAttributeFields" class="grid gap-3">
           <div class="text-sm font-medium">基础属性</div>
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
-            <div v-if="hasField('lvli')" class="grid gap-1">
-              <Label class="text-muted-foreground">膂力 / 额外膂力</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('lvli')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="膂力">
                 <SaveFieldEditor
                   :field="field('lvli')"
                   :draft="draft"
@@ -303,6 +304,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="额外膂力">
                 <SaveFieldEditor
                   :field="field('lvli_plus')"
                   :draft="draft"
@@ -310,11 +313,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('gengu')" class="grid gap-1">
-              <Label class="text-muted-foreground">根骨 / 额外根骨</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('gengu')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="根骨">
                 <SaveFieldEditor
                   :field="field('gengu')"
                   :draft="draft"
@@ -322,6 +324,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="额外根骨">
                 <SaveFieldEditor
                   :field="field('genfu_plus')"
                   :draft="draft"
@@ -329,11 +333,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('tipo')" class="grid gap-1">
-              <Label class="text-muted-foreground">体魄 / 额外体魄</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('tipo')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="体魄">
                 <SaveFieldEditor
                   :field="field('tipo')"
                   :draft="draft"
@@ -341,6 +344,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="额外体魄">
                 <SaveFieldEditor
                   :field="field('tipo_plus')"
                   :draft="draft"
@@ -348,11 +353,10 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
-            <div v-if="hasField('shenfa')" class="grid gap-1">
-              <Label class="text-muted-foreground">身法 / 额外身法</Label>
-              <div class="flex items-center gap-2">
+            <div v-if="hasField('shenfa')" class="flex items-center gap-2">
+              <AppFieldStack class="flex-1" label="身法">
                 <SaveFieldEditor
                   :field="field('shenfa')"
                   :draft="draft"
@@ -360,6 +364,8 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
+              </AppFieldStack>
+              <AppFieldStack class="flex-1" label="额外身法">
                 <SaveFieldEditor
                   :field="field('shenfa_plus')"
                   :draft="draft"
@@ -367,7 +373,7 @@ function portraitFieldValues(initial: boolean) {
                   compact
                   @update="updateField"
                 />
-              </div>
+              </AppFieldStack>
             </div>
           </div>
         </div>
@@ -375,8 +381,7 @@ function portraitFieldValues(initial: boolean) {
         <div v-if="hasMartialFields" class="grid gap-3">
           <div class="text-sm font-medium">武艺</div>
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
-            <div v-if="hasField('wuxuexiuwei')" class="grid gap-1">
-              <Label class="text-muted-foreground">武学修为</Label>
+            <AppFieldStack v-if="hasField('wuxuexiuwei')" label="武学修为">
               <SaveFieldEditor
                 :field="field('wuxuexiuwei')"
                 :draft="draft"
@@ -384,9 +389,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('quanzhang')" class="grid gap-1">
-              <Label class="text-muted-foreground">拳掌</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('quanzhang')" label="拳掌">
               <SaveFieldEditor
                 :field="field('quanzhang')"
                 :draft="draft"
@@ -394,9 +398,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('daojian')" class="grid gap-1">
-              <Label class="text-muted-foreground">刀剑</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('daojian')" label="刀剑">
               <SaveFieldEditor
                 :field="field('daojian')"
                 :draft="draft"
@@ -404,9 +407,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('qiangbang')" class="grid gap-1">
-              <Label class="text-muted-foreground">枪棒</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('qiangbang')" label="枪棒">
               <SaveFieldEditor
                 :field="field('qiangbang')"
                 :draft="draft"
@@ -414,9 +416,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('anqi')" class="grid gap-1">
-              <Label class="text-muted-foreground">暗器</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('anqi')" label="暗器">
               <SaveFieldEditor
                 :field="field('anqi')"
                 :draft="draft"
@@ -424,9 +425,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('neigong')" class="grid gap-1">
-              <Label class="text-muted-foreground">内功</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('neigong')" label="内功">
               <SaveFieldEditor
                 :field="field('neigong')"
                 :draft="draft"
@@ -434,9 +434,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('wxexp')" class="grid gap-1">
-              <Label class="text-muted-foreground">武学经验</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('wxexp')" label="武学经验">
               <SaveFieldEditor
                 :field="field('wxexp')"
                 :draft="draft"
@@ -444,9 +443,8 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
-            <div v-if="hasField('maxwugongqty')" class="grid gap-1">
-              <Label class="text-muted-foreground">武功上限</Label>
+            </AppFieldStack>
+            <AppFieldStack v-if="hasField('maxwugongqty')" label="武功上限">
               <SaveFieldEditor
                 :field="field('maxwugongqty')"
                 :draft="draft"
@@ -454,7 +452,7 @@ function portraitFieldValues(initial: boolean) {
                 compact
                 @update="updateField"
               />
-            </div>
+            </AppFieldStack>
           </div>
         </div>
 

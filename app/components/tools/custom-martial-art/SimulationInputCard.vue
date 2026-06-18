@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
 
@@ -51,8 +50,7 @@ const visibleWeaponOptions = computed(() => props.weaponOptions.filter((item) =>
       <p v-if="pending" class="text-sm text-muted-foreground">读取 sqlite 数据中...</p>
       <p v-else-if="errorMessage" class="text-sm text-destructive">{{ errorMessage }}</p>
       <div class="grid gap-3 grid-cols-5">
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="custom-weapon">武器</Label>
+        <AppFieldStack label="武器" label-for="custom-weapon">
           <WikiEnumSelect
             id="custom-weapon"
             :model-value="input.weaponType"
@@ -61,23 +59,19 @@ const visibleWeaponOptions = computed(() => props.weaponOptions.filter((item) =>
             :disabled="isSimulating"
             @update:model-value="emit('updateInput', { weaponType: $event })"
           />
-        </div>
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="custom-yi">意念</Label>
+        </AppFieldStack>
+        <AppFieldStack label="意念" label-for="custom-yi">
           <WikiNumberInput id="custom-yi" :model-value="input.yi" min="0" max="10" :disabled="isSimulating" @update:model-value="emit('updateInput', { yi: $event })" />
-        </div>
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="custom-qi">气劲</Label>
+        </AppFieldStack>
+        <AppFieldStack label="气劲" label-for="custom-qi">
           <WikiNumberInput id="custom-qi" :model-value="input.qi" min="0" max="10" :disabled="isSimulating" @update:model-value="emit('updateInput', { qi: $event })" />
-        </div>
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="custom-xing">形态</Label>
+        </AppFieldStack>
+        <AppFieldStack label="形态" label-for="custom-xing">
           <WikiNumberInput id="custom-xing" :model-value="input.xing" min="0" max="10" :disabled="isSimulating" @update:model-value="emit('updateInput', { xing: $event })" />
-        </div>
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="custom-shen">神韵</Label>
+        </AppFieldStack>
+        <AppFieldStack label="神韵" label-for="custom-shen">
           <WikiNumberInput id="custom-shen" :model-value="input.shen" min="0" max="10" :disabled="isSimulating" @update:model-value="emit('updateInput', { shen: $event })" />
-        </div>
+        </AppFieldStack>
       </div>
       <RunControls
         input-id="analysis-trials"

@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 
 defineProps<{
   pending: boolean;
@@ -34,8 +33,7 @@ const emit = defineEmits<{
       </CardDescription>
     </AppCardHeader>
     <AppCardContent class="grid gap-5">
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground">门派</Label>
+      <AppFieldStack label="门派">
         <div class="flex flex-wrap gap-2">
           <AppButton
             type="button"
@@ -58,10 +56,9 @@ const emit = defineEmits<{
             {{ option.label }}
           </AppButton>
         </div>
-      </div>
+      </AppFieldStack>
 
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground">风格</Label>
+      <AppFieldStack label="风格">
         <div class="flex flex-wrap gap-2">
           <AppButton
             type="button"
@@ -84,7 +81,7 @@ const emit = defineEmits<{
             {{ option.label }}
           </AppButton>
         </div>
-      </div>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 </template>

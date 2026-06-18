@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectItem,
@@ -123,8 +122,7 @@ function selectValue(event: Event) {
       <CardDescription>{{ saveEditCharacterName(save, draft) }}：{{ table.name }}：{{ totalRows }} 行</CardDescription>
     </AppCardHeader>
     <AppCardContent class="grid gap-4 grid-cols-2">
-      <Label class="grid gap-2">
-        表
+      <AppFieldStack label="表">
         <Select :model-value="String(selectedTableIndex)" @update:model-value="setTable">
           <AppSelectTrigger class="w-full">
             <SelectValue placeholder="选择数据表" />
@@ -139,12 +137,11 @@ function selectValue(event: Event) {
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </Label>
+      </AppFieldStack>
 
-      <Label class="grid gap-2">
-        搜索
+      <AppFieldStack label="搜索">
         <AppInput v-model="search" type="search" placeholder="搜索当前表" />
-      </Label>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 

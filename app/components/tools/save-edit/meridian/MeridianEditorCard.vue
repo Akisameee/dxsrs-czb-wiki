@@ -131,17 +131,19 @@ function bonusText(label: string, value: number) {
         </div>
 
         <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          <div
+          <AppFieldStack
             v-for="point in group.points"
             :key="point"
-            class="grid gap-1 text-xs text-muted-foreground"
+            label-class="text-xs"
           >
-            <span class="truncate whitespace-nowrap">
-              <span class="font-medium text-foreground">{{ point }}</span>
-              <span v-if="meridianBonusText(point)" class="text-muted-foreground">
-                {{ " " }}{{ meridianBonusText(point) }}
+            <template #label>
+              <span class="truncate whitespace-nowrap">
+                <span class="font-medium text-foreground">{{ point }}</span>
+                <span v-if="meridianBonusText(point)" class="text-muted-foreground">
+                  {{ " " }}{{ meridianBonusText(point) }}
+                </span>
               </span>
-            </span>
+            </template>
             <EditableBooleanField
               true-value="true"
               false-value="false"
@@ -152,7 +154,7 @@ function bonusText(label: string, value: number) {
               :model-value="selectedSet.has(point) ? 'true' : 'false'"
               @update="updatePoint(point, $event)"
             />
-          </div>
+          </AppFieldStack>
         </div>
       </section>
     </AppCardContent>

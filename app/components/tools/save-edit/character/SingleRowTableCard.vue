@@ -62,12 +62,11 @@ function enumOptions(fieldName: string) {
       @reset="resetTable"
     />
     <AppCardContent class="grid auto-rows-min gap-3 grid-cols-2">
-      <div
+      <AppFieldStack
         v-for="field in fields"
         :key="field.name"
-        class="grid gap-1"
+        :label="field.name"
       >
-        <Label class="text-muted-foreground">{{ field.name }}</Label>
         <WikiEnumSelect
           v-if="enumOptions(field.name).length"
           :model-value="formatSaveValue(fieldValue(field))"
@@ -79,7 +78,7 @@ function enumOptions(fieldName: string) {
           :model-value="formatSaveValue(fieldValue(field))"
           @update:model-value="emit('updateField', field, String($event), 0)"
         />
-      </div>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 </template>

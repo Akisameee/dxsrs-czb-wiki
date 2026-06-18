@@ -328,18 +328,21 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
       </div>
 
       <div class="grid gap-4 grid-cols-4">
-        <div class="grid gap-2">
-          <Label for="save-edit-inventory-search">搜索</Label>
+        <AppFieldStack label="搜索" label-for="save-edit-inventory-search">
           <AppInput
             id="save-edit-inventory-search"
             v-model="search"
             type="search"
             placeholder="搜索道具"
           />
-        </div>
+        </AppFieldStack>
 
-        <div v-for="filter in indexFilters" :key="filter.id" class="grid gap-2">
-          <Label :for="filter.id">{{ filter.label }}</Label>
+        <AppFieldStack
+          v-for="filter in indexFilters"
+          :key="filter.id"
+          :label="filter.label"
+          :label-for="filter.id"
+        >
           <Select
             :model-value="filter.modelValue"
             @update:model-value="updateFilter(filter.id, String($event))"
@@ -360,7 +363,7 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
               </SelectItem>
             </AppSelectContent>
           </Select>
-        </div>
+        </AppFieldStack>
       </div>
 
       <div class="flex justify-center">

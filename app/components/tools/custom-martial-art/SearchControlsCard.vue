@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
 import WikiNumberInput from "~/components/wiki/WikiNumberInput.vue";
 
@@ -58,8 +57,7 @@ const effectSelectOptions = computed(() => [
     </AppCardHeader>
     <AppCardContent class="grid gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,2fr)]">
       <div class="grid gap-2 grid-cols-5">
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="search-weapon">武器</Label>
+        <AppFieldStack label="武器" label-for="search-weapon">
           <WikiEnumSelect
             id="search-weapon"
             :model-value="target.weaponType"
@@ -68,10 +66,9 @@ const effectSelectOptions = computed(() => [
             :disabled="isSearching"
             @update:model-value="emit('updateTarget', { weaponType: $event })"
           />
-        </div>
+        </AppFieldStack>
 
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="search-style">目标风格</Label>
+        <AppFieldStack label="目标风格" label-for="search-style">
           <WikiEnumSelect
             id="search-style"
             :model-value="target.styleId"
@@ -80,10 +77,9 @@ const effectSelectOptions = computed(() => [
             :disabled="isSearching"
             @update:model-value="emit('updateTarget', { styleId: $event })"
           />
-        </div>
+        </AppFieldStack>
 
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="search-area">攻击范围</Label>
+        <AppFieldStack label="攻击范围" label-for="search-area">
           <WikiEnumSelect
             id="search-area"
             :model-value="target.areaName"
@@ -92,10 +88,9 @@ const effectSelectOptions = computed(() => [
             :disabled="isSearching"
             @update:model-value="emit('updateTarget', { areaName: $event })"
           />
-        </div>
+        </AppFieldStack>
 
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="search-effect">特殊效果</Label>
+        <AppFieldStack label="特殊效果" label-for="search-effect">
           <WikiEnumSelect
             id="search-effect"
             :model-value="target.effectType"
@@ -104,10 +99,9 @@ const effectSelectOptions = computed(() => [
             :disabled="isSearching"
             @update:model-value="emit('updateTarget', { effectType: $event })"
           />
-        </div>
+        </AppFieldStack>
 
-        <div class="grid gap-2">
-          <Label class="text-muted-foreground" for="search-effect-level">效果等级</Label>
+        <AppFieldStack label="效果等级" label-for="search-effect-level">
           <WikiNumberInput
             id="search-effect-level"
             :model-value="target.effectLevel"
@@ -116,7 +110,7 @@ const effectSelectOptions = computed(() => [
             :disabled="isSearching || effectMaxLevel <= 0"
             @update:model-value="emit('updateTarget', { effectLevel: $event })"
           />
-        </div>
+        </AppFieldStack>
       </div>
       <RunControls
         input-id="search-trials"

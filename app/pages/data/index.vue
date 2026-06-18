@@ -72,8 +72,7 @@ watch(pageCount, (count) => {
         <CardDescription>{{ pending ? "读取中..." : `${table || "-"}：${totalRows} 行` }}</CardDescription>
       </AppCardHeader>
       <AppCardContent class="grid gap-4 grid-cols-2">
-        <Label class="grid gap-2">
-          表
+        <AppFieldStack label="表">
           <Select v-model="table">
             <AppSelectTrigger class="w-full">
               <SelectValue placeholder="选择表" />
@@ -84,11 +83,10 @@ watch(pageCount, (count) => {
               </SelectItem>
             </AppSelectContent>
           </Select>
-        </Label>
-        <Label class="grid gap-2">
-          搜索
+        </AppFieldStack>
+        <AppFieldStack label="搜索">
           <AppInput v-model="search" type="search" placeholder="搜索当前表" />
-        </Label>
+        </AppFieldStack>
       </AppCardContent>
     </AppCard>
 

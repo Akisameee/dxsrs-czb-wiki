@@ -60,12 +60,11 @@ function fieldInput(field: EquipmentEditField) {
       </DialogHeader>
 
       <div v-if="fields.length" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div
+        <AppFieldStack
           v-for="field in fields"
           :key="field.key"
-          class="grid gap-1.5"
+          :label="fieldLabel(field)"
         >
-          <Label>{{ fieldLabel(field) }}</Label>
           <EditableEnumField
             v-if="fieldInput(field) === 'select'"
             :initial-value="field.initialValue"
@@ -88,7 +87,7 @@ function fieldInput(field: EquipmentEditField) {
           >
             {{ field.value || "-" }}
           </div>
-        </div>
+        </AppFieldStack>
       </div>
 
       <div v-else class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">

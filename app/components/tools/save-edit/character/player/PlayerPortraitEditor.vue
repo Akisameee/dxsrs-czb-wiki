@@ -202,12 +202,11 @@ function setPortraitOption(control: PortraitControl, value: string) {
     </div>
 
     <div class="grid gap-3 grid-cols-2 lg:grid-cols-1">
-      <div
+      <AppFieldStack
         v-for="control in visiblePortraitControls"
         :key="control.key"
-        class="grid gap-1"
+        :label="control.label"
       >
-        <Label class="text-muted-foreground">{{ control.label }}</Label>
         <EditableStepperField
           :initial-value="portraitInitialOptionNumber(control)"
           :model-value="portraitOptionNumber(control)"
@@ -217,7 +216,7 @@ function setPortraitOption(control: PortraitControl, value: string) {
           compact
           @update="setPortraitOption(control, $event)"
         />
-      </div>
+      </AppFieldStack>
     </div>
   </div>
 </template>

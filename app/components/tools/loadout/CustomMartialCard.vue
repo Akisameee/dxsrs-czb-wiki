@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectItem,
@@ -76,8 +75,7 @@ function cardClass() {
       </div>
     </AppCardHeader>
     <AppCardContent class="grid gap-3 grid-cols-2" @click.stop @keydown.stop>
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground" for="custom-sect">门派</Label>
+      <AppFieldStack label="门派" label-for="custom-sect">
         <Select
           :model-value="customMartial.sectId"
           @update:model-value="emit('updateCustomMartial', { sectId: String($event) })"
@@ -92,10 +90,9 @@ function cardClass() {
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
 
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground" for="custom-style">风格</Label>
+      <AppFieldStack label="风格" label-for="custom-style">
         <Select
           :model-value="customMartial.styleId"
           @update:model-value="emit('updateCustomMartial', { styleId: String($event) })"
@@ -110,7 +107,7 @@ function cardClass() {
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 </template>

@@ -205,28 +205,25 @@ function updateSlotSex(index: number, value: number) {
 
             <div class="grid auto-rows-min gap-5">
               <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  角色名
+                <AppFieldStack label="角色名" label-class="text-xs">
                   <EditableTextField
                     :initial-value="initialSlot(slot).player"
                     :model-value="slot.player"
                     compact
                     @update="updateString(index, 'player', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  存档文件
+                <AppFieldStack label="存档文件" label-class="text-xs">
                   <EditableTextField
                     :initial-value="initialSlot(slot).savepath"
                     :model-value="slot.savepath"
                     compact
                     @update="updateString(index, 'savepath', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  当前槽
+                <AppFieldStack label="当前槽" label-class="text-xs">
                   <EditableBooleanField
                     :initial-value="booleanValue(initialSlot(slot).isplaying)"
                     :model-value="booleanValue(slot.isplaying)"
@@ -235,40 +232,36 @@ function updateSlotSex(index: number, value: number) {
                     compact
                     @update="updateBoolean(index, 'isplaying', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  槽位
+                <AppFieldStack label="槽位" label-class="text-xs">
                   <EditableNumberField
                     :initial-value="String(initialSlot(slot).slotid)"
                     :model-value="String(slot.slotid)"
                     compact
                     @update="updateNumber(index, 'slotid', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  年龄
+                <AppFieldStack label="年龄" label-class="text-xs">
                   <EditableNumberField
                     :initial-value="String(initialSlot(slot).old)"
                     :model-value="String(slot.old)"
                     compact
                     @update="updateNumber(index, 'old', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  功力
+                <AppFieldStack label="功力" label-class="text-xs">
                   <EditableNumberField
                     :initial-value="String(initialSlot(slot).gongli)"
                     :model-value="String(slot.gongli)"
                     compact
                     @update="updateNumber(index, 'gongli', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  门派
+                <AppFieldStack label="门派" label-class="text-xs">
                   <EditableEnumField
                     :initial-value="String(initialSlot(slot).menPai)"
                     :model-value="String(slot.menPai)"
@@ -276,10 +269,9 @@ function updateSlotSex(index: number, value: number) {
                     compact
                     @update="updateNumber(index, 'menPai', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  难度
+                <AppFieldStack label="难度" label-class="text-xs">
                   <EditableEnumField
                     :initial-value="String(initialSlot(slot).difficult)"
                     :model-value="String(slot.difficult)"
@@ -287,17 +279,16 @@ function updateSlotSex(index: number, value: number) {
                     compact
                     @update="updateNumber(index, 'difficult', $event)"
                   />
-                </div>
+                </AppFieldStack>
 
-                <div class="grid gap-1 text-xs text-muted-foreground">
-                  主角
+                <AppFieldStack label="主角" label-class="text-xs">
                   <EditableNumberField
                     :initial-value="String(initialSlot(slot).zhujue)"
                     :model-value="String(slot.zhujue)"
                     compact
                     @update="updateNumber(index, 'zhujue', $event)"
                   />
-                </div>
+                </AppFieldStack>
               </div>
             </div>
           </div>

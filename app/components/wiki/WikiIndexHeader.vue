@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectItem,
@@ -66,8 +65,7 @@ function updateFilter(id: string, value: unknown) {
       </CardDescription>
     </AppCardHeader>
     <AppCardContent class="grid grid-cols-[repeat(4,minmax(0,1fr))] gap-4">
-      <div class="grid min-w-0 gap-2">
-        <Label :for="searchId">{{ searchLabel }}</Label>
+      <AppFieldStack :label="searchLabel" :label-for="searchId">
         <AppInput
           :id="searchId"
           type="search"
@@ -75,10 +73,14 @@ function updateFilter(id: string, value: unknown) {
           :placeholder="searchPlaceholder"
           @update:model-value="updateSearch"
         />
-      </div>
+      </AppFieldStack>
 
-      <div v-for="filter in filters" :key="filter.id" class="grid min-w-0 gap-2">
-        <Label :for="filter.id">{{ filter.label }}</Label>
+      <AppFieldStack
+        v-for="filter in filters"
+        :key="filter.id"
+        :label="filter.label"
+        :label-for="filter.id"
+      >
         <Select
           :model-value="filter.modelValue"
           @update:model-value="updateFilter(filter.id, $event)"
@@ -102,7 +104,7 @@ function updateFilter(id: string, value: unknown) {
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 </template>

@@ -52,6 +52,12 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 const isInternal = computed(() => martialArtIsInternal({ type_id: props.typeId }));
+const currentLevelValue = computed(() => Number(formField("currentlv")?.value));
+const currentLevel = computed(() =>
+  Number.isFinite(currentLevelValue.value)
+    ? props.levels.find((level) => level.level === currentLevelValue.value) || null
+    : null,
+);
 
 function updateField(field: MartialSaveField, value: string) {
   emit("updateField", { field: field.field, rowIndex: field.rowIndex, value });
@@ -75,12 +81,23 @@ function levelField(level: MartialLevelRow, key: string) {
   return level.fields[key] || null;
 }
 
+function currentLevelField(key: string) {
+  const level = currentLevel.value;
+  return level ? levelField(level, key) : null;
+}
+
 function formField(key: string) {
   return props.fields.find((field) => field.key === key) || null;
 }
 
 function baseField(key: string) {
   return props.baseFields.find((field) => field.key === key) || null;
+}
+
+function chainStyleOptions(field: MartialSaveField) {
+  return field.enumOptions.map((option) => option.value === "0"
+    ? { ...option, label: "无连锁" }
+    : option);
 }
 </script>
 
@@ -95,26 +112,27 @@ function baseField(key: string) {
       </DialogHeader>
 
       <div class="grid gap-3">
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div v-if="formField('currentlv')" class="grid gap-1.5">
-            <Label>当前境界 / 最高境界</Label>
-            <div class="flex items-center gap-2">
+        <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div v-if="formField('currentlv')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="当前境界">
               <EditableNumberField
                 :initial-value="formField('currentlv')!.initialValue"
                 :model-value="formField('currentlv')!.value"
                 compact
                 @update="updateField(formField('currentlv')!, $event)"
               />
+            </AppFieldStack>
+            <AppFieldStack class="flex-1" label="最高境界">
               <EditableNumberField
                 :initial-value="formField('maxlv')!.initialValue"
                 :model-value="formField('maxlv')!.value"
                 compact
                 @update="updateField(formField('maxlv')!, $event)"
               />
-            </div>
+            </AppFieldStack>
           </div>
-          <div v-if="formField('liansuo_mp')" class="grid gap-1.5">
-            <Label>连锁门派</Label>
+
+          <AppFieldStack v-if="formField('liansuo_mp')" label="连锁门派">
             <EditableEnumField
               :initial-value="formField('liansuo_mp')!.initialValue"
               :model-value="formField('liansuo_mp')!.value"
@@ -122,29 +140,28 @@ function baseField(key: string) {
               compact
               @update="updateField(formField('liansuo_mp')!, $event)"
             />
-          </div>
-          <div v-if="formField('liansuo_fg1')" class="grid gap-1.5">
-            <Label>连锁风格 1</Label>
+          </AppFieldStack>
+
+          <AppFieldStack v-if="formField('liansuo_fg1')" label="连锁风格 1">
             <EditableEnumField
               :initial-value="formField('liansuo_fg1')!.initialValue"
               :model-value="formField('liansuo_fg1')!.value"
-              :options="formField('liansuo_fg1')!.enumOptions"
+              :options="chainStyleOptions(formField('liansuo_fg1')!)"
               compact
               @update="updateField(formField('liansuo_fg1')!, $event)"
             />
-          </div>
-          <div v-if="formField('liansuo_fg2')" class="grid gap-1.5">
-            <Label>连锁风格 2</Label>
+          </AppFieldStack>
+          <AppFieldStack v-if="formField('liansuo_fg2')" label="连锁风格 2">
             <EditableEnumField
               :initial-value="formField('liansuo_fg2')!.initialValue"
               :model-value="formField('liansuo_fg2')!.value"
-              :options="formField('liansuo_fg2')!.enumOptions"
+              :options="chainStyleOptions(formField('liansuo_fg2')!)"
               compact
               @update="updateField(formField('liansuo_fg2')!, $event)"
             />
-          </div>
-          <div v-if="baseField('rare')" class="grid gap-1.5">
-            <Label>品质</Label>
+          </AppFieldStack>
+
+          <AppFieldStack v-if="baseField('rare')" label="品质">
             <EditableEnumField
               v-if="fieldInput(baseField('rare')) === 'select'"
               :initial-value="baseField('rare')!.initialValue"
@@ -163,10 +180,47 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("rare")?.value || "-" }}
             </div>
-          </div>
+          </AppFieldStack>
 
-          <div v-if="!isInternal && baseField('cost')" class="grid gap-1.5">
-            <Label>消耗</Label>
+          <AppFieldStack v-if="!isInternal && currentLevelField('weili')" label="威力">
+            <EditableNumberField
+              v-if="fieldInput(currentLevelField('weili')) === 'number'"
+              :initial-value="currentLevelField('weili')!.initialValue"
+              :model-value="currentLevelField('weili')!.value"
+              compact
+              @update="updateField(currentLevelField('weili')!, $event)"
+            />
+            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+              {{ currentLevelField("weili")?.value || "-" }}
+            </div>
+          </AppFieldStack>
+
+          <AppFieldStack v-if="isInternal && currentLevelField('hp')" label="体力">
+            <EditableNumberField
+              v-if="fieldInput(currentLevelField('hp')) === 'number'"
+              :initial-value="currentLevelField('hp')!.initialValue"
+              :model-value="currentLevelField('hp')!.value"
+              compact
+              @update="updateField(currentLevelField('hp')!, $event)"
+            />
+            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+              {{ currentLevelField("hp")?.value || "-" }}
+            </div>
+          </AppFieldStack>
+          <AppFieldStack v-if="isInternal && currentLevelField('zhenqiup')" label="真气恢复">
+            <EditableNumberField
+              v-if="fieldInput(currentLevelField('zhenqiup')) === 'number'"
+              :initial-value="currentLevelField('zhenqiup')!.initialValue"
+              :model-value="currentLevelField('zhenqiup')!.value"
+              compact
+              @update="updateField(currentLevelField('zhenqiup')!, $event)"
+            />
+            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+              {{ currentLevelField("zhenqiup")?.value || "-" }}
+            </div>
+          </AppFieldStack>
+
+          <AppFieldStack v-if="!isInternal && baseField('cost')" label="消耗真气">
             <EditableNumberField
               v-if="fieldInput(baseField('cost')) === 'number'"
               :initial-value="baseField('cost')!.initialValue"
@@ -177,10 +231,9 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("cost")?.value || "-" }}
             </div>
-          </div>
+          </AppFieldStack>
 
-          <div v-if="!isInternal && baseField('jiange')" class="grid gap-1.5">
-            <Label>间隔</Label>
+          <AppFieldStack v-if="!isInternal && baseField('jiange')" label="间隔">
             <EditableNumberField
               v-if="fieldInput(baseField('jiange')) === 'number'"
               :initial-value="baseField('jiange')!.initialValue"
@@ -191,10 +244,9 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("jiange")?.value || "-" }}
             </div>
-          </div>
+          </AppFieldStack>
 
-          <div v-if="!isInternal && baseField('mingzhong')" class="grid gap-1.5">
-            <Label>命中</Label>
+          <AppFieldStack v-if="!isInternal && baseField('mingzhong')" label="命中">
             <EditableNumberField
               v-if="fieldInput(baseField('mingzhong')) === 'number'"
               :initial-value="baseField('mingzhong')!.initialValue"
@@ -205,10 +257,9 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("mingzhong")?.value || "-" }}
             </div>
-          </div>
+          </AppFieldStack>
 
-          <div v-if="!isInternal && baseField('slashfx')" class="grid gap-1.5">
-            <Label>出招特效</Label>
+          <AppFieldStack v-if="!isInternal && baseField('slashfx')" label="出招特效">
             <EditableEnumField
               v-if="fieldInput(baseField('slashfx')) === 'select'"
               :initial-value="baseField('slashfx')!.initialValue"
@@ -227,10 +278,9 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("slashfx")?.value || "-" }}
             </div>
-          </div>
+          </AppFieldStack>
 
-          <div v-if="!isInternal && baseField('hitfx')" class="grid gap-1.5">
-            <Label>命中特效</Label>
+          <AppFieldStack v-if="!isInternal && baseField('hitfx')" label="命中特效">
             <EditableEnumField
               v-if="fieldInput(baseField('hitfx')) === 'select'"
               :initial-value="baseField('hitfx')!.initialValue"
@@ -249,144 +299,222 @@ function baseField(key: string) {
             <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               {{ baseField("hitfx")?.value || "-" }}
             </div>
+          </AppFieldStack>
+        </div>
+
+        <div v-if="!isInternal" class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div v-if="baseField('buff1')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="特殊效果 1">
+              <EditableEnumField
+                v-if="fieldInput(baseField('buff1')) === 'select'"
+                :initial-value="baseField('buff1')!.initialValue"
+                :model-value="baseField('buff1')!.value"
+                :options="baseField('buff1')!.enumOptions"
+                compact
+                @update="updateBuffField(1, baseField('buff1')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('buff1')) === 'number'"
+                :initial-value="baseField('buff1')!.initialValue"
+                :model-value="baseField('buff1')!.value"
+                compact
+                @update="updateBuffField(1, baseField('buff1')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("buff1")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b1value')" class="flex-1" label="等级">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b1value')) === 'number'"
+                :initial-value="currentLevelField('b1value')!.initialValue"
+                :model-value="currentLevelField('b1value')!.value"
+                compact
+                @update="updateField(currentLevelField('b1value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b1value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+          </div>
+          <div v-if="baseField('buff2')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="特殊效果 2">
+              <EditableEnumField
+                v-if="fieldInput(baseField('buff2')) === 'select'"
+                :initial-value="baseField('buff2')!.initialValue"
+                :model-value="baseField('buff2')!.value"
+                :options="baseField('buff2')!.enumOptions"
+                compact
+                @update="updateBuffField(2, baseField('buff2')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('buff2')) === 'number'"
+                :initial-value="baseField('buff2')!.initialValue"
+                :model-value="baseField('buff2')!.value"
+                compact
+                @update="updateBuffField(2, baseField('buff2')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("buff2")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b2value')" class="flex-1" label="等级">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b2value')) === 'number'"
+                :initial-value="currentLevelField('b2value')!.initialValue"
+                :model-value="currentLevelField('b2value')!.value"
+                compact
+                @update="updateField(currentLevelField('b2value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b2value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+          </div>
+          <div v-if="baseField('buff3')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="特殊效果 3">
+              <EditableEnumField
+                v-if="fieldInput(baseField('buff3')) === 'select'"
+                :initial-value="baseField('buff3')!.initialValue"
+                :model-value="baseField('buff3')!.value"
+                :options="baseField('buff3')!.enumOptions"
+                compact
+                @update="updateBuffField(3, baseField('buff3')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('buff3')) === 'number'"
+                :initial-value="baseField('buff3')!.initialValue"
+                :model-value="baseField('buff3')!.value"
+                compact
+                @update="updateBuffField(3, baseField('buff3')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("buff3")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b3value')" class="flex-1" label="等级">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b3value')) === 'number'"
+                :initial-value="currentLevelField('b3value')!.initialValue"
+                :model-value="currentLevelField('b3value')!.value"
+                compact
+                @update="updateField(currentLevelField('b3value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b3value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
           </div>
         </div>
 
-        <div v-if="!isInternal" class="grid gap-3 lg:grid-cols-3">
-          <div v-if="baseField('buff1')" class="grid gap-1.5">
-            <Label>效果 1</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('buff1')) === 'select'"
-              :initial-value="baseField('buff1')!.initialValue"
-              :model-value="baseField('buff1')!.value"
-              :options="baseField('buff1')!.enumOptions"
-              compact
-              @update="updateBuffField(1, baseField('buff1')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('buff1')) === 'number'"
-              :initial-value="baseField('buff1')!.initialValue"
-              :model-value="baseField('buff1')!.value"
-              compact
-              @update="updateBuffField(1, baseField('buff1')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("buff1")?.value || "-" }}
-            </div>
+        <div v-if="isInternal" class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div v-if="baseField('beidong1')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="被动 1">
+              <EditableEnumField
+                v-if="fieldInput(baseField('beidong1')) === 'select'"
+                :initial-value="baseField('beidong1')!.initialValue"
+                :model-value="baseField('beidong1')!.value"
+                :options="baseField('beidong1')!.enumOptions"
+                compact
+                @update="updateField(baseField('beidong1')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('beidong1')) === 'number'"
+                :initial-value="baseField('beidong1')!.initialValue"
+                :model-value="baseField('beidong1')!.value"
+                compact
+                @update="updateField(baseField('beidong1')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("beidong1")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b1value')" class="flex-1" label="数值">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b1value')) === 'number'"
+                :initial-value="currentLevelField('b1value')!.initialValue"
+                :model-value="currentLevelField('b1value')!.value"
+                compact
+                @update="updateField(currentLevelField('b1value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b1value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
           </div>
-          <div v-if="baseField('buff2')" class="grid gap-1.5">
-            <Label>效果 2</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('buff2')) === 'select'"
-              :initial-value="baseField('buff2')!.initialValue"
-              :model-value="baseField('buff2')!.value"
-              :options="baseField('buff2')!.enumOptions"
-              compact
-              @update="updateBuffField(2, baseField('buff2')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('buff2')) === 'number'"
-              :initial-value="baseField('buff2')!.initialValue"
-              :model-value="baseField('buff2')!.value"
-              compact
-              @update="updateBuffField(2, baseField('buff2')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("buff2")?.value || "-" }}
-            </div>
+          <div v-if="baseField('beidong2')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="被动 2">
+              <EditableEnumField
+                v-if="fieldInput(baseField('beidong2')) === 'select'"
+                :initial-value="baseField('beidong2')!.initialValue"
+                :model-value="baseField('beidong2')!.value"
+                :options="baseField('beidong2')!.enumOptions"
+                compact
+                @update="updateField(baseField('beidong2')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('beidong2')) === 'number'"
+                :initial-value="baseField('beidong2')!.initialValue"
+                :model-value="baseField('beidong2')!.value"
+                compact
+                @update="updateField(baseField('beidong2')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("beidong2")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b2value')" class="flex-1" label="数值">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b2value')) === 'number'"
+                :initial-value="currentLevelField('b2value')!.initialValue"
+                :model-value="currentLevelField('b2value')!.value"
+                compact
+                @update="updateField(currentLevelField('b2value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b2value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
           </div>
-          <div v-if="baseField('buff3')" class="grid gap-1.5">
-            <Label>效果 3</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('buff3')) === 'select'"
-              :initial-value="baseField('buff3')!.initialValue"
-              :model-value="baseField('buff3')!.value"
-              :options="baseField('buff3')!.enumOptions"
-              compact
-              @update="updateBuffField(3, baseField('buff3')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('buff3')) === 'number'"
-              :initial-value="baseField('buff3')!.initialValue"
-              :model-value="baseField('buff3')!.value"
-              compact
-              @update="updateBuffField(3, baseField('buff3')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("buff3")?.value || "-" }}
-            </div>
-          </div>
-        </div>
-
-        <div v-if="isInternal" class="grid gap-3 sm:grid-cols-3">
-          <div v-if="baseField('beidong1')" class="grid gap-1.5">
-            <Label>被动 1</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('beidong1')) === 'select'"
-              :initial-value="baseField('beidong1')!.initialValue"
-              :model-value="baseField('beidong1')!.value"
-              :options="baseField('beidong1')!.enumOptions"
-              compact
-              @update="updateField(baseField('beidong1')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('beidong1')) === 'number'"
-              :initial-value="baseField('beidong1')!.initialValue"
-              :model-value="baseField('beidong1')!.value"
-              compact
-              @update="updateField(baseField('beidong1')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("beidong1")?.value || "-" }}
-            </div>
-          </div>
-          <div v-if="baseField('beidong2')" class="grid gap-1.5">
-            <Label>被动 2</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('beidong2')) === 'select'"
-              :initial-value="baseField('beidong2')!.initialValue"
-              :model-value="baseField('beidong2')!.value"
-              :options="baseField('beidong2')!.enumOptions"
-              compact
-              @update="updateField(baseField('beidong2')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('beidong2')) === 'number'"
-              :initial-value="baseField('beidong2')!.initialValue"
-              :model-value="baseField('beidong2')!.value"
-              compact
-              @update="updateField(baseField('beidong2')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("beidong2")?.value || "-" }}
-            </div>
-          </div>
-          <div v-if="baseField('beidong3')" class="grid gap-1.5">
-            <Label>被动 3</Label>
-            <EditableEnumField
-              v-if="fieldInput(baseField('beidong3')) === 'select'"
-              :initial-value="baseField('beidong3')!.initialValue"
-              :model-value="baseField('beidong3')!.value"
-              :options="baseField('beidong3')!.enumOptions"
-              compact
-              @update="updateField(baseField('beidong3')!, $event)"
-            />
-            <EditableNumberField
-              v-else-if="fieldInput(baseField('beidong3')) === 'number'"
-              :initial-value="baseField('beidong3')!.initialValue"
-              :model-value="baseField('beidong3')!.value"
-              compact
-              @update="updateField(baseField('beidong3')!, $event)"
-            />
-            <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-              {{ baseField("beidong3")?.value || "-" }}
-            </div>
+          <div v-if="baseField('beidong3')" class="flex items-center gap-2">
+            <AppFieldStack class="flex-1" label="被动 3">
+              <EditableEnumField
+                v-if="fieldInput(baseField('beidong3')) === 'select'"
+                :initial-value="baseField('beidong3')!.initialValue"
+                :model-value="baseField('beidong3')!.value"
+                :options="baseField('beidong3')!.enumOptions"
+                compact
+                @update="updateField(baseField('beidong3')!, $event)"
+              />
+              <EditableNumberField
+                v-else-if="fieldInput(baseField('beidong3')) === 'number'"
+                :initial-value="baseField('beidong3')!.initialValue"
+                :model-value="baseField('beidong3')!.value"
+                compact
+                @update="updateField(baseField('beidong3')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ baseField("beidong3")?.value || "-" }}
+              </div>
+            </AppFieldStack>
+            <AppFieldStack v-if="currentLevelField('b3value')" class="flex-1" label="数值">
+              <EditableNumberField
+                v-if="fieldInput(currentLevelField('b3value')) === 'number'"
+                :initial-value="currentLevelField('b3value')!.initialValue"
+                :model-value="currentLevelField('b3value')!.value"
+                compact
+                @update="updateField(currentLevelField('b3value')!, $event)"
+              />
+              <div v-else class="h-9 truncate rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                {{ currentLevelField("b3value")?.value || "-" }}
+              </div>
+            </AppFieldStack>
           </div>
         </div>
       </div>
 
       <div class="overflow-auto">
-        <Table class="[&_td]:text-center [&_th]:text-center">
+        <Table class="[&_td]:min-w-24 [&_td]:text-center [&_th]:min-w-24 [&_th]:whitespace-nowrap [&_th]:text-center">
           <TableHeader>
             <TableRow>
               <TableHead rowspan="2">境界</TableHead>

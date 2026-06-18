@@ -3,11 +3,9 @@ import type { EquipmentStyleKey, EquipmentStyles, LoadoutOption } from "./types"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectItem,
@@ -32,8 +30,7 @@ const emit = defineEmits<{
       <CardTitle>铭刻</CardTitle>
     </AppCardHeader>
     <AppCardContent class="grid gap-3 grid-cols-3">
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground" for="equipment-weapon1">武器 1</Label>
+      <AppFieldStack label="武器 1" label-for="equipment-weapon1">
         <Select
           :model-value="equipmentStyles.weapon1"
           @update:model-value="emit('updateEquipmentStyle', 'weapon1', String($event))"
@@ -48,10 +45,9 @@ const emit = defineEmits<{
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
 
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground" for="equipment-weapon2">武器 2</Label>
+      <AppFieldStack label="武器 2" label-for="equipment-weapon2">
         <Select
           :model-value="equipmentStyles.weapon2"
           @update:model-value="emit('updateEquipmentStyle', 'weapon2', String($event))"
@@ -66,10 +62,9 @@ const emit = defineEmits<{
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
 
-      <div class="grid gap-2">
-        <Label class="text-muted-foreground" for="equipment-armor">装备</Label>
+      <AppFieldStack label="装备" label-for="equipment-armor">
         <Select
           :model-value="equipmentStyles.armor"
           @update:model-value="emit('updateEquipmentStyle', 'armor', String($event))"
@@ -84,7 +79,7 @@ const emit = defineEmits<{
             </SelectItem>
           </AppSelectContent>
         </Select>
-      </div>
+      </AppFieldStack>
     </AppCardContent>
   </AppCard>
 </template>
