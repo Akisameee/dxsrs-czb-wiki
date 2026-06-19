@@ -9,6 +9,11 @@ import {
   type CharacterSummaryRow,
   type WikiEnums,
 } from "~/lib/wiki/character";
+import {
+  createCharacterDefaultEquipmentResolver,
+  type CharacterDefaultEquipmentIds,
+  type CharacterDefaultEquipmentRecipeRow,
+} from "~/lib/wiki/character-equipment";
 
 export type CharacterDetailRow = CharacterSummaryRow & {
   portrait: string | null;
@@ -53,6 +58,7 @@ export type CharacterDetailRow = CharacterSummaryRow & {
 
 export type CharacterDetailData = {
   character: CharacterDetailRow | null;
+  defaultEquipment: CharacterDefaultEquipmentIds | null;
   quests: CharacterQuestRow[];
   questTargets: CharacterQuestTargetRow[];
   invitationRequirements: CharacterInvitationRequirementRow[];
@@ -68,6 +74,7 @@ export type CharacterFindQuery =
 const summaryCache = new Map<number, CharacterSummary | null>();
 const detailCache = new Map<number, CharacterDetailData>();
 const characterFindCache = new Map<string, CharacterDetailRow | null>();
+let defaultEquipmentResolverPromise: Promise<ReturnType<typeof createCharacterDefaultEquipmentResolver>> | null = null;
 
 export function useCharacterData() {
   const { queryRows } = useWikiDb();
@@ -144,19 +151,39 @@ export function useCharacterData() {
     );
   }
 
+  function loadCharacterDefaultEquipmentResolver() {
+    defaultEquipmentResolverPromise ||= queryRows<CharacterDefaultEquipmentRecipeRow>(
+      `SELECT item_id, template_name, rarity_id
+       FROM item_recipes
+       WHERE template_name IS NOT NULL
+       ORDER BY template_name, rarity_id, item_id`,
+    ).then((rows) => createCharacterDefaultEquipmentResolver(rows));
+    return defaultEquipmentResolverPromise;
+  }
+
   async function loadCharacterDetail(id: number): Promise<CharacterDetailData> {
     if (detailCache.has(id)) return detailCache.get(id)!;
 
-    const [character, quests, questTargets, invitationRequirements, enums] = await Promise.all([
+    const [character, quests, questTargets, invitationRequirements, enums, defaultEquipmentResolver] = await Promise.all([
       loadCharacter(id),
       loadCharacterQuests(id),
       loadCharacterQuestTargets(id),
       loadCharacterInvitationRequirements(id),
       loadWikiEnums(),
+      loadCharacterDefaultEquipmentResolver(),
     ]);
 
     const invitationRequirementSummaries = await buildInvitationRequirementSummaries(invitationRequirements, enums);
-    const detail = { character, quests, questTargets, invitationRequirements, invitationRequirementSummaries, enums };
+    const defaultEquipment = character ? defaultEquipmentResolver(character) : null;
+    const detail = {
+      character,
+      defaultEquipment,
+      quests,
+      questTargets,
+      invitationRequirements,
+      invitationRequirementSummaries,
+      enums,
+    };
     detailCache.set(id, detail);
     return detail;
   }

@@ -174,6 +174,7 @@ class ItemBuilder:
             rows.append({
                 "id": int(js_number(row.get("index"))),
                 "item_id": product_id,
+                "template_name": row.get("tuzhi") or None,
                 "recipe_name": item_display_name(row.get("name")),
                 "product_name": item_display_name(product_name),
                 "type_id": int(js_number(row.get("chanwutype"))),

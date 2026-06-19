@@ -279,6 +279,7 @@ TABLES = {
     "columns": {
       "id": "INTEGER NOT NULL",
       "item_id": "INTEGER NOT NULL",
+      "template_name": "TEXT",
       "recipe_name": "TEXT",
       "product_name": "TEXT",
       "type_id": "INTEGER",

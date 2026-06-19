@@ -31,59 +31,52 @@ defineProps<{
       />
     </template>
     <template #default="{ summary: currentSummary }">
-    <div class="grid gap-2 text-sm">
-      <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">门派</span>
-        <span class="tabular-nums">{{ currentSummary.sect }}</span>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <AppInfoRow label="门派" :value="currentSummary.sect" />
+        <AppInfoRow label="风格">
+          <div class="flex flex-wrap justify-end gap-2">
+            <Badge
+              v-for="style in currentSummary.styles"
+              :key="style"
+              variant="secondary"
+            >
+              {{ style }}
+            </Badge>
+          </div>
+        </AppInfoRow>
       </div>
-      <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">风格</span>
-        <div class="flex flex-wrap justify-end gap-2">
-          <Badge
-            v-for="style in currentSummary.styles"
-            :key="style"
-            variant="secondary"
-          >
-            {{ style }}
-          </Badge>
-        </div>
-      </div>
-    </div>
 
-    <div class="grid gap-2 border-t pt-3 text-sm">
-      <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">获取</span>
-        <span class="min-w-0 flex-1 text-right">
+      <div class="grid gap-2 border-t pt-3 text-sm">
+        <AppInfoRow label="获取" value-class="min-w-0 flex-1">
           <WikiText :parts="currentSummary.obtainMethodParts" />
-        </span>
+        </AppInfoRow>
       </div>
-    </div>
 
-    <div v-if="currentSummary.effects.length" class="grid gap-2 border-t pt-3 text-sm">
-      <div class="text-muted-foreground">效果</div>
-      <div class="grid gap-1">
-        <div
-          v-for="effect in currentSummary.effects"
-          :key="effect.id"
-          class="rounded-md border px-3 py-2"
-        >
-          {{ effect.text }}
+      <div v-if="currentSummary.effects.length" class="grid gap-2 border-t pt-3 text-sm">
+        <div class="text-muted-foreground">效果</div>
+        <div class="grid gap-2">
+          <div
+            v-for="effect in currentSummary.effects"
+            :key="effect.id"
+            class="rounded-md border px-3 py-2"
+          >
+            {{ effect.text }}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="currentSummary.passives.length" class="grid gap-2 border-t pt-3 text-sm">
-      <div class="text-muted-foreground">被动</div>
-      <div class="grid gap-1">
-        <div
-          v-for="passive in currentSummary.passives"
-          :key="passive"
-          class="rounded-md border px-3 py-2"
-        >
-          {{ passive }}
+      <div v-if="currentSummary.passives.length" class="grid gap-2 border-t pt-3 text-sm">
+        <div class="text-muted-foreground">被动</div>
+        <div class="grid gap-2">
+          <div
+            v-for="passive in currentSummary.passives"
+            :key="passive"
+            class="rounded-md border px-3 py-2"
+          >
+            {{ passive }}
+          </div>
         </div>
       </div>
-    </div>
     </template>
   </WikiSummaryPanel>
 </template>

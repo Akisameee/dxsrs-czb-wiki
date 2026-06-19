@@ -431,8 +431,10 @@ export async function buildItemSummary(
   enums: WikiEnums,
   recipeUnlocks: ItemRecipeUnlockSummary[],
 ): Promise<ItemSummary> {
-  const description = item.description || "无说明";
-  const descriptionParts = await linkMartialArtsInText(description);
+  const description = item.description || "";
+  const descriptionParts = description
+    ? await linkMartialArtsInText(description)
+    : [];
   const useEffectText = itemUseEffectText(item, recipeUnlocks);
   const useEffectParts = await itemUseEffectParts(item, recipeUnlocks);
 
@@ -449,7 +451,7 @@ export async function buildItemSummary(
     materialText: itemMaterialText(item),
     cost: formatItemNumber(item.cost),
     description,
-    descriptionParts: descriptionParts.length ? descriptionParts : [wikiText(description)],
+    descriptionParts: descriptionParts.length ? descriptionParts : (description ? [wikiText(description)] : []),
     useText: item.use_text || "无",
     useEffectText,
     useEffectParts,

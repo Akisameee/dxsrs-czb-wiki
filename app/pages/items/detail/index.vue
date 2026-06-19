@@ -32,6 +32,10 @@ const { data, pending, error } = useLazyAsyncData(
 
 const summary = computed(() => data.value?.summary || null);
 const recipe = computed(() => data.value?.recipe || null);
+const hasDescription = computed(() => Boolean(summary.value?.descriptionParts.length));
+const hasUseEffect = computed(() =>
+  Boolean(summary.value && (summary.value.useEffectText !== "无" || summary.value.useValues.length)),
+);
 const recipeAttributeRows = computed(() =>
   Object.fromEntries((recipe.value?.attributeRows || []).map((row) => [row.key, row])),
 );
@@ -122,12 +126,6 @@ const recipeMetaRows = computed(() =>
                 value-class="tabular-nums"
               />
               <AppInfoRow
-                v-if="recipeAttributeRows.main_attribute"
-                label="主属性"
-                :value="recipeAttributeRows.main_attribute.value"
-                value-class="tabular-nums"
-              />
-              <AppInfoRow
                 v-if="recipeAttributeRows.bonus_count"
                 label="附加属性数量"
                 :value="recipeAttributeRows.bonus_count.value"
@@ -206,7 +204,7 @@ const recipeMetaRows = computed(() =>
         </AppCard>
       </div>
 
-      <AppCard>
+      <AppCard v-if="hasDescription">
         <AppCardHeader>
           <CardTitle>说明</CardTitle>
         </AppCardHeader>
@@ -215,7 +213,7 @@ const recipeMetaRows = computed(() =>
         </AppCardContent>
       </AppCard>
 
-      <AppCard>
+      <AppCard v-if="hasUseEffect">
         <AppCardHeader>
           <CardTitle>使用效果</CardTitle>
         </AppCardHeader>

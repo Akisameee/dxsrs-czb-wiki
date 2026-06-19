@@ -40,7 +40,6 @@ def character_display_name_lookup(npc_rows: list[dict[str, Any]]) -> dict[str, s
         name_by_name[display_name] = display_name
     return name_by_name
 
-
 class CharacterBuilder:
     def __init__(self, ctx):
         self.ctx = ctx

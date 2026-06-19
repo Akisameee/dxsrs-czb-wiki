@@ -4,7 +4,7 @@ import { CircleHelp } from "@lucide/vue";
 import WikiHoverLink from "~/components/wiki/WikiHoverLink.vue";
 import { rarityTextClass } from "~/lib/rarity";
 import { useItemData } from "~/composables/useItemData";
-import type { ItemSummary } from "~/lib/wiki/item";
+import type { ItemRecipeSummary, ItemSummary } from "~/lib/wiki/item";
 
 const ItemSummaryPanel = defineAsyncComponent(() => import("./SummaryPanel.vue"));
 
@@ -27,8 +27,9 @@ const itemId = computed(() => {
 const detailUrl = computed(() => (
   itemId.value === null ? "/items/" : `/items/detail/?id=${itemId.value}`
 ));
-const { loadItemSummary } = useItemData();
+const { loadItemDetail } = useItemData();
 const summary = shallowRef<ItemSummary | null>(null);
+const recipe = shallowRef<ItemRecipeSummary | null>(null);
 const pending = ref(false);
 const error = shallowRef<Error | null>(null);
 const displayLabel = computed(() => (
@@ -53,9 +54,12 @@ async function load() {
   pending.value = true;
   error.value = null;
   try {
-    const nextSummary = await loadItemSummary(value);
-    if (itemId.value === value) summary.value = nextSummary;
-    return nextSummary;
+    const detail = await loadItemDetail(value);
+    if (itemId.value === value) {
+      summary.value = detail.summary;
+      recipe.value = detail.recipe;
+    }
+    return detail.summary;
   } catch (caught) {
     if (itemId.value === value) {
       error.value = caught instanceof Error ? caught : new Error(String(caught));
@@ -72,6 +76,7 @@ watch(open, (value) => {
 
 watch(itemId, () => {
   summary.value = null;
+  recipe.value = null;
   error.value = null;
 });
 
@@ -97,6 +102,7 @@ onMounted(() => {
     </template>
     <ItemSummaryPanel
       :summary="summary"
+      :recipe="recipe"
       :pending="pending"
       :error="error"
     />

@@ -187,44 +187,39 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
               />
             </div>
             <div class="grid content-start items-start gap-3 text-sm grid-cols-2">
-              <div class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">类型</span>
-                <span>{{ martialArtTypeLabel(martialArt, enums) }}</span>
-              </div>
-              <div class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">门派</span>
-                <SectHoverLink
-                  mode="link"
-                  :id="martialArt.sect_id"
-                  :label="martialArtSectLabel(martialArt)"
-                />
-              </div>
-              <div class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">稀有度</span>
-                <span>{{ martialArtRarityLabel(martialArt, enums) }}</span>
-              </div>
-              <div class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">门派限制</span>
-                <span>{{ martialArtRestrictionValue(martialArt) }}</span>
-              </div>
-              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">真气消耗</span>
-                <span>{{ formatMartialArtNumber(martialArt.cost) }}</span>
-              </div>
-              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">攻击范围</span>
-                <span>{{ martialArtAttackAreaLabel(martialArt, enums) }}</span>
-              </div>
-              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">出招间隔</span>
-                <span>{{ martialArt.interval === null || martialArt.interval === undefined ? "无间隔" : formatMartialArtNumber(martialArt.interval) }}</span>
-              </div>
-              <div v-if="!isInternalMartialArt" class="flex items-start justify-between gap-3">
-                <span class="text-muted-foreground">命中率</span>
-                <span>{{ martialArt.accuracy === null || martialArt.accuracy === undefined ? "无命中" : formatMartialArtPercent(martialArt.accuracy) }}</span>
-              </div>
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-muted-foreground">风格</span>
+              <AppInfoRow label="类型" :value="martialArtTypeLabel(martialArt, enums)" />
+              <AppInfoRow label="门派">
+                <template #default>
+                  <SectHoverLink
+                    mode="link"
+                    :id="martialArt.sect_id"
+                    :label="martialArtSectLabel(martialArt)"
+                  />
+                </template>
+              </AppInfoRow>
+              <AppInfoRow label="稀有度" :value="martialArtRarityLabel(martialArt, enums)" />
+              <AppInfoRow label="门派限制" :value="martialArtRestrictionValue(martialArt)" />
+              <AppInfoRow
+                v-if="!isInternalMartialArt"
+                label="真气消耗"
+                :value="formatMartialArtNumber(martialArt.cost)"
+              />
+              <AppInfoRow
+                v-if="!isInternalMartialArt"
+                label="攻击范围"
+                :value="martialArtAttackAreaLabel(martialArt, enums)"
+              />
+              <AppInfoRow
+                v-if="!isInternalMartialArt"
+                label="出招间隔"
+                :value="martialArt.interval === null || martialArt.interval === undefined ? '无间隔' : formatMartialArtNumber(martialArt.interval)"
+              />
+              <AppInfoRow
+                v-if="!isInternalMartialArt"
+                label="命中率"
+                :value="martialArt.accuracy === null || martialArt.accuracy === undefined ? '无命中' : formatMartialArtPercent(martialArt.accuracy)"
+              />
+              <AppInfoRow label="风格">
                 <div v-if="styleItems.length" class="flex flex-wrap justify-end gap-2">
                   <StyleHoverLink
                     v-for="style in styleItems"
@@ -233,10 +228,9 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                     :label="style.label"
                   />
                 </div>
-                <span v-else>无风格</span>
-              </div>
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-muted-foreground">效果</span>
+                <template v-else>无风格</template>
+              </AppInfoRow>
+              <AppInfoRow label="效果">
                 <div v-if="effectBadges.length" class="flex flex-wrap justify-end gap-2">
                   <Badge
                     v-for="item in effectBadges"
@@ -246,8 +240,8 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                     {{ item.text }}
                   </Badge>
                 </div>
-                <span v-else>无效果</span>
-              </div>
+                <template v-else>无效果</template>
+              </AppInfoRow>
             </div>
           </AppCardContent>
         </AppCard>
@@ -266,7 +260,7 @@ function assetEffectPreviewLayers(kind: "slash" | "hit", effectId: number | null
                 {{ item }}
               </div>
             </div>
-            <span v-else class="text-muted-foreground">无被动</span>
+            <div v-else class="text-muted-foreground">无被动</div>
           </AppCardContent>
         </AppCard>
 

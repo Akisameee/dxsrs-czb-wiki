@@ -3,6 +3,7 @@ import { enumLabel } from "~/lib/utils";
 import { rarityCardClass } from "~/lib/rarity";
 import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
 import LifeSkillRankImages from "~/components/wiki/character/LifeSkillRankImages.vue";
+import ItemHoverLink from "~/components/wiki/item/HoverLink.vue";
 import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
 import WikiText from "~/components/wiki/WikiText.vue";
 import {
@@ -28,7 +29,15 @@ const { data, pending, error } = useLazyAsyncData(
   async () => {
     const id = Number(route.query.id);
     if (!Number.isFinite(id)) {
-      return { character: null, quests: [], questTargets: [], invitationRequirements: [], invitationRequirementSummaries: [], enums: {} };
+      return {
+        character: null,
+        defaultEquipment: null,
+        quests: [],
+        questTargets: [],
+        invitationRequirements: [],
+        invitationRequirementSummaries: [],
+        enums: {},
+      };
     }
 
     return loadCharacterDetail(id);
@@ -37,6 +46,7 @@ const { data, pending, error } = useLazyAsyncData(
 );
 
 const character = computed(() => data.value?.character || null);
+const defaultEquipment = computed(() => data.value?.defaultEquipment || null);
 const enums = computed(() => data.value?.enums || {});
 const radarCanvas = ref<HTMLCanvasElement | null>(null);
 let radarChart: any = null;
@@ -248,56 +258,24 @@ onBeforeUnmount(() => {
               />
             </div>
             <div class="grid auto-rows-min content-start gap-3 text-sm grid-cols-2">
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">门派</span>
-                <SectHoverLink
-                  mode="link"
-                  :id="character.sect_id"
-                  :label="character.sect_name || '无门派'"
-                />
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">地位</span>
-                <span>{{ label("DiWei", character.position_id, "地位") }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">资质</span>
-                <span>{{ label("NPC_Rare", character.rarity_id, "资质") }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">资历</span>
-                <span>{{ label("Dengji", character.rank_id, "资历") }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">名声</span>
-                <span>{{ formatNumber(character.fame) }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">侠义</span>
-                <span>{{ formatNumber(character.chivalry) }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">银两</span>
-                <span>{{ formatNumber(character.gold) }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">等级</span>
-                <span>{{ formatNumber(character.level) }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">武器类型</span>
-                <span>{{ label("BingQiType", character.weapon_type_id) }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">武器</span>
-                <span>{{ character.equipment_weapon || "-" }}</span>
-              </div>
-              <div class="flex justify-between gap-3">
-                <span class="text-muted-foreground">防具</span>
-                <span>{{ character.equipment_armor || "-" }}</span>
-              </div>
-              <div v-if="favoriteItems.length" class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-muted-foreground">偏好</span>
+              <AppInfoRow label="门派">
+                <template #default>
+                  <SectHoverLink
+                    mode="link"
+                    :id="character.sect_id"
+                    :label="character.sect_name || '无门派'"
+                  />
+                </template>
+              </AppInfoRow>
+              <AppInfoRow label="地位" :value="label('DiWei', character.position_id, '地位')" />
+              <AppInfoRow label="资质" :value="label('NPC_Rare', character.rarity_id, '资质')" />
+              <AppInfoRow label="资历" :value="label('Dengji', character.rank_id, '资历')" />
+              <AppInfoRow label="名声" :value="formatNumber(character.fame)" />
+              <AppInfoRow label="侠义" :value="formatNumber(character.chivalry)" />
+              <AppInfoRow label="银两" :value="formatNumber(character.gold)" />
+              <AppInfoRow label="等级" :value="formatNumber(character.level)" />
+              <AppInfoRow label="武器类型" :value="label('BingQiType', character.weapon_type_id)" />
+              <AppInfoRow v-if="favoriteItems.length" label="偏好">
                 <div class="flex flex-wrap justify-end gap-2">
                   <Badge
                     v-for="item in favoriteItems"
@@ -307,7 +285,21 @@ onBeforeUnmount(() => {
                     {{ item.label }}
                   </Badge>
                 </div>
-              </div>
+              </AppInfoRow>
+              <AppInfoRow label="默认武器">
+                <ItemHoverLink
+                  v-if="defaultEquipment && defaultEquipment.weaponItemId !== null"
+                  :id="defaultEquipment.weaponItemId"
+                />
+                <span v-else>{{ character.equipment_weapon || "-" }}</span>
+              </AppInfoRow>
+              <AppInfoRow label="默认防具">
+                <ItemHoverLink
+                  v-if="defaultEquipment && defaultEquipment.armorItemId !== null"
+                  :id="defaultEquipment.armorItemId"
+                />
+                <span v-else>{{ character.equipment_armor || "-" }}</span>
+              </AppInfoRow>
             </div>
           </AppCardContent>
         </AppCard>
@@ -373,7 +365,7 @@ onBeforeUnmount(() => {
         </AppCard>
       </div>
 
-      <AppCard>
+      <AppCard v-if="(data?.invitationRequirementSummaries || []).length">
         <AppCardHeader>
           <CardTitle>邀请条件</CardTitle>
         </AppCardHeader>
@@ -386,13 +378,10 @@ onBeforeUnmount(() => {
             <span class="text-muted-foreground">条件 {{ requirement.slot + 1 }}：</span>
             <WikiText :parts="requirement.parts" />
           </div>
-          <div v-if="!(data?.invitationRequirementSummaries || []).length" class="text-sm text-muted-foreground">
-            无邀请条件
-          </div>
         </AppCardContent>
       </AppCard>
 
-      <AppCard>
+      <AppCard v-if="(data?.quests || []).length">
         <AppCardHeader>
           <CardTitle>心愿任务</CardTitle>
         </AppCardHeader>
@@ -407,9 +396,6 @@ onBeforeUnmount(() => {
               <WikiText :parts="questSummaryParts(quest)" />
             </span>
             <span class="text-sm text-muted-foreground">亲密度 {{ quest.required_affinity }}</span>
-          </div>
-          <div v-if="!(data?.quests || []).length" class="text-sm text-muted-foreground">
-            无心愿任务
           </div>
         </AppCardContent>
       </AppCard>

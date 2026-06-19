@@ -21,6 +21,8 @@ export type CharacterSummaryRow = {
   location_id: number | null;
   sect_id: number | null;
   sect_name?: string | null;
+  position_id: number | null;
+  rank_id: number | null;
   rarity_id: number;
   weapon_type_id: number;
 };
@@ -76,6 +78,8 @@ export type CharacterSummary = {
   rarityId: number;
   location: string;
   sect: string;
+  position: string;
+  rank: string;
   rarity: string;
   weaponType: string;
   invitationRequirements: CharacterInvitationRequirementSummary[];
@@ -326,6 +330,8 @@ export async function buildCharacterSummary(
     rarityId: character.rarity_id,
     location: characterLocationText(character, enums),
     sect: character.sect_name || "无门派",
+    position: enumLabel(enums, "DiWei", character.position_id, "地位"),
+    rank: enumLabel(enums, "Dengji", character.rank_id, "资历"),
     rarity: enumLabel(enums, "NPC_Rare", character.rarity_id, "资质"),
     weaponType: enumLabel(enums, "BingQiType", character.weapon_type_id, "未知"),
     invitationRequirements: invitationRequirementSummaries,
