@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {
-  fieldDraftKey,
   formatSaveValue,
+  saveEditDraftFieldValue,
+  saveEditDraftHasField,
   type SaveEditDraft,
 } from "~/lib/save-edit";
 import type { BgDatabaseField, BgDatabaseValue } from "~/lib/save-edit";
@@ -41,11 +42,12 @@ const emit = defineEmits<{
 }>();
 
 const initialValue = computed(() => formatSaveValue(props.field?.values[props.rowIndex] as BgDatabaseValue | undefined));
-const draftKey = computed(() => props.field ? fieldDraftKey(props.field, props.rowIndex) : "");
 const modelValue = computed(() => {
   if (!props.field) return "";
-  return props.draft[draftKey.value] ?? initialValue.value;
+  return formatSaveValue(saveEditDraftFieldValue(props.field, props.rowIndex, props.draft));
 });
+const dirty = computed(() => saveEditDraftHasField(props.field, props.rowIndex, props.draft));
+const resetValue = computed(() => initialValue.value);
 const normalizedOptions = computed<EditableEnumOption[]>(() =>
   props.enumOptions.map((option) => ({
     value: "value" in option ? option.value : option.id,
@@ -78,6 +80,7 @@ function update(value: string) {
       v-if="!field || resolvedInput === 'readonly'"
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
       :hint="hint"
       :compact="compact"
     />
@@ -85,6 +88,8 @@ function update(value: string) {
       v-else-if="resolvedInput === 'select'"
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
+      :reset-value="resetValue"
       :options="normalizedOptions"
       :hint="hint"
       :compact="compact"
@@ -94,6 +99,8 @@ function update(value: string) {
       v-else-if="resolvedInput === 'boolean'"
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
+      :reset-value="resetValue"
       true-value="true"
       false-value="false"
       :hint="hint"
@@ -104,6 +111,8 @@ function update(value: string) {
       v-else-if="resolvedInput === 'number'"
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
+      :reset-value="resetValue"
       :min="min"
       :max="max"
       :step="step"
@@ -115,6 +124,8 @@ function update(value: string) {
       v-else-if="resolvedInput === 'json'"
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
+      :reset-value="resetValue"
       :hint="hint"
       :compact="compact"
       @update="update"
@@ -123,6 +134,8 @@ function update(value: string) {
       v-else
       :initial-value="initialValue"
       :model-value="modelValue"
+      :dirty="dirty"
+      :reset-value="resetValue"
       :hint="hint"
       :compact="compact"
       @update="update"

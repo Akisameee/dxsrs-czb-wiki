@@ -8,6 +8,8 @@ const props = withDefaults(defineProps<{
   readonly?: boolean;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string;
 }>(), {
   disabled: false,
   readonly: false,
@@ -19,7 +21,8 @@ const emit = defineEmits<{
   update: [value: string];
 }>();
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 const error = computed(() => {
   if (!props.modelValue.trim()) return "";
   try {
@@ -40,7 +43,7 @@ const error = computed(() => {
     :hint="hint"
     :error="error"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <textarea
       :value="modelValue"

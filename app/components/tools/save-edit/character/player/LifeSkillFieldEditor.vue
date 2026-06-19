@@ -73,7 +73,7 @@ function onWheel(event: WheelEvent) {
       @wheel="onWheel"
     >
       <span v-if="label" class="shrink-0 whitespace-nowrap text-sm text-muted-foreground">{{ label }}</span>
-      <div class="ml-auto flex shrink-0 items-center gap-1 md:gap-2 xl:gap-3">
+      <div class="ml-auto flex shrink-0 items-center gap-1">
         <button
           v-for="index in slots"
           :key="index"

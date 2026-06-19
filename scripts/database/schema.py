@@ -239,6 +239,125 @@ TABLES = {
       "is_material": "INTEGER NOT NULL"
     }
   },
+  "item_inventory_templates": {
+    "primaryKey": [
+      "item_id"
+    ],
+    "columns": {
+      "item_id": "INTEGER NOT NULL",
+      "source_row_index": "INTEGER NOT NULL",
+      "template_name": "TEXT",
+      "daojuname": "TEXT",
+      "showname": "TEXT",
+      "type_id": "INTEGER",
+      "rarity_id": "INTEGER",
+      "zhuangbeiid": "INTEGER",
+      "att": "INTEGER",
+      "def": "INTEGER",
+      "hp": "INTEGER",
+      "weight": "REAL",
+      "length": "REAL",
+      "zhushuxing": "INTEGER",
+      "lvli": "INTEGER",
+      "gengu": "INTEGER",
+      "tipo": "INTEGER",
+      "shenfa": "INTEGER",
+      "showlv": "INTEGER",
+      "hidelv": "INTEGER",
+      "mingkecitiao": "TEXT",
+      "mingke_fg": "INTEGER",
+      "mingke_lvli": "INTEGER",
+      "mingke_gengu": "INTEGER",
+      "mingke_tipo": "INTEGER",
+      "mingke_shenfa": "INTEGER"
+    }
+  },
+  "item_recipes": {
+    "primaryKey": [
+      "id"
+    ],
+    "columns": {
+      "id": "INTEGER NOT NULL",
+      "item_id": "INTEGER NOT NULL",
+      "recipe_name": "TEXT",
+      "product_name": "TEXT",
+      "type_id": "INTEGER",
+      "quantity": "INTEGER",
+      "rarity_id": "INTEGER",
+      "material_1_name": "TEXT",
+      "material_1_item_id": "INTEGER",
+      "material_1_quantity": "INTEGER",
+      "material_2_name": "TEXT",
+      "material_2_item_id": "INTEGER",
+      "material_2_quantity": "INTEGER",
+      "material_3_name": "TEXT",
+      "material_3_item_id": "INTEGER",
+      "material_3_quantity": "INTEGER",
+      "length_min": "REAL",
+      "length_max": "REAL",
+      "weight_min": "REAL",
+      "weight_max": "REAL",
+      "att_min": "INTEGER",
+      "att_max": "INTEGER",
+      "def_min": "INTEGER",
+      "def_max": "INTEGER",
+      "hp_min": "INTEGER",
+      "hp_max": "INTEGER",
+      "main_attribute_min": "INTEGER",
+      "main_attribute_max": "INTEGER",
+      "bonus_count_min": "INTEGER",
+      "bonus_count_max": "INTEGER",
+      "bonus_value_min": "INTEGER",
+      "bonus_value_max": "INTEGER",
+      "fixed_strength": "INTEGER NOT NULL",
+      "fixed_constitution": "INTEGER NOT NULL",
+      "fixed_physique": "INTEGER NOT NULL",
+      "fixed_agility": "INTEGER NOT NULL",
+      "is_learned": "INTEGER NOT NULL",
+      "required_level": "INTEGER",
+      "is_basic": "INTEGER NOT NULL",
+      "is_basic_material": "INTEGER NOT NULL",
+      "can_buy": "INTEGER NOT NULL"
+    }
+  },
+  "item_recipe_unlocks": {
+    "primaryKey": [
+      "unlock_item_id",
+      "recipe_id"
+    ],
+    "columns": {
+      "unlock_item_id": "INTEGER NOT NULL",
+      "recipe_id": "INTEGER NOT NULL",
+      "product_item_id": "INTEGER NOT NULL"
+    }
+  },
+  "inscriptions": {
+    "primaryKey": [
+      "id"
+    ],
+    "columns": {
+      "id": "INTEGER NOT NULL",
+      "name": "TEXT",
+      "legacy_name": "TEXT",
+      "style_id": "INTEGER",
+      "bonus_count": "INTEGER",
+      "bonus_value_min": "INTEGER",
+      "bonus_value_max": "INTEGER",
+      "fixed_strength": "INTEGER NOT NULL",
+      "fixed_constitution": "INTEGER NOT NULL",
+      "fixed_physique": "INTEGER NOT NULL",
+      "fixed_agility": "INTEGER NOT NULL",
+      "material_1_name": "TEXT",
+      "material_1_item_id": "INTEGER",
+      "material_1_quantity": "INTEGER",
+      "material_2_name": "TEXT",
+      "material_2_item_id": "INTEGER",
+      "material_2_quantity": "INTEGER",
+      "material_3_name": "TEXT",
+      "material_3_item_id": "INTEGER",
+      "material_3_quantity": "INTEGER"
+    }
+  },
   "image_manifest": {
     "primaryKey": [
       "id"
@@ -647,6 +766,20 @@ INDEXES = [
   "CREATE INDEX idx_character_invitation_requirements_type ON character_invitation_requirements(type_id)",
   "CREATE INDEX idx_items_type ON items(type_id)",
   "CREATE INDEX idx_items_image ON items(image_id)",
+  "CREATE INDEX idx_item_inventory_templates_type ON item_inventory_templates(type_id)",
+  "CREATE INDEX idx_item_inventory_templates_rarity ON item_inventory_templates(rarity_id)",
+  "CREATE INDEX idx_item_inventory_templates_daojuname ON item_inventory_templates(daojuname)",
+  "CREATE INDEX idx_item_recipes_item ON item_recipes(item_id)",
+  "CREATE INDEX idx_item_recipes_type ON item_recipes(type_id)",
+  "CREATE INDEX idx_item_recipes_material_1 ON item_recipes(material_1_item_id)",
+  "CREATE INDEX idx_item_recipes_material_2 ON item_recipes(material_2_item_id)",
+  "CREATE INDEX idx_item_recipes_material_3 ON item_recipes(material_3_item_id)",
+  "CREATE INDEX idx_item_recipe_unlocks_recipe ON item_recipe_unlocks(recipe_id)",
+  "CREATE INDEX idx_item_recipe_unlocks_product ON item_recipe_unlocks(product_item_id)",
+  "CREATE INDEX idx_inscriptions_style ON inscriptions(style_id)",
+  "CREATE INDEX idx_inscriptions_material_1 ON inscriptions(material_1_item_id)",
+  "CREATE INDEX idx_inscriptions_material_2 ON inscriptions(material_2_item_id)",
+  "CREATE INDEX idx_inscriptions_material_3 ON inscriptions(material_3_item_id)",
   "CREATE INDEX idx_image_manifest_atlas ON image_manifest(atlas)",
   "CREATE INDEX idx_items_legacy_name ON items(legacy_name)",
   "CREATE INDEX idx_items_rarity ON items(rarity_id)",

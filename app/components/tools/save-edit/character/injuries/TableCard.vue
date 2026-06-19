@@ -3,9 +3,9 @@ import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import { Badge } from "~/components/ui/badge";
 import {
-  fieldDraftKey,
   formatSaveValue,
-  parseFieldDraftKey,
+  saveEditDraftDirtyRows,
+  saveEditDraftHasField,
   saveEditEnumOptions,
   type SaveEditDraft,
 } from "~/lib/save-edit";
@@ -32,12 +32,7 @@ const emit = defineEmits<{
 
 const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
 const dirtyRows = computed(() => {
-  const result = new Set<number>();
-  for (const key of Object.keys(props.draft)) {
-    const parsed = parseFieldDraftKey(key);
-    if (parsed?.tableIndex === props.table.tableIndex) result.add(parsed.rowIndex);
-  }
-  return result;
+  return saveEditDraftDirtyRows(props.draft, props.table.tableIndex);
 });
 const tableDirty = computed(() => dirtyRows.value.size > 0);
 
@@ -86,7 +81,7 @@ function resetRow(rowIndex: number) {
   for (const fieldName of props.table.fieldNames) {
     const candidate = field(fieldName);
     if (!candidate?.parsed) continue;
-    if (fieldDraftKey(candidate, rowIndex) in props.draft) {
+    if (saveEditDraftHasField(candidate, rowIndex, props.draft)) {
       emit("updateField", candidate, initialFieldText(fieldName, rowIndex), rowIndex);
     }
   }

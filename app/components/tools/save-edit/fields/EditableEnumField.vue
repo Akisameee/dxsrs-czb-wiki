@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<{
   readonly?: boolean;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string;
 }>(), {
   placeholder: "",
   disabled: false,
@@ -32,7 +34,8 @@ const emit = defineEmits<{
   update: [value: string];
 }>();
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 const selectedLabel = computed(() => props.options.find((option) => option.value === props.modelValue)?.label || "");
 </script>
 
@@ -43,7 +46,7 @@ const selectedLabel = computed(() => props.options.find((option) => option.value
     :readonly="readonly"
     :hint="hint"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <Select
       :model-value="modelValue"

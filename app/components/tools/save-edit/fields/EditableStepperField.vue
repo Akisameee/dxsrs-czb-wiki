@@ -12,6 +12,8 @@ const props = withDefaults(defineProps<{
   readonly?: boolean;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string;
 }>(), {
   step: 1,
   disabled: false,
@@ -24,7 +26,8 @@ const emit = defineEmits<{
   update: [value: string];
 }>();
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 const numericValue = computed(() => {
   const value = Number(props.modelValue);
   return Number.isFinite(value) ? value : props.min ?? 0;
@@ -51,7 +54,7 @@ function stepBy(offset: number) {
     :readonly="readonly"
     :hint="hint"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <div class="grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2 rounded-md border bg-background px-2">
       <AppButton

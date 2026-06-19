@@ -35,10 +35,7 @@ defineProps<{
         <span class="text-muted-foreground">材料</span>
         <span>{{ currentSummary.materialText }}</span>
       </div>
-      <div class="flex justify-between gap-3">
-        <span class="text-muted-foreground">用途</span>
-        <span>{{ currentSummary.useType }}</span>
-      </div>
+
       <div class="flex justify-between gap-3">
         <span class="text-muted-foreground">价值</span>
         <span class="tabular-nums">{{ currentSummary.cost }}</span>
@@ -52,7 +49,7 @@ defineProps<{
       </div>
     </div>
 
-    <div v-if="currentSummary.useText !== '无' || currentSummary.useValues.length" class="grid gap-2 border-t pt-3 text-sm">
+    <div v-if="currentSummary.useEffectText !== '无' || currentSummary.useValues.length" class="grid gap-2 border-t pt-3 text-sm">
       <div class="text-muted-foreground">使用</div>
       <div><WikiText :parts="currentSummary.useEffectParts" /></div>
     </div>

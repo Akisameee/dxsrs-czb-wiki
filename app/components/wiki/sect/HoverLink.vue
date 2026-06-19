@@ -45,7 +45,7 @@ watch(open, (value) => {
       </Badge>
       <span
         v-else
-        class="font-medium underline-offset-4 hover:underline"
+        class="font-semibold underline-offset-4 hover:underline"
         :data-detail-url="detailUrl"
       >
         {{ label }}

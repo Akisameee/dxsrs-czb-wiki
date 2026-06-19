@@ -106,8 +106,23 @@ export type BgDatabaseFile = {
   warnings: string[];
 };
 
-export type BgDatabaseFieldUpdate = {
-  field: BgDatabaseField;
-  rowIndex: number;
-  value: string;
-};
+export type BgDatabaseRowOperation =
+  | {
+      type: "update";
+      field: BgDatabaseField;
+      rowIndex: number;
+      value: string;
+    }
+  | {
+      type: "insert";
+      tableIndex: number;
+      tableName: string;
+      tempId: string;
+      values: Record<string, string>;
+    }
+  | {
+      type: "delete";
+      tableIndex: number;
+      tableName: string;
+      rowIndex: number;
+    };

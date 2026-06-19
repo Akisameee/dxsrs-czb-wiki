@@ -9,6 +9,8 @@ const props = withDefaults(defineProps<{
   readonly?: boolean;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string[];
 }>(), {
   disabled: false,
   readonly: false,
@@ -20,7 +22,8 @@ const emit = defineEmits<{
   update: [value: string[]];
 }>();
 
-const dirty = computed(() => JSON.stringify(props.modelValue) !== JSON.stringify(props.initialValue));
+const dirty = computed(() => props.dirty ?? JSON.stringify(props.modelValue) !== JSON.stringify(props.initialValue));
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 
 function updateItem(index: number, value: string) {
   const next = [...props.modelValue];
@@ -44,7 +47,7 @@ function addItem() {
     :readonly="readonly"
     :hint="hint"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <div class="grid gap-2">
       <div

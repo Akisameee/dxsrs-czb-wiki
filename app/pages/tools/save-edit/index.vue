@@ -2,6 +2,7 @@
 import SaveEditHeaderCard from "~/components/tools/save-edit/SaveEditHeaderCard.vue";
 import SaveFileCardGrid from "~/components/tools/save-edit/SaveFileCardGrid.vue";
 import {
+  createEmptySaveEditDraft,
   formatSaveFileSize,
   isSaveEditCharacterSlotsFile,
   isSaveEditMeridianFile,
@@ -41,7 +42,7 @@ async function readSaveFile(file: File): Promise<ImportedSaveItem> {
     fileName: file.name,
     fileSize: formatSaveFileSize(file.size),
     fileType: "未知",
-    draft: {},
+    draft: createEmptySaveEditDraft(),
     selectedTableIndex: 0,
   };
 

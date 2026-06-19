@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { Plus, Trash2 } from "@lucide/vue";
+import AddInventoryItemDialog, { type InventoryAddItemPayload } from "./AddInventoryItemDialog.vue";
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import EditableItemCard from "./EditableItemCard.vue";
 import {
-  fieldDraftKey,
   formatSaveValue,
-  parseFieldDraftKey,
+  saveEditDraftDeletedRows,
+  saveEditDraftDirtyRows,
+  saveEditDraftFieldValue,
+  saveEditDraftTableDirty,
+  selectSaveEditInsertedTableRows,
+  selectSaveEditTableRow,
+  type SaveEditDraftResetTarget,
+  type SaveEditRowDraftOperation,
   type SaveEditDraft,
+  type SaveEditTableRowView,
+  createXingNangRow,
 } from "~/lib/save-edit";
 import { itemRarityLabel, itemTypeLabel } from "~/lib/wiki/item";
 import { rarityCardClass } from "~/lib/rarity";
@@ -22,6 +32,8 @@ type InventoryItemRow = {
   is_material: number | null;
 };
 
+type InventoryDisplayRow = SaveEditTableRowView;
+
 const props = defineProps<{
   table: BgDatabaseTable;
   equippedUids?: {
@@ -34,15 +46,20 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  updateField: [field: BgDatabaseField, value: string, rowIndex: number];
+  rowOperation: [operation: SaveEditRowDraftOperation];
+  rowOperations: [operations: SaveEditRowDraftOperation[]];
+  resetDraft: [target: SaveEditDraftResetTarget];
 }>();
 
 const { queryRows } = useWikiDb();
+const { findInventoryItemSource } = useItemData();
 const page = ref(1);
 const search = ref("");
 const typeFilter = ref("all");
 const rarityFilter = ref("all");
 const materialFilter = ref("all");
+const addDialogOpen = ref(false);
+const deleteMode = ref(false);
 const pageSize = 24;
 const equipmentTypeIds = new Set([9, 10, 11, 12, 13, 14, 15]);
 const equipmentStyleOptionIds = [1, 2, 3, 4, 6, 10, 11];
@@ -81,23 +98,23 @@ const itemByName = computed(() => {
 });
 
 const nameField = computed(() => props.table.fields.daojuname);
+const ownerField = computed(() => props.table.fields.juesename);
 const uidField = computed(() => props.table.fields.uid);
 const quantityField = computed(() => props.table.fields.qty);
 const equippedField = computed(() => props.table.fields.iseuipped);
 const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
+const playerRowIndexes = computed(() =>
+  rowIndexes.value.filter((rowIndex) => initialFieldText(ownerField.value, rowIndex) === "ZhuJue"),
+);
 const parsedFields = computed(() =>
   props.table.fieldNames
     .map((fieldName) => props.table.fields[fieldName])
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed)),
 );
 const dirtyRows = computed(() => {
-  const result = new Set<number>();
-  for (const key of Object.keys(props.draft)) {
-    const parsed = parseFieldDraftKey(key);
-    if (parsed?.tableIndex === props.table.tableIndex) result.add(parsed.rowIndex);
-  }
-  return result;
+  return saveEditDraftDirtyRows(props.draft, props.table.tableIndex);
 });
+const deletedRows = computed(() => saveEditDraftDeletedRows(props.draft, props.table.tableIndex));
 const equipmentUidSlots = [
   { key: "weapon1", label: "武器 1" },
   { key: "weapon2", label: "武器 2" },
@@ -144,13 +161,15 @@ const indexFilters = computed(() => [
   },
 ]);
 
+const insertedRows = computed(() => selectSaveEditInsertedTableRows(props.table, props.draft));
 const filteredRowIndexes = computed(() => {
   const query = search.value.trim().toLowerCase();
 
-  return rowIndexes.value.filter((rowIndex) => {
-    const name = fieldText(nameField.value, rowIndex);
-    const uid = fieldText(uidField.value, rowIndex);
-    const item = rowItem(rowIndex);
+  return playerRowIndexes.value.filter((rowIndex) => {
+    if (deletedRows.value.has(rowIndex)) return false;
+    const name = initialFieldText(nameField.value, rowIndex);
+    const uid = initialFieldText(uidField.value, rowIndex);
+    const item = initialRowItem(rowIndex);
     if (query && ![name, uid, item?.name, item?.legacy_name, item ? String(item.id) : ""]
       .some((value) => String(value || "").toLowerCase().includes(query))) {
       return false;
@@ -161,12 +180,20 @@ const filteredRowIndexes = computed(() => {
     return true;
   });
 });
-const totalRows = computed(() => filteredRowIndexes.value.length);
-const matchedRows = computed(() => rowIndexes.value.filter((rowIndex) => rowItem(rowIndex)).length);
+const filteredInventoryEntries = computed<Array<InventoryDisplayRow | number>>(() => [
+  ...insertedRows.value.filter(insertMatchesFilters),
+  ...filteredRowIndexes.value,
+]);
+const totalRows = computed(() => filteredInventoryEntries.value.length);
+const matchedRows = computed(() =>
+  playerRowIndexes.value.filter((rowIndex) => !deletedRows.value.has(rowIndex) && rowItem(rowIndex)).length,
+);
 const pageCount = computed(() => Math.max(1, Math.ceil(totalRows.value / pageSize)));
-const pagedRowIndexes = computed(() => {
+const pagedInventoryRows = computed<InventoryDisplayRow[]>(() => {
   const start = (page.value - 1) * pageSize;
-  return filteredRowIndexes.value.slice(start, start + pageSize);
+  return filteredInventoryEntries.value
+    .slice(start, start + pageSize)
+    .map((entry) => typeof entry === "number" ? selectSaveEditTableRow(props.table, props.draft, entry) : entry);
 });
 const equippedRowIndexes = computed(() => {
   const used = new Set<number>();
@@ -177,8 +204,8 @@ const equippedRowIndexes = computed(() => {
     return { ...slot, rowIndex };
   });
 
-  const fallbackRows = rowIndexes.value
-    .filter((rowIndex) => !used.has(rowIndex))
+  const fallbackRows = playerRowIndexes.value
+    .filter((rowIndex) => !used.has(rowIndex) && !deletedRows.value.has(rowIndex))
     .filter((rowIndex) => isEquipmentItem(rowItem(rowIndex)))
     .filter((rowIndex) => saveBool(equippedField.value, rowIndex));
 
@@ -211,9 +238,7 @@ function updateFilter(id: string, value: string) {
 }
 
 function fieldValue(field: BgDatabaseField | undefined, rowIndex: number): BgDatabaseValue {
-  if (!field) return null;
-  const key = fieldDraftKey(field, rowIndex);
-  return props.draft[key] ?? field.values[rowIndex] ?? null;
+  return saveEditDraftFieldValue(field, rowIndex, props.draft);
 }
 
 function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
@@ -229,6 +254,26 @@ function rowItem(rowIndex: number) {
   return itemByLegacyName.value.get(key) || itemByName.value.get(key) || null;
 }
 
+function initialRowItem(rowIndex: number) {
+  const key = lookupName(initialFieldText(nameField.value, rowIndex));
+  return itemByLegacyName.value.get(key) || itemByName.value.get(key) || null;
+}
+
+function insertMatchesFilters(row: InventoryDisplayRow) {
+  if ((row.values.juesename || row.initialValues.juesename || "ZhuJue") !== "ZhuJue") return false;
+  const query = search.value.trim().toLowerCase();
+  const item = displayItem(row);
+  const name = displayItemName(row);
+  if (query && ![name, row.values.uid, item?.name, item?.legacy_name, item ? String(item.id) : ""]
+    .some((value) => String(value || "").toLowerCase().includes(query))) {
+    return false;
+  }
+  if (typeFilter.value !== "all" && String(row.values.type || item?.type_id) !== typeFilter.value) return false;
+  if (rarityFilter.value !== "all" && String(row.values.rare || item?.rarity_id) !== rarityFilter.value) return false;
+  if (materialFilter.value !== "all" && String(Number(item?.is_material || 0)) !== materialFilter.value) return false;
+  return true;
+}
+
 function isEquipmentItem(item: InventoryItemRow | null) {
   return equipmentTypeIds.has(Number(item?.type_id));
 }
@@ -236,7 +281,9 @@ function isEquipmentItem(item: InventoryItemRow | null) {
 function findRowIndexByUid(uid: string, used: Set<number>) {
   const key = uid.trim();
   if (!key) return null;
-  const rowIndex = rowIndexes.value.find((index) => !used.has(index) && fieldText(uidField.value, index).trim() === key);
+  const rowIndex = playerRowIndexes.value.find((index) =>
+    !used.has(index) && !deletedRows.value.has(index) && fieldText(uidField.value, index).trim() === key,
+  );
   return rowIndex ?? null;
 }
 
@@ -259,7 +306,12 @@ function rowFields(rowIndex: number) {
     field,
     value: fieldText(field, rowIndex),
     initialValue: initialFieldText(field, rowIndex),
-    enumOptions: field.name === "mingke_fg" ? equipmentStyleOptions() : [],
+    dirty: fieldText(field, rowIndex) !== initialFieldText(field, rowIndex),
+    enumOptions: field.name === "rare"
+      ? enumOptions("ItemRare")
+      : field.name === "mingke_fg"
+        ? equipmentStyleOptions()
+        : [],
   }));
 }
 
@@ -267,25 +319,186 @@ function rowDirty(rowIndex: number) {
   return dirtyRows.value.has(rowIndex);
 }
 
-const tableDirty = computed(() => dirtyRows.value.size > 0);
+const tableDirty = computed(() => saveEditDraftTableDirty(props.draft, props.table.tableIndex));
 
 function resetRow(rowIndex: number) {
-  for (const field of parsedFields.value) {
-    const initialValue = initialFieldText(field, rowIndex);
-    if (fieldDraftKey(field, rowIndex) in props.draft) emit("updateField", field, initialValue, rowIndex);
-  }
+  emit("resetDraft", { type: "row", rowIndex });
+}
+
+function deleteRow(rowIndex: number) {
+  emit("rowOperation", {
+    type: "delete",
+    target: { type: "row", rowIndex },
+  });
 }
 
 function resetTable() {
-  for (const rowIndex of rowIndexes.value) resetRow(rowIndex);
+  emit("resetDraft", { type: "table" });
 }
 
 function updateQuantity(rowIndex: number, value: string) {
-  if (quantityField.value) emit("updateField", quantityField.value, value, rowIndex);
+  if (quantityField.value) {
+    emit("rowOperation", {
+      type: "update",
+      target: { type: "row", rowIndex },
+      values: { [quantityField.value.name]: value },
+    });
+  }
 }
 
 function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: string) {
-  emit("updateField", field, value, rowIndex);
+  emit("rowOperation", {
+    type: "update",
+    target: { type: "row", rowIndex },
+    values: { [field.name]: value },
+  });
+}
+
+async function addPendingItems(payloads: InventoryAddItemPayload[]) {
+  const rows = await Promise.all(payloads.map((payload) =>
+    createXingNangRow({ id: payload.item.id }, { findInventoryItem: findInventoryItemSource }),
+  ));
+  const operations = rows.filter((values): values is Record<string, string> => Boolean(values)).map((values): SaveEditRowDraftOperation => {
+    const filteredValues = filterInsertValues(values);
+    return {
+      type: "insert",
+      tempId: createTempRowId(),
+      initialValues: filteredValues,
+      values: filteredValues,
+    };
+  });
+  if (operations.length) emit("rowOperations", operations);
+  page.value = 1;
+}
+
+function rowViewItem(row: InventoryDisplayRow) {
+  const key = lookupName(row.values.daojuname);
+  return itemByLegacyName.value.get(key) || itemByName.value.get(key) || null;
+}
+
+function rowViewFields(row: InventoryDisplayRow) {
+  return parsedFields.value.map((field) => ({
+    key: field.name,
+    field,
+    value: row.values[field.name] ?? "",
+    initialValue: row.initialValues[field.name] ?? "",
+    dirty: row.dirtyFields.has(field.name),
+    enumOptions: field.name === "rare"
+      ? enumOptions("ItemRare")
+      : field.name === "mingke_fg"
+        ? equipmentStyleOptions()
+        : [],
+  }));
+}
+
+function displayRowKey(row: InventoryDisplayRow) {
+  return row.key;
+}
+
+function displayRowIndex(row: InventoryDisplayRow, index: number) {
+  return row.rowIndex ?? props.table.rowCount + index;
+}
+
+function displayItemName(row: InventoryDisplayRow) {
+  return displayItem(row)?.name || row.values.showname || row.values.daojuname || row.values.name || "待添加物品";
+}
+
+function displayUid(row: InventoryDisplayRow) {
+  return row.values.uid || "";
+}
+
+function displayQuantity(row: InventoryDisplayRow) {
+  return row.values.qty || "1";
+}
+
+function displayInitialQuantity(row: InventoryDisplayRow) {
+  return row.initialValues.qty || "1";
+}
+
+function displayItem(row: InventoryDisplayRow) {
+  if (row.rowIndex !== null && row.status !== "inserted") return rowItem(row.rowIndex);
+  return rowViewItem(row);
+}
+
+function displayIsEquipment(row: InventoryDisplayRow) {
+  return isEquipmentItem(displayItem(row));
+}
+
+function displayRowFields(row: InventoryDisplayRow) {
+  return rowViewFields(row);
+}
+
+function displayTypeLabel(row: InventoryDisplayRow) {
+  const item = displayItem(row);
+  if (item) return itemTypeLabel(item, props.enums);
+  if (row.status === "inserted") return itemTypeLabel({ type_id: Number(row.values.type || 0) }, props.enums);
+  return "未匹配";
+}
+
+function displayRarityLabel(row: InventoryDisplayRow) {
+  const item = displayItem(row);
+  if (item) return itemRarityLabel(item, props.enums);
+  if (row.status === "inserted") return itemRarityLabel({ rarity_id: Number(row.values.rare || 0) }, props.enums);
+  return "未知";
+}
+
+function displayRarityClass(row: InventoryDisplayRow) {
+  const item = displayItem(row);
+  if (item) return rarityCardClass(item.rarity_id ?? null);
+  if (row.status === "inserted") return rarityCardClass(Number(row.values.rare || 0));
+  return rarityCardClass(null);
+}
+
+function displayDirty(row: InventoryDisplayRow) {
+  return row.dirtyFields.size > 0;
+}
+
+function updateDisplayQuantity(row: InventoryDisplayRow, value: string) {
+  emit("rowOperation", {
+    type: "update",
+    target: row.target,
+    values: { qty: value },
+  });
+}
+
+function updateDisplayEquipmentField(row: InventoryDisplayRow, field: BgDatabaseField, value: string) {
+  emit("rowOperation", {
+    type: "update",
+    target: row.target,
+    values: { [field.name]: value },
+  });
+}
+
+function resetDisplayRow(row: InventoryDisplayRow) {
+  emit("resetDraft", row.target);
+}
+
+function deleteDisplayRow(row: InventoryDisplayRow) {
+  emit("rowOperation", {
+    type: "delete",
+    target: row.target,
+  });
+}
+
+function deleteCurrentViewRows() {
+  const operations = filteredInventoryEntries.value.map((entry): SaveEditRowDraftOperation => ({
+    type: "delete",
+    target: typeof entry === "number" ? { type: "row", rowIndex: entry } : entry.target,
+  }));
+  if (operations.length) emit("rowOperations", operations);
+}
+
+function toggleDeleteMode() {
+  deleteMode.value = !deleteMode.value;
+}
+
+function createTempRowId() {
+  if (import.meta.client && globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return `insert-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function filterInsertValues(values: Record<string, string>) {
+  return Object.fromEntries(Object.entries(values).filter(([fieldName]) => Boolean(props.table.fields[fieldName])));
 }
 </script>
 
@@ -293,13 +506,12 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
   <AppCard>
     <EditableTableCardHeader
       title="行囊"
-      :description="`${table.rowCount} 行，已映射 ${matchedRows} 条，当前 ${totalRows} 条`"
+      :description="`主角行囊 ${playerRowIndexes.length} 行，已映射 ${matchedRows} 条，当前 ${totalRows} 条`"
       :dirty="tableDirty"
       @reset="resetTable"
     />
     <AppCardContent class="grid gap-4">
       <div v-if="equippedUids || hasEquippedRows" class="grid gap-3">
-        <div class="text-sm font-medium">已装备</div>
         <div class="grid gap-3 lg:grid-cols-3">
           <template v-for="slot in equippedRowIndexes" :key="slot.key">
             <EditableItemCard
@@ -309,6 +521,8 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
               :uid="fieldText(uidField, slot.rowIndex)"
               :quantity="fieldText(quantityField, slot.rowIndex)"
               :initial-quantity="initialFieldText(quantityField, slot.rowIndex)"
+              :quantity-dirty="fieldText(quantityField, slot.rowIndex) !== initialFieldText(quantityField, slot.rowIndex)"
+              :quantity-reset-value="initialFieldText(quantityField, slot.rowIndex)"
               :item="rowItem(slot.rowIndex)"
               :is-equipment="isEquipmentItem(rowItem(slot.rowIndex))"
               :row-fields="rowFields(slot.rowIndex)"
@@ -316,9 +530,11 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
               :rarity-label="rowItem(slot.rowIndex) ? itemRarityLabel(rowItem(slot.rowIndex)!, enums) : '未知'"
               :rarity-class="rarityCardClass(rowItem(slot.rowIndex)?.rarity_id ?? null)"
               :dirty="rowDirty(slot.rowIndex)"
+              :delete-mode="deleteMode"
               @update-quantity="updateQuantity(slot.rowIndex, $event)"
               @update-equipment-field="updateEquipmentField(slot.rowIndex, $event.field, $event.value)"
               @reset="resetRow(slot.rowIndex)"
+              @delete="deleteRow(slot.rowIndex)"
             />
             <div v-else class="grid min-h-24 place-items-center rounded-md border border-dashed px-3 py-6 text-sm text-muted-foreground">
               {{ slot.label }}：未装备
@@ -366,6 +582,33 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
         </AppFieldStack>
       </div>
 
+      <div class="grid w-full grid-cols-4 gap-2 sm:ml-auto sm:w-[28rem]">
+        <AppButton type="button" class="col-span-2 w-full" @click="addDialogOpen = true">
+          <Plus class="size-4" />
+          添加物品
+        </AppButton>
+        <AppButton
+          type="button"
+          class="w-full"
+          :variant="deleteMode ? 'destructive' : 'outline'"
+          :aria-pressed="deleteMode"
+          @click="toggleDeleteMode"
+        >
+          <Trash2 class="size-4" />
+          删除物品
+        </AppButton>
+        <AppButton
+          type="button"
+          variant="destructive"
+          class="w-full"
+          :disabled="!deleteMode || !totalRows"
+          @click="deleteCurrentViewRows"
+        >
+          <Trash2 class="size-4" />
+          全部删除
+        </AppButton>
+      </div>
+
       <div class="flex justify-center">
         <AppPagination
           v-model:page="page"
@@ -374,31 +617,41 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
         />
       </div>
 
-      <div v-if="!pagedRowIndexes.length" class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">
+      <div v-if="!pagedInventoryRows.length" class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">
         没有匹配的行囊物品
       </div>
 
       <div v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <EditableItemCard
-          v-for="rowIndex in pagedRowIndexes"
-          :key="rowIndex"
-          :row-index="rowIndex"
-          :item-name="fieldText(nameField, rowIndex)"
-          :uid="fieldText(uidField, rowIndex)"
-          :quantity="fieldText(quantityField, rowIndex)"
-          :initial-quantity="initialFieldText(quantityField, rowIndex)"
-          :item="rowItem(rowIndex)"
-          :is-equipment="isEquipmentItem(rowItem(rowIndex))"
-          :row-fields="rowFields(rowIndex)"
-          :type-label="rowItem(rowIndex) ? itemTypeLabel(rowItem(rowIndex)!, enums) : '未匹配'"
-          :rarity-label="rowItem(rowIndex) ? itemRarityLabel(rowItem(rowIndex)!, enums) : '未知'"
-          :rarity-class="rarityCardClass(rowItem(rowIndex)?.rarity_id ?? null)"
-          :dirty="rowDirty(rowIndex)"
-          @update-quantity="updateQuantity(rowIndex, $event)"
-          @update-equipment-field="updateEquipmentField(rowIndex, $event.field, $event.value)"
-          @reset="resetRow(rowIndex)"
+          v-for="(row, index) in pagedInventoryRows"
+          :key="displayRowKey(row)"
+          :row-index="displayRowIndex(row, index)"
+          :item-name="displayItemName(row)"
+          :uid="displayUid(row)"
+          :quantity="displayQuantity(row)"
+          :initial-quantity="displayInitialQuantity(row)"
+          :quantity-dirty="row.dirtyFields.has('qty')"
+          :quantity-reset-value="displayInitialQuantity(row)"
+          :item="displayItem(row)"
+          :is-equipment="displayIsEquipment(row)"
+          :row-fields="displayRowFields(row)"
+          :type-label="displayTypeLabel(row)"
+          :rarity-label="displayRarityLabel(row)"
+          :rarity-class="displayRarityClass(row)"
+          :dirty="displayDirty(row)"
+          :delete-mode="deleteMode"
+          @update-quantity="updateDisplayQuantity(row, $event)"
+          @update-equipment-field="updateDisplayEquipmentField(row, $event.field, $event.value)"
+          @reset="resetDisplayRow(row)"
+          @delete="deleteDisplayRow(row)"
         />
       </div>
     </AppCardContent>
+
+    <AddInventoryItemDialog
+      v-model:open="addDialogOpen"
+      :enums="enums"
+      @add="addPendingItems"
+    />
   </AppCard>
 </template>

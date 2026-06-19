@@ -31,7 +31,7 @@ const pending = ref(false);
 const error = shallowRef<Error | null>(null);
 const displayLabel = computed(() => props.label || summary.value?.name || `人物 ${props.id ?? "-"}`);
 const linkClass = computed(() => [
-  "font-medium underline-offset-4 hover:underline",
+  "font-semibold underline-offset-4 hover:underline",
   rarityTextClass(props.rarityId ?? summary.value?.rarityId),
 ]);
 

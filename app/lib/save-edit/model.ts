@@ -1,9 +1,9 @@
 import {
   parseBgDatabase,
-  writeBgDatabaseUpdates,
+  writeBgDatabaseRowOperations,
   type BgDatabaseField,
-  type BgDatabaseFieldUpdate,
   type BgDatabaseFile,
+  type BgDatabaseRowOperation,
   type BgDatabaseTable,
   type BgDatabaseValue,
 } from "../bgdatabase";
@@ -12,8 +12,23 @@ import type { WikiEnums } from "../wiki/text";
 import { detectSaveEditFileKind } from "./detect";
 import { decodeSaveEditEs2FileName } from "./es2-file-name";
 import { applyEs2Draft } from "./es2-draft";
-
-export type SaveEditDraft = Record<string, string>;
+import {
+  createEmptySaveEditDraft,
+  saveEditDraftFieldValue,
+  saveEditDraftRowOperations,
+  updateSaveEditCellDraft,
+  type SaveEditDraft,
+} from "./draft-model";
+export type {
+  SaveEditDraft,
+  SaveEditDraftResetTarget,
+  SaveEditInsertedRowDraft,
+  SaveEditRowDraft,
+  SaveEditRowDraftOperation,
+  SaveEditRowDraftTarget,
+  SaveEditTableDraft,
+  SaveEditTableRowView,
+} from "./draft-model";
 
 export type SaveEditFile = BgDatabaseFile & {
   kind: "bgdatabase";
@@ -266,62 +281,68 @@ export function parseAnySaveEditFile(input: ArrayBuffer | Uint8Array): AnySaveEd
 }
 
 export function createSaveEditDraft(save: SaveEditFile): SaveEditDraft {
-  const draft: SaveEditDraft = {};
+  let draft = createEmptySaveEditDraft();
   for (const definition of SAVE_EDIT_FIELD_DEFINITIONS) {
     const field = save.zhuJue.fields[definition.key];
     if (!field) continue;
     const value = field.values[0];
     if (value === null || value === undefined) continue;
-    draft[fieldDraftKey(field, 0)] = String(value);
+    draft = updateSaveEditCellDraft(draft, field, 0, String(value));
   }
   return draft;
 }
 
-export function writeSaveEditFile(save: SaveEditFile, draft: SaveEditDraft): Uint8Array {
-  return writeBgDatabaseUpdates(save, draftToUpdates(save, draft));
+export function writeSaveEditFile(save: SaveEditFile, draft?: SaveEditDraft): Uint8Array {
+  return writeBgDatabaseRowOperations(save, draftToRowOperations(save, draft));
 }
 
-export function writeAnySaveEditFile(save: AnySaveEditFile, draft: SaveEditDraft = {}): Uint8Array {
+export function writeAnySaveEditFile(save: AnySaveEditFile, draft?: SaveEditDraft): Uint8Array {
   if (save.kind === "bgdatabase") return writeSaveEditFile(save, draft);
   return writeEs2(applyEs2Draft(save, draft).es2);
 }
 
-export function draftToUpdates(save: SaveEditFile, draft: SaveEditDraft) {
-  return Object.entries(draft)
-    .map(([key, value]) => {
-      const parsed = parseFieldDraftKey(key);
-      if (!parsed) return null;
-      const table = save.tables[parsed.tableIndex];
-      const field = table?.fieldNames
-        .map((fieldName) => table.fields[fieldName])
-        .find((candidate) => candidate?.fieldIndex === parsed.fieldIndex);
-      return field ? { field, rowIndex: parsed.rowIndex, value } : null;
-    })
-    .filter((update): update is BgDatabaseFieldUpdate => Boolean(update));
+export function draftToRowOperations(save: SaveEditFile, draft?: SaveEditDraft) {
+  const rows = saveEditDraftRowOperations(draft);
+  return rows.flatMap((operation): BgDatabaseRowOperation[] => {
+    if (operation.type !== "update") return [];
+    const table = save.tables[operation.tableIndex];
+    if (!table || table.name !== operation.tableName) return [];
+    return Object.entries(operation.values)
+      .map(([fieldName, value]) => {
+        const field = table.fields[fieldName];
+        return field ? { type: "update" as const, field, rowIndex: operation.rowIndex, value } : null;
+      })
+      .filter((update): update is Extract<BgDatabaseRowOperation, { type: "update" }> => Boolean(update));
+  }).concat(rows.flatMap((operation): BgDatabaseRowOperation[] => {
+    if (operation.type === "update") return [];
+    const table = save.tables[operation.tableIndex];
+    if (!table || table.name !== operation.tableName) return [];
+    if (operation.type === "insert") {
+      return [{
+        type: "insert",
+        tableIndex: operation.tableIndex,
+        tableName: operation.tableName,
+        tempId: operation.tempId,
+        values: { ...operation.values },
+      }];
+    }
+    return [{
+      type: "delete",
+      tableIndex: operation.tableIndex,
+      tableName: operation.tableName,
+      rowIndex: operation.rowIndex,
+    }];
+  }));
 }
 
-export function fieldDraftKey(field: BgDatabaseField, rowIndex: number) {
-  return `${field.tableIndex}:${field.fieldIndex}:${rowIndex}`;
-}
-
-export function parseFieldDraftKey(key: string) {
-  const parts = key.split(":").map(Number);
-  if (parts.length !== 3) return null;
-  const [tableIndex, fieldIndex, rowIndex] = parts as [number, number, number];
-  if (![tableIndex, fieldIndex, rowIndex].every(Number.isInteger)) return null;
-  return { tableIndex, fieldIndex, rowIndex };
-}
-
-export function saveEditCharacterName(save: SaveEditFile, draft: SaveEditDraft = {}) {
+export function saveEditCharacterName(save: SaveEditFile, draft?: SaveEditDraft) {
   const xing = valueWithDraft(save.zhuJue.fields.xing, 0, draft);
   const ming = valueWithDraft(save.zhuJue.fields.ming, 0, draft);
   return `${formatSaveValue(xing)}${formatSaveValue(ming)}` || "未命名";
 }
 
-export function valueWithDraft(field: BgDatabaseField | undefined, rowIndex: number, draft: SaveEditDraft) {
-  if (!field) return null;
-  const key = fieldDraftKey(field, rowIndex);
-  return draft[key] ?? field.values[rowIndex] ?? null;
+export function valueWithDraft(field: BgDatabaseField | undefined, rowIndex: number, draft?: SaveEditDraft) {
+  return saveEditDraftFieldValue(field, rowIndex, draft);
 }
 
 export function isSaveEditStringListFile(save: AnySaveEditFile | null | undefined): save is SaveEditEs2File {

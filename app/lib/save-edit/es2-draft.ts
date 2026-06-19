@@ -6,28 +6,29 @@ export const ES2_DRAFT_VALUE_KEY = `${ES2_DRAFT_PREFIX}value`;
 export const ES2_DRAFT_STRING_LIST_KEY = `${ES2_DRAFT_PREFIX}string-list`;
 export const ES2_DRAFT_CUN_DANGS_KEY = `${ES2_DRAFT_PREFIX}cundangs`;
 
-export function applyEs2Draft(save: SaveEditEs2File, draft: SaveEditDraft | undefined = {}): SaveEditEs2File {
+export function applyEs2Draft(save: SaveEditEs2File, draft: SaveEditDraft | undefined): SaveEditEs2File {
   const value = save.es2.value;
+  const es2Draft = draft?.es2 || {};
 
-  if (value.type === "int" && ES2_DRAFT_VALUE_KEY in draft) {
-    const parsed = Number(draft[ES2_DRAFT_VALUE_KEY]);
+  if (value.type === "int" && ES2_DRAFT_VALUE_KEY in es2Draft) {
+    const parsed = Number(es2Draft[ES2_DRAFT_VALUE_KEY]);
     return withEs2Value(save, { ...value, value: Number.isFinite(parsed) ? Math.trunc(parsed) : 0 });
   }
 
-  if (value.type === "string" && ES2_DRAFT_VALUE_KEY in draft) {
-    return withEs2Value(save, { ...value, value: draft[ES2_DRAFT_VALUE_KEY] });
+  if (value.type === "string" && ES2_DRAFT_VALUE_KEY in es2Draft) {
+    return withEs2Value(save, { ...value, value: es2Draft[ES2_DRAFT_VALUE_KEY] });
   }
 
-  if (value.type === "bool" && ES2_DRAFT_VALUE_KEY in draft) {
-    return withEs2Value(save, { ...value, value: draft[ES2_DRAFT_VALUE_KEY] === "true" });
+  if (value.type === "bool" && ES2_DRAFT_VALUE_KEY in es2Draft) {
+    return withEs2Value(save, { ...value, value: es2Draft[ES2_DRAFT_VALUE_KEY] === "true" });
   }
 
-  if (isStringListValue(value) && ES2_DRAFT_STRING_LIST_KEY in draft) {
-    return withEs2Value(save, stringListValue(readStringArrayDraft(draft[ES2_DRAFT_STRING_LIST_KEY])));
+  if (isStringListValue(value) && ES2_DRAFT_STRING_LIST_KEY in es2Draft) {
+    return withEs2Value(save, stringListValue(readStringArrayDraft(es2Draft[ES2_DRAFT_STRING_LIST_KEY])));
   }
 
-  if (isCunDangListValue(value) && ES2_DRAFT_CUN_DANGS_KEY in draft) {
-    return withEs2Value(save, cunDangListValue(readCunDangArrayDraft(draft[ES2_DRAFT_CUN_DANGS_KEY])));
+  if (isCunDangListValue(value) && ES2_DRAFT_CUN_DANGS_KEY in es2Draft) {
+    return withEs2Value(save, cunDangListValue(readCunDangArrayDraft(es2Draft[ES2_DRAFT_CUN_DANGS_KEY])));
   }
 
   return save;
@@ -46,11 +47,11 @@ export function updateEs2ScalarDraft(save: SaveEditEs2File, draft: SaveEditDraft
     const next = nextValue === true || nextValue === "true" || nextValue === "1";
     return withDraftValue(draft, ES2_DRAFT_VALUE_KEY, String(next), String(value.value));
   }
-  return draft;
+  return draft || { tables: {}, es2: {} };
 }
 
 export function updateEs2StringListDraft(save: SaveEditEs2File, draft: SaveEditDraft | undefined, values: string[]) {
-  if (!isStringListValue(save.es2.value)) return draft;
+  if (!isStringListValue(save.es2.value)) return draft || { tables: {}, es2: {} };
   return withDraftValue(
     draft,
     ES2_DRAFT_STRING_LIST_KEY,
@@ -60,7 +61,7 @@ export function updateEs2StringListDraft(save: SaveEditEs2File, draft: SaveEditD
 }
 
 export function updateEs2CunDangsDraft(save: SaveEditEs2File, draft: SaveEditDraft | undefined, values: Es2CunDang[]) {
-  if (!isCunDangListValue(save.es2.value)) return draft;
+  if (!isCunDangListValue(save.es2.value)) return draft || { tables: {}, es2: {} };
   return withDraftValue(
     draft,
     ES2_DRAFT_CUN_DANGS_KEY,
@@ -69,14 +70,13 @@ export function updateEs2CunDangsDraft(save: SaveEditEs2File, draft: SaveEditDra
   );
 }
 
-export function hasSaveEditDraft(draft: SaveEditDraft | undefined) {
-  return Object.keys(draft || {}).length > 0;
-}
-
 function withDraftValue(draft: SaveEditDraft | undefined, key: string, value: string, initialValue: string) {
-  const next = { ...(draft || {}) };
-  if (value === initialValue) delete next[key];
-  else next[key] = value;
+  const next: SaveEditDraft = {
+    tables: draft?.tables || {},
+    es2: { ...(draft?.es2 || {}) },
+  };
+  if (value === initialValue) delete next.es2[key];
+  else next.es2[key] = value;
   return next;
 }
 

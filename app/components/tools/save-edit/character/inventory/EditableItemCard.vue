@@ -2,6 +2,7 @@
 import GameImage from "~/components/wiki/WikiImage.vue";
 import WikiCard from "~/components/wiki/WikiCard.vue";
 import ItemHoverLink from "~/components/wiki/item/HoverLink.vue";
+import SaveEditDeleteButton from "~/components/tools/save-edit/SaveEditDeleteButton.vue";
 import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
 import EditableNumberField from "~/components/tools/save-edit/fields/EditableNumberField.vue";
 import EquipmentEditDialog, { type EquipmentEditField } from "./EquipmentEditDialog.vue";
@@ -13,6 +14,8 @@ const props = defineProps<{
   uid: string;
   quantity: string;
   initialQuantity: string;
+  quantityDirty?: boolean;
+  quantityResetValue?: string;
   item: {
     id: number;
     name: string | null;
@@ -25,12 +28,14 @@ const props = defineProps<{
   rarityLabel: string;
   rarityClass?: string;
   dirty?: boolean;
+  deleteMode?: boolean;
 }>();
 
 const emit = defineEmits<{
   updateQuantity: [value: string];
   updateEquipmentField: [payload: { field: BgDatabaseField; value: string }];
   reset: [];
+  delete: [];
 }>();
 
 const equipmentDialogOpen = ref(false);
@@ -61,11 +66,18 @@ function updateEquipmentField(field: BgDatabaseField, value: string) {
     </template>
 
     <template #action>
-      <div v-if="!isEquipment" class="max-w-12 md:max-w-16 gap-2">
+      <SaveEditDeleteButton
+        v-if="deleteMode"
+        label="删除物品"
+        @click="emit('delete')"
+      />
+      <div v-else-if="!isEquipment" class="max-w-12 md:max-w-16 gap-2">
         <EditableNumberField
           :initial-value="initialQuantity"
           :model-value="quantity"
-          :min="0"
+          :dirty="quantityDirty"
+          :reset-value="quantityResetValue"
+          :min="1"
           compact
           @update="emit('updateQuantity', $event)"
         />
@@ -84,7 +96,7 @@ function updateEquipmentField(field: BgDatabaseField, value: string) {
         </AppButton>
       </EditableFieldFrame>
       <ItemHoverLink
-        v-if="item"
+        v-if="!deleteMode && item"
         :id="item.id"
         mode="button"
       />

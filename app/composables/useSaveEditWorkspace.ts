@@ -1,5 +1,6 @@
 import {
   applyEs2Draft,
+  createEmptySaveEditDraft,
   hasSaveEditDraft,
   isSaveEditCharacterSlotsFile,
   saveEditCharacterSlotsValues,
@@ -44,7 +45,7 @@ export function useSaveEditWorkspace() {
   }
 
   function resetItem(id: number) {
-    updateItem(id, { draft: {} });
+    updateItem(id, { draft: createEmptySaveEditDraft() });
   }
 
   function findByFileName(fileName: string) {
@@ -74,7 +75,7 @@ export function useSaveEditWorkspace() {
   function updateCharacterSlots(itemId: number, values: Es2CunDang[]) {
     files.value = files.value.map((item) => {
       if (item.id === itemId && isSaveEditCharacterSlotsFile(item.save, item.fileName) && item.save.kind === "es2") {
-        return { ...item, draft: updateEs2CunDangsDraft(item.save, item.draft, values) ?? {} };
+        return { ...item, draft: updateEs2CunDangsDraft(item.save, item.draft, values) ?? createEmptySaveEditDraft() };
       }
 
       return item;

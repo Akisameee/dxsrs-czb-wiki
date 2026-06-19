@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RotateCcwIcon } from "@lucide/vue";
+import SaveEditResetButton from "~/components/tools/save-edit/SaveEditResetButton.vue";
 
 withDefaults(defineProps<{
   title: string;
@@ -26,17 +26,10 @@ const emit = defineEmits<{
       </CardDescription>
     </div>
 
-    <AppButton
+    <SaveEditResetButton
       v-if="dirty"
-      type="button"
-      variant="ghost"
-      size="icon"
-      class="size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground"
       :disabled="disabled"
       @click="emit('reset')"
-    >
-      <RotateCcwIcon class="size-3.5" />
-      <span class="sr-only">重置所有修改</span>
-    </AppButton>
+    />
   </AppCardHeader>
 </template>

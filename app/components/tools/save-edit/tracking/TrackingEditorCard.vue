@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RotateCcw } from "@lucide/vue";
+import SaveEditResetButton from "~/components/tools/save-edit/SaveEditResetButton.vue";
 import {
   CardDescription,
   CardTitle,
@@ -27,17 +27,10 @@ const dirty = computed(() => JSON.stringify(props.events) !== JSON.stringify(pro
         <CardDescription>这些值是游戏已经触发过的统计事件标记，保存后会写回埋点 ES2 小存档</CardDescription>
       </div>
 
-      <AppButton
+      <SaveEditResetButton
         v-if="dirty"
-        type="button"
-        variant="ghost"
-        size="icon"
-        class="size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground"
         @click="emit('reset')"
-      >
-        <RotateCcw class="size-3.5" />
-        <span class="sr-only">重置所有修改</span>
-      </AppButton>
+      />
     </AppCardHeader>
 
     <AppCardContent>

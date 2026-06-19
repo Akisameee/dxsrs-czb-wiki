@@ -1,9 +1,9 @@
-export { parseBgDatabase, writeBgDatabaseUpdates } from "./public";
+export { parseBgDatabase, writeBgDatabaseRowOperations } from "./public";
 
 export type {
   BgDatabaseField,
-  BgDatabaseFieldUpdate,
   BgDatabaseFile,
+  BgDatabaseRowOperation,
   BgDatabaseTable,
   BgDatabaseValue,
 } from "./types";

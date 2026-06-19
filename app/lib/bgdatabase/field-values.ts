@@ -245,7 +245,7 @@ function encodeInt64Values(values: BgDatabaseValue[], rowCount: number) {
   const output = new Uint8Array(rowCount * 8);
   const view = new DataView(output.buffer);
   for (let index = 0; index < rowCount; index += 1) {
-    view.setBigInt64(index * 8, BigInt(Math.round(numberValue(values[index] ?? null))), true);
+    view.setBigInt64(index * 8, bigintValue(values[index] ?? null), true);
   }
   return output;
 }
@@ -262,4 +262,9 @@ function encodeBoolValues(values: BgDatabaseValue[], rowCount: number) {
 function numberValue(value: BgDatabaseValue) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
+}
+
+function bigintValue(value: BgDatabaseValue) {
+  if (typeof value === "string" && /^-?\d+$/.test(value.trim())) return BigInt(value.trim());
+  return BigInt(Math.round(numberValue(value)));
 }

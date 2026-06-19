@@ -6,12 +6,13 @@ const props = withDefaults(defineProps<{
   modelValue: string;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
 }>(), {
   hint: "",
   compact: false,
 });
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
 </script>
 
 <template>

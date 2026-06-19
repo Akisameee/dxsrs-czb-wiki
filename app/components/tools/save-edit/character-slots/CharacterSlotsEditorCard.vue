@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RotateCcw } from "@lucide/vue";
+import SaveEditResetButton from "~/components/tools/save-edit/SaveEditResetButton.vue";
 import { Badge } from "~/components/ui/badge";
 import {
   CardDescription,
@@ -145,17 +145,10 @@ function updateSlotSex(index: number, value: number) {
         <CardDescription>编辑存档槽索引文件本身的角色摘要信息</CardDescription>
       </div>
 
-      <AppButton
+      <SaveEditResetButton
         v-if="props.dirty"
-        type="button"
-        variant="ghost"
-        size="icon"
-        class="size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground"
         @click="emit('reset')"
-      >
-        <RotateCcw class="size-3.5" />
-        <span class="sr-only">重置所有修改</span>
-      </AppButton>
+      />
     </AppCardHeader>
 
     <AppCardContent>

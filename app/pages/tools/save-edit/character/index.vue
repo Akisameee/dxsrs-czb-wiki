@@ -8,11 +8,15 @@ import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveC
 import SingleRowTableCard from "~/components/tools/save-edit/character/SingleRowTableCard.vue";
 import SaveTableEditor from "~/components/tools/save-edit/SaveTableEditor.vue";
 import {
-  fieldDraftKey,
-  formatSaveValue,
-  parseFieldDraftKey,
+  applySaveEditRowDraftOperation,
+  createEmptySaveEditDraft,
+  resetSaveEditDraftTarget,
   saveEditCharacterName,
+  saveEditDraftFieldValue,
+  updateSaveEditCellDraft,
   writeSaveEditFile,
+  type SaveEditDraftResetTarget,
+  type SaveEditRowDraftOperation,
 } from "~/lib/save-edit";
 import { enumMapFromRows } from "~/lib/utils";
 import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
@@ -28,7 +32,7 @@ const easyTableNames = ["Option", "MenPaiInfo", "JiGou", "ZiChuangWuGong", "Shen
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findByFileName(editFileName.value));
 const save = computed(() => item.value?.save || null);
-const draft = computed(() => item.value?.draft || {});
+const draft = computed(() => item.value?.draft || createEmptySaveEditDraft());
 const characterName = computed(() => (save.value ? saveEditCharacterName(save.value, draft.value) : "未选择存档"));
 const headerFileName = computed(() => item.value?.fileName || editFileName.value);
 
@@ -75,14 +79,12 @@ const equippedUids = computed(() => ({
 function zhuJueFieldText(fieldName: string) {
   const field = save.value?.zhuJue.fields[fieldName];
   if (!field) return "";
-  const key = fieldDraftKey(field, 0);
-  return String(draft.value[key] ?? field.values[0] ?? "");
+  return String(saveEditDraftFieldValue(field, 0, draft.value) ?? "");
 }
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
   if (!item.value) return;
-  const key = fieldDraftKey(field, rowIndex);
-  updateDraftValue(key, field, rowIndex, value);
+  updateDraftValue(field, rowIndex, value);
 }
 
 function updateActiveTable(tableIndex: number) {
@@ -90,34 +92,37 @@ function updateActiveTable(tableIndex: number) {
   updateItem(item.value.id, { selectedTableIndex: tableIndex });
 }
 
-function updateDatabaseCell(key: string, value: string) {
+function updateDatabaseCell(field: BgDatabaseField, rowIndex: number, value: string) {
   if (!item.value) return;
-  const parsed = parseFieldDraftKey(key);
-  const table = save.value?.tables.find((candidate) => candidate.tableIndex === parsed?.tableIndex);
-  const field = table?.fieldNames
-    .map((fieldName) => table.fields[fieldName])
-    .find((candidate) => candidate?.fieldIndex === parsed?.fieldIndex);
-  if (!parsed || !field) {
-    updateItem(item.value.id, { draft: { ...item.value.draft, [key]: value } });
-    return;
-  }
-  updateDraftValue(key, field, parsed.rowIndex, value);
+  updateDraftValue(field, rowIndex, value);
 }
 
-function updateDraftValue(key: string, field: BgDatabaseField, rowIndex: number, value: string) {
+function updateDraftValue(field: BgDatabaseField, rowIndex: number, value: string) {
   if (!item.value) return;
-  const initialValue = formatSaveValue(field.values[rowIndex]);
-  const currentDraftValue = item.value.draft[key];
-  if (value === initialValue && currentDraftValue === undefined) return;
-  if (value !== initialValue && currentDraftValue === value) return;
+  updateItem(item.value.id, { draft: updateSaveEditCellDraft(item.value.draft, field, rowIndex, value) });
+}
 
-  const nextDraft = { ...item.value.draft };
-  if (value === initialValue) {
-    delete nextDraft[key];
-  } else {
-    nextDraft[key] = value;
-  }
+function applyInventoryRowOperation(operation: SaveEditRowDraftOperation) {
+  if (!item.value || !inventoryTable.value) return;
+  updateItem(item.value.id, {
+    draft: applySaveEditRowDraftOperation(item.value.draft, inventoryTable.value, operation),
+  });
+}
+
+function applyInventoryRowOperations(operations: SaveEditRowDraftOperation[]) {
+  if (!item.value || !inventoryTable.value || !operations.length) return;
+  const nextDraft = operations.reduce(
+    (currentDraft, operation) => applySaveEditRowDraftOperation(currentDraft, inventoryTable.value!, operation),
+    item.value.draft,
+  );
   updateItem(item.value.id, { draft: nextDraft });
+}
+
+function resetInventoryDraft(target: SaveEditDraftResetTarget) {
+  if (!item.value || !inventoryTable.value) return;
+  updateItem(item.value.id, {
+    draft: resetSaveEditDraftTarget(item.value.draft, inventoryTable.value, target),
+  });
 }
 
 function downloadSave() {
@@ -200,7 +205,9 @@ function downloadSave() {
         :equipped-uids="equippedUids"
         :draft="draft"
         :enums="enums"
-        @update-field="updateField"
+        @row-operation="applyInventoryRowOperation"
+        @row-operations="applyInventoryRowOperations"
+        @reset-draft="resetInventoryDraft"
       />
 
       <div v-if="easyTables.length" class="grid gap-6 lg:grid-cols-2">

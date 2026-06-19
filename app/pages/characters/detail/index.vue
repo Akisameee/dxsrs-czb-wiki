@@ -403,7 +403,7 @@ onBeforeUnmount(() => {
             class="flex flex-col gap-1 rounded-md border px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
           >
             <span>
-              阶段 {{ quest.stage }}：
+              <span class="text-sm text-muted-foreground">阶段 {{ quest.stage }}：</span>
               <WikiText :parts="questSummaryParts(quest)" />
             </span>
             <span class="text-sm text-muted-foreground">亲密度 {{ quest.required_affinity }}</span>

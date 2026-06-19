@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Check, RotateCcw } from "@lucide/vue";
+import { Check } from "@lucide/vue";
+import SaveEditResetButton from "~/components/tools/save-edit/SaveEditResetButton.vue";
 import { Badge } from "~/components/ui/badge";
 import {
   CardDescription,
@@ -98,17 +99,10 @@ function bonusText(label: string, value: number) {
         <CardDescription>勾选要解锁的穴位，保存后会写回经脉 ES2 小存档</CardDescription>
       </div>
 
-      <AppButton
+      <SaveEditResetButton
         v-if="dirty"
-        type="button"
-        variant="ghost"
-        size="icon"
-        class="size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground"
         @click="emit('reset')"
-      >
-        <RotateCcw class="size-3.5" />
-        <span class="sr-only">重置所有修改</span>
-      </AppButton>
+      />
     </AppCardHeader>
 
     <AppCardContent class="grid gap-4 md:grid-cols-2">

@@ -4,9 +4,10 @@ import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitVa
 import LifeSkillFieldEditor from "./LifeSkillFieldEditor.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import {
-  fieldDraftKey,
   formatSaveValue,
-  parseFieldDraftKey,
+  saveEditDraftFieldValue,
+  saveEditDraftHasField,
+  saveEditDraftTableDirty,
   saveEditEnumOptions,
   saveEditCharacterName,
   type SaveEditDraft,
@@ -61,15 +62,13 @@ const parsedFields = computed(() =>
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed)),
 );
 const tableDirty = computed(() =>
-  Object.keys(props.draft).some((key) => parseFieldDraftKey(key)?.tableIndex === props.table.tableIndex),
+  saveEditDraftTableDirty(props.draft, props.table.tableIndex),
 );
 const portraitValues = computed(() => portraitFieldValues(false));
 const initialPortraitValues = computed(() => portraitFieldValues(true));
 
 function fieldValue(field: BgDatabaseField | undefined): BgDatabaseValue {
-  if (!field) return null;
-  const key = fieldDraftKey(field, 0);
-  return props.draft[key] ?? field.values[0] ?? null;
+  return saveEditDraftFieldValue(field, 0, props.draft);
 }
 
 function fieldCurrentText(fieldName: string) {
@@ -108,7 +107,7 @@ function updateField(field: BgDatabaseField | undefined, value: string, rowIndex
 function resetTable() {
   for (const field of parsedFields.value) {
     const initialValue = fieldInitialText(field.name);
-    if (fieldDraftKey(field, 0) in props.draft) emitField(field, initialValue);
+    if (saveEditDraftHasField(field, 0, props.draft)) emitField(field, initialValue);
   }
 }
 

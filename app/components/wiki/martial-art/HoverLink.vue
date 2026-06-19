@@ -42,7 +42,7 @@ const rarityId = computed(() => (
   ?? null
 ));
 const linkClass = computed(() => [
-  "font-medium underline-offset-4 hover:underline",
+  "font-semibold underline-offset-4 hover:underline",
   rarityTextClass(rarityId.value),
 ]);
 

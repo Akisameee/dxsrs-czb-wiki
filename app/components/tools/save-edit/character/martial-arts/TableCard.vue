@@ -6,9 +6,10 @@ import MartialArtHoverLink from "~/components/wiki/martial-art/HoverLink.vue";
 import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
 import WikiCard from "~/components/wiki/WikiCard.vue";
 import {
-  fieldDraftKey,
   formatSaveValue,
-  parseFieldDraftKey,
+  saveEditDraftDirtyRows,
+  saveEditDraftFieldValue,
+  saveEditDraftHasField,
   saveEditEnumOptions,
   type SaveEditDraft,
 } from "~/lib/save-edit";
@@ -148,12 +149,8 @@ const detailRowByNameAndLevel = computed(() => {
 
 const dirtyRowsByTableIndex = computed(() => {
   const result = new Map<number, Set<number>>();
-  for (const key of Object.keys(props.draft)) {
-    const parsed = parseFieldDraftKey(key);
-    if (!parsed) continue;
-    const rows = result.get(parsed.tableIndex) || new Set<number>();
-    rows.add(parsed.rowIndex);
-    result.set(parsed.tableIndex, rows);
+  for (const table of [props.jsTable, props.baseTable, props.detailTable]) {
+    result.set(table.tableIndex, saveEditDraftDirtyRows(props.draft, table.tableIndex));
   }
   return result;
 });
@@ -172,9 +169,7 @@ function addName(map: Map<string, MartialArtRow>, value: string | null | undefin
 }
 
 function fieldValue(field: BgDatabaseField | undefined, rowIndex: number): BgDatabaseValue {
-  if (!field) return null;
-  const key = fieldDraftKey(field, rowIndex);
-  return props.draft[key] ?? field.values[rowIndex] ?? null;
+  return saveEditDraftFieldValue(field, rowIndex, props.draft);
 }
 
 function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
@@ -292,7 +287,7 @@ function martialRowDirty(rowIndex: number) {
 function resetRow(table: BgDatabaseTable, rowIndex: number) {
   for (const field of parsedFieldsByTableIndex.value.get(table.tableIndex) || []) {
     const initialValue = initialFieldText(field, rowIndex);
-    if (fieldDraftKey(field, rowIndex) in props.draft) emit("updateField", field, initialValue, rowIndex);
+    if (saveEditDraftHasField(field, rowIndex, props.draft)) emit("updateField", field, initialValue, rowIndex);
   }
 }
 

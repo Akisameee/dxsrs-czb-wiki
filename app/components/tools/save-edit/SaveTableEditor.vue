@@ -20,9 +20,9 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import {
-  fieldDraftKey,
   formatSaveValue,
   isEditableSaveValue,
+  saveEditDraftFieldValue,
   saveEditEnumOptions,
   saveEditCharacterName,
   type SaveEditDraft,
@@ -40,7 +40,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   updateTable: [tableIndex: number];
-  updateCell: [key: string, value: string];
+  updateCell: [field: BgDatabaseField, rowIndex: number, value: string];
 }>();
 
 const page = ref(1);
@@ -98,12 +98,11 @@ function setTable(value: unknown) {
 }
 
 function cellValue(field: BgDatabaseField, rowIndex: number): BgDatabaseValue {
-  const key = fieldDraftKey(field, rowIndex);
-  return props.draft[key] ?? field.values[rowIndex] ?? null;
+  return saveEditDraftFieldValue(field, rowIndex, props.draft);
 }
 
 function updateCell(field: BgDatabaseField, rowIndex: number, value: string) {
-  emit("updateCell", fieldDraftKey(field, rowIndex), value);
+  emit("updateCell", field, rowIndex, value);
 }
 
 function enumOptions(field: BgDatabaseField) {

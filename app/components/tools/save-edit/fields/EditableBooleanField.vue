@@ -14,6 +14,8 @@ const props = withDefaults(defineProps<{
   readonly?: boolean;
   hint?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string;
 }>(), {
   trueValue: "true",
   falseValue: "false",
@@ -29,7 +31,8 @@ const emit = defineEmits<{
   update: [value: string];
 }>();
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 const checked = computed(() => props.modelValue === props.trueValue || props.modelValue === "1");
 
 function toggle() {
@@ -45,7 +48,7 @@ function toggle() {
     :readonly="readonly"
     :hint="hint"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <AppButton
       type="button"

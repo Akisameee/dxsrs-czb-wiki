@@ -10,6 +10,8 @@ const props = withDefaults(defineProps<{
   hint?: string;
   error?: string;
   compact?: boolean;
+  dirty?: boolean;
+  resetValue?: string;
 }>(), {
   placeholder: "",
   disabled: false,
@@ -23,7 +25,8 @@ const emit = defineEmits<{
   update: [value: string];
 }>();
 
-const dirty = computed(() => props.modelValue !== props.initialValue);
+const dirty = computed(() => props.dirty ?? props.modelValue !== props.initialValue);
+const resetValue = computed(() => props.resetValue ?? props.initialValue);
 </script>
 
 <template>
@@ -34,7 +37,7 @@ const dirty = computed(() => props.modelValue !== props.initialValue);
     :hint="hint"
     :error="error"
     :compact="compact"
-    @reset="emit('update', initialValue)"
+    @reset="emit('update', resetValue)"
   >
     <AppInput
       :model-value="modelValue"

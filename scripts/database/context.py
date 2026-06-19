@@ -71,6 +71,9 @@ class BuildContext:
     qing_yuan_rows: list[dict[str, Any]]
     yaoqing_rows: list[dict[str, Any]]
     item_rows: list[dict[str, Any]]
+    inventory_rows: list[dict[str, Any]]
+    recipe_rows: list[dict[str, Any]]
+    inscription_rows: list[dict[str, Any]]
     portrait_part_rows: list[dict[str, Any]]
     portrait_option_rows: list[dict[str, Any]]
     portrait_weapon_rows: list[dict[str, Any]]
@@ -125,6 +128,9 @@ class BuildContext:
             qing_yuan_rows=table_by_name(extracted, "QingYuan"),
             yaoqing_rows=table_by_name(extracted, "GYaoQing"),
             item_rows=table_by_name(extracted, "GItem"),
+            inventory_rows=table_by_name(extracted, "XingNang"),
+            recipe_rows=table_by_name(extracted, "PeiFang"),
+            inscription_rows=table_by_name(extracted, "GMingKe"),
             portrait_part_rows=table_by_name(extracted, "RemakeTouXiangParts"),
             portrait_option_rows=table_by_name(extracted, "RemakeTouXiangBuWei"),
             portrait_weapon_rows=table_by_name(extracted, "RemakeTouXiangWuQi"),

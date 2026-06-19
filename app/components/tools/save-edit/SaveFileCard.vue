@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Download, Pencil, RotateCcwIcon, Trash2 } from "@lucide/vue";
+import { Download, Pencil, Trash2 } from "@lucide/vue";
+import SaveEditResetButton from "~/components/tools/save-edit/SaveEditResetButton.vue";
 import { Badge } from "~/components/ui/badge";
 import {
   CardAction,
@@ -52,17 +53,10 @@ const emit = defineEmits<{
       </CardDescription>
       <CardAction>
         <div class="flex items-center gap-1">
-          <AppButton
+          <SaveEditResetButton
             v-if="dirty"
-            type="button"
-            variant="ghost"
-            size="icon"
-            class="size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground"
             @click="emit('reset')"
-          >
-            <RotateCcwIcon class="size-3.5" />
-            <span class="sr-only">重置所有修改</span>
-          </AppButton>
+          />
           <AppButton type="button" variant="ghost" size="icon" @click="emit('remove')">
             <Trash2 class="size-4" />
           </AppButton>
