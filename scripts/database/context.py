@@ -65,13 +65,15 @@ class BuildContext:
     meridian_rows: list[dict[str, Any]]
     npc_rows: list[dict[str, Any]]
     area_rows: list[dict[str, Any]]
-    npc_martial_rows: list[dict[str, Any]]
+    js_martial_rows: list[dict[str, Any]]
+    npc_martial_type_rows: list[dict[str, Any]]
     npc_attribute_rows: list[dict[str, Any]]
     npc_word_rows: list[dict[str, Any]]
     qing_yuan_rows: list[dict[str, Any]]
     yaoqing_rows: list[dict[str, Any]]
     item_rows: list[dict[str, Any]]
     inventory_rows: list[dict[str, Any]]
+    shop_rows: list[dict[str, Any]]
     recipe_rows: list[dict[str, Any]]
     inscription_rows: list[dict[str, Any]]
     portrait_part_rows: list[dict[str, Any]]
@@ -122,13 +124,15 @@ class BuildContext:
             meridian_rows=meridian_rows,
             npc_rows=table_by_name(extracted, "Npc"),
             area_rows=area_rows,
-            npc_martial_rows=table_by_name(extracted, "GNpcWuGong"),
+            js_martial_rows=table_by_name(extracted, "JSWugong"),
+            npc_martial_type_rows=table_by_name(extracted, "GNPCWuGongType"),
             npc_attribute_rows=table_by_name(extracted, "GNpcAttribute"),
             npc_word_rows=table_by_name(extracted, "NPC_Word"),
             qing_yuan_rows=table_by_name(extracted, "QingYuan"),
             yaoqing_rows=table_by_name(extracted, "GYaoQing"),
             item_rows=table_by_name(extracted, "GItem"),
             inventory_rows=table_by_name(extracted, "XingNang"),
+            shop_rows=table_by_name(extracted, "Shop"),
             recipe_rows=table_by_name(extracted, "PeiFang"),
             inscription_rows=table_by_name(extracted, "GMingKe"),
             portrait_part_rows=table_by_name(extracted, "RemakeTouXiangParts"),

@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Card v-bind="$attrs" :class="cn('gap-4 py-4 md:gap-6 md:py-6', props.class)">
+  <Card v-bind="$attrs" :class="cn('gap-2 py-2 sm:gap-3 sm:py-3 md:gap-4 md:py-4 lg:gap-5 lg:py-5', props.class)">
     <slot />
   </Card>
 </template>

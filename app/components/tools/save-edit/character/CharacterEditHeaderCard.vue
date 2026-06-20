@@ -6,11 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "~/components/ui/tabs";
 
 type ViewMode = "normal" | "database";
 
@@ -31,6 +26,11 @@ const viewModeModel = computed<ViewMode>({
   get: () => props.viewMode,
   set: (value) => emit("updateViewMode", value),
 });
+
+const viewModeOptions = [
+  { value: "normal", label: "正常视图" },
+  { value: "database", label: "数据库视图" },
+] satisfies Array<{ value: ViewMode; label: string }>;
 </script>
 
 <template>
@@ -55,18 +55,20 @@ const viewModeModel = computed<ViewMode>({
               返回
             </NuxtLink>
           </AppButton>
-          <Tabs v-model="viewModeModel">
-            <TabsList class="grid w-full grid-cols-2 sm:w-auto">
-              <TabsTrigger value="normal" class="gap-1.5">
-                <UserRound class="size-4" />
-                正常视图
-              </TabsTrigger>
-              <TabsTrigger value="database" class="gap-1.5">
-                <Database class="size-4" />
-                数据库视图
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <AppTabsToggle
+            v-model="viewModeModel"
+            :options="viewModeOptions"
+            trigger-class="gap-1.5"
+          >
+            <template #trigger-normal>
+              <UserRound class="size-4" />
+              正常视图
+            </template>
+            <template #trigger-database>
+              <Database class="size-4" />
+              数据库视图
+            </template>
+          </AppTabsToggle>
           <AppButton v-if="hasSave" type="button" @click="emit('download')">
             <Download class="size-4" />
             下载

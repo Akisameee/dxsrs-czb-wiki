@@ -10,12 +10,7 @@ import EditableEnumField, { type EditableEnumOption } from "~/components/tools/s
 import EditableNumberField from "~/components/tools/save-edit/fields/EditableNumberField.vue";
 import EditableTextField from "~/components/tools/save-edit/fields/EditableTextField.vue";
 import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitValues } from "~/components/tools/save-edit/character/player/PlayerPortraitEditor.vue";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "~/components/ui/tabs";
+import { TabsContent } from "~/components/ui/tabs";
 import type { Es2CunDang } from "~/lib/es2";
 
 type EnumRow = {
@@ -74,6 +69,10 @@ const slotSections = computed(() => [
     slots: indexedSlots(false),
   },
 ]);
+const slotSectionOptions = computed(() => slotSections.value.map((section) => ({
+  value: section.key,
+  label: section.label,
+})));
 
 const portraitFieldKeys: PlayerPortraitPartKey[] = ["qianfa", "houfa", "maozi", "meimao", "lianshi", "yifu", "houbei", "huzi"];
 
@@ -152,21 +151,23 @@ function updateSlotSex(index: number, value: number) {
     </AppCardHeader>
 
     <AppCardContent>
-      <Tabs v-model="activeSection" class="grid gap-3">
-        <TabsList class="grid w-full grid-cols-2 sm:w-fit">
-          <TabsTrigger
-            v-for="section in slotSections"
-            :key="section.key"
-            :value="section.key"
-            class="gap-1.5"
-          >
-            {{ section.label }}
-            <Badge variant="secondary">
-              {{ section.slots.filter((item) => slotUsed(item.slot)).length }} / {{ section.slots.length }}
-            </Badge>
-          </TabsTrigger>
-        </TabsList>
-
+      <AppTabsToggle
+        v-model="activeSection"
+        :options="slotSectionOptions"
+        tabs-class="grid gap-3"
+        list-class="grid w-full grid-cols-2 sm:w-fit"
+        trigger-class="gap-1.5"
+      >
+        <template
+          v-for="section in slotSections"
+          :key="section.key"
+          #[`trigger-${section.key}`]
+        >
+          {{ section.label }}
+          <Badge variant="secondary">
+            {{ section.slots.filter((item) => slotUsed(item.slot)).length }} / {{ section.slots.length }}
+          </Badge>
+        </template>
         <TabsContent
           v-for="section in slotSections"
           :key="section.key"
@@ -286,7 +287,7 @@ function updateSlotSex(index: number, value: number) {
             </div>
           </div>
         </TabsContent>
-      </Tabs>
+      </AppTabsToggle>
     </AppCardContent>
   </AppCard>
 </template>

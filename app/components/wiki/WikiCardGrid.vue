@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { Card, CardContent } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
 type WikiCardGridError = string | { message?: string } | null;
@@ -11,13 +10,15 @@ const props = withDefaults(defineProps<{
   total: number;
   pageSize: number;
   emptyLabel: string;
+  pagination?: boolean;
   gridClass?: HTMLAttributes["class"];
 }>(), {
   error: null,
+  pagination: true,
   gridClass: undefined,
 });
 
-const page = defineModel<number>("page", { required: true });
+const page = defineModel<number>("page", { default: 1 });
 
 const errorMessage = computed(() => {
   if (!props.error) return "";
@@ -33,6 +34,7 @@ const errorMessage = computed(() => {
 
   <template v-else>
     <AppPagination
+      v-if="pagination"
       v-model:page="page"
       :total="total"
       :page-size="pageSize"

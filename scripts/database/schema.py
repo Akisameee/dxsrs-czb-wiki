@@ -97,9 +97,22 @@ TABLES = {
     "columns": {
       "character_id": "INTEGER NOT NULL",
       "slot": "INTEGER NOT NULL",
-      "level": "INTEGER NOT NULL",
       "martial_art_id": "INTEGER NOT NULL",
-      "martial_level": "INTEGER NOT NULL"
+      "current_level": "INTEGER NOT NULL",
+      "max_level": "INTEGER NOT NULL",
+      "current_exp": "INTEGER NOT NULL",
+      "max_exp": "INTEGER NOT NULL"
+    }
+  },
+  "npc_martial_art_pools": {
+    "primaryKey": [
+      "martial_type_id",
+      "pool_index"
+    ],
+    "columns": {
+      "martial_type_id": "INTEGER NOT NULL",
+      "pool_index": "INTEGER NOT NULL",
+      "martial_art_id": "INTEGER NOT NULL"
     }
   },
   "character_attribute_snapshots": {
@@ -330,6 +343,65 @@ TABLES = {
       "unlock_item_id": "INTEGER NOT NULL",
       "recipe_id": "INTEGER NOT NULL",
       "product_item_id": "INTEGER NOT NULL"
+    }
+  },
+  "inventory_presets": {
+    "primaryKey": [
+      "source_row_index"
+    ],
+    "columns": {
+      "source_row_index": "INTEGER NOT NULL",
+      "legacy_name": "TEXT",
+      "legacy_character_name": "TEXT",
+      "legacy_item_name": "TEXT",
+      "character_id": "INTEGER NOT NULL",
+      "item_id": "INTEGER NOT NULL",
+      "type_id": "INTEGER",
+      "equipment_id": "INTEGER",
+      "quantity": "INTEGER",
+      "rarity_id": "INTEGER",
+      "att": "INTEGER",
+      "def": "INTEGER",
+      "hp": "INTEGER",
+      "weight": "REAL",
+      "length": "REAL",
+      "main_attribute": "INTEGER",
+      "strength": "INTEGER",
+      "constitution": "INTEGER",
+      "physique": "INTEGER",
+      "agility": "INTEGER",
+      "is_equipped": "INTEGER NOT NULL",
+      "show_level": "INTEGER",
+      "hide_level": "INTEGER",
+      "is_new": "INTEGER NOT NULL",
+      "show_name": "TEXT",
+      "inscription": "TEXT",
+      "inscription_fg": "INTEGER",
+      "inscription_strength": "INTEGER",
+      "inscription_constitution": "INTEGER",
+      "inscription_physique": "INTEGER",
+      "inscription_agility": "INTEGER",
+      "redpoint": "INTEGER NOT NULL",
+      "selected": "INTEGER NOT NULL",
+      "uid": "TEXT"
+    }
+  },
+  "shop": {
+    "primaryKey": [
+      "source_row_index"
+    ],
+    "columns": {
+      "source_row_index": "INTEGER NOT NULL",
+      "legacy_name": "TEXT",
+      "legacy_character_name": "TEXT",
+      "legacy_item_name": "TEXT",
+      "character_id": "INTEGER NOT NULL",
+      "item_id": "INTEGER NOT NULL",
+      "type_id": "INTEGER",
+      "min_quantity": "INTEGER",
+      "max_quantity": "INTEGER",
+      "rarity_id": "INTEGER",
+      "chance": "REAL"
     }
   },
   "inscriptions": {
@@ -758,6 +830,8 @@ INDEXES = [
   "CREATE INDEX idx_location_characters_character ON location_characters(character_id)",
   "CREATE INDEX idx_character_martial_arts_character ON character_martial_arts(character_id)",
   "CREATE INDEX idx_character_martial_arts_martial ON character_martial_arts(martial_art_id)",
+  "CREATE INDEX idx_npc_martial_art_pools_type ON npc_martial_art_pools(martial_type_id)",
+  "CREATE INDEX idx_npc_martial_art_pools_martial ON npc_martial_art_pools(martial_art_id)",
   "CREATE INDEX idx_character_attribute_snapshots_character ON character_attribute_snapshots(character_id)",
   "CREATE INDEX idx_character_quests_character ON character_quests(character_id)",
   "CREATE INDEX idx_character_quests_type ON character_quests(quest_type_id)",
@@ -777,6 +851,12 @@ INDEXES = [
   "CREATE INDEX idx_item_recipes_material_3 ON item_recipes(material_3_item_id)",
   "CREATE INDEX idx_item_recipe_unlocks_recipe ON item_recipe_unlocks(recipe_id)",
   "CREATE INDEX idx_item_recipe_unlocks_product ON item_recipe_unlocks(product_item_id)",
+  "CREATE INDEX idx_inventory_presets_character ON inventory_presets(character_id)",
+  "CREATE INDEX idx_inventory_presets_item ON inventory_presets(item_id)",
+  "CREATE INDEX idx_inventory_presets_type ON inventory_presets(type_id)",
+  "CREATE INDEX idx_shop_character ON shop(character_id)",
+  "CREATE INDEX idx_shop_item ON shop(item_id)",
+  "CREATE INDEX idx_shop_type ON shop(type_id)",
   "CREATE INDEX idx_inscriptions_style ON inscriptions(style_id)",
   "CREATE INDEX idx_inscriptions_material_1 ON inscriptions(material_1_item_id)",
   "CREATE INDEX idx_inscriptions_material_2 ON inscriptions(material_2_item_id)",

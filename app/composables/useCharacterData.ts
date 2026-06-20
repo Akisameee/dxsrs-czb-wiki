@@ -14,6 +14,12 @@ import {
   type CharacterDefaultEquipmentIds,
   type CharacterDefaultEquipmentRecipeRow,
 } from "~/lib/wiki/character-equipment";
+import {
+  characterYearlyPurchaseRarityId,
+  characterYearlyPurchaseTypeIds,
+  resolveCharacterYearlyPurchaseItemIds,
+  type CharacterYearlyPurchaseItemRow as CharacterYearlyPurchaseSourceItemRow,
+} from "~/lib/wiki/character-yearly-purchases";
 
 export type CharacterDetailRow = CharacterSummaryRow & {
   portrait: string | null;
@@ -28,6 +34,7 @@ export type CharacterDetailRow = CharacterSummaryRow & {
   is_instructor: number;
   is_manager: number;
   growth_type_id: number;
+  martial_type_id: number;
   equipment_weapon: string | null;
   equipment_armor: string | null;
   equipment_other_weapon: string | null;
@@ -59,11 +66,78 @@ export type CharacterDetailRow = CharacterSummaryRow & {
 export type CharacterDetailData = {
   character: CharacterDetailRow | null;
   defaultEquipment: CharacterDefaultEquipmentIds | null;
+  defaultEquipmentItems: {
+    weapon: CharacterItemRow | null;
+    armor: CharacterItemRow | null;
+  };
+  shopItems: CharacterShopItemRow[];
+  martialArts: CharacterMartialArtRow[];
+  martialArtPool: CharacterMartialArtPoolRow[];
+  yearlyPurchaseItems: CharacterYearlyPurchaseItemRow[];
+  inventoryPresets: CharacterInventoryPresetRow[];
   quests: CharacterQuestRow[];
   questTargets: CharacterQuestTargetRow[];
   invitationRequirements: CharacterInvitationRequirementRow[];
   invitationRequirementSummaries: CharacterInvitationRequirementSummary[];
   enums: WikiEnums;
+};
+
+export type CharacterItemRow = {
+  id: number;
+  name: string | null;
+  legacy_name: string | null;
+  image_id: string | null;
+  type_id: number | null;
+  rarity_id: number | null;
+};
+
+export type CharacterMartialArtRow = {
+  slot: number;
+  martial_art_id: number;
+  current_level: number;
+  max_level: number;
+  current_exp: number;
+  max_exp: number;
+};
+
+export type CharacterMartialArtPoolRow = {
+  slot: number;
+  martial_art_id: number;
+};
+
+export type CharacterInventoryPresetRow = {
+  source_row_index: number;
+  item_id: number;
+  quantity: number;
+  type_id: number | null;
+  rarity_id: number | null;
+  show_name: string | null;
+  item_name: string | null;
+  item_legacy_name: string | null;
+  item_image_id: string | null;
+};
+
+export type CharacterYearlyPurchaseItemRow = {
+  id: number;
+  name: string | null;
+  legacy_name: string | null;
+  image_id: string | null;
+  type_id: number | null;
+  rarity_id: number | null;
+  cost: number | null;
+};
+
+export type CharacterShopItemRow = {
+  source_row_index: number;
+  item_id: number;
+  type_id: number | null;
+  rarity_id: number | null;
+  min_quantity: number | null;
+  max_quantity: number | null;
+  chance: number | null;
+  item_name: string | null;
+  item_legacy_name: string | null;
+  item_image_id: string | null;
 };
 
 export type CharacterFindQuery =
@@ -151,6 +225,93 @@ export function useCharacterData() {
     );
   }
 
+  function loadCharacterMartialArts(id: number) {
+    return queryRows<CharacterMartialArtRow>(
+      `SELECT cm.slot, cm.martial_art_id, cm.current_level, cm.max_level, cm.current_exp, cm.max_exp
+       FROM character_martial_arts cm
+       WHERE cm.character_id = ?
+       ORDER BY cm.slot`,
+      [id],
+    );
+  }
+
+  function loadCharacterMartialArtPool(martialTypeId: number | null | undefined) {
+    const typeId = Number(martialTypeId);
+    if (!Number.isFinite(typeId)) {
+      return Promise.resolve<CharacterMartialArtPoolRow[]>([]);
+    }
+    return queryRows<CharacterMartialArtPoolRow>(
+      `SELECT pool_index - 1 AS slot, martial_art_id
+       FROM npc_martial_art_pools
+       WHERE martial_type_id = ?
+       ORDER BY pool_index`,
+      [typeId],
+    );
+  }
+
+  function loadCharacterInventoryPresets(id: number) {
+    return queryRows<CharacterInventoryPresetRow>(
+      `SELECT preset.source_row_index, preset.item_id, preset.quantity, preset.type_id, preset.rarity_id,
+        preset.show_name,
+        item.name AS item_name, item.legacy_name AS item_legacy_name, item.image_id AS item_image_id
+       FROM inventory_presets preset
+       JOIN items item ON item.id = preset.item_id
+       WHERE preset.character_id = ?
+       ORDER BY preset.source_row_index`,
+      [id],
+    );
+  }
+
+  function loadCharacterShopItems(id: number) {
+    return queryRows<CharacterShopItemRow>(
+      `SELECT shop.source_row_index, shop.item_id, shop.type_id, shop.rarity_id,
+        shop.min_quantity, shop.max_quantity, shop.chance,
+        item.name AS item_name, item.legacy_name AS item_legacy_name, item.image_id AS item_image_id
+       FROM shop
+       JOIN items item ON item.id = shop.item_id
+       WHERE shop.character_id = ?
+       ORDER BY shop.source_row_index`,
+      [id],
+    );
+  }
+
+  async function loadCharacterItems(ids: Array<number | null | undefined>) {
+    const uniqueIds = [...new Set(
+      ids.filter((id): id is number => Number.isFinite(id)),
+    )];
+    if (!uniqueIds.length) return [];
+
+    const placeholders = uniqueIds.map(() => "?").join(", ");
+    return queryRows<CharacterItemRow>(
+      `SELECT id, name, legacy_name, image_id, type_id, rarity_id
+       FROM items
+       WHERE id IN (${placeholders})`,
+      uniqueIds,
+    );
+  }
+
+  async function loadCharacterYearlyPurchaseItems(character: CharacterDetailRow | null) {
+    if (!character) return [];
+
+    const typeIds = characterYearlyPurchaseTypeIds(character);
+    const rarityId = characterYearlyPurchaseRarityId(character);
+    if (!typeIds.length || rarityId === null) return [];
+
+    const placeholders = typeIds.map(() => "?").join(", ");
+    const items = await queryRows<CharacterYearlyPurchaseItemRow>(
+      `SELECT id, name, legacy_name, image_id, type_id, rarity_id, cost
+       FROM items
+       WHERE type_id IN (${placeholders}) AND rarity_id = ?
+       ORDER BY type_id, id`,
+      [...typeIds, rarityId],
+    );
+    const itemIds = new Set(resolveCharacterYearlyPurchaseItemIds(
+      character,
+      items as CharacterYearlyPurchaseSourceItemRow[],
+    ));
+    return items.filter((item) => itemIds.has(item.id));
+  }
+
   function loadCharacterDefaultEquipmentResolver() {
     defaultEquipmentResolverPromise ||= queryRows<CharacterDefaultEquipmentRecipeRow>(
       `SELECT item_id, template_name, rarity_id
@@ -164,20 +325,40 @@ export function useCharacterData() {
   async function loadCharacterDetail(id: number): Promise<CharacterDetailData> {
     if (detailCache.has(id)) return detailCache.get(id)!;
 
-    const [character, quests, questTargets, invitationRequirements, enums, defaultEquipmentResolver] = await Promise.all([
+    const [character, quests, questTargets, invitationRequirements, martialArts, inventoryPresets, shopItems, enums, defaultEquipmentResolver] = await Promise.all([
       loadCharacter(id),
       loadCharacterQuests(id),
       loadCharacterQuestTargets(id),
       loadCharacterInvitationRequirements(id),
+      loadCharacterMartialArts(id),
+      loadCharacterInventoryPresets(id),
+      loadCharacterShopItems(id),
       loadWikiEnums(),
       loadCharacterDefaultEquipmentResolver(),
     ]);
+    const martialArtPool = await loadCharacterMartialArtPool(character?.martial_type_id);
 
     const invitationRequirementSummaries = await buildInvitationRequirementSummaries(invitationRequirements, enums);
+    const yearlyPurchaseItems = await loadCharacterYearlyPurchaseItems(character);
     const defaultEquipment = character ? defaultEquipmentResolver(character) : null;
+    const defaultEquipmentRows = await loadCharacterItems([
+      defaultEquipment?.weaponItemId,
+      defaultEquipment?.armorItemId,
+    ]);
+    const defaultEquipmentRowById = new Map(defaultEquipmentRows.map((row) => [row.id, row]));
+    const defaultEquipmentItems = {
+      weapon: defaultEquipment?.weaponItemId != null ? defaultEquipmentRowById.get(defaultEquipment.weaponItemId) || null : null,
+      armor: defaultEquipment?.armorItemId != null ? defaultEquipmentRowById.get(defaultEquipment.armorItemId) || null : null,
+    };
     const detail = {
       character,
       defaultEquipment,
+      defaultEquipmentItems,
+      shopItems,
+      martialArts,
+      martialArtPool,
+      yearlyPurchaseItems,
+      inventoryPresets,
       quests,
       questTargets,
       invitationRequirements,
@@ -211,6 +392,8 @@ export function useCharacterData() {
     loadCharacterQuests,
     loadCharacterQuestTargets,
     loadCharacterInvitationRequirements,
+    loadCharacterMartialArts,
+    loadCharacterInventoryPresets,
     loadCharacterDetail,
     loadCharacterSummary,
   };

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import re
 from typing import Any
 
 from .enums import npc_name
@@ -19,6 +20,8 @@ LEGACY_SECT_TARGET_IDS = {
     "日月神教": 8,
     "五毒教": 9,
 }
+
+MARTIAL_POOL_NAME_SUFFIX_RE = re.compile(r"(\d+)$")
 
 
 def character_id_lookup(npc_rows: list[dict[str, Any]]) -> dict[str, int]:
@@ -49,6 +52,7 @@ class CharacterBuilder:
         return {
             "characters": self.build_characters(),
             "character_martial_arts": self.build_martial_arts(),
+            "npc_martial_art_pools": self.build_martial_art_pools(),
             "character_attribute_snapshots": self.build_attribute_snapshots(),
             "character_quests": quest_data["quests"],
             "character_quest_targets": quest_data["targets"],
@@ -138,31 +142,71 @@ class CharacterBuilder:
         martial_id_by_name = martial_art_id_by_internal_name(self.ctx.wugong_rows)
         missing = sorted({
             row.get("wugongname")
-            for row in self.ctx.npc_martial_rows or []
+            for row in self.ctx.js_martial_rows or []
             if row.get("wugongname") and row.get("wugongname") not in martial_id_by_name
         })
         if missing:
-            raise RuntimeError(f"GNpcWuGong.wugongname 无法映射到 GWuGong.name：{'、'.join(missing)}")
+            raise RuntimeError(f"JSWugong.wugongname 无法映射到 GWuGong.name：{'、'.join(missing)}")
 
         source_rows = [
-            row for row in self.ctx.npc_martial_rows or []
+            row for row in self.ctx.js_martial_rows or []
             if row.get("juesename") in id_by_name and row.get("wugongname") in martial_id_by_name
         ]
         source_rows.sort(key=lambda row: (
             id_by_name[row["juesename"]],
-            js_number(row.get("lv")),
+            js_number(row.get("index")),
             martial_id_by_name[row["wugongname"]],
         ))
-        return [
-            {
-                "character_id": id_by_name[row["juesename"]],
+        slot_by_character: dict[int, int] = defaultdict(int)
+        rows: list[dict[str, Any]] = []
+        for row in source_rows:
+            character_id = id_by_name[row["juesename"]]
+            slot = slot_by_character[character_id]
+            slot_by_character[character_id] += 1
+            rows.append({
+                "character_id": character_id,
                 "slot": slot,
-                "level": int(js_number(row.get("lv"))),
                 "martial_art_id": martial_id_by_name[row["wugongname"]],
-                "martial_level": int(js_number(row.get("wugonglv"))),
-            }
-            for slot, row in enumerate(source_rows)
+                "current_level": int(js_number(row.get("currentlv"))),
+                "max_level": int(js_number(row.get("maxlv"))),
+                "current_exp": int(js_number(row.get("currentexp"))),
+                "max_exp": int(js_number(row.get("maxexp"))),
+            })
+        return rows
+
+    def build_martial_art_pools(self) -> list[dict[str, Any]]:
+        martial_id_by_name = martial_art_id_by_internal_name(self.ctx.wugong_rows)
+        missing = sorted({
+            row.get("wugongname")
+            for row in self.ctx.npc_martial_type_rows or []
+            if row.get("wugongname") and row.get("wugongname") not in martial_id_by_name
+        })
+        if missing:
+            raise RuntimeError(f"GNPCWuGongType.wugongname 无法映射到 GWuGong.name：{'、'.join(missing)}")
+
+        source_rows = [
+            row for row in self.ctx.npc_martial_type_rows or []
+            if row.get("wugongname") in martial_id_by_name
         ]
+        source_rows.sort(key=lambda row: (
+            int(js_number(row.get("type"))),
+            js_number(row.get("index")),
+            martial_id_by_name[row["wugongname"]],
+        ))
+        fallback_index_by_type: dict[int, int] = defaultdict(int)
+        rows: list[dict[str, Any]] = []
+        for row in source_rows:
+            martial_type_id = int(js_number(row.get("type")))
+            fallback_index = fallback_index_by_type[martial_type_id]
+            fallback_index_by_type[martial_type_id] += 1
+            match = MARTIAL_POOL_NAME_SUFFIX_RE.search(str(row.get("name") or ""))
+            pool_index = int(match.group(1)) if match else fallback_index + 1
+            rows.append({
+                "martial_type_id": martial_type_id,
+                "pool_index": pool_index,
+                "martial_art_id": martial_id_by_name[row["wugongname"]],
+            })
+        return rows
 
     def build_attribute_snapshots(self) -> list[dict[str, Any]]:
         id_by_name = character_id_lookup(self.ctx.npc_rows)

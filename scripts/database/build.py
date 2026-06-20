@@ -7,6 +7,7 @@ from .builders.asset_effects import AssetEffectBuilder
 from .builders.characters import CharacterBuilder
 from .builders.custom_martial import CustomMartialBuilder
 from .builders.enums import EnumBuilder
+from .builders.inventory import InventoryBuilder
 from .builders.inscriptions import InscriptionBuilder
 from .builders.items import ItemBuilder
 from .builders.martial_arts import MartialArtBuilder
@@ -62,6 +63,7 @@ def build_rows_from_source(
         SectBuilder(ctx),
         CharacterBuilder(ctx),
         ItemBuilder(ctx),
+        InventoryBuilder(ctx),
         InscriptionBuilder(ctx),
         MartialArtBuilder(ctx),
         AssetEffectBuilder(ctx),
