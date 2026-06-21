@@ -34,3 +34,8 @@ export function enumLabel(
   if (id === null || id === undefined || Number.isNaN(Number(id))) return fallback
   return enums?.[type]?.[String(id)] ?? fallback
 }
+
+export function safeNumber(value: number | string | null | undefined, fallback = 0) {
+  const number = Number(value)
+  return Number.isFinite(number) ? number : fallback
+}

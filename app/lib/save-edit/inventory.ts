@@ -1,51 +1,8 @@
+import type { ItemInventoryRecipeRow } from "~/lib/wiki/item";
+
 export type SaveEditXingNangRow = Record<string, string>;
 
-export type SaveEditXingNangRecipeInput = {
-  name: string | null;
-  legacy_name: string | null;
-  type_id: number | null;
-  rarity_id: number | null;
-  template_name: string | null;
-  showname: string | null;
-  template_att: number | null;
-  template_def: number | null;
-  template_hp: number | null;
-  template_weight: number | null;
-  template_length: number | null;
-  template_zhushuxing: number | null;
-  lvli: number | null;
-  gengu: number | null;
-  tipo: number | null;
-  shenfa: number | null;
-  showlv: number | null;
-  hidelv: number | null;
-  mingkecitiao: string | null;
-  mingke_fg: number | null;
-  mingke_lvli: number | null;
-  mingke_gengu: number | null;
-  mingke_tipo: number | null;
-  mingke_shenfa: number | null;
-  recipe_item_id: number | null;
-  recipe_quantity: number | null;
-  length_min: number | null;
-  length_max: number | null;
-  weight_min: number | null;
-  weight_max: number | null;
-  att_min: number | null;
-  att_max: number | null;
-  def_min: number | null;
-  def_max: number | null;
-  hp_min: number | null;
-  hp_max: number | null;
-  main_attribute_min: number | null;
-  main_attribute_max: number | null;
-  bonus_value_min: number | null;
-  bonus_value_max: number | null;
-  fixed_strength: number | null;
-  fixed_constitution: number | null;
-  fixed_physique: number | null;
-  fixed_agility: number | null;
-};
+export type SaveEditXingNangRecipeInput = ItemInventoryRecipeRow;
 
 export type SaveEditInventoryRecipeRepository<TQuery, TRow extends SaveEditXingNangRecipeInput = SaveEditXingNangRecipeInput> = {
   findInventoryItem: (query: TQuery) => Promise<TRow | null>;

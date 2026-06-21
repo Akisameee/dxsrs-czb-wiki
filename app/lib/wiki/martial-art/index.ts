@@ -1,4 +1,4 @@
-import { enumLabel } from "../utils";
+import { enumLabel } from "../../utils";
 
 import {
   linkCharactersInText,
@@ -6,9 +6,9 @@ import {
   type WikiTextPart,
   wikiStrong,
   wikiText,
-} from "./text";
+} from "../text";
 
-export type { WikiEnums } from "./text";
+export type { WikiEnums } from "../text";
 
 const INTERNAL_MARTIAL_ART_TYPE_ID = 6;
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LifeSkillRankImages from "~/components/wiki/character/LifeSkillRankImages.vue";
 import type { CharacterDetailRow } from "~/composables/useCharacterData";
-import type { LifeSkillType } from "~/lib/wiki/life-skills";
+import type { LifeSkillType } from "~/lib/wiki/character/life-skills";
 
 const props = defineProps<{
   character: CharacterDetailRow;

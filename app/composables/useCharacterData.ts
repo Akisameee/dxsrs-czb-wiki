@@ -13,13 +13,13 @@ import {
   createCharacterDefaultEquipmentResolver,
   type CharacterDefaultEquipmentIds,
   type CharacterDefaultEquipmentRecipeRow,
-} from "~/lib/wiki/character-equipment";
+} from "~/lib/wiki/character/equipment";
 import {
   characterYearlyPurchaseRarityId,
   characterYearlyPurchaseTypeIds,
   resolveCharacterYearlyPurchaseItemIds,
   type CharacterYearlyPurchaseItemRow as CharacterYearlyPurchaseSourceItemRow,
-} from "~/lib/wiki/character-yearly-purchases";
+} from "~/lib/wiki/character/yearly-purchases";
 
 export type CharacterDetailRow = CharacterSummaryRow & {
   portrait: string | null;

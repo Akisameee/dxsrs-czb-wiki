@@ -81,11 +81,11 @@ function yearlyPurchaseType(item: CharacterYearlyPurchaseItemRow) {
                 total = 膂力 + 根骨 + 体魄 + 身法
               </p>
               <div class="grid gap-1 rounded px-2 py-1 font-mono text-xs">
-                <p>total &lt; 1600 -&gt; rarity 0</p>
-                <p>1600 &lt;= total &lt; 2200 -&gt; rarity 1</p>
-                <p>2200 &lt;= total &lt; 2800 -&gt; rarity 2</p>
-                <p>2800 &lt;= total &lt; 3400 -&gt; rarity 3</p>
-                <p>3400 &lt;= total -&gt; rarity 4</p>
+                <p>1600 以下 -> 一阶</p>
+                <p>1600 ~ 2199 -> 二阶</p>
+                <p>2200 ~ 2799 -> 三阶</p>
+                <p>2800 ~ 3399 -> 四阶</p>
+                <p>3400 及以上 -> 五阶</p>
               </div>
               <p>使用模板名 + 稀有度去匹配得到默认装备对应的装备</p>
             </div>

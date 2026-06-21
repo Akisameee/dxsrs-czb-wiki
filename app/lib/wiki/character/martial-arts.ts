@@ -1,4 +1,4 @@
-import type { WikiEnums } from "./character";
+import type { WikiEnums } from "./index";
 import {
   martialArtName,
   martialArtRarityToneId,
@@ -7,7 +7,7 @@ import {
   martialArtTypeLabel,
   type MartialArtStyleRow,
   type MartialArtSummaryRow,
-} from "./martial-art";
+} from "../martial-art";
 
 export type CharacterMartialArtCard = {
   slot: number;

@@ -1,4 +1,4 @@
-import { enumLabel, groupBy } from "../utils";
+import { enumLabel, groupBy } from "../../utils";
 import {
   linkCharactersInText,
   joinWikiPartGroups,
@@ -9,9 +9,9 @@ import {
   type WikiTextPart,
   wikiPartsToText,
   wikiText,
-} from "./text";
+} from "../text";
 
-export type { WikiEnums } from "./text";
+export type { WikiEnums } from "../text";
 
 export type CharacterSummaryRow = {
   id: number;

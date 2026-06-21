@@ -1,4 +1,4 @@
-import { enumLabel } from "../utils";
+import { enumLabel } from "../../utils";
 
 import {
   linkMartialArtsInText,
@@ -6,9 +6,9 @@ import {
   type WikiEnums,
   type WikiTextPart,
   wikiText,
-} from "./text";
+} from "../text";
 
-export type { WikiEnums } from "./text";
+export type { WikiEnums } from "../text";
 
 export type ItemSummaryRow = {
   id: number;

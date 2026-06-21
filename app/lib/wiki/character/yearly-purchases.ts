@@ -1,3 +1,5 @@
+import { safeNumber } from "../../utils";
+
 export type CharacterYearlyPurchaseCharacterRow = {
   rank_id: number | null | undefined;
   likes_tea: number | null | undefined;
@@ -56,9 +58,4 @@ export function resolveCharacterYearlyPurchaseItemIds(
       && item.rarity_id === rarityId
       && typeIds.has(item.type_id))
     .map((item) => item.id);
-}
-
-function safeNumber(value: number | null | undefined) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : 0;
 }

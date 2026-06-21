@@ -17,7 +17,7 @@ import {
 import {
   loadCharacterMartialArtCards,
   type CharacterMartialArtCard,
-} from "~/lib/wiki/character-martial-arts";
+} from "~/lib/wiki/character/martial-arts";
 import { useMartialArtData } from "~/composables/useMartialArtData";
 import {
   useCharacterData,

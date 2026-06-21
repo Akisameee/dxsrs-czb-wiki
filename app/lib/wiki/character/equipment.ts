@@ -1,3 +1,5 @@
+import { safeNumber } from "../../utils";
+
 export type CharacterDefaultEquipmentCharacterRow = {
   equipment_weapon: string | null;
   equipment_armor: string | null;
@@ -70,9 +72,4 @@ export function characterDefaultEquipmentRarityId(character: CharacterDefaultEqu
 
 function characterDefaultEquipmentKey(name: string, rarityId: number | null | undefined) {
   return `${name}\u0000${safeNumber(rarityId)}`;
-}
-
-function safeNumber(value: number | null | undefined) {
-  const result = Number(value);
-  return Number.isFinite(result) ? result : 0;
 }

@@ -3,7 +3,7 @@ import { CircleHelp } from "@lucide/vue";
 import MartialArtCard from "~/components/wiki/martial-art/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import { martialArtDetailUrl } from "~/lib/wiki/martial-art";
-import type { CharacterMartialArtCard } from "~/lib/wiki/character-martial-arts";
+import type { CharacterMartialArtCard } from "~/lib/wiki/character/martial-arts";
 
 type CharacterMartialArtView = "initial" | "all";
 

@@ -2,7 +2,7 @@
 import { useMediaQuery } from "@vueuse/core";
 import GameImage from "~/components/wiki/WikiImage.vue";
 import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
-import { lifeSkillIconSize, lifeSkillIconSizeKey, lifeSkillImageId, lifeSkillLevel, type LifeSkillIconSize, type LifeSkillIconSizeValue, type LifeSkillType } from "~/lib/wiki/life-skills";
+import { lifeSkillIconSize, lifeSkillIconSizeKey, lifeSkillImageId, lifeSkillLevel, type LifeSkillIconSize, type LifeSkillIconSizeValue, type LifeSkillType } from "~/lib/wiki/character/life-skills";
 
 const props = withDefaults(defineProps<{
   type: LifeSkillType;

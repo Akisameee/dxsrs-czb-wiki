@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 import GameImage from "~/components/wiki/WikiImage.vue";
-import { lifeSkillIconSize, lifeSkillImageId, type LifeSkillIconSizeValue, type LifeSkillType } from "~/lib/wiki/life-skills";
+import { lifeSkillIconSize, lifeSkillImageId, type LifeSkillIconSizeValue, type LifeSkillType } from "~/lib/wiki/character/life-skills";
 
 const props = withDefaults(defineProps<{
   type: LifeSkillType;
