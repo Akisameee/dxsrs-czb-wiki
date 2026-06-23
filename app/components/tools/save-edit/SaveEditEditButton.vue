@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { Trash2Icon } from "@lucide/vue";
+import { PencilIcon } from "@lucide/vue";
 import SaveEditActionButton from "./SaveEditActionButton.vue";
 
 const props = withDefaults(defineProps<{
   label?: string;
 }>(), {
-  label: "删除",
+  label: "编辑",
 });
 </script>
 
 <template>
   <SaveEditActionButton
     v-bind="$attrs"
-    class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+    class="text-muted-foreground hover:text-foreground"
   >
-    <Trash2Icon class="size-4" />
+    <PencilIcon class="size-4" />
     <span class="sr-only">{{ label }}</span>
   </SaveEditActionButton>
 </template>

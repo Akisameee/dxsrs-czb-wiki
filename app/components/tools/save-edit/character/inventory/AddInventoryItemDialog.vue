@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import { Check } from "@lucide/vue";
 import { useMediaQuery } from "@vueuse/core";
 import {
@@ -10,15 +9,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import { rarityCardClass } from "~/lib/rarity";
 import {
-  itemInitial,
   type ItemInventoryRecipeRow,
   itemName,
   itemTypeLabel,
 } from "~/lib/wiki/item";
-import GameImage from "~/components/wiki/WikiImage.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import ItemCard from "~/components/wiki/item/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 import type { WikiEnums } from "~/lib/wiki/text";
@@ -37,7 +33,6 @@ const emit = defineEmits<{
   add: [payloads: InventoryAddItemPayload[]];
 }>();
 
-const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki/item/HoverLink.vue"));
 const open = defineModel<boolean>("open", { required: true });
 const { queryRows } = useWikiDb();
 const search = ref("");
@@ -177,7 +172,10 @@ function confirmSelection() {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-4xl">
+    <DialogContent
+      class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-4xl"
+      @open-auto-focus.prevent
+    >
       <DialogHeader>
         <DialogTitle>添加物品</DialogTitle>
         <DialogDescription>点击道具卡片选择，确认后一次性加入行囊</DialogDescription>
@@ -203,28 +201,18 @@ function confirmSelection() {
           :page-size="pageSize"
           empty-label="没有匹配的道具"
         >
-          <WikiCard
+          <ItemCard
             v-for="item in pagedItems"
             :key="item.id"
             role="button"
-            :title="itemName(item)"
+            :id="item.id"
+            :name="itemName(item)"
+            :image-id="item.image_id"
             :description="itemTypeLabel(item, enums)"
-            :color="rarityCardClass(item.rarity_id)"
+            :rarity-id="item.rarity_id"
             :selected="selectedItemIds.has(item.id)"
             :on-click="() => toggleItem(item)"
-          >
-            <template #avatar>
-              <GameImage
-                :id="item.image_id"
-                :alt="itemName(item)"
-                :fallback="itemInitial(item)"
-                :size="40"
-              />
-            </template>
-            <template #action>
-              <ItemHoverLink :id="item.id" mode="button" />
-            </template>
-          </WikiCard>
+          />
         </WikiCardGrid>
       </div>
 

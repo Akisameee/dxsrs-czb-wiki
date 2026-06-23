@@ -98,7 +98,7 @@ export function characterDetailUrl(id: number) {
   return `/characters/detail/?id=${id}`;
 }
 
-export function characterLocationText(item: CharacterSummaryRow, enums: WikiEnums) {
+export function characterLocationText(item: Pick<CharacterSummaryRow, "region_id" | "location_id">, enums: WikiEnums) {
   if (item.region_id === null || item.location_id === null) return "无地点";
   return `${enumLabel(enums, "DiDian", item.region_id)} / ${enumLabel(enums, "Area", item.location_id)}`;
 }

@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
-import { useMediaQuery } from "@vueuse/core";
 import { enumMapFromRows } from "~/lib/utils";
-import { rarityCardClass } from "~/lib/rarity";
 import {
   itemDetailUrl,
-  itemInitial,
   itemName,
   itemTypeLabel,
   type ItemSummaryRow,
 } from "~/lib/wiki/item";
-import GameImage from "~/components/wiki/WikiImage.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import ItemCard from "~/components/wiki/item/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
@@ -19,7 +14,6 @@ useHead({ title: "道具" });
 
 type Item = ItemSummaryRow;
 
-const ItemHoverLink = defineAsyncComponent(() => import("~/components/wiki/item/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const typeFilter = ref("all");
@@ -32,19 +26,10 @@ useWikiIndexRouteQuery({
   filters: [
     { key: "type", value: typeFilter },
     { key: "rarity", value: rarityFilter },
-    { key: "material", value: materialFilter },
+  { key: "material", value: materialFilter },
   ],
 });
-const isSm = useMediaQuery("(min-width: 640px)");
-const isLg = useMediaQuery("(min-width: 1024px)");
-const isXl = useMediaQuery("(min-width: 1280px)");
-const gridColumns = computed(() => {
-  if (isXl.value) return 4;
-  if (isLg.value) return 3;
-  if (isSm.value) return 2;
-  return 1;
-});
-const pageSize = computed(() => gridColumns.value * (gridColumns.value === 1 ? 10 : 6));
+const pageSize = computed(() => 24);
 
 const { data, pending, error } = useLazyAsyncData("items-index", async () => {
   const [items, enumRows] = await Promise.all([
@@ -159,27 +144,17 @@ function goToItem(item: Item) {
       :page-size="pageSize"
       empty-label="没有匹配的道具"
     >
-        <WikiCard
-          v-for="item in pagedRows"
-          :key="item.id"
-          role="link"
-          :title="itemName(item)"
-          :description="itemTypeLabel(item, enums)"
-          :color="rarityCardClass(item.rarity_id)"
-          :on-click="() => goToItem(item)"
-        >
-          <template #avatar>
-            <GameImage
-              :id="item.image_id"
-              :alt="itemName(item)"
-              :fallback="itemInitial(item)"
-              :size="40"
-            />
-          </template>
-          <template #action>
-            <ItemHoverLink :id="item.id" mode="button" />
-          </template>
-        </WikiCard>
+      <ItemCard
+        v-for="item in pagedRows"
+        :key="item.id"
+        role="link"
+        :id="item.id"
+        :name="itemName(item)"
+        :image-id="item.image_id"
+        :description="itemTypeLabel(item, enums)"
+        :rarity-id="item.rarity_id"
+        :on-click="() => goToItem(item)"
+      />
     </WikiCardGrid>
   </AppPageContainer>
 </template>

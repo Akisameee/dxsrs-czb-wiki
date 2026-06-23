@@ -8,8 +8,10 @@ withDefaults(defineProps<{
   label: string;
   linkClass?: HTMLAttributes["class"];
   buttonLabel: string;
+  triggerTabindex?: number | string;
 }>(), {
   mode: "link",
+  triggerTabindex: undefined,
 });
 
 const open = defineModel<boolean>("open", { default: false });
@@ -27,6 +29,7 @@ const open = defineModel<boolean>("open", { default: false });
         variant="ghost"
         size="icon-sm"
         :aria-label="buttonLabel"
+        :tabindex="triggerTabindex"
         @click.stop
         @keydown.stop
       >
@@ -38,6 +41,7 @@ const open = defineModel<boolean>("open", { default: false });
         v-else
         :to="to"
         :class="linkClass"
+        :tabindex="triggerTabindex"
       >
         <slot name="trigger">{{ label }}</slot>
       </NuxtLink>

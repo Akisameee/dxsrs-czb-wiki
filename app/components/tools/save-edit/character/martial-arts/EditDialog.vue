@@ -5,11 +5,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "~/components/ui/dialog";
+import CharacterEditDialogHeader from "../CharacterEditDialogHeader.vue";
 import {
   Table,
   TableBody,
@@ -37,6 +35,7 @@ export type MartialLevelRow = {
 };
 
 const props = defineProps<{
+  martialArtId?: number | string | null;
   title: string;
   description?: string;
   fields: MartialSaveField[];
@@ -103,13 +102,16 @@ function chainStyleOptions(field: MartialSaveField) {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-6xl">
-      <DialogHeader>
-        <DialogTitle>{{ title }}</DialogTitle>
-        <DialogDescription v-if="description">
-          {{ description }}
-        </DialogDescription>
-      </DialogHeader>
+    <DialogContent
+      class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-6xl"
+      @open-auto-focus.prevent
+    >
+      <CharacterEditDialogHeader
+        kind="martial-art"
+        :id="martialArtId"
+        :title="title"
+        :description="description"
+      />
 
       <div class="grid gap-3">
         <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

@@ -13,10 +13,12 @@ const props = withDefaults(defineProps<{
   mode?: "link" | "button";
   label?: string;
   rarityId?: number | string | null;
+  triggerTabindex?: number | string;
 }>(), {
   mode: "link",
   label: "",
   rarityId: null,
+  triggerTabindex: undefined,
 });
 
 const open = ref(false);
@@ -93,6 +95,7 @@ onMounted(() => {
     :label="displayLabel"
     :link-class="linkClass"
     button-label="查看道具摘要"
+    :trigger-tabindex="triggerTabindex"
   >
     <template #trigger>
       <slot>

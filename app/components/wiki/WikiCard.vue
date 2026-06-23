@@ -39,7 +39,7 @@ const emit = defineEmits<{
 const clickable = computed(() => Boolean(props.onClick));
 const cardClass = computed(() => cn(
   props.color,
-  "gap-4 py-4 md:gap-6 md:py-6",
+  "relative gap-4 py-4 md:gap-6 md:py-6",
   clickable.value && "cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
   props.selected && "ring-2 ring-primary",
   props.disabled && "opacity-50",
@@ -69,7 +69,7 @@ function handleKeydown(event: KeyboardEvent) {
     @click="handleClick"
     @keydown="handleKeydown"
   >
-    <AppCardHeader class="px-3 md:px-6">
+    <AppCardHeader class="px-3 sm:px-4 md:px-5 lg:px-6">
       <div class="relative min-w-0">
         <div
           :class="cn(
@@ -87,26 +87,12 @@ function handleKeydown(event: KeyboardEvent) {
             >
               {{ description }}
             </CardDescription>
-            <div
-              v-if="$slots.badges || badges.length"
-              class="mt-1 flex flex-wrap gap-1 md:mt-2 md:gap-2"
-            >
-              <slot name="badges" />
-              <Badge
-                v-for="badge in badges"
-                :key="badge.label"
-                :variant="badge.variant || 'outline'"
-                :class="badge.class"
-              >
-                {{ badge.label }}
-              </Badge>
-            </div>
           </div>
         </div>
 
         <div
           v-if="$slots.action || tip || $slots.tip"
-          class="absolute right-0 top-0 flex items-center gap-1"
+          class="absolute right-0 top-[0.75rem] flex -translate-y-1/2 items-center gap-1"
           @click.stop
           @keydown.stop
         >
@@ -124,15 +110,30 @@ function handleKeydown(event: KeyboardEvent) {
           </AppHoverCard>
         </div>
       </div>
+
+      <div
+        v-if="$slots.badges || badges.length"
+        class="mt-1 flex flex-wrap gap-1 md:mt-2 md:gap-2"
+      >
+        <slot name="badges" />
+        <Badge
+          v-for="badge in badges"
+          :key="badge.label"
+          :variant="badge.variant || 'outline'"
+          :class="badge.class"
+        >
+          {{ badge.label }}
+        </Badge>
+      </div>
     </AppCardHeader>
 
-    <AppCardContent
+    <AppCardFooter
       v-if="$slots.footer"
-      class="px-3 pt-0 md:px-6"
+      class="absolute bottom-3 right-3 px-0 md:right-6 md:px-0"
       @click.stop
       @keydown.stop
     >
       <slot name="footer" />
-    </AppCardContent>
+    </AppCardFooter>
   </AppCard>
 </template>

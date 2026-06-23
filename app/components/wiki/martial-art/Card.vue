@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useMediaQuery } from "@vueuse/core";
 import type { HTMLAttributes } from "vue";
 import { Badge } from "~/components/ui/badge";
 import { rarityCardClass } from "~/lib/rarity";
@@ -21,7 +22,7 @@ const props = withDefaults(defineProps<{
   rarityId?: number | string | null;
   rarityToneId?: number | string | null;
   sectId?: number | string | null;
-  sectLabel: string;
+  sectLabel?: string;
   styles?: MartialArtCardStyle[];
   role?: "link" | "button";
   selected?: boolean;
@@ -39,6 +40,15 @@ const props = withDefaults(defineProps<{
 
 const cardColor = computed<HTMLAttributes["class"]>(() => rarityCardClass(props.rarityToneId));
 const styleItems = computed(() => props.styles.filter((style) => style.label));
+const isSm = useMediaQuery("(min-width: 640px)");
+const isLg = useMediaQuery("(min-width: 1024px)");
+const isXl = useMediaQuery("(min-width: 1280px)");
+const iconSize = computed(() => {
+  if (isXl.value) return 48;
+  if (isLg.value) return 44;
+  if (isSm.value) return 40;
+  return 34;
+});
 </script>
 
 <template>
@@ -57,34 +67,38 @@ const styleItems = computed(() => props.styles.filter((style) => style.label));
         :name="name"
         :type-id="typeId"
         :rarity-id="rarityId"
-        :size="40"
+        :size="iconSize"
       />
     </template>
 
     <template #action>
-      <MartialArtHoverLink :id="id" mode="button" />
+      <slot name="action">
+        <MartialArtHoverLink :id="id" mode="button" />
+      </slot>
     </template>
 
     <template #badges>
-      <div
-        v-if="interactiveBadges"
-        class="flex flex-wrap gap-2"
-        @click.stop
-        @keydown.stop
-      >
-        <SectHoverLink :id="sectId" :label="sectLabel" />
-        <StyleHoverLink v-for="style in styleItems" :key="`${style.id}-${style.label}`" :id="style.id" :label="style.label" />
-      </div>
-      <div v-else class="flex flex-wrap gap-2">
-        <Badge variant="outline">{{ sectLabel }}</Badge>
-        <Badge
-          v-for="style in styleItems"
-          :key="`${style.id}-${style.label}`"
-          variant="outline"
+      <slot name="badges">
+        <div
+          v-if="interactiveBadges"
+          class="flex flex-wrap gap-2"
+          @click.stop
+          @keydown.stop
         >
-          {{ style.label }}
-        </Badge>
-      </div>
+          <SectHoverLink :id="sectId" :label="sectLabel || '无门派'" />
+          <StyleHoverLink v-for="style in styleItems" :key="`${style.id}-${style.label}`" :id="style.id" :label="style.label" />
+        </div>
+        <div v-else class="flex flex-wrap gap-2">
+          <Badge variant="outline">{{ sectLabel || "无门派" }}</Badge>
+          <Badge
+            v-for="style in styleItems"
+            :key="`${style.id}-${style.label}`"
+            variant="outline"
+          >
+            {{ style.label }}
+          </Badge>
+        </div>
+      </slot>
     </template>
   </WikiCard>
 </template>

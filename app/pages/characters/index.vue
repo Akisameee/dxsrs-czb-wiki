@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
 import { enumLabel, enumMapFromRows } from "~/lib/utils";
 import { useMediaQuery } from "@vueuse/core";
-import { rarityCardClass } from "~/lib/rarity";
 import {
   characterDetailUrl,
-  characterInitial as getCharacterInitial,
   characterLocationText,
   characterName as getCharacterName,
   type CharacterSummaryRow,
 } from "~/lib/wiki/character";
-import CharacterPortrait from "~/components/wiki/character/CharacterPortrait.vue";
-import { Badge } from "~/components/ui/badge";
-import SectHoverLink from "~/components/wiki/sect/HoverLink.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import CharacterCard from "~/components/wiki/character/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import WikiIndexHeader from "~/components/wiki/WikiIndexHeader.vue";
 
@@ -21,7 +15,6 @@ useHead({ title: "人物" });
 
 type Character = CharacterSummaryRow;
 
-const CharacterHoverLink = defineAsyncComponent(() => import("~/components/wiki/character/HoverLink.vue"));
 const { queryRows } = useWikiDb();
 const search = ref("");
 const sectFilter = ref("all");
@@ -72,10 +65,6 @@ function characterName(item: Character) {
 
 function locationText(item: Character) {
   return characterLocationText(item, enums.value);
-}
-
-function characterInitial(item: Character) {
-  return getCharacterInitial(item);
 }
 
 function goToCharacter(item: Character) {
@@ -171,35 +160,20 @@ watch(pageCount, (count) => {
       :page-size="pageSize"
       empty-label="没有匹配的人物"
     >
-        <WikiCard
+        <CharacterCard
           v-for="item in pagedRows"
           :key="item.id"
           role="link"
-          :title="characterName(item)"
+          :id="item.id"
+          :name="characterName(item)"
           :description="locationText(item)"
-          :color="rarityCardClass(item.rarity_id)"
+          :portrait="item.portrait"
+          :rarity-id="item.rarity_id"
+          :sect-id="item.sect_id"
+          :sect-label="item.sect_name || '无门派'"
+          :weapon-type="enumLabel(enums, 'BingQiType', item.weapon_type_id)"
           :on-click="() => goToCharacter(item)"
-        >
-          <template #avatar>
-            <CharacterPortrait
-              :ids="{ characterId: item.id, portrait: item.portrait }"
-              :fallback="characterInitial(item)"
-              :size="48"
-            />
-          </template>
-          <template #action>
-            <CharacterHoverLink :id="item.id" mode="button" />
-          </template>
-          <template #badges>
-            <SectHoverLink
-              :id="item.sect_id"
-              :label="item.sect_name || '无门派'"
-            />
-            <Badge variant="secondary">
-              {{ enumLabel(enums, 'BingQiType', item.weapon_type_id) }}
-            </Badge>
-          </template>
-        </WikiCard>
+        />
     </WikiCardGrid>
   </AppPageContainer>
 </template>

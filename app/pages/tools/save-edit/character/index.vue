@@ -3,7 +3,9 @@ import CharacterEditHeaderCard from "~/components/tools/save-edit/character/Char
 import InjuriesTableCard from "~/components/tools/save-edit/character/injuries/TableCard.vue";
 import InventoryTableCard from "~/components/tools/save-edit/character/inventory/TableCard.vue";
 import MartialArtsTableCard from "~/components/tools/save-edit/character/martial-arts/TableCard.vue";
-import ZhuJueTableCard from "~/components/tools/save-edit/character/player/TableCard.vue";
+import NpcDetailCard from "~/components/tools/save-edit/character/npc/DetailCard.vue";
+import NpcTableCard from "~/components/tools/save-edit/character/npc/NpcTableCard.vue";
+import PlayerTableCard from "~/components/tools/save-edit/character/player/TableCard.vue";
 import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
 import SingleRowTableCard from "~/components/tools/save-edit/character/SingleRowTableCard.vue";
 import SaveTableEditor from "~/components/tools/save-edit/SaveTableEditor.vue";
@@ -11,6 +13,7 @@ import {
   applySaveEditRowDraftOperation,
   createEmptySaveEditDraft,
   resetSaveEditDraftTarget,
+  resetSaveEditRowDraft,
   saveEditCharacterName,
   saveEditDraftFieldValue,
   updateSaveEditCellDraft,
@@ -24,6 +27,7 @@ import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 useHead({ title: "人物存档修改" });
 
 const route = useRoute();
+const router = useRouter();
 const { queryRows } = useWikiDb();
 const { findByFileName, updateItem } = useSaveEditWorkspace();
 const viewMode = ref<"normal" | "database">("normal");
@@ -70,6 +74,36 @@ const inventoryTable = computed(() => save.value?.tables.find((table) => table.n
 const jsWugongTable = computed(() => save.value?.tables.find((table) => table.name === "JSWugong") || null);
 const gWugongTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGong") || null);
 const gWugongDetailTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGongDetail") || null);
+const npcTable = computed(() => save.value?.tables.find((table) => table.name === "Npc") || null);
+const activeNpcRowIndex = computed(() => {
+  const raw = Array.isArray(route.query.character) ? route.query.character[0] : route.query.character;
+  if (raw === undefined || raw === null || raw === "") return null;
+  const rowIndex = Number(raw);
+  if (!Number.isInteger(rowIndex) || rowIndex < 0 || !npcTable.value || rowIndex >= npcTable.value.rowCount) return null;
+  return rowIndex;
+});
+const activeNpcLabel = computed(() => {
+  const rowIndex = activeNpcRowIndex.value;
+  if (rowIndex === null) return "";
+  const fullName = `${npcFieldText("xing", rowIndex)}${npcFieldText("ming", rowIndex)}`.trim();
+  return fullName || npcFieldText("name", rowIndex) || `NPC ${rowIndex}`;
+});
+const activeNpcOwnerName = computed(() => {
+  const rowIndex = activeNpcRowIndex.value;
+  return rowIndex === null ? "" : npcFieldText("name", rowIndex);
+});
+const activeNpcEquippedUids = computed(() => {
+  const rowIndex = activeNpcRowIndex.value;
+  if (rowIndex === null) return {};
+  return {
+    weapon: npcFieldText("wq_uid", rowIndex),
+    armor: npcFieldText("fj_uid", rowIndex),
+  };
+});
+const npcEquipmentSlots = [
+  { key: "weapon", label: "武器" },
+  { key: "armor", label: "防具" },
+];
 const equippedUids = computed(() => ({
   weapon1: zhuJueFieldText("wq1_uid"),
   weapon2: zhuJueFieldText("wq2_uid"),
@@ -82,9 +116,30 @@ function zhuJueFieldText(fieldName: string) {
   return String(saveEditDraftFieldValue(field, 0, draft.value) ?? "");
 }
 
+function npcFieldText(fieldName: string, rowIndex: number) {
+  const field = npcTable.value?.fields[fieldName];
+  if (!field) return "";
+  return String(saveEditDraftFieldValue(field, rowIndex, draft.value) ?? "");
+}
+
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
   if (!item.value) return;
   updateDraftValue(field, rowIndex, value);
+}
+
+function editNpc(rowIndex: number) {
+  void router.push({
+    path: route.path,
+    query: {
+      ...route.query,
+      character: String(rowIndex),
+    },
+  });
+}
+
+function closeNpcDetail() {
+  const { character: _character, ...query } = route.query;
+  void router.push({ path: route.path, query });
 }
 
 function updateActiveTable(tableIndex: number) {
@@ -122,6 +177,13 @@ function resetInventoryDraft(target: SaveEditDraftResetTarget) {
   if (!item.value || !inventoryTable.value) return;
   updateItem(item.value.id, {
     draft: resetSaveEditDraftTarget(item.value.draft, inventoryTable.value, target),
+  });
+}
+
+function resetNpcRow(rowIndex: number) {
+  if (!item.value || !npcTable.value) return;
+  updateItem(item.value.id, {
+    draft: resetSaveEditRowDraft(item.value.draft, npcTable.value, rowIndex),
   });
 }
 
@@ -172,8 +234,54 @@ function downloadSave() {
       />
     </template>
 
+    <template v-else-if="activeNpcRowIndex !== null && npcTable">
+      <div class="flex items-center justify-between gap-3">
+        <AppButton type="button" variant="outline" @click="closeNpcDetail">
+          返回 NPC 列表
+        </AppButton>
+        <div class="text-sm text-muted-foreground">
+          正在编辑：{{ activeNpcLabel }}
+        </div>
+      </div>
+
+      <NpcDetailCard
+        :table="npcTable"
+        :row-index="activeNpcRowIndex"
+        :draft="draft"
+        :enums="enums"
+        @update-field="updateField"
+        @reset-row="resetNpcRow"
+      />
+
+      <MartialArtsTableCard
+        v-if="jsWugongTable && gWugongTable && gWugongDetailTable && activeNpcOwnerName"
+        :js-table="jsWugongTable"
+        :base-table="gWugongTable"
+        :detail-table="gWugongDetailTable"
+        :owner-name="activeNpcOwnerName"
+        :owner-label="activeNpcLabel"
+        :draft="draft"
+        :enums="enums"
+        @update-field="updateField"
+      />
+
+      <InventoryTableCard
+        v-if="inventoryTable && activeNpcOwnerName"
+        :table="inventoryTable"
+        :owner-name="activeNpcOwnerName"
+        :owner-label="activeNpcLabel"
+        :equipped-uids="activeNpcEquippedUids"
+        :equipment-slots="npcEquipmentSlots"
+        :draft="draft"
+        :enums="enums"
+        @row-operation="applyInventoryRowOperation"
+        @row-operations="applyInventoryRowOperations"
+        @reset-draft="resetInventoryDraft"
+      />
+    </template>
+
     <template v-else>
-      <ZhuJueTableCard
+      <PlayerTableCard
         :save="save"
         :table="save.zhuJue"
         :draft="draft"
@@ -208,6 +316,14 @@ function downloadSave() {
         @row-operation="applyInventoryRowOperation"
         @row-operations="applyInventoryRowOperations"
         @reset-draft="resetInventoryDraft"
+      />
+
+      <NpcTableCard
+        v-if="npcTable"
+        :table="npcTable"
+        :draft="draft"
+        :enums="enums"
+        @edit-character="editNpc"
       />
 
       <div v-if="easyTables.length" class="grid gap-6 lg:grid-cols-2">

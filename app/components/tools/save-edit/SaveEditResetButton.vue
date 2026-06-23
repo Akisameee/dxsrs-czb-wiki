@@ -1,32 +1,31 @@
 <script setup lang="ts">
 import { RotateCcwIcon } from "@lucide/vue";
-import type { HTMLAttributes } from "vue";
-import { cn } from "~/lib/utils";
-
-defineOptions({
-  inheritAttrs: false,
-});
+import SaveEditActionButton from "./SaveEditActionButton.vue";
+import type { ButtonVariants } from "~/components/ui/button";
 
 const props = withDefaults(defineProps<{
   label?: string;
-  class?: HTMLAttributes["class"];
+  size?: "sm" | "md" | "lg";
 }>(), {
   label: "重置所有修改",
+  size: "sm",
+});
+
+const sizeClass = computed<ButtonVariants["size"]>(() => {
+  if (props.size === "lg") return "icon-lg";
+  if (props.size === "md") return "icon-sm";
+  return "icon-xs";
 });
 </script>
 
 <template>
-  <AppButton
+  <SaveEditActionButton
     v-bind="$attrs"
-    type="button"
-    variant="ghost"
-    size="icon"
-    :class="cn(
-      'size-6 rounded-full border bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground md:size-6',
-      props.class,
-    )"
+    variant="outline"
+    :size="sizeClass"
+    class="rounded-full border-border bg-background text-muted-foreground shadow-xs hover:text-foreground"
   >
-    <RotateCcwIcon class="size-3.5" />
+    <RotateCcwIcon class="size-4" />
     <span class="sr-only">{{ label }}</span>
-  </AppButton>
+  </SaveEditActionButton>
 </template>

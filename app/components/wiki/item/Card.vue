@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useMediaQuery } from "@vueuse/core";
 import type { HTMLAttributes } from "vue";
 import GameImage from "~/components/wiki/WikiImage.vue";
 import WikiCard from "~/components/wiki/WikiCard.vue";
@@ -11,6 +12,7 @@ const props = withDefaults(defineProps<{
   imageId?: string | null;
   description?: string;
   rarityId?: number | string | null;
+  cardColor?: HTMLAttributes["class"];
   role?: "link" | "button";
   selected?: boolean;
   disabled?: boolean;
@@ -22,6 +24,7 @@ const props = withDefaults(defineProps<{
   imageId: null,
   description: undefined,
   rarityId: null,
+  cardColor: undefined,
   role: "link",
   selected: false,
   disabled: false,
@@ -31,7 +34,16 @@ const props = withDefaults(defineProps<{
 });
 
 const initial = computed(() => props.name.slice(0, 1));
-const cardColor = computed<HTMLAttributes["class"]>(() => rarityCardClass(props.rarityId));
+const cardColor = computed<HTMLAttributes["class"]>(() => props.cardColor || rarityCardClass(props.rarityId));
+const isSm = useMediaQuery("(min-width: 640px)");
+const isLg = useMediaQuery("(min-width: 1024px)");
+const isXl = useMediaQuery("(min-width: 1280px)");
+const imageSize = computed(() => {
+  if (isXl.value) return 48;
+  if (isLg.value) return 44;
+  if (isSm.value) return 40;
+  return 34;
+});
 </script>
 
 <template>
@@ -50,18 +62,24 @@ const cardColor = computed<HTMLAttributes["class"]>(() => rarityCardClass(props.
         :id="imageId"
         :alt="name"
         :fallback="initial"
-        :size="40"
+        :size="imageSize"
       />
     </template>
 
     <template #action>
-      <span
-        v-if="actionText"
-        :class="['text-sm text-muted-foreground tabular-nums', actionTextClass]"
-      >
-        {{ actionText }}
-      </span>
-      <ItemHoverLink :id="id" mode="button" />
+      <slot name="action">
+        <span
+          v-if="actionText"
+          :class="['text-sm text-muted-foreground tabular-nums', actionTextClass]"
+        >
+          {{ actionText }}
+        </span>
+        <ItemHoverLink :id="id" mode="button" />
+      </slot>
+    </template>
+
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" />
     </template>
   </WikiCard>
 </template>

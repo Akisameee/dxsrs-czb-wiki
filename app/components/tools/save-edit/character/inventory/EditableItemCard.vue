@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import GameImage from "~/components/wiki/WikiImage.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
-import ItemHoverLink from "~/components/wiki/item/HoverLink.vue";
+import ItemCard from "~/components/wiki/item/Card.vue";
+import SaveEditResettableFrame from "~/components/tools/save-edit/SaveEditResettableFrame.vue";
+import SaveEditEditButton from "~/components/tools/save-edit/SaveEditEditButton.vue";
 import SaveEditDeleteButton from "~/components/tools/save-edit/SaveEditDeleteButton.vue";
-import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
-import EditableNumberField from "~/components/tools/save-edit/fields/EditableNumberField.vue";
 import EquipmentEditDialog, { type EquipmentEditField } from "./EquipmentEditDialog.vue";
+import QuantityEditDialog from "./QuantityEditDialog.vue";
 import type { BgDatabaseField } from "~/lib/save-edit";
 
 const props = defineProps<{
@@ -39,77 +38,112 @@ const emit = defineEmits<{
 }>();
 
 const equipmentDialogOpen = ref(false);
+const quantityDialogOpen = ref(false);
 const displayName = computed(() => props.item?.name || props.itemName || "未知道具");
 const legacyName = computed(() => props.item?.legacy_name || props.itemName);
-const shouldShowLegacyName = computed(() => Boolean(legacyName.value && legacyName.value !== displayName.value));
-const initial = computed(() => displayName.value.slice(0, 1));
 const rowFields = computed(() => props.rowFields || []);
+const quantityText = computed(() => `x${props.quantity || "1"}`);
 
 function updateEquipmentField(field: BgDatabaseField, value: string) {
   emit("updateEquipmentField", { field, value });
 }
+
+function openEditDialog() {
+  if (props.isEquipment) equipmentDialogOpen.value = true;
+  else quantityDialogOpen.value = true;
+}
 </script>
 
 <template>
-  <WikiCard
-    :title="displayName"
-    :description="typeLabel"
-    :color="rarityClass"
+  <SaveEditResettableFrame
+    v-if="isEquipment"
+    :dirty="Boolean(dirty)"
+    :readonly="deleteMode"
+    :surface="false"
+    reset-label="重置装备"
+    reset-class="-right-2 -top-2"
+    @reset="emit('reset')"
   >
-    <template #avatar>
-      <GameImage
-        :id="item?.image_id"
-        :alt="displayName"
-        :fallback="initial"
-        :size="40"
-      />
-    </template>
+    <ItemCard
+      :id="item?.id || rowIndex"
+      :name="displayName"
+      :image-id="item?.image_id"
+      :description="typeLabel"
+      :card-color="rarityClass"
+    >
+      <template #action>
+        <SaveEditDeleteButton
+          v-if="deleteMode"
+          label="删除物品"
+          @click="emit('delete')"
+        />
+        <SaveEditEditButton
+          v-else
+          aria-label="编辑物品"
+          label="编辑物品"
+          @click="openEditDialog"
+        />
+      </template>
 
+      <template #footer>
+        <div class="text-xs md:text-sm text-muted-foreground tabular-nums">
+          {{ quantityText }}
+        </div>
+      </template>
+    </ItemCard>
+  </SaveEditResettableFrame>
+
+  <ItemCard
+    v-else
+    :id="item?.id || rowIndex"
+    :name="displayName"
+    :image-id="item?.image_id"
+    :description="typeLabel"
+    :card-color="rarityClass"
+  >
     <template #action>
       <SaveEditDeleteButton
         v-if="deleteMode"
         label="删除物品"
         @click="emit('delete')"
       />
-      <div v-else-if="!isEquipment" class="max-w-12 md:max-w-16 gap-2">
-        <EditableNumberField
-          :initial-value="initialQuantity"
-          :model-value="quantity"
-          :dirty="quantityDirty"
-          :reset-value="quantityResetValue"
-          :min="1"
-          compact
-          @update="emit('updateQuantity', $event)"
-        />
-      </div>
-      <EditableFieldFrame
+      <SaveEditEditButton
         v-else
-        :dirty="dirty"
-        @reset="emit('reset')"
-      >
-        <AppButton
-          variant="outline"
-          type="button"
-          @click="equipmentDialogOpen = true"
-        >
-          编辑
-        </AppButton>
-      </EditableFieldFrame>
-      <ItemHoverLink
-        v-if="!deleteMode && item"
-        :id="item.id"
-        mode="button"
+        aria-label="编辑物品"
+        label="编辑物品"
+        @click="openEditDialog"
       />
     </template>
-  </WikiCard>
+
+    <template #footer>
+      <div class="text-xs md:text-sm text-muted-foreground tabular-nums">
+        {{ quantityText }}
+      </div>
+    </template>
+  </ItemCard>
 
   <EquipmentEditDialog
     v-if="isEquipment"
     v-model:open="equipmentDialogOpen"
+    :item-id="item?.id"
     :item-name="displayName"
     :legacy-name="legacyName"
     :uid="uid"
     :fields="rowFields"
     @update-field="updateEquipmentField($event.field, $event.value)"
+  />
+
+  <QuantityEditDialog
+    v-else
+    v-model:open="quantityDialogOpen"
+    :item-id="item?.id"
+    :item-name="displayName"
+    :legacy-name="legacyName"
+    :uid="uid"
+    :quantity="quantity"
+    :initial-quantity="initialQuantity"
+    :quantity-dirty="quantityDirty"
+    :quantity-reset-value="quantityResetValue"
+    @update-quantity="emit('updateQuantity', $event)"
   />
 </template>

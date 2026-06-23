@@ -5,11 +5,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "~/components/ui/dialog";
+import CharacterEditDialogHeader from "../CharacterEditDialogHeader.vue";
 import type { BgDatabaseField } from "~/lib/save-edit";
 
 export type EquipmentEditField = {
@@ -35,6 +33,7 @@ type InscriptionRow = {
 };
 
 const props = defineProps<{
+  itemId?: number | string | null;
   itemName: string;
   legacyName?: string;
   uid: string;
@@ -153,14 +152,17 @@ function updateInscriptionType(value: string) {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-3xl">
-      <DialogHeader>
-        <DialogTitle>{{ itemName }}</DialogTitle>
-        <DialogDescription>
-          <span v-if="legacyName && legacyName !== itemName">存档：{{ legacyName }}，</span>
-          UID：{{ uid || "-" }}
-        </DialogDescription>
-      </DialogHeader>
+    <DialogContent
+      class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-3xl"
+      @open-auto-focus.prevent
+    >
+      <CharacterEditDialogHeader
+        kind="item"
+        :id="itemId"
+        :title="itemName"
+        :legacy-name="legacyName"
+        :uid="uid"
+      />
 
       <div v-if="fields.length" class="grid auto-rows-min gap-5">
         <div v-if="hasBasicFields" class="grid gap-3">

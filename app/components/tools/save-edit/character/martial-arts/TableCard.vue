@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import EditDialog, { type MartialLevelRow, type MartialSaveField } from "./EditDialog.vue";
-import EditableFieldFrame from "~/components/tools/save-edit/fields/EditableFieldFrame.vue";
-import MartialArtHoverLink from "~/components/wiki/martial-art/HoverLink.vue";
-import MartialArtIcon from "~/components/wiki/martial-art/MartialArtIcon.vue";
-import WikiCard from "~/components/wiki/WikiCard.vue";
+import MartialArtCard from "~/components/wiki/martial-art/Card.vue";
+import SaveEditEditButton from "~/components/tools/save-edit/SaveEditEditButton.vue";
 import {
   formatSaveValue,
   saveEditDraftDirtyRows,
@@ -13,8 +11,9 @@ import {
   saveEditEnumOptions,
   type SaveEditDraft,
 } from "~/lib/save-edit";
-import { rarityCardClass } from "~/lib/rarity";
-import { martialArtRarityToneId } from "~/lib/wiki/martial-art";
+import {
+  martialArtRarityToneId,
+} from "~/lib/wiki/martial-art";
 import { enumLabel } from "~/lib/utils";
 import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
@@ -29,7 +28,7 @@ type MartialArtRow = {
   rarity_id: number | null;
 };
 
-type PlayerMartialRow = {
+type MartialDisplayRow = {
   rowIndex: number;
   name: string;
   martialArt: MartialArtRow | null;
@@ -40,13 +39,18 @@ type CustomEffectTargetRow = {
   target_id: number;
 };
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   jsTable: BgDatabaseTable;
   baseTable: BgDatabaseTable;
   detailTable: BgDatabaseTable;
   draft: SaveEditDraft;
   enums: WikiEnums;
-}>();
+  ownerName?: string;
+  ownerLabel?: string;
+}>(), {
+  ownerName: "ZhuJue",
+  ownerLabel: "主角",
+});
 
 const emit = defineEmits<{
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
@@ -95,9 +99,9 @@ const buffTargetsByEffect = computed(() => {
   return result;
 });
 
-const playerRows = computed<PlayerMartialRow[]>(() =>
+const ownerRows = computed<MartialDisplayRow[]>(() =>
   Array.from({ length: props.jsTable.rowCount }, (_, rowIndex) => rowIndex)
-    .filter((rowIndex) => fieldText(props.jsTable.fields.juesename, rowIndex) === "ZhuJue")
+    .filter((rowIndex) => fieldText(props.jsTable.fields.juesename, rowIndex) === props.ownerName)
     .map((rowIndex) => {
       const name = fieldText(props.jsTable.fields.wugongname, rowIndex);
       return {
@@ -108,7 +112,7 @@ const playerRows = computed<PlayerMartialRow[]>(() =>
     }),
 );
 
-const tableDirty = computed(() => playerRows.value.some((row) => martialRowDirty(row.rowIndex)));
+const tableDirty = computed(() => ownerRows.value.some((row) => martialRowDirty(row.rowIndex)));
 
 const parsedFieldsByTableIndex = computed(() => {
   const result = new Map<number, BgDatabaseField[]>();
@@ -300,18 +304,18 @@ function resetMartial(rowIndex: number) {
 }
 
 function resetTable() {
-  for (const row of playerRows.value) resetMartial(row.rowIndex);
+  for (const row of ownerRows.value) resetMartial(row.rowIndex);
 }
 
 function updateField(payload: { field: BgDatabaseField; rowIndex: number; value: string }) {
   emit("updateField", payload.field, payload.value, payload.rowIndex);
 }
 
-function cardTitle(row: PlayerMartialRow) {
+function cardTitle(row: MartialDisplayRow) {
   return baseFieldText(row.name, "chnname") || row.name || "未知武学";
 }
 
-function cardDescription(row: PlayerMartialRow) {
+function cardDescription(row: MartialDisplayRow) {
   return enumLabel(props.enums, "BingQiType", cardTypeId(row), "未匹配");
 }
 
@@ -336,13 +340,40 @@ function jsFieldNumber(rowIndex: number, fieldName: string) {
   return numberOrNull(fieldText(props.jsTable.fields[fieldName], rowIndex));
 }
 
-function cardTypeId(row: PlayerMartialRow) {
+function cardTypeId(row: MartialDisplayRow) {
   return baseFieldNumber(row.name, "type") ??
     jsFieldNumber(row.rowIndex, "wugongtype");
 }
 
-function cardRarityId(row: PlayerMartialRow) {
+function cardRarityId(row: MartialDisplayRow) {
   return baseFieldNumber(row.name, "rare");
+}
+
+function cardSectId(row: MartialDisplayRow) {
+  const id = jsFieldNumber(row.rowIndex, "liansuo_mp") ??
+    row.martialArt?.sect_id ??
+    null;
+  return id === 15 ? null : id;
+}
+
+function cardSectLabel(row: MartialDisplayRow) {
+  const id = jsFieldNumber(row.rowIndex, "liansuo_mp") ??
+    row.martialArt?.sect_id ??
+    null;
+  return enumLabel(props.enums, "LianSuo_MP", id, row.martialArt?.sect_name || "无门派");
+}
+
+function cardStyleItems(row: MartialDisplayRow) {
+  const ids = [
+    jsFieldNumber(row.rowIndex, "liansuo_fg1"),
+    jsFieldNumber(row.rowIndex, "liansuo_fg2"),
+  ];
+  return ids
+    .filter((id): id is number => Boolean(id && id > 0))
+    .map((id) => ({
+      id,
+      label: enumLabel(props.enums, "LianSuo_FG", id, `风格 ${id}`),
+    }));
 }
 </script>
 
@@ -350,55 +381,37 @@ function cardRarityId(row: PlayerMartialRow) {
   <AppCard>
     <EditableTableCardHeader
       title="武学"
-      :description="`${playerRows.length} 个玩家武学`"
+      :description="`${ownerRows.length} 个${ownerLabel}武学`"
       :dirty="tableDirty"
       @reset="resetTable"
     />
     <AppCardContent>
-      <div v-if="playerRows.length" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div v-if="ownerRows.length" class="grid gap-3 grid-cols-2 xl:grid-cols-4">
         <template
-          v-for="row in playerRows"
+          v-for="row in ownerRows"
           :key="row.rowIndex"
         >
-          <WikiCard
-            :title="cardTitle(row)"
-            :description="cardDescription(row)"
-            :color="rarityCardClass(martialArtRarityToneId(cardRarityId(row)))"
+          <MartialArtCard
+            :id="row.martialArt?.id || row.rowIndex"
+            :name="cardTitle(row)"
+            :type="cardDescription(row)"
+            :type-id="cardTypeId(row)"
+            :rarity-id="cardRarityId(row)"
+            :rarity-tone-id="martialArtRarityToneId(cardRarityId(row))"
+            :sect-id="cardSectId(row)"
+            :sect-label="cardSectLabel(row)"
+            :styles="cardStyleItems(row)"
           >
-            <template #avatar>
-              <MartialArtIcon
-                :name="cardTitle(row)"
-                :type-id="cardTypeId(row)"
-                :rarity-id="cardRarityId(row)"
-                :size="40"
-              />
-            </template>
-
             <template #action>
-              <EditableFieldFrame
-                :dirty="martialRowDirty(row.rowIndex)"
-                @reset="resetMartial(row.rowIndex)"
-              >
-                <AppButton
-                  type="button"
-                  variant="outline"
-                  @click="openRow = row.rowIndex"
-                >
-                  编辑
-                </AppButton>
-              </EditableFieldFrame>
-              <MartialArtHoverLink
-                v-if="row.martialArt"
-                :id="row.martialArt.id"
-                mode="button"
-              />
+              <SaveEditEditButton aria-label="编辑武学" @click="openRow = row.rowIndex" />
             </template>
-          </WikiCard>
+          </MartialArtCard>
 
           <EditDialog
             v-if="openRow === row.rowIndex"
             :open="openRow === row.rowIndex"
             @update:open="openRow = $event ? row.rowIndex : null"
+            :martial-art-id="row.martialArt?.id"
             :title="cardTitle(row)"
             :description="row.name"
             :fields="jsFields(row.rowIndex)"
@@ -412,7 +425,7 @@ function cardRarityId(row: PlayerMartialRow) {
       </div>
 
       <div v-else class="rounded-md border px-3 py-8 text-center text-sm text-muted-foreground">
-        没有找到玩家武学
+        没有找到{{ ownerLabel }}武学
       </div>
     </AppCardContent>
   </AppCard>

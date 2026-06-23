@@ -33,17 +33,29 @@ type InventoryItemRow = {
 };
 
 type InventoryDisplayRow = SaveEditTableRowView;
+type EquipmentSlot = {
+  key: string;
+  label: string;
+};
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   table: BgDatabaseTable;
-  equippedUids?: {
-    weapon1?: string;
-    weapon2?: string;
-    armor?: string;
-  };
+  ownerName?: string;
+  ownerLabel?: string;
+  equippedUids?: Record<string, string | undefined>;
+  equipmentSlots?: EquipmentSlot[];
   draft: SaveEditDraft;
   enums: WikiEnums;
-}>();
+}>(), {
+  ownerName: "ZhuJue",
+  ownerLabel: "主角",
+  equippedUids: () => ({}),
+  equipmentSlots: () => [
+    { key: "weapon1", label: "武器 1" },
+    { key: "weapon2", label: "武器 2" },
+    { key: "armor", label: "防具" },
+  ],
+});
 
 const emit = defineEmits<{
   rowOperation: [operation: SaveEditRowDraftOperation];
@@ -103,8 +115,8 @@ const uidField = computed(() => props.table.fields.uid);
 const quantityField = computed(() => props.table.fields.qty);
 const equippedField = computed(() => props.table.fields.iseuipped);
 const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
-const playerRowIndexes = computed(() =>
-  rowIndexes.value.filter((rowIndex) => initialFieldText(ownerField.value, rowIndex) === "ZhuJue"),
+const ownerRowIndexes = computed(() =>
+  rowIndexes.value.filter((rowIndex) => initialFieldText(ownerField.value, rowIndex) === props.ownerName),
 );
 const parsedFields = computed(() =>
   props.table.fieldNames
@@ -115,11 +127,6 @@ const dirtyRows = computed(() => {
   return saveEditDraftDirtyRows(props.draft, props.table.tableIndex);
 });
 const deletedRows = computed(() => saveEditDraftDeletedRows(props.draft, props.table.tableIndex));
-const equipmentUidSlots = [
-  { key: "weapon1", label: "武器 1" },
-  { key: "weapon2", label: "武器 2" },
-  { key: "armor", label: "防具" },
-];
 
 function enumOptions(type: string) {
   return Object.entries(props.enums[type] || {})
@@ -165,7 +172,7 @@ const insertedRows = computed(() => selectSaveEditInsertedTableRows(props.table,
 const filteredRowIndexes = computed(() => {
   const query = search.value.trim().toLowerCase();
 
-  return playerRowIndexes.value.filter((rowIndex) => {
+  return ownerRowIndexes.value.filter((rowIndex) => {
     if (deletedRows.value.has(rowIndex)) return false;
     const name = initialFieldText(nameField.value, rowIndex);
     const uid = initialFieldText(uidField.value, rowIndex);
@@ -186,7 +193,7 @@ const filteredInventoryEntries = computed<Array<InventoryDisplayRow | number>>((
 ]);
 const totalRows = computed(() => filteredInventoryEntries.value.length);
 const matchedRows = computed(() =>
-  playerRowIndexes.value.filter((rowIndex) => !deletedRows.value.has(rowIndex) && rowItem(rowIndex)).length,
+  ownerRowIndexes.value.filter((rowIndex) => !deletedRows.value.has(rowIndex) && rowItem(rowIndex)).length,
 );
 const pageCount = computed(() => Math.max(1, Math.ceil(totalRows.value / pageSize)));
 const pagedInventoryRows = computed<InventoryDisplayRow[]>(() => {
@@ -197,14 +204,14 @@ const pagedInventoryRows = computed<InventoryDisplayRow[]>(() => {
 });
 const equippedRowIndexes = computed(() => {
   const used = new Set<number>();
-  const rows = equipmentUidSlots.map((slot) => {
-    const uid = props.equippedUids?.[slot.key as keyof NonNullable<typeof props.equippedUids>] || "";
+  const rows = props.equipmentSlots.map((slot) => {
+    const uid = props.equippedUids[slot.key] || "";
     const rowIndex = uid ? findRowIndexByUid(uid, used) : null;
     if (rowIndex !== null) used.add(rowIndex);
     return { ...slot, rowIndex };
   });
 
-  const fallbackRows = playerRowIndexes.value
+  const fallbackRows = ownerRowIndexes.value
     .filter((rowIndex) => !used.has(rowIndex) && !deletedRows.value.has(rowIndex))
     .filter((rowIndex) => isEquipmentItem(rowItem(rowIndex)))
     .filter((rowIndex) => saveBool(equippedField.value, rowIndex));
@@ -217,6 +224,7 @@ const equippedRowIndexes = computed(() => {
     return { ...row, rowIndex: fallback ?? null };
   });
 });
+const hasExplicitEquippedUids = computed(() => Object.values(props.equippedUids).some((uid) => Boolean(uid)));
 const hasEquippedRows = computed(() => equippedRowIndexes.value.some((slot) => slot.rowIndex !== null));
 
 watch(search, () => {
@@ -260,7 +268,7 @@ function initialRowItem(rowIndex: number) {
 }
 
 function insertMatchesFilters(row: InventoryDisplayRow) {
-  if ((row.values.juesename || row.initialValues.juesename || "ZhuJue") !== "ZhuJue") return false;
+  if ((row.values.juesename || row.initialValues.juesename || props.ownerName) !== props.ownerName) return false;
   const query = search.value.trim().toLowerCase();
   const item = displayItem(row);
   const name = displayItemName(row);
@@ -281,7 +289,7 @@ function isEquipmentItem(item: InventoryItemRow | null) {
 function findRowIndexByUid(uid: string, used: Set<number>) {
   const key = uid.trim();
   if (!key) return null;
-  const rowIndex = playerRowIndexes.value.find((index) =>
+  const rowIndex = ownerRowIndexes.value.find((index) =>
     !used.has(index) && !deletedRows.value.has(index) && fieldText(uidField.value, index).trim() === key,
   );
   return rowIndex ?? null;
@@ -356,7 +364,7 @@ function updateEquipmentField(rowIndex: number, field: BgDatabaseField, value: s
 
 async function addPendingItems(payloads: InventoryAddItemPayload[]) {
   const rows = await Promise.all(payloads.map((payload) =>
-    createXingNangRow({ id: payload.item.id }, { findInventoryItem: findInventoryItemSource }),
+    createXingNangRow({ id: payload.item.id }, { findInventoryItem: findInventoryItemSource }, { owner: props.ownerName }),
   ));
   const operations = rows.filter((values): values is Record<string, string> => Boolean(values)).map((values): SaveEditRowDraftOperation => {
     const filteredValues = filterInsertValues(values);
@@ -506,12 +514,12 @@ function filterInsertValues(values: Record<string, string>) {
   <AppCard>
     <EditableTableCardHeader
       title="行囊"
-      :description="`主角行囊 ${playerRowIndexes.length} 行，已映射 ${matchedRows} 条，当前 ${totalRows} 条`"
+      :description="`${ownerLabel}行囊 ${ownerRowIndexes.length} 行，已映射 ${matchedRows} 条，当前 ${totalRows} 条`"
       :dirty="tableDirty"
       @reset="resetTable"
     />
     <AppCardContent class="grid gap-4">
-      <div v-if="equippedUids || hasEquippedRows" class="grid gap-3">
+      <div v-if="hasExplicitEquippedUids || hasEquippedRows" class="grid gap-3">
         <div class="grid gap-3 lg:grid-cols-3">
           <template v-for="slot in equippedRowIndexes" :key="slot.key">
             <EditableItemCard
@@ -621,7 +629,7 @@ function filterInsertValues(values: Record<string, string>) {
         没有匹配的行囊物品
       </div>
 
-      <div v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div v-else class="grid gap-3 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <EditableItemCard
           v-for="(row, index) in pagedInventoryRows"
           :key="displayRowKey(row)"
