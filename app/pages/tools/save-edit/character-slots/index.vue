@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
+import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.vue";
 import CharacterSlotsEditHeaderCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditHeaderCard.vue";
 import CharacterSlotsEditorCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditorCard.vue";
 import {

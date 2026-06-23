@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
+import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.vue";
 import TrackingEditHeaderCard from "~/components/tools/save-edit/tracking/TrackingEditHeaderCard.vue";
 import TrackingEditorCard from "~/components/tools/save-edit/tracking/TrackingEditorCard.vue";
 import {

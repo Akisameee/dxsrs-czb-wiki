@@ -9,7 +9,7 @@ import EditableBooleanField from "~/components/tools/save-edit/fields/EditableBo
 import EditableEnumField, { type EditableEnumOption } from "~/components/tools/save-edit/fields/EditableEnumField.vue";
 import EditableNumberField from "~/components/tools/save-edit/fields/EditableNumberField.vue";
 import EditableTextField from "~/components/tools/save-edit/fields/EditableTextField.vue";
-import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitValues } from "~/components/tools/save-edit/character/player/PlayerPortraitEditor.vue";
+import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitValues } from "~/components/tools/save-edit/main/player/PlayerPortraitEditor.vue";
 import { TabsContent } from "~/components/ui/tabs";
 import type { Es2CunDang } from "~/lib/es2";
 

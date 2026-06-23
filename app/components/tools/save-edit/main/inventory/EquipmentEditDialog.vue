@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogFooter,
 } from "~/components/ui/dialog";
-import CharacterEditDialogHeader from "../CharacterEditDialogHeader.vue";
+import MainEditDialogHeader from "../MainEditDialogHeader.vue";
 import type { BgDatabaseField } from "~/lib/save-edit";
 
 export type EquipmentEditField = {
@@ -156,7 +156,7 @@ function updateInscriptionType(value: string) {
       class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-3xl"
       @open-auto-focus.prevent
     >
-      <CharacterEditDialogHeader
+      <MainEditDialogHeader
         kind="item"
         :id="itemId"
         :title="itemName"

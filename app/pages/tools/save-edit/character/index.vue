@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import CharacterEditHeaderCard from "~/components/tools/save-edit/character/CharacterEditHeaderCard.vue";
-import InjuriesTableCard from "~/components/tools/save-edit/character/injuries/TableCard.vue";
-import InventoryTableCard from "~/components/tools/save-edit/character/inventory/TableCard.vue";
-import MartialArtsTableCard from "~/components/tools/save-edit/character/martial-arts/TableCard.vue";
-import NpcDetailCard from "~/components/tools/save-edit/character/npc/DetailCard.vue";
-import NpcTableCard from "~/components/tools/save-edit/character/npc/NpcTableCard.vue";
-import PlayerTableCard from "~/components/tools/save-edit/character/player/TableCard.vue";
-import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
-import SingleRowTableCard from "~/components/tools/save-edit/character/SingleRowTableCard.vue";
+import MainEditHeaderCard from "~/components/tools/save-edit/main/MainEditHeaderCard.vue";
+import InjuriesTableCard from "~/components/tools/save-edit/main/injuries/TableCard.vue";
+import InventoryTableCard from "~/components/tools/save-edit/main/inventory/TableCard.vue";
+import MartialArtsTableCard from "~/components/tools/save-edit/main/martial-arts/TableCard.vue";
+import EditDialog from "~/components/tools/save-edit/main/character/EditDialog.vue";
+import CharacterTableCard from "~/components/tools/save-edit/main/character/CharacterTableCard.vue";
+import PlayerTableCard from "~/components/tools/save-edit/main/player/TableCard.vue";
+import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.vue";
+import SingleRowTableCard from "~/components/tools/save-edit/main/SingleRowTableCard.vue";
 import SaveTableEditor from "~/components/tools/save-edit/SaveTableEditor.vue";
 import {
   applySaveEditRowDraftOperation,
@@ -27,10 +27,16 @@ import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 useHead({ title: "人物存档修改" });
 
 const route = useRoute();
-const router = useRouter();
 const { queryRows } = useWikiDb();
 const { findByFileName, updateItem } = useSaveEditWorkspace();
 const viewMode = ref<"normal" | "database">("normal");
+const characterDialogOpen = computed({
+  get: () => characterDialogRowIndex.value !== null,
+  set: (value: boolean) => {
+    if (!value) characterDialogRowIndex.value = null;
+  },
+});
+const characterDialogRowIndex = ref<number | null>(null);
 const easyTableNames = ["Option", "MenPaiInfo", "JiGou", "ZiChuangWuGong", "ShengChanRandom"];
 
 const editFileName = computed(() => String(route.query.edit || ""));
@@ -75,25 +81,19 @@ const jsWugongTable = computed(() => save.value?.tables.find((table) => table.na
 const gWugongTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGong") || null);
 const gWugongDetailTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGongDetail") || null);
 const npcTable = computed(() => save.value?.tables.find((table) => table.name === "Npc") || null);
-const activeNpcRowIndex = computed(() => {
-  const raw = Array.isArray(route.query.character) ? route.query.character[0] : route.query.character;
-  if (raw === undefined || raw === null || raw === "") return null;
-  const rowIndex = Number(raw);
-  if (!Number.isInteger(rowIndex) || rowIndex < 0 || !npcTable.value || rowIndex >= npcTable.value.rowCount) return null;
-  return rowIndex;
-});
-const activeNpcLabel = computed(() => {
-  const rowIndex = activeNpcRowIndex.value;
+const activeCharacterRowIndex = computed(() => characterDialogRowIndex.value);
+const activeCharacterLabel = computed(() => {
+  const rowIndex = activeCharacterRowIndex.value;
   if (rowIndex === null) return "";
   const fullName = `${npcFieldText("xing", rowIndex)}${npcFieldText("ming", rowIndex)}`.trim();
-  return fullName || npcFieldText("name", rowIndex) || `NPC ${rowIndex}`;
+  return fullName || npcFieldText("name", rowIndex) || `角色 ${rowIndex}`;
 });
-const activeNpcOwnerName = computed(() => {
-  const rowIndex = activeNpcRowIndex.value;
+const activeCharacterOwnerName = computed(() => {
+  const rowIndex = activeCharacterRowIndex.value;
   return rowIndex === null ? "" : npcFieldText("name", rowIndex);
 });
-const activeNpcEquippedUids = computed(() => {
-  const rowIndex = activeNpcRowIndex.value;
+const activeCharacterEquippedUids = computed(() => {
+  const rowIndex = activeCharacterRowIndex.value;
   if (rowIndex === null) return {};
   return {
     weapon: npcFieldText("wq_uid", rowIndex),
@@ -127,19 +127,8 @@ function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
   updateDraftValue(field, rowIndex, value);
 }
 
-function editNpc(rowIndex: number) {
-  void router.push({
-    path: route.path,
-    query: {
-      ...route.query,
-      character: String(rowIndex),
-    },
-  });
-}
-
-function closeNpcDetail() {
-  const { character: _character, ...query } = route.query;
-  void router.push({ path: route.path, query });
+function editCharacter(rowIndex: number) {
+  characterDialogRowIndex.value = rowIndex;
 }
 
 function updateActiveTable(tableIndex: number) {
@@ -180,7 +169,7 @@ function resetInventoryDraft(target: SaveEditDraftResetTarget) {
   });
 }
 
-function resetNpcRow(rowIndex: number) {
+function resetCharacterRow(rowIndex: number) {
   if (!item.value || !npcTable.value) return;
   updateItem(item.value.id, {
     draft: resetSaveEditRowDraft(item.value.draft, npcTable.value, rowIndex),
@@ -211,7 +200,7 @@ function downloadSave() {
 
 <template>
   <AppPageContainer>
-    <CharacterEditHeaderCard
+    <MainEditHeaderCard
       :character-name="characterName"
       :file-name="headerFileName"
       :table-count="save?.tables.length"
@@ -223,119 +212,97 @@ function downloadSave() {
 
     <MissingSaveCard v-if="!save" />
 
-    <template v-else-if="viewMode === 'database'">
-      <SaveTableEditor
-        :save="save"
-        :draft="draft"
-        :enums="enums"
-        :selected-table-index="item?.selectedTableIndex || 0"
-        @update-table="updateActiveTable"
-        @update-cell="updateDatabaseCell"
-      />
-    </template>
-
-    <template v-else-if="activeNpcRowIndex !== null && npcTable">
-      <div class="flex items-center justify-between gap-3">
-        <AppButton type="button" variant="outline" @click="closeNpcDetail">
-          返回 NPC 列表
-        </AppButton>
-        <div class="text-sm text-muted-foreground">
-          正在编辑：{{ activeNpcLabel }}
-        </div>
-      </div>
-
-      <NpcDetailCard
-        :table="npcTable"
-        :row-index="activeNpcRowIndex"
-        :draft="draft"
-        :enums="enums"
-        @update-field="updateField"
-        @reset-row="resetNpcRow"
-      />
-
-      <MartialArtsTableCard
-        v-if="jsWugongTable && gWugongTable && gWugongDetailTable && activeNpcOwnerName"
-        :js-table="jsWugongTable"
-        :base-table="gWugongTable"
-        :detail-table="gWugongDetailTable"
-        :owner-name="activeNpcOwnerName"
-        :owner-label="activeNpcLabel"
-        :draft="draft"
-        :enums="enums"
-        @update-field="updateField"
-      />
-
-      <InventoryTableCard
-        v-if="inventoryTable && activeNpcOwnerName"
-        :table="inventoryTable"
-        :owner-name="activeNpcOwnerName"
-        :owner-label="activeNpcLabel"
-        :equipped-uids="activeNpcEquippedUids"
-        :equipment-slots="npcEquipmentSlots"
-        :draft="draft"
-        :enums="enums"
-        @row-operation="applyInventoryRowOperation"
-        @row-operations="applyInventoryRowOperations"
-        @reset-draft="resetInventoryDraft"
-      />
-    </template>
-
     <template v-else>
-      <PlayerTableCard
-        :save="save"
-        :table="save.zhuJue"
-        :draft="draft"
-        :enums="enums"
-        @update-field="updateField"
-      />
+      <template v-if="viewMode === 'database'">
+        <SaveTableEditor
+          :save="save"
+          :draft="draft"
+          :enums="enums"
+          :selected-table-index="item?.selectedTableIndex || 0"
+          @update-table="updateActiveTable"
+          @update-cell="updateDatabaseCell"
+        />
+      </template>
 
-      <InjuriesTableCard
-        v-if="injuryTable"
-        :table="injuryTable"
-        :draft="draft"
-        :enums="enums"
-        @update-field="updateField"
-      />
-
-      <MartialArtsTableCard
-        v-if="jsWugongTable && gWugongTable && gWugongDetailTable"
-        :js-table="jsWugongTable"
-        :base-table="gWugongTable"
-        :detail-table="gWugongDetailTable"
-        :draft="draft"
-        :enums="enums"
-        @update-field="updateField"
-      />
-
-      <InventoryTableCard
-        v-if="inventoryTable"
-        :table="inventoryTable"
-        :equipped-uids="equippedUids"
-        :draft="draft"
-        :enums="enums"
-        @row-operation="applyInventoryRowOperation"
-        @row-operations="applyInventoryRowOperations"
-        @reset-draft="resetInventoryDraft"
-      />
-
-      <NpcTableCard
-        v-if="npcTable"
-        :table="npcTable"
-        :draft="draft"
-        :enums="enums"
-        @edit-character="editNpc"
-      />
-
-      <div v-if="easyTables.length" class="grid gap-6 lg:grid-cols-2">
-        <SingleRowTableCard
-          v-for="table in easyTables"
-          :key="table.name"
-          :table="table"
+      <template v-else>
+        <PlayerTableCard
+          :save="save"
+          :table="save.zhuJue"
           :draft="draft"
           :enums="enums"
           @update-field="updateField"
         />
-      </div>
+
+        <InjuriesTableCard
+          v-if="injuryTable"
+          :table="injuryTable"
+          :draft="draft"
+          :enums="enums"
+          @update-field="updateField"
+        />
+
+        <MartialArtsTableCard
+          v-if="jsWugongTable && gWugongTable && gWugongDetailTable"
+          :js-table="jsWugongTable"
+          :base-table="gWugongTable"
+          :detail-table="gWugongDetailTable"
+          :draft="draft"
+          :enums="enums"
+          @update-field="updateField"
+        />
+
+        <InventoryTableCard
+          v-if="inventoryTable"
+          :table="inventoryTable"
+          :equipped-uids="equippedUids"
+          :draft="draft"
+          :enums="enums"
+          @row-operation="applyInventoryRowOperation"
+          @row-operations="applyInventoryRowOperations"
+          @reset-draft="resetInventoryDraft"
+        />
+
+        <CharacterTableCard
+          v-if="npcTable"
+          :table="npcTable"
+          :draft="draft"
+          :enums="enums"
+          @edit-character="editCharacter"
+        />
+
+        <div v-if="easyTables.length" class="grid gap-6 lg:grid-cols-2">
+          <SingleRowTableCard
+            v-for="table in easyTables"
+            :key="table.name"
+            :table="table"
+            :draft="draft"
+            :enums="enums"
+            @update-field="updateField"
+          />
+        </div>
+      </template>
+
+      <EditDialog
+        v-if="npcTable"
+        v-model:open="characterDialogOpen"
+        :table="npcTable"
+        :row-index="activeCharacterRowIndex"
+        :draft="draft"
+        :enums="enums"
+        :owner-name="activeCharacterOwnerName"
+        :owner-label="activeCharacterLabel"
+        :equipped-uids="activeCharacterEquippedUids"
+        :equipment-slots="npcEquipmentSlots"
+        :js-wugong-table="jsWugongTable"
+        :g-wugong-table="gWugongTable"
+        :g-wugong-detail-table="gWugongDetailTable"
+        :inventory-table="inventoryTable"
+        @update-field="updateField"
+        @reset-row="resetCharacterRow"
+        @row-operation="applyInventoryRowOperation"
+        @row-operations="applyInventoryRowOperations"
+        @reset-draft="resetInventoryDraft"
+      />
     </template>
   </AppPageContainer>
 </template>

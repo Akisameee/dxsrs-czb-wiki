@@ -22,12 +22,12 @@ function quantityText(item: CharacterShopItemRow) {
   const min = Number(item.min_quantity);
   const max = Number(item.max_quantity);
   if (Number.isFinite(min) && Number.isFinite(max)) {
-    if (min === max) return String(min);
-    return `${min}-${max}`;
+    if (min === max) return `x${min}`;
+    return `x${min}~${max}`;
   }
-  if (Number.isFinite(min)) return String(min);
-  if (Number.isFinite(max)) return String(max);
-  return "-";
+  if (Number.isFinite(min)) return `x${min}`;
+  if (Number.isFinite(max)) return `x${max}`;
+  return "x-";
 }
 </script>
 
@@ -52,9 +52,14 @@ function quantityText(item: CharacterShopItemRow) {
           :image-id="item.item_image_id"
           :description="itemType(item)"
           :rarity-id="item.rarity_id"
-          :action-text="`x${quantityText(item)}`"
           :on-click="() => navigateTo(itemDetailUrl(item.item_id))"
-        />
+        >
+          <template #footer>
+            <span class="text-xs md:text-sm text-muted-foreground tabular-nums">
+              {{ quantityText(item) }}
+            </span>
+          </template>
+        </ItemCard>
       </WikiCardGrid>
     </AppCardContent>
   </AppCard>

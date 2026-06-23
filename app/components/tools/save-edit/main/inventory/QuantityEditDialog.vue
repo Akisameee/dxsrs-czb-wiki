@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogFooter,
 } from "~/components/ui/dialog";
-import CharacterEditDialogHeader from "../CharacterEditDialogHeader.vue";
+import MainEditDialogHeader from "../MainEditDialogHeader.vue";
 
 defineProps<{
   itemId?: number | string | null;
@@ -32,7 +32,7 @@ const open = defineModel<boolean>("open", { required: true });
       class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-md"
       @open-auto-focus.prevent
     >
-      <CharacterEditDialogHeader
+      <MainEditDialogHeader
         kind="item"
         :id="itemId"
         :title="itemName"

@@ -346,7 +346,7 @@ function itemRecipeRangeText(min: number | null | undefined, max: number | null 
   if (minValue === null) return formatItemNumber(maxValue);
   if (maxValue === null) return formatItemNumber(minValue);
   if (minValue === maxValue) return formatItemNumber(minValue);
-  return `${formatItemNumber(minValue)} - ${formatItemNumber(maxValue)}`;
+  return `${formatItemNumber(minValue)} ~ ${formatItemNumber(maxValue)}`;
 }
 
 export function buildItemRecipeSummary(recipe: ItemRecipeRow, enums: WikiEnums): ItemRecipeSummary {

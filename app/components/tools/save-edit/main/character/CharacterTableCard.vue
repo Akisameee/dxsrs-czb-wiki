@@ -244,7 +244,7 @@ function rowDescription(row: NpcDisplayRow) {
 <template>
   <AppCard>
     <EditableTableCardHeader
-      title="NPC"
+      title="角色"
       :description="`${teammateRows.length}/6 队友，${filteredRows.length} 个搜索结果`"
     />
 
@@ -276,7 +276,7 @@ function rowDescription(row: NpcDisplayRow) {
             :interactive-badges="false"
           >
             <template #action>
-              <SaveEditEditButton aria-label="编辑 NPC" @click="emit('editCharacter', row.rowIndex)" />
+              <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
             </template>
           </CharacterCard>
         </WikiCardGrid>
@@ -342,7 +342,7 @@ function rowDescription(row: NpcDisplayRow) {
             :interactive-badges="false"
           >
             <template #action>
-              <SaveEditEditButton aria-label="编辑 NPC" @click="emit('editCharacter', row.rowIndex)" />
+              <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
             </template>
           </CharacterCard>
         </WikiCardGrid>

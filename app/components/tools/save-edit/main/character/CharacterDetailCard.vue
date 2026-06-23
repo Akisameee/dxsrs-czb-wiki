@@ -105,7 +105,7 @@ const activeGroups = computed(() =>
     .filter((group) => group.fields.length),
 );
 const dirty = computed(() => saveEditDraftRowDirty(props.draft, props.table.tableIndex, props.rowIndex));
-const npcName = computed(() => fullName() || fieldText("name") || `NPC ${props.rowIndex}`);
+const characterName = computed(() => fullName() || fieldText("name") || `Character ${props.rowIndex}`);
 const { queryRows } = useWikiDb();
 
 const { data: characterLookupRows } = await useAsyncData(
@@ -127,7 +127,7 @@ const characterByName = computed(() => {
   return result;
 });
 
-const npcCharacter = computed(() =>
+const characterRecord = computed(() =>
   characterByName.value.get(lookupName(fieldText("name"))) ??
   characterByName.value.get(lookupName(fullName())) ??
   null,
@@ -135,8 +135,8 @@ const npcCharacter = computed(() =>
 const locationText = computed(() =>
   characterLocationText(
     {
-      region_id: npcCharacter.value?.region_id ?? null,
-      location_id: npcCharacter.value?.location_id ?? null,
+      region_id: characterRecord.value?.region_id ?? null,
+      location_id: characterRecord.value?.location_id ?? null,
     },
     props.enums,
   ),
@@ -184,8 +184,8 @@ function updateField(fieldName: string, value: string) {
 <template>
   <AppCard>
     <EditableTableCardHeader
-      :title="`NPC：${npcName}`"
-      :description="`地点：${locationText}，Npc 表第 ${rowIndex} 行`"
+      :title="`角色：${characterName}`"
+      :description="`地点：${locationText}，Character 表第 ${rowIndex} 行`"
       :dirty="dirty"
       @reset="emit('resetRow', rowIndex)"
     />

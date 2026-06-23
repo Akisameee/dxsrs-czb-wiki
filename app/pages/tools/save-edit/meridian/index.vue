@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MeridianEditHeaderCard from "~/components/tools/save-edit/meridian/MeridianEditHeaderCard.vue";
 import MeridianEditorCard from "~/components/tools/save-edit/meridian/MeridianEditorCard.vue";
-import MissingSaveCard from "~/components/tools/save-edit/character/MissingSaveCard.vue";
+import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.vue";
 import {
   SAVE_EDIT_MERIDIAN_GROUPS,
   SAVE_EDIT_MERIDIAN_POINTS,

@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogFooter,
 } from "~/components/ui/dialog";
-import CharacterEditDialogHeader from "../CharacterEditDialogHeader.vue";
+import MainEditDialogHeader from "../MainEditDialogHeader.vue";
 import {
   Table,
   TableBody,
@@ -106,7 +106,7 @@ function chainStyleOptions(field: MartialSaveField) {
       class="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-6xl"
       @open-auto-focus.prevent
     >
-      <CharacterEditDialogHeader
+      <MainEditDialogHeader
         kind="martial-art"
         :id="martialArtId"
         :title="title"
