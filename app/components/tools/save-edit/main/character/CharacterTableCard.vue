@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveEditEditButton from "~/components/tools/save-edit/SaveEditEditButton.vue";
+import SaveEditResettableFrame from "~/components/tools/save-edit/SaveEditResettableFrame.vue";
 import CharacterCard from "~/components/wiki/character/Card.vue";
 import WikiCardGrid from "~/components/wiki/WikiCardGrid.vue";
 import { Badge } from "~/components/ui/badge";
@@ -12,6 +13,12 @@ import {
 import {
   formatSaveValue,
   saveEditDraftFieldValue,
+  saveEditDraftRowDirty,
+  selectSaveEditInsertedTableRows,
+  type SaveEditDraftResetOperation,
+  type SaveEditDraftResetTarget,
+  type SaveEditRowDraftOperation,
+  type SaveEditTableRowView,
   type BgDatabaseField,
   type BgDatabaseTable,
   type BgDatabaseValue,
@@ -37,6 +44,7 @@ type NpcDisplayRow = {
   rank: string;
   rarityId: number | null;
   teammate: boolean;
+  dirty: boolean;
 };
 
 type CharacterLookupRow = {
@@ -51,10 +59,16 @@ const props = defineProps<{
   table: BgDatabaseTable;
   draft: SaveEditDraft;
   enums: WikiEnums;
+  jsWugongTable?: BgDatabaseTable | null;
+  gWugongTable?: BgDatabaseTable | null;
+  gWugongDetailTable?: BgDatabaseTable | null;
+  inventoryTable?: BgDatabaseTable | null;
 }>();
 
 const emit = defineEmits<{
   editCharacter: [rowIndex: number];
+  resetDrafts: [operations: SaveEditDraftResetOperation[]];
+  tableRowOperations: [table: BgDatabaseTable, operations: SaveEditRowDraftOperation[]];
 }>();
 
 const { queryRows } = useWikiDb();
@@ -88,6 +102,31 @@ const rows = computed<NpcDisplayRow[]>(() =>
   Array.from({ length: props.table.rowCount }, (_, rowIndex) => buildRow(rowIndex)),
 );
 const teammateRows = computed(() => rows.value.filter((row) => row.teammate));
+const tableDirty = computed(() => rows.value.some((row) => row.dirty));
+const martialBaseRowByName = computed(() => {
+  const result = new Map<string, number>();
+  const table = props.gWugongTable;
+  const field = table?.fields.name;
+  if (!table || !field) return result;
+  for (let rowIndex = 0; rowIndex < table.rowCount; rowIndex += 1) {
+    const key = lookupName(initialTableFieldText(table, "name", rowIndex));
+    if (key && !result.has(key)) result.set(key, rowIndex);
+  }
+  return result;
+});
+const martialDetailRowsByName = computed(() => {
+  const result = new Map<string, number[]>();
+  const table = props.gWugongDetailTable;
+  if (!table) return result;
+  for (let rowIndex = 0; rowIndex < table.rowCount; rowIndex += 1) {
+    const key = lookupName(initialTableFieldText(table, "wugongname", rowIndex));
+    if (!key) continue;
+    const list = result.get(key) || [];
+    list.push(rowIndex);
+    result.set(key, list);
+  }
+  return result;
+});
 
 function enumOptions(type: string) {
   return Object.entries(props.enums[type] || {})
@@ -194,6 +233,14 @@ function fieldText(fieldName: string, rowIndex: number) {
   return formatSaveValue(fieldValue(fieldName, rowIndex));
 }
 
+function tableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
+  return formatSaveValue(saveEditDraftFieldValue(table?.fields[fieldName], rowIndex, props.draft));
+}
+
+function initialTableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
+  return formatSaveValue(table?.fields[fieldName]?.values[rowIndex]);
+}
+
 function fieldNumber(fieldName: string, rowIndex: number) {
   const value = Number(fieldText(fieldName, rowIndex));
   return Number.isFinite(value) ? value : null;
@@ -233,11 +280,155 @@ function buildRow(rowIndex: number): NpcDisplayRow {
     rank: enumFieldLabel("Dengji", "dengji", rowIndex),
     rarityId: fieldNumber("rare", rowIndex),
     teammate: fieldBool("isteammate", rowIndex),
+    dirty: characterRowDirty(rowIndex, name),
   };
 }
 
 function rowDescription(row: NpcDisplayRow) {
   return characterLocationText({ region_id: row.regionId, location_id: row.locationId }, props.enums);
+}
+
+function resetRow(row: NpcDisplayRow) {
+  resetCharacterRows([row]);
+}
+
+function resetTable() {
+  resetCharacterRows(rows.value);
+}
+
+function characterRowDirty(rowIndex: number, ownerName: string) {
+  return saveEditDraftRowDirty(props.draft, props.table.tableIndex, rowIndex) ||
+    inventoryRowsDirty(ownerName) ||
+    martialRowsDirty(ownerName);
+}
+
+function relatedExistingRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
+  if (!table) return [];
+  return Array.from({ length: table.rowCount }, (_, rowIndex) => rowIndex)
+    .filter((rowIndex) => initialTableFieldText(table, ownerFieldName, rowIndex) === ownerName);
+}
+
+function relatedInsertedRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
+  if (!table) return [];
+  return selectSaveEditInsertedTableRows(table, props.draft)
+    .filter((row) => (row.values[ownerFieldName] || row.initialValues[ownerFieldName] || "") === ownerName);
+}
+
+function inventoryRowsDirty(ownerName: string) {
+  const table = props.inventoryTable;
+  if (!table) return false;
+  return relatedExistingRows(table, "juesename", ownerName)
+    .some((rowIndex) => saveEditDraftRowDirty(props.draft, table.tableIndex, rowIndex)) ||
+    relatedInsertedRows(table, "juesename", ownerName).length > 0;
+}
+
+function martialRowsDirty(ownerName: string) {
+  const table = props.jsWugongTable;
+  if (!table) return false;
+  return relatedExistingRows(table, "juesename", ownerName)
+    .some((rowIndex) => martialRowDirty(rowIndex)) ||
+    relatedInsertedRows(table, "juesename", ownerName).some((row) => martialInsertedRowDirty(row));
+}
+
+function martialRowDirty(rowIndex: number) {
+  const table = props.jsWugongTable;
+  if (!table) return false;
+  const name = tableFieldText(table, "wugongname", rowIndex);
+  return saveEditDraftRowDirty(props.draft, table.tableIndex, rowIndex) || martialDefinitionDirty(name);
+}
+
+function martialInsertedRowDirty(row: SaveEditTableRowView) {
+  return row.rowDirty || martialDefinitionDirty(row.values.wugongname || row.initialValues.wugongname || "");
+}
+
+function martialDefinitionDirty(name: string) {
+  const key = lookupName(name);
+  const baseIndex = martialBaseRowByName.value.get(key);
+  return Boolean((props.gWugongTable && baseIndex !== undefined && saveEditDraftRowDirty(props.draft, props.gWugongTable.tableIndex, baseIndex)) ||
+    (props.gWugongDetailTable && (martialDetailRowsByName.value.get(key) || [])
+      .some((rowIndex) => saveEditDraftRowDirty(props.draft, props.gWugongDetailTable!.tableIndex, rowIndex))));
+}
+
+function resetCharacterRows(targetRows: NpcDisplayRow[]) {
+  const resetOperations: SaveEditDraftResetOperation[] = [];
+  const rowOperationsByTable = new Map<BgDatabaseTable, SaveEditRowDraftOperation[]>();
+
+  for (const row of targetRows) {
+    pushReset(resetOperations, props.table, { type: "row", rowIndex: row.rowIndex });
+    pushInventoryReset(resetOperations, rowOperationsByTable, row.name);
+    pushMartialReset(resetOperations, rowOperationsByTable, row.name);
+  }
+
+  for (const [table, operations] of rowOperationsByTable) {
+    if (operations.length) emit("tableRowOperations", table, operations);
+  }
+  if (resetOperations.length) emit("resetDrafts", resetOperations);
+}
+
+function pushInventoryReset(
+  resetOperations: SaveEditDraftResetOperation[],
+  rowOperationsByTable: Map<BgDatabaseTable, SaveEditRowDraftOperation[]>,
+  ownerName: string,
+) {
+  const table = props.inventoryTable;
+  if (!table) return;
+  for (const rowIndex of relatedExistingRows(table, "juesename", ownerName)) {
+    pushReset(resetOperations, table, { type: "row", rowIndex });
+  }
+  for (const row of relatedInsertedRows(table, "juesename", ownerName)) {
+    pushRowOperation(rowOperationsByTable, table, { type: "delete", target: row.target });
+  }
+}
+
+function pushMartialReset(
+  resetOperations: SaveEditDraftResetOperation[],
+  rowOperationsByTable: Map<BgDatabaseTable, SaveEditRowDraftOperation[]>,
+  ownerName: string,
+) {
+  const table = props.jsWugongTable;
+  if (!table) return;
+  for (const rowIndex of relatedExistingRows(table, "juesename", ownerName)) {
+    pushReset(resetOperations, table, { type: "row", rowIndex });
+    pushMartialDefinitionReset(resetOperations, tableFieldText(table, "wugongname", rowIndex));
+  }
+  for (const row of relatedInsertedRows(table, "juesename", ownerName)) {
+    pushRowOperation(rowOperationsByTable, table, { type: "delete", target: row.target });
+    pushMartialDefinitionReset(resetOperations, row.values.wugongname || row.initialValues.wugongname || "");
+  }
+}
+
+function pushMartialDefinitionReset(resetOperations: SaveEditDraftResetOperation[], name: string) {
+  const key = lookupName(name);
+  const baseIndex = martialBaseRowByName.value.get(key);
+  if (props.gWugongTable && baseIndex !== undefined) {
+    pushReset(resetOperations, props.gWugongTable, { type: "row", rowIndex: baseIndex });
+  }
+  if (props.gWugongDetailTable) {
+    for (const rowIndex of martialDetailRowsByName.value.get(key) || []) {
+      pushReset(resetOperations, props.gWugongDetailTable, { type: "row", rowIndex });
+    }
+  }
+}
+
+function pushReset(
+  operations: SaveEditDraftResetOperation[],
+  table: BgDatabaseTable,
+  target: SaveEditDraftResetTarget,
+) {
+  const key = `${table.tableIndex}:${table.name}:${JSON.stringify(target)}`;
+  if (operations.some((operation) => `${operation.table.tableIndex}:${operation.table.name}:${JSON.stringify(operation.target)}` === key)) return;
+  operations.push({ table, target });
+}
+
+function pushRowOperation(
+  operationsByTable: Map<BgDatabaseTable, SaveEditRowDraftOperation[]>,
+  table: BgDatabaseTable,
+  operation: SaveEditRowDraftOperation,
+) {
+  const operations = operationsByTable.get(table) || [];
+  const key = JSON.stringify(operation);
+  if (!operations.some((item) => JSON.stringify(item) === key)) operations.push(operation);
+  operationsByTable.set(table, operations);
 }
 </script>
 
@@ -246,6 +437,8 @@ function rowDescription(row: NpcDisplayRow) {
     <EditableTableCardHeader
       title="角色"
       :description="`${teammateRows.length}/6 队友，${filteredRows.length} 个搜索结果`"
+      :dirty="tableDirty"
+      @reset="resetTable"
     />
 
     <AppCardContent class="grid gap-5">
@@ -263,22 +456,32 @@ function rowDescription(row: NpcDisplayRow) {
           empty-label="当前没有队友"
           :pagination="false"
         >
-          <CharacterCard
+          <SaveEditResettableFrame
             v-for="row in teammateRows"
             :key="row.key"
-            :id="row.characterId"
-            :name="row.fullName"
-            :description="rowDescription(row)"
-            :portrait="row.portrait"
-            :rarity-id="row.rarityId"
-            :sect-label="row.sect"
-            :weapon-type="row.weaponType"
-            :interactive-badges="false"
+            class="h-full"
+            :dirty="row.dirty"
+            :surface="false"
+            reset-label="重置角色"
+            reset-class="-right-2 -top-2"
+            @reset="resetRow(row)"
           >
-            <template #action>
-              <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
-            </template>
-          </CharacterCard>
+            <CharacterCard
+              class="h-full"
+              :id="row.characterId"
+              :name="row.fullName"
+              :description="rowDescription(row)"
+              :portrait="row.portrait"
+              :rarity-id="row.rarityId"
+              :sect-label="row.sect"
+              :weapon-type="row.weaponType"
+              :interactive-badges="false"
+            >
+              <template #action>
+                <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
+              </template>
+            </CharacterCard>
+          </SaveEditResettableFrame>
         </WikiCardGrid>
       </div>
 
@@ -329,22 +532,32 @@ function rowDescription(row: NpcDisplayRow) {
           :page-size="pageSize"
           empty-label="没有匹配的 NPC"
         >
-          <CharacterCard
+          <SaveEditResettableFrame
             v-for="row in pagedRows"
             :key="row.key"
-            :id="row.characterId"
-            :name="row.fullName"
-            :description="rowDescription(row)"
-            :portrait="row.portrait"
-            :rarity-id="row.rarityId"
-            :sect-label="row.sect"
-            :weapon-type="row.weaponType"
-            :interactive-badges="false"
+            class="h-full"
+            :dirty="row.dirty"
+            :surface="false"
+            reset-label="重置角色"
+            reset-class="-right-2 -top-2"
+            @reset="resetRow(row)"
           >
-            <template #action>
-              <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
-            </template>
-          </CharacterCard>
+            <CharacterCard
+              class="h-full"
+              :id="row.characterId"
+              :name="row.fullName"
+              :description="rowDescription(row)"
+              :portrait="row.portrait"
+              :rarity-id="row.rarityId"
+              :sect-label="row.sect"
+              :weapon-type="row.weaponType"
+              :interactive-badges="false"
+            >
+              <template #action>
+                <SaveEditEditButton aria-label="编辑角色" @click="emit('editCharacter', row.rowIndex)" />
+              </template>
+            </CharacterCard>
+          </SaveEditResettableFrame>
         </WikiCardGrid>
       </div>
     </AppCardContent>

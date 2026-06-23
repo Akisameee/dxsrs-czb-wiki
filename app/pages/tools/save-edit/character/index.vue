@@ -288,7 +288,13 @@ function downloadSave() {
           :table="npcTable"
           :draft="draft"
           :enums="enums"
+          :js-wugong-table="jsWugongTable"
+          :g-wugong-table="gWugongTable"
+          :g-wugong-detail-table="gWugongDetailTable"
+          :inventory-table="inventoryTable"
           @edit-character="editCharacter"
+          @reset-drafts="resetTableDrafts"
+          @table-row-operations="applyTableRowOperations"
         />
 
         <div v-if="easyTables.length" class="grid gap-6 lg:grid-cols-2">

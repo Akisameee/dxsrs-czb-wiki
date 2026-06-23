@@ -5,10 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { X } from "@lucide/vue";
 import type { BgDatabaseField, BgDatabaseTable, SaveEditDraft, SaveEditDraftResetOperation, SaveEditDraftResetTarget, SaveEditRowDraftOperation } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 import CharacterDetailCard from "./CharacterDetailCard.vue";
@@ -53,6 +50,15 @@ function resetTableDraft(table: BgDatabaseTable, target: SaveEditDraftResetTarge
 function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
   emit("resetDrafts", operations);
 }
+
+function updateCharacterField(field: BgDatabaseField, value: string, rowIndex: number) {
+  if (!props.table) return;
+  emit("tableRowOperation", props.table, {
+    type: "update",
+    target: { type: "row", rowIndex },
+    values: { [field.name]: value },
+  });
+}
 </script>
 
 <template>
@@ -65,21 +71,13 @@ function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
         </DialogDescription>
       </DialogHeader>
 
-      <div class="flex justify-end">
-        <DialogClose as-child>
-          <Button type="button" variant="ghost" size="icon" class="size-8">
-            <X class="size-4" />
-          </Button>
-        </DialogClose>
-      </div>
-
       <CharacterDetailCard
         v-if="table && rowIndex !== null"
         :table="table"
         :row-index="rowIndex"
         :draft="draft"
         :enums="enums"
-        @update-field="(field, value, currentRowIndex) => emit('updateField', field, value, currentRowIndex)"
+        @update-field="updateCharacterField"
         @reset-draft="resetCharacterDraft"
       />
 
