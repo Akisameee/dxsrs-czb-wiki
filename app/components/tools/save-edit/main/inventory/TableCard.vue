@@ -60,7 +60,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   rowOperation: [operation: SaveEditRowDraftOperation];
   rowOperations: [operations: SaveEditRowDraftOperation[]];
-  resetDraft: [target: SaveEditDraftResetTarget];
+  resetDraft: [table: BgDatabaseTable, target: SaveEditDraftResetTarget];
 }>();
 
 const { queryRows } = useWikiDb();
@@ -330,7 +330,7 @@ function rowDirty(rowIndex: number) {
 const tableDirty = computed(() => saveEditDraftTableDirty(props.draft, props.table.tableIndex));
 
 function resetRow(rowIndex: number) {
-  emit("resetDraft", { type: "row", rowIndex });
+  emit("resetDraft", props.table, { type: "row", rowIndex });
 }
 
 function deleteRow(rowIndex: number) {
@@ -341,7 +341,7 @@ function deleteRow(rowIndex: number) {
 }
 
 function resetTable() {
-  emit("resetDraft", { type: "table" });
+  emit("resetDraft", props.table, { type: "table" });
 }
 
 function updateQuantity(rowIndex: number, value: string) {
@@ -478,7 +478,7 @@ function updateDisplayEquipmentField(row: InventoryDisplayRow, field: BgDatabase
 }
 
 function resetDisplayRow(row: InventoryDisplayRow) {
-  emit("resetDraft", row.target);
+  emit("resetDraft", props.table, row.target);
 }
 
 function deleteDisplayRow(row: InventoryDisplayRow) {

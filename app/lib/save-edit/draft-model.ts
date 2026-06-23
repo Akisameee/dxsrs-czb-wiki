@@ -15,6 +15,11 @@ export type SaveEditDraftResetTarget =
   | { type: "field"; target: SaveEditRowDraftTarget; fieldName: string }
   | SaveEditRowDraftTarget;
 
+export type SaveEditDraftResetOperation = {
+  table: BgDatabaseTable;
+  target: SaveEditDraftResetTarget;
+};
+
 export type SaveEditInsertedRowDraft = {
   initialValues: Record<string, string>;
   values: Record<string, string>;

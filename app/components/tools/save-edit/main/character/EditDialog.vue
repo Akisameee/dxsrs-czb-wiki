@@ -9,7 +9,7 @@ import {
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { X } from "@lucide/vue";
-import type { BgDatabaseField, BgDatabaseTable, SaveEditDraft, SaveEditDraftResetTarget, SaveEditRowDraftOperation } from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseTable, SaveEditDraft, SaveEditDraftResetOperation, SaveEditDraftResetTarget, SaveEditRowDraftOperation } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 import CharacterDetailCard from "./CharacterDetailCard.vue";
 import MartialArtsTableCard from "~/components/tools/save-edit/main/martial-arts/TableCard.vue";
@@ -34,11 +34,25 @@ const props = defineProps<{
 const emit = defineEmits<{
   "update:open": [value: boolean];
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
-  resetRow: [rowIndex: number];
+  tableRowOperation: [table: BgDatabaseTable, operation: SaveEditRowDraftOperation];
+  tableRowOperations: [table: BgDatabaseTable, operations: SaveEditRowDraftOperation[]];
   rowOperation: [operation: SaveEditRowDraftOperation];
   rowOperations: [operations: SaveEditRowDraftOperation[]];
-  resetDraft: [target: SaveEditDraftResetTarget];
+  resetDraft: [table: BgDatabaseTable, target: SaveEditDraftResetTarget];
+  resetDrafts: [operations: SaveEditDraftResetOperation[]];
 }>();
+
+function resetCharacterDraft(target: SaveEditDraftResetTarget) {
+  if (props.table) emit("resetDraft", props.table, target);
+}
+
+function resetTableDraft(table: BgDatabaseTable, target: SaveEditDraftResetTarget) {
+  emit("resetDraft", table, target);
+}
+
+function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
+  emit("resetDrafts", operations);
+}
 </script>
 
 <template>
@@ -66,7 +80,7 @@ const emit = defineEmits<{
         :draft="draft"
         :enums="enums"
         @update-field="(field, value, currentRowIndex) => emit('updateField', field, value, currentRowIndex)"
-        @reset-row="(currentRowIndex) => emit('resetRow', currentRowIndex)"
+        @reset-draft="resetCharacterDraft"
       />
 
       <MartialArtsTableCard
@@ -79,6 +93,9 @@ const emit = defineEmits<{
         :owner-name="ownerName"
         :owner-label="ownerLabel"
         @update-field="(field, value, rowIndex) => emit('updateField', field, value, rowIndex)"
+        @row-operation="(table, operation) => emit('tableRowOperation', table, operation)"
+        @row-operations="(table, operations) => emit('tableRowOperations', table, operations)"
+        @reset-drafts="resetTableDrafts"
       />
 
       <InventoryTableCard
@@ -92,7 +109,7 @@ const emit = defineEmits<{
         :equipment-slots="equipmentSlots"
         @row-operation="(operation) => emit('rowOperation', operation)"
         @row-operations="(operations) => emit('rowOperations', operations)"
-        @reset-draft="(target) => emit('resetDraft', target)"
+        @reset-draft="resetTableDraft"
       />
     </DialogContent>
   </Dialog>

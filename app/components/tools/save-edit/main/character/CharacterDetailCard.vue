@@ -7,6 +7,7 @@ import {
   saveEditDraftRowDirty,
   saveEditEnumOptions,
   type SaveEditDraft,
+  type SaveEditDraftResetTarget,
 } from "~/lib/save-edit";
 import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
 import { characterLocationText } from "~/lib/wiki/character";
@@ -34,7 +35,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
-  resetRow: [rowIndex: number];
+  resetDraft: [target: SaveEditDraftResetTarget];
 }>();
 
 const fieldGroups: FieldGroup[] = [
@@ -187,7 +188,7 @@ function updateField(fieldName: string, value: string) {
       :title="`角色：${characterName}`"
       :description="`地点：${locationText}，Character 表第 ${rowIndex} 行`"
       :dirty="dirty"
-      @reset="emit('resetRow', rowIndex)"
+      @reset="emit('resetDraft', { type: 'row', rowIndex })"
     />
 
     <AppCardContent class="grid gap-5">

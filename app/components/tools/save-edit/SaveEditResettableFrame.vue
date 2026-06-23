@@ -49,7 +49,7 @@ const emit = defineEmits<{
       props.class,
     )"
   >
-    <div class="min-w-0">
+    <div class="min-w-0 h-full">
       <slot />
     </div>
 

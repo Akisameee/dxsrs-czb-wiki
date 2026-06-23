@@ -56,11 +56,10 @@ function openEditDialog() {
 
 <template>
   <SaveEditResettableFrame
-    v-if="isEquipment"
     :dirty="Boolean(dirty)"
     :readonly="deleteMode"
     :surface="false"
-    reset-label="重置装备"
+    reset-label="重置物品"
     reset-class="-right-2 -top-2"
     @reset="emit('reset')"
   >
@@ -93,37 +92,8 @@ function openEditDialog() {
     </ItemCard>
   </SaveEditResettableFrame>
 
-  <ItemCard
-    v-else
-    :id="item?.id || rowIndex"
-    :name="displayName"
-    :image-id="item?.image_id"
-    :description="typeLabel"
-    :card-color="rarityClass"
-  >
-    <template #action>
-      <SaveEditDeleteButton
-        v-if="deleteMode"
-        label="删除物品"
-        @click="emit('delete')"
-      />
-      <SaveEditEditButton
-        v-else
-        aria-label="编辑物品"
-        label="编辑物品"
-        @click="openEditDialog"
-      />
-    </template>
-
-    <template #footer>
-      <div class="text-xs md:text-sm text-muted-foreground tabular-nums">
-        {{ quantityText }}
-      </div>
-    </template>
-  </ItemCard>
-
   <EquipmentEditDialog
-    v-if="isEquipment"
+    v-if="equipmentDialogOpen"
     v-model:open="equipmentDialogOpen"
     :item-id="item?.id"
     :item-name="displayName"
@@ -134,7 +104,7 @@ function openEditDialog() {
   />
 
   <QuantityEditDialog
-    v-else
+    v-if="quantityDialogOpen"
     v-model:open="quantityDialogOpen"
     :item-id="item?.id"
     :item-name="displayName"

@@ -13,11 +13,11 @@ import {
   applySaveEditRowDraftOperation,
   createEmptySaveEditDraft,
   resetSaveEditDraftTarget,
-  resetSaveEditRowDraft,
   saveEditCharacterName,
   saveEditDraftFieldValue,
   updateSaveEditCellDraft,
   writeSaveEditFile,
+  type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
 } from "~/lib/save-edit";
@@ -153,6 +153,13 @@ function applyInventoryRowOperation(operation: SaveEditRowDraftOperation) {
   });
 }
 
+function applyTableRowOperation(table: BgDatabaseTable, operation: SaveEditRowDraftOperation) {
+  if (!item.value) return;
+  updateItem(item.value.id, {
+    draft: applySaveEditRowDraftOperation(item.value.draft, table, operation),
+  });
+}
+
 function applyInventoryRowOperations(operations: SaveEditRowDraftOperation[]) {
   if (!item.value || !inventoryTable.value || !operations.length) return;
   const nextDraft = operations.reduce(
@@ -162,18 +169,29 @@ function applyInventoryRowOperations(operations: SaveEditRowDraftOperation[]) {
   updateItem(item.value.id, { draft: nextDraft });
 }
 
-function resetInventoryDraft(target: SaveEditDraftResetTarget) {
-  if (!item.value || !inventoryTable.value) return;
+function applyTableRowOperations(table: BgDatabaseTable, operations: SaveEditRowDraftOperation[]) {
+  if (!item.value || !operations.length) return;
+  const nextDraft = operations.reduce(
+    (currentDraft, operation) => applySaveEditRowDraftOperation(currentDraft, table, operation),
+    item.value.draft,
+  );
+  updateItem(item.value.id, { draft: nextDraft });
+}
+
+function resetTableDraft(table: BgDatabaseTable | null | undefined, target: SaveEditDraftResetTarget) {
+  if (!item.value || !table) return;
   updateItem(item.value.id, {
-    draft: resetSaveEditDraftTarget(item.value.draft, inventoryTable.value, target),
+    draft: resetSaveEditDraftTarget(item.value.draft, table, target),
   });
 }
 
-function resetCharacterRow(rowIndex: number) {
-  if (!item.value || !npcTable.value) return;
-  updateItem(item.value.id, {
-    draft: resetSaveEditRowDraft(item.value.draft, npcTable.value, rowIndex),
-  });
+function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
+  if (!item.value || !operations.length) return;
+  const nextDraft = operations.reduce(
+    (currentDraft, operation) => resetSaveEditDraftTarget(currentDraft, operation.table, operation.target),
+    item.value.draft,
+  );
+  updateItem(item.value.id, { draft: nextDraft });
 }
 
 function downloadSave() {
@@ -249,6 +267,9 @@ function downloadSave() {
           :draft="draft"
           :enums="enums"
           @update-field="updateField"
+          @row-operation="applyTableRowOperation"
+          @row-operations="applyTableRowOperations"
+          @reset-drafts="resetTableDrafts"
         />
 
         <InventoryTableCard
@@ -259,7 +280,7 @@ function downloadSave() {
           :enums="enums"
           @row-operation="applyInventoryRowOperation"
           @row-operations="applyInventoryRowOperations"
-          @reset-draft="resetInventoryDraft"
+          @reset-draft="resetTableDraft"
         />
 
         <CharacterTableCard
@@ -298,10 +319,12 @@ function downloadSave() {
         :g-wugong-detail-table="gWugongDetailTable"
         :inventory-table="inventoryTable"
         @update-field="updateField"
-        @reset-row="resetCharacterRow"
+        @table-row-operation="applyTableRowOperation"
+        @table-row-operations="applyTableRowOperations"
         @row-operation="applyInventoryRowOperation"
         @row-operations="applyInventoryRowOperations"
-        @reset-draft="resetInventoryDraft"
+        @reset-draft="resetTableDraft"
+        @reset-drafts="resetTableDrafts"
       />
     </template>
   </AppPageContainer>

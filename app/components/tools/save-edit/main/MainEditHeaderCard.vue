@@ -27,10 +27,9 @@ const viewModeModel = computed<ViewMode>({
   set: (value) => emit("updateViewMode", value),
 });
 
-const viewModeOptions = [
-  { value: "normal", label: "正常视图" },
-  { value: "database", label: "数据库视图" },
-] satisfies Array<{ value: ViewMode; label: string }>;
+function toggleViewMode() {
+  viewModeModel.value = viewModeModel.value === "normal" ? "database" : "normal";
+}
 </script>
 
 <template>
@@ -55,20 +54,15 @@ const viewModeOptions = [
               返回
             </NuxtLink>
           </AppButton>
-          <AppTabsToggle
-            v-model="viewModeModel"
-            :options="viewModeOptions"
-            trigger-class="gap-1.5"
+          <AppButton
+            type="button"
+            :variant="viewModeModel === 'database' ? 'secondary' : 'outline'"
+            :aria-pressed="viewModeModel === 'database'"
+            @click="toggleViewMode"
           >
-            <template #trigger-normal>
-              <UserRound class="size-4" />
-              正常视图
-            </template>
-            <template #trigger-database>
-              <Database class="size-4" />
-              数据库视图
-            </template>
-          </AppTabsToggle>
+            <Database class="size-4" />
+            数据库视图
+          </AppButton>
           <AppButton v-if="hasSave" type="button" @click="emit('download')">
             <Download class="size-4" />
             下载

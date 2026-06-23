@@ -16,16 +16,18 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import type { BgDatabaseField } from "~/lib/save-edit";
+import type { BgDatabaseField, SaveEditRowDraftTarget } from "~/lib/save-edit";
 import { martialArtIsInternal } from "~/lib/wiki/martial-art";
 
 export type MartialSaveField = {
   key: string;
   label: string;
   field: BgDatabaseField;
-  rowIndex: number;
+  target: SaveEditRowDraftTarget;
+  rowIndex: number | null;
   value: string;
   initialValue: string;
+  dirty: boolean;
   enumOptions: EditableEnumOption[];
 };
 
@@ -46,7 +48,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  updateField: [payload: { field: BgDatabaseField; rowIndex: number; value: string }];
+  updateField: [payload: { field: BgDatabaseField; target: SaveEditRowDraftTarget; value: string }];
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
@@ -59,7 +61,7 @@ const currentLevel = computed(() =>
 );
 
 function updateField(field: MartialSaveField, value: string) {
-  emit("updateField", { field: field.field, rowIndex: field.rowIndex, value });
+  emit("updateField", { field: field.field, target: field.target, value });
 }
 
 function updateBuffField(slot: 1 | 2 | 3, field: MartialSaveField, value: string) {
@@ -93,6 +95,16 @@ function baseField(key: string) {
   return props.baseFields.find((field) => field.key === key) || null;
 }
 
+function fieldEditProps(field: MartialSaveField | null) {
+  const initialValue = field?.initialValue ?? "";
+  return {
+    initialValue,
+    modelValue: field?.value ?? "",
+    dirty: Boolean(field?.dirty),
+    resetValue: initialValue,
+  };
+}
+
 function chainStyleOptions(field: MartialSaveField) {
   return field.enumOptions.map((option) => option.value === "0"
     ? { ...option, label: "无连锁" }
@@ -118,16 +130,14 @@ function chainStyleOptions(field: MartialSaveField) {
           <div v-if="formField('currentlv')" class="flex items-center gap-2">
             <AppFieldStack class="flex-1" label="当前境界">
               <EditableNumberField
-                :initial-value="formField('currentlv')!.initialValue"
-                :model-value="formField('currentlv')!.value"
+                v-bind="fieldEditProps(formField('currentlv'))"
                 compact
                 @update="updateField(formField('currentlv')!, $event)"
               />
             </AppFieldStack>
             <AppFieldStack class="flex-1" label="最高境界">
               <EditableNumberField
-                :initial-value="formField('maxlv')!.initialValue"
-                :model-value="formField('maxlv')!.value"
+                v-bind="fieldEditProps(formField('maxlv'))"
                 compact
                 @update="updateField(formField('maxlv')!, $event)"
               />
@@ -136,8 +146,7 @@ function chainStyleOptions(field: MartialSaveField) {
 
           <AppFieldStack v-if="formField('liansuo_mp')" label="连锁门派">
             <EditableEnumField
-              :initial-value="formField('liansuo_mp')!.initialValue"
-              :model-value="formField('liansuo_mp')!.value"
+              v-bind="fieldEditProps(formField('liansuo_mp'))"
               :options="formField('liansuo_mp')!.enumOptions"
               compact
               @update="updateField(formField('liansuo_mp')!, $event)"
@@ -146,8 +155,7 @@ function chainStyleOptions(field: MartialSaveField) {
 
           <AppFieldStack v-if="formField('liansuo_fg1')" label="连锁风格 1">
             <EditableEnumField
-              :initial-value="formField('liansuo_fg1')!.initialValue"
-              :model-value="formField('liansuo_fg1')!.value"
+              v-bind="fieldEditProps(formField('liansuo_fg1'))"
               :options="chainStyleOptions(formField('liansuo_fg1')!)"
               compact
               @update="updateField(formField('liansuo_fg1')!, $event)"
@@ -155,8 +163,7 @@ function chainStyleOptions(field: MartialSaveField) {
           </AppFieldStack>
           <AppFieldStack v-if="formField('liansuo_fg2')" label="连锁风格 2">
             <EditableEnumField
-              :initial-value="formField('liansuo_fg2')!.initialValue"
-              :model-value="formField('liansuo_fg2')!.value"
+              v-bind="fieldEditProps(formField('liansuo_fg2'))"
               :options="chainStyleOptions(formField('liansuo_fg2')!)"
               compact
               @update="updateField(formField('liansuo_fg2')!, $event)"
@@ -166,16 +173,14 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="baseField('rare')" label="品质">
             <EditableEnumField
               v-if="fieldInput(baseField('rare')) === 'select'"
-              :initial-value="baseField('rare')!.initialValue"
-              :model-value="baseField('rare')!.value"
+              v-bind="fieldEditProps(baseField('rare'))"
               :options="baseField('rare')!.enumOptions"
               compact
               @update="updateField(baseField('rare')!, $event)"
             />
             <EditableNumberField
               v-else-if="fieldInput(baseField('rare')) === 'number'"
-              :initial-value="baseField('rare')!.initialValue"
-              :model-value="baseField('rare')!.value"
+              v-bind="fieldEditProps(baseField('rare'))"
               compact
               @update="updateField(baseField('rare')!, $event)"
             />
@@ -187,8 +192,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && currentLevelField('weili')" label="威力">
             <EditableNumberField
               v-if="fieldInput(currentLevelField('weili')) === 'number'"
-              :initial-value="currentLevelField('weili')!.initialValue"
-              :model-value="currentLevelField('weili')!.value"
+              v-bind="fieldEditProps(currentLevelField('weili'))"
               compact
               @update="updateField(currentLevelField('weili')!, $event)"
             />
@@ -200,8 +204,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="isInternal && currentLevelField('hp')" label="体力">
             <EditableNumberField
               v-if="fieldInput(currentLevelField('hp')) === 'number'"
-              :initial-value="currentLevelField('hp')!.initialValue"
-              :model-value="currentLevelField('hp')!.value"
+              v-bind="fieldEditProps(currentLevelField('hp'))"
               compact
               @update="updateField(currentLevelField('hp')!, $event)"
             />
@@ -212,8 +215,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="isInternal && currentLevelField('zhenqiup')" label="真气恢复">
             <EditableNumberField
               v-if="fieldInput(currentLevelField('zhenqiup')) === 'number'"
-              :initial-value="currentLevelField('zhenqiup')!.initialValue"
-              :model-value="currentLevelField('zhenqiup')!.value"
+              v-bind="fieldEditProps(currentLevelField('zhenqiup'))"
               compact
               @update="updateField(currentLevelField('zhenqiup')!, $event)"
             />
@@ -225,8 +227,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && baseField('cost')" label="消耗真气">
             <EditableNumberField
               v-if="fieldInput(baseField('cost')) === 'number'"
-              :initial-value="baseField('cost')!.initialValue"
-              :model-value="baseField('cost')!.value"
+              v-bind="fieldEditProps(baseField('cost'))"
               compact
               @update="updateField(baseField('cost')!, $event)"
             />
@@ -238,8 +239,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && baseField('jiange')" label="间隔">
             <EditableNumberField
               v-if="fieldInput(baseField('jiange')) === 'number'"
-              :initial-value="baseField('jiange')!.initialValue"
-              :model-value="baseField('jiange')!.value"
+              v-bind="fieldEditProps(baseField('jiange'))"
               compact
               @update="updateField(baseField('jiange')!, $event)"
             />
@@ -251,8 +251,7 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && baseField('mingzhong')" label="命中">
             <EditableNumberField
               v-if="fieldInput(baseField('mingzhong')) === 'number'"
-              :initial-value="baseField('mingzhong')!.initialValue"
-              :model-value="baseField('mingzhong')!.value"
+              v-bind="fieldEditProps(baseField('mingzhong'))"
               compact
               @update="updateField(baseField('mingzhong')!, $event)"
             />
@@ -264,16 +263,14 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && baseField('slashfx')" label="出招特效">
             <EditableEnumField
               v-if="fieldInput(baseField('slashfx')) === 'select'"
-              :initial-value="baseField('slashfx')!.initialValue"
-              :model-value="baseField('slashfx')!.value"
+              v-bind="fieldEditProps(baseField('slashfx'))"
               :options="baseField('slashfx')!.enumOptions"
               compact
               @update="updateField(baseField('slashfx')!, $event)"
             />
             <EditableNumberField
               v-else-if="fieldInput(baseField('slashfx')) === 'number'"
-              :initial-value="baseField('slashfx')!.initialValue"
-              :model-value="baseField('slashfx')!.value"
+              v-bind="fieldEditProps(baseField('slashfx'))"
               compact
               @update="updateField(baseField('slashfx')!, $event)"
             />
@@ -285,16 +282,14 @@ function chainStyleOptions(field: MartialSaveField) {
           <AppFieldStack v-if="!isInternal && baseField('hitfx')" label="命中特效">
             <EditableEnumField
               v-if="fieldInput(baseField('hitfx')) === 'select'"
-              :initial-value="baseField('hitfx')!.initialValue"
-              :model-value="baseField('hitfx')!.value"
+              v-bind="fieldEditProps(baseField('hitfx'))"
               :options="baseField('hitfx')!.enumOptions"
               compact
               @update="updateField(baseField('hitfx')!, $event)"
             />
             <EditableNumberField
               v-else-if="fieldInput(baseField('hitfx')) === 'number'"
-              :initial-value="baseField('hitfx')!.initialValue"
-              :model-value="baseField('hitfx')!.value"
+              v-bind="fieldEditProps(baseField('hitfx'))"
               compact
               @update="updateField(baseField('hitfx')!, $event)"
             />
@@ -309,16 +304,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="特殊效果 1">
               <EditableEnumField
                 v-if="fieldInput(baseField('buff1')) === 'select'"
-                :initial-value="baseField('buff1')!.initialValue"
-                :model-value="baseField('buff1')!.value"
+                v-bind="fieldEditProps(baseField('buff1'))"
                 :options="baseField('buff1')!.enumOptions"
                 compact
                 @update="updateBuffField(1, baseField('buff1')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('buff1')) === 'number'"
-                :initial-value="baseField('buff1')!.initialValue"
-                :model-value="baseField('buff1')!.value"
+                v-bind="fieldEditProps(baseField('buff1'))"
                 compact
                 @update="updateBuffField(1, baseField('buff1')!, $event)"
               />
@@ -329,8 +322,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b1value')" class="flex-1" label="等级">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b1value')) === 'number'"
-                :initial-value="currentLevelField('b1value')!.initialValue"
-                :model-value="currentLevelField('b1value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b1value'))"
                 compact
                 @update="updateField(currentLevelField('b1value')!, $event)"
               />
@@ -343,16 +335,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="特殊效果 2">
               <EditableEnumField
                 v-if="fieldInput(baseField('buff2')) === 'select'"
-                :initial-value="baseField('buff2')!.initialValue"
-                :model-value="baseField('buff2')!.value"
+                v-bind="fieldEditProps(baseField('buff2'))"
                 :options="baseField('buff2')!.enumOptions"
                 compact
                 @update="updateBuffField(2, baseField('buff2')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('buff2')) === 'number'"
-                :initial-value="baseField('buff2')!.initialValue"
-                :model-value="baseField('buff2')!.value"
+                v-bind="fieldEditProps(baseField('buff2'))"
                 compact
                 @update="updateBuffField(2, baseField('buff2')!, $event)"
               />
@@ -363,8 +353,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b2value')" class="flex-1" label="等级">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b2value')) === 'number'"
-                :initial-value="currentLevelField('b2value')!.initialValue"
-                :model-value="currentLevelField('b2value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b2value'))"
                 compact
                 @update="updateField(currentLevelField('b2value')!, $event)"
               />
@@ -377,16 +366,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="特殊效果 3">
               <EditableEnumField
                 v-if="fieldInput(baseField('buff3')) === 'select'"
-                :initial-value="baseField('buff3')!.initialValue"
-                :model-value="baseField('buff3')!.value"
+                v-bind="fieldEditProps(baseField('buff3'))"
                 :options="baseField('buff3')!.enumOptions"
                 compact
                 @update="updateBuffField(3, baseField('buff3')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('buff3')) === 'number'"
-                :initial-value="baseField('buff3')!.initialValue"
-                :model-value="baseField('buff3')!.value"
+                v-bind="fieldEditProps(baseField('buff3'))"
                 compact
                 @update="updateBuffField(3, baseField('buff3')!, $event)"
               />
@@ -397,8 +384,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b3value')" class="flex-1" label="等级">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b3value')) === 'number'"
-                :initial-value="currentLevelField('b3value')!.initialValue"
-                :model-value="currentLevelField('b3value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b3value'))"
                 compact
                 @update="updateField(currentLevelField('b3value')!, $event)"
               />
@@ -414,16 +400,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="被动 1">
               <EditableEnumField
                 v-if="fieldInput(baseField('beidong1')) === 'select'"
-                :initial-value="baseField('beidong1')!.initialValue"
-                :model-value="baseField('beidong1')!.value"
+                v-bind="fieldEditProps(baseField('beidong1'))"
                 :options="baseField('beidong1')!.enumOptions"
                 compact
                 @update="updateField(baseField('beidong1')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('beidong1')) === 'number'"
-                :initial-value="baseField('beidong1')!.initialValue"
-                :model-value="baseField('beidong1')!.value"
+                v-bind="fieldEditProps(baseField('beidong1'))"
                 compact
                 @update="updateField(baseField('beidong1')!, $event)"
               />
@@ -434,8 +418,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b1value')" class="flex-1" label="数值">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b1value')) === 'number'"
-                :initial-value="currentLevelField('b1value')!.initialValue"
-                :model-value="currentLevelField('b1value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b1value'))"
                 compact
                 @update="updateField(currentLevelField('b1value')!, $event)"
               />
@@ -448,16 +431,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="被动 2">
               <EditableEnumField
                 v-if="fieldInput(baseField('beidong2')) === 'select'"
-                :initial-value="baseField('beidong2')!.initialValue"
-                :model-value="baseField('beidong2')!.value"
+                v-bind="fieldEditProps(baseField('beidong2'))"
                 :options="baseField('beidong2')!.enumOptions"
                 compact
                 @update="updateField(baseField('beidong2')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('beidong2')) === 'number'"
-                :initial-value="baseField('beidong2')!.initialValue"
-                :model-value="baseField('beidong2')!.value"
+                v-bind="fieldEditProps(baseField('beidong2'))"
                 compact
                 @update="updateField(baseField('beidong2')!, $event)"
               />
@@ -468,8 +449,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b2value')" class="flex-1" label="数值">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b2value')) === 'number'"
-                :initial-value="currentLevelField('b2value')!.initialValue"
-                :model-value="currentLevelField('b2value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b2value'))"
                 compact
                 @update="updateField(currentLevelField('b2value')!, $event)"
               />
@@ -482,16 +462,14 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack class="flex-1" label="被动 3">
               <EditableEnumField
                 v-if="fieldInput(baseField('beidong3')) === 'select'"
-                :initial-value="baseField('beidong3')!.initialValue"
-                :model-value="baseField('beidong3')!.value"
+                v-bind="fieldEditProps(baseField('beidong3'))"
                 :options="baseField('beidong3')!.enumOptions"
                 compact
                 @update="updateField(baseField('beidong3')!, $event)"
               />
               <EditableNumberField
                 v-else-if="fieldInput(baseField('beidong3')) === 'number'"
-                :initial-value="baseField('beidong3')!.initialValue"
-                :model-value="baseField('beidong3')!.value"
+                v-bind="fieldEditProps(baseField('beidong3'))"
                 compact
                 @update="updateField(baseField('beidong3')!, $event)"
               />
@@ -502,8 +480,7 @@ function chainStyleOptions(field: MartialSaveField) {
             <AppFieldStack v-if="currentLevelField('b3value')" class="flex-1" label="数值">
               <EditableNumberField
                 v-if="fieldInput(currentLevelField('b3value')) === 'number'"
-                :initial-value="currentLevelField('b3value')!.initialValue"
-                :model-value="currentLevelField('b3value')!.value"
+                v-bind="fieldEditProps(currentLevelField('b3value'))"
                 compact
                 @update="updateField(currentLevelField('b3value')!, $event)"
               />
@@ -548,8 +525,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'weili')) === 'number'"
-                  :initial-value="levelField(level, 'weili')!.initialValue"
-                  :model-value="levelField(level, 'weili')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'weili'))"
                   compact
                   @update="updateField(levelField(level, 'weili')!, $event)"
                 />
@@ -560,8 +536,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'hp')) === 'number'"
-                  :initial-value="levelField(level, 'hp')!.initialValue"
-                  :model-value="levelField(level, 'hp')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'hp'))"
                   compact
                   @update="updateField(levelField(level, 'hp')!, $event)"
                 />
@@ -572,8 +547,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'zhenqiup')) === 'number'"
-                  :initial-value="levelField(level, 'zhenqiup')!.initialValue"
-                  :model-value="levelField(level, 'zhenqiup')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'zhenqiup'))"
                   compact
                   @update="updateField(levelField(level, 'zhenqiup')!, $event)"
                 />
@@ -584,8 +558,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'maxexp')) === 'number'"
-                  :initial-value="levelField(level, 'maxexp')!.initialValue"
-                  :model-value="levelField(level, 'maxexp')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'maxexp'))"
                   compact
                   @update="updateField(levelField(level, 'maxexp')!, $event)"
                 />
@@ -596,8 +569,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'xiulian_lvli')) === 'number'"
-                  :initial-value="levelField(level, 'xiulian_lvli')!.initialValue"
-                  :model-value="levelField(level, 'xiulian_lvli')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'xiulian_lvli'))"
                   compact
                   @update="updateField(levelField(level, 'xiulian_lvli')!, $event)"
                 />
@@ -608,8 +580,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'xiulian_gengu')) === 'number'"
-                  :initial-value="levelField(level, 'xiulian_gengu')!.initialValue"
-                  :model-value="levelField(level, 'xiulian_gengu')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'xiulian_gengu'))"
                   compact
                   @update="updateField(levelField(level, 'xiulian_gengu')!, $event)"
                 />
@@ -620,8 +591,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'xiulian_tipo')) === 'number'"
-                  :initial-value="levelField(level, 'xiulian_tipo')!.initialValue"
-                  :model-value="levelField(level, 'xiulian_tipo')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'xiulian_tipo'))"
                   compact
                   @update="updateField(levelField(level, 'xiulian_tipo')!, $event)"
                 />
@@ -632,8 +602,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'xiulian_shenfa')) === 'number'"
-                  :initial-value="levelField(level, 'xiulian_shenfa')!.initialValue"
-                  :model-value="levelField(level, 'xiulian_shenfa')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'xiulian_shenfa'))"
                   compact
                   @update="updateField(levelField(level, 'xiulian_shenfa')!, $event)"
                 />
@@ -644,8 +613,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'xiulian_wuyi')) === 'number'"
-                  :initial-value="levelField(level, 'xiulian_wuyi')!.initialValue"
-                  :model-value="levelField(level, 'xiulian_wuyi')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'xiulian_wuyi'))"
                   compact
                   @update="updateField(levelField(level, 'xiulian_wuyi')!, $event)"
                 />
@@ -656,8 +624,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'b1value')) === 'number'"
-                  :initial-value="levelField(level, 'b1value')!.initialValue"
-                  :model-value="levelField(level, 'b1value')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'b1value'))"
                   compact
                   @update="updateField(levelField(level, 'b1value')!, $event)"
                 />
@@ -668,8 +635,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'b2value')) === 'number'"
-                  :initial-value="levelField(level, 'b2value')!.initialValue"
-                  :model-value="levelField(level, 'b2value')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'b2value'))"
                   compact
                   @update="updateField(levelField(level, 'b2value')!, $event)"
                 />
@@ -680,8 +646,7 @@ function chainStyleOptions(field: MartialSaveField) {
               <TableCell>
                 <EditableNumberField
                   v-if="fieldInput(levelField(level, 'b3value')) === 'number'"
-                  :initial-value="levelField(level, 'b3value')!.initialValue"
-                  :model-value="levelField(level, 'b3value')!.value"
+                  v-bind="fieldEditProps(levelField(level, 'b3value'))"
                   compact
                   @update="updateField(levelField(level, 'b3value')!, $event)"
                 />
