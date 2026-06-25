@@ -11,10 +11,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   formatSaveValue,
-  selectSaveEditTableRow,
   type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
@@ -78,6 +75,15 @@ const regionFilter = ref("all");
 const rarityFilter = ref("all");
 const page = ref(1);
 const pageSize = 24;
+const npcIndex = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
+const inventoryTableRef = computed(() => props.inventoryTable || props.table);
+const jsTableRef = computed(() => props.jsWugongTable || props.table);
+const baseTableRef = computed(() => props.gWugongTable || props.table);
+const detailTableRef = computed(() => props.gWugongDetailTable || props.table);
+const inventoryIndex = useSaveEditTableViewIndex(inventoryTableRef, toRef(props, "draft"));
+const jsIndex = useSaveEditTableViewIndex(jsTableRef, toRef(props, "draft"));
+const baseIndex = useSaveEditTableViewIndex(baseTableRef, toRef(props, "draft"));
+const detailIndex = useSaveEditTableViewIndex(detailTableRef, toRef(props, "draft"));
 
 const { data: characterLookupRows } = await useAsyncData(
   "save-edit-npc-character-lookup",
@@ -106,24 +112,47 @@ const tableDirty = computed(() => rows.value.some((row) => row.dirty));
 const martialBaseRowByName = computed(() => {
   const result = new Map<string, number>();
   const table = props.gWugongTable;
-  const field = table?.fields.name;
-  if (!table || !field) return result;
-  for (let rowIndex = 0; rowIndex < table.rowCount; rowIndex += 1) {
-    const key = lookupName(initialTableFieldText(table, "name", rowIndex));
-    if (key && !result.has(key)) result.set(key, rowIndex);
+  if (!table) return result;
+  for (const [name, rowIndexes] of baseIndex.initialFieldRows("name")) {
+    const key = lookupName(name);
+    if (key && !result.has(key) && rowIndexes[0] !== undefined) result.set(key, rowIndexes[0]);
   }
   return result;
 });
 const martialDetailRowsByName = computed(() => {
   const result = new Map<string, number[]>();
-  const table = props.gWugongDetailTable;
-  if (!table) return result;
-  for (let rowIndex = 0; rowIndex < table.rowCount; rowIndex += 1) {
-    const key = lookupName(initialTableFieldText(table, "wugongname", rowIndex));
+  if (!props.gWugongDetailTable) return result;
+  for (const [name, rowIndexes] of detailIndex.initialFieldRows("wugongname")) {
+    const key = lookupName(name);
     if (!key) continue;
-    const list = result.get(key) || [];
-    list.push(rowIndex);
-    result.set(key, list);
+    result.set(key, [...rowIndexes]);
+  }
+  return result;
+});
+const inventoryDirtyOwnerNames = computed(() => {
+  const result = new Set<string>();
+  const table = props.inventoryTable;
+  if (!table) return result;
+  for (const [ownerName, rowIndexes] of inventoryIndex.initialFieldRows("juesename")) {
+    if (ownerName && rowIndexes.some((rowIndex) => rowDirty(table, rowIndex))) result.add(ownerName);
+  }
+  for (const row of inventoryIndex.insertedRows.value) {
+    const ownerName = row.values.juesename || row.initialValues.juesename || "";
+    if (ownerName) result.add(ownerName);
+  }
+  return result;
+});
+const martialDirtyOwnerNames = computed(() => {
+  const result = new Set<string>();
+  const table = props.jsWugongTable;
+  if (!table) return result;
+  for (const [ownerName, rowIndexes] of jsIndex.initialFieldRows("juesename")) {
+    if (!ownerName) continue;
+    if (rowIndexes.some((rowIndex) => martialRowDirty(rowIndex))) result.add(ownerName);
+  }
+  for (const row of jsIndex.insertedRows.value) {
+    const ownerName = row.values.juesename || row.initialValues.juesename || "";
+    if (ownerName && martialInsertedRowDirty(row)) result.add(ownerName);
   }
   return result;
 });
@@ -226,19 +255,15 @@ function rowCharacter(name: string, fullNameValue: string) {
 }
 
 function fieldValue(fieldName: string, rowIndex: number): BgDatabaseValue {
-  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).value;
+  return npcIndex.value(field(fieldName), rowIndex);
 }
 
 function fieldText(fieldName: string, rowIndex: number) {
-  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).text;
+  return npcIndex.text(field(fieldName), rowIndex);
 }
 
 function tableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
-  return selectSaveEditFieldView(table?.fields[fieldName], rowIndex, props.draft).text;
-}
-
-function initialTableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
-  return selectSaveEditFieldView(table?.fields[fieldName], rowIndex, props.draft).initialText;
+  return indexForTable(table).text(table?.fields[fieldName], rowIndex);
 }
 
 function fieldNumber(fieldName: string, rowIndex: number) {
@@ -261,8 +286,9 @@ function enumFieldLabel(type: string, fieldName: string, rowIndex: number, fallb
 }
 
 function buildRow(rowIndex: number): NpcDisplayRow {
-  const name = fieldText("name", rowIndex);
-  const fullNameValue = fullName(rowIndex);
+  const rowView = npcIndex.row(rowIndex);
+  const name = rowView.values.name || "";
+  const fullNameValue = `${rowView.values.xing || ""}${rowView.values.ming || ""}` || name;
   const character = rowCharacter(name, fullNameValue);
   return {
     rowIndex,
@@ -270,7 +296,7 @@ function buildRow(rowIndex: number): NpcDisplayRow {
     characterId: character?.id ?? null,
     name,
     fullName: fullNameValue,
-    portrait: fieldText("touxiang", rowIndex),
+    portrait: rowView.values.touxiang || "",
     sectId: fieldNumber("menpai", rowIndex),
     sect: enumFieldLabel("MenPai", "menpai", rowIndex),
     regionId: character?.region_id ?? null,
@@ -298,36 +324,19 @@ function resetTable() {
 
 function characterRowDirty(rowIndex: number, ownerName: string) {
   return rowDirty(props.table, rowIndex) ||
-    inventoryRowsDirty(ownerName) ||
-    martialRowsDirty(ownerName);
+    inventoryDirtyOwnerNames.value.has(ownerName) ||
+    martialDirtyOwnerNames.value.has(ownerName);
 }
 
 function relatedExistingRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
   if (!table) return [];
-  return Array.from({ length: table.rowCount }, (_, rowIndex) => rowIndex)
-    .filter((rowIndex) => initialTableFieldText(table, ownerFieldName, rowIndex) === ownerName);
+  return indexForTable(table).rowIndexesByInitialField(ownerFieldName, ownerName);
 }
 
 function relatedInsertedRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
   if (!table) return [];
-  return selectSaveEditTableView(table, props.draft).insertedRows
+  return indexForTable(table).insertedRows.value
     .filter((row) => (row.values[ownerFieldName] || row.initialValues[ownerFieldName] || "") === ownerName);
-}
-
-function inventoryRowsDirty(ownerName: string) {
-  const table = props.inventoryTable;
-  if (!table) return false;
-  return relatedExistingRows(table, "juesename", ownerName)
-    .some((rowIndex) => rowDirty(table, rowIndex)) ||
-    relatedInsertedRows(table, "juesename", ownerName).length > 0;
-}
-
-function martialRowsDirty(ownerName: string) {
-  const table = props.jsWugongTable;
-  if (!table) return false;
-  return relatedExistingRows(table, "juesename", ownerName)
-    .some((rowIndex) => martialRowDirty(rowIndex)) ||
-    relatedInsertedRows(table, "juesename", ownerName).some((row) => martialInsertedRowDirty(row));
 }
 
 function martialRowDirty(rowIndex: number) {
@@ -350,7 +359,7 @@ function martialDefinitionDirty(name: string) {
 }
 
 function rowDirty(table: BgDatabaseTable, rowIndex: number) {
-  return selectSaveEditTableRow(table, props.draft, rowIndex).rowDirty;
+  return indexForTable(table).row(rowIndex).rowDirty;
 }
 
 function resetCharacterRows(targetRows: NpcDisplayRow[]) {
@@ -412,6 +421,15 @@ function pushMartialDefinitionReset(resetOperations: SaveEditDraftResetOperation
       pushReset(resetOperations, props.gWugongDetailTable, { type: "row", rowIndex });
     }
   }
+}
+
+function indexForTable(table: BgDatabaseTable | null | undefined) {
+  if (!table) return npcIndex;
+  if (props.inventoryTable && table.tableIndex === props.inventoryTable.tableIndex && table.name === props.inventoryTable.name) return inventoryIndex;
+  if (props.jsWugongTable && table.tableIndex === props.jsWugongTable.tableIndex && table.name === props.jsWugongTable.name) return jsIndex;
+  if (props.gWugongTable && table.tableIndex === props.gWugongTable.tableIndex && table.name === props.gWugongTable.name) return baseIndex;
+  if (props.gWugongDetailTable && table.tableIndex === props.gWugongDetailTable.tableIndex && table.name === props.gWugongDetailTable.name) return detailIndex;
+  return npcIndex;
 }
 
 function pushReset(

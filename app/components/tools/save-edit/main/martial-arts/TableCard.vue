@@ -8,10 +8,7 @@ import SaveEditDeleteButton from "~/components/tools/save-edit/SaveEditDeleteBut
 import SaveEditEditButton from "~/components/tools/save-edit/SaveEditEditButton.vue";
 import SaveEditResettableFrame from "~/components/tools/save-edit/SaveEditResettableFrame.vue";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   saveEditEnumOptions,
-  selectSaveEditTableRow,
   type SaveEditDraft,
   type SaveEditDraftResetOperation,
   type SaveEditRowDraftOperation,
@@ -115,13 +112,13 @@ const buffTargetsByEffect = computed(() => {
   return result;
 });
 
-const jsTableView = computed(() => selectSaveEditTableView(props.jsTable, props.draft));
-const insertedRows = computed(() => jsTableView.value.insertedRows);
+const jsIndex = useSaveEditTableViewIndex(toRef(props, "jsTable"), toRef(props, "draft"));
+const baseIndex = useSaveEditTableViewIndex(toRef(props, "baseTable"), toRef(props, "draft"));
+const detailIndex = useSaveEditTableViewIndex(toRef(props, "detailTable"), toRef(props, "draft"));
+const insertedRows = computed(() => jsIndex.insertedRows.value);
 const allOwnerRows = computed<MartialDisplayRow[]>(() => [
   ...insertedRows.value.filter((row) => (row.values.juesename || row.initialValues.juesename || props.ownerName) === props.ownerName),
-  ...Array.from({ length: props.jsTable.rowCount }, (_, rowIndex) => rowIndex)
-    .filter((rowIndex) => initialFieldText(props.jsTable.fields.juesename, rowIndex) === props.ownerName)
-    .map((rowIndex) => selectSaveEditTableRow(props.jsTable, props.draft, rowIndex)),
+  ...jsIndex.rowIndexesByInitialField("juesename", props.ownerName).map((rowIndex) => jsIndex.row(rowIndex)),
 ].map((view) => {
   const name = view.values.wugongname || view.initialValues.wugongname || "";
   return {
@@ -139,10 +136,10 @@ const tableDirty = computed(() => allOwnerRows.value.some((row) => martialTableR
 
 const baseRowByName = computed(() => {
   const result = new Map<string, number>();
-  const field = props.baseTable.fields.name;
-  for (let rowIndex = 0; rowIndex < props.baseTable.rowCount; rowIndex += 1) {
-    const key = lookupKey(initialFieldText(field, rowIndex));
-    if (key && !result.has(key)) result.set(key, rowIndex);
+  for (const [name, rows] of baseIndex.initialFieldRows("name")) {
+    const key = lookupKey(name);
+    const rowIndex = rows[0];
+    if (key && rowIndex !== undefined && !result.has(key)) result.set(key, rowIndex);
   }
   return result;
 });
@@ -163,9 +160,9 @@ const detailRowByNameAndLevel = computed(() => {
 
 const dirtyRowsByTableIndex = computed(() => {
   const result = new Map<number, Set<number>>();
-  for (const table of [props.jsTable, props.baseTable, props.detailTable]) {
-    result.set(table.tableIndex, selectSaveEditTableView(table, props.draft).dirtyRows);
-  }
+  result.set(props.jsTable.tableIndex, jsIndex.dirtyRows.value);
+  result.set(props.baseTable.tableIndex, baseIndex.dirtyRows.value);
+  result.set(props.detailTable.tableIndex, detailIndex.dirtyRows.value);
   return result;
 });
 
@@ -183,11 +180,11 @@ function addName(map: Map<string, MartialArtRow>, value: string | null | undefin
 }
 
 function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).text;
+  return indexForField(field).text(field, rowIndex);
 }
 
 function initialFieldText(field: BgDatabaseField | undefined, rowIndex: number) {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).initialText;
+  return indexForField(field).initialText(field, rowIndex);
 }
 
 function fieldPayload(
@@ -201,7 +198,7 @@ function fieldPayload(
   if (!field?.parsed) return null;
   const initialValue = view ? view.initialValues[fieldName] ?? "" : initialFieldText(field, rowIndex ?? 0);
   const value = view ? view.values[fieldName] ?? "" : fieldText(field, rowIndex ?? 0);
-  const fieldView = selectSaveEditFieldView(field, rowIndex ?? 0, props.draft);
+  const fieldView = indexForTable(table).field(field, rowIndex ?? 0);
   return {
     key: fieldName,
     label: fieldName,
@@ -230,6 +227,18 @@ function jsFields(row: MartialDisplayRow) {
   ]
     .map((fieldName) => fieldPayload(props.jsTable, fieldName, row.target, row.rowIndex, row.view))
     .filter((field): field is MartialSaveField => Boolean(field));
+}
+
+function indexForField(field: BgDatabaseField | undefined) {
+  if (field?.tableIndex === props.baseTable.tableIndex && field.table === props.baseTable.name) return baseIndex;
+  if (field?.tableIndex === props.detailTable.tableIndex && field.table === props.detailTable.name) return detailIndex;
+  return jsIndex;
+}
+
+function indexForTable(table: BgDatabaseTable) {
+  if (table.tableIndex === props.baseTable.tableIndex && table.name === props.baseTable.name) return baseIndex;
+  if (table.tableIndex === props.detailTable.tableIndex && table.name === props.detailTable.name) return detailIndex;
+  return jsIndex;
 }
 
 function baseRowIndex(name: string) {

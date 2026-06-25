@@ -4,10 +4,7 @@ import AddInventoryItemDialog, { type InventoryAddItemPayload } from "./AddInven
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import EditableItemCard from "./EditableItemCard.vue";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   formatSaveValue,
-  selectSaveEditTableRow,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
   type SaveEditDraft,
@@ -111,10 +108,9 @@ const ownerField = computed(() => props.table.fields.juesename);
 const uidField = computed(() => props.table.fields.uid);
 const quantityField = computed(() => props.table.fields.qty);
 const equippedField = computed(() => props.table.fields.iseuipped);
-const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
-const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
+const tableIndex = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
 const ownerRowIndexes = computed(() =>
-  rowIndexes.value.filter((rowIndex) => initialFieldText(ownerField.value, rowIndex) === props.ownerName),
+  ownerField.value ? tableIndex.rowIndexesByInitialField(ownerField.value.name, props.ownerName) : [],
 );
 const parsedFields = computed(() =>
   props.table.fieldNames
@@ -122,9 +118,9 @@ const parsedFields = computed(() =>
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed)),
 );
 const dirtyRows = computed(() => {
-  return tableView.value.dirtyRows;
+  return tableIndex.dirtyRows.value;
 });
-const deletedRows = computed(() => tableView.value.deletedRows);
+const deletedRows = computed(() => tableIndex.deletedRows.value);
 
 function enumOptions(type: string) {
   return Object.entries(props.enums[type] || {})
@@ -166,7 +162,7 @@ const indexFilters = computed(() => [
   },
 ]);
 
-const insertedRows = computed(() => tableView.value.insertedRows);
+const insertedRows = computed(() => tableIndex.insertedRows.value);
 const filteredRowIndexes = computed(() => {
   const query = search.value.trim().toLowerCase();
 
@@ -198,7 +194,7 @@ const pagedInventoryRows = computed<InventoryDisplayRow[]>(() => {
   const start = (page.value - 1) * pageSize;
   return filteredInventoryEntries.value
     .slice(start, start + pageSize)
-    .map((entry) => typeof entry === "number" ? selectSaveEditTableRow(props.table, props.draft, entry) : entry);
+    .map((entry) => typeof entry === "number" ? tableIndex.row(entry) : entry);
 });
 const equippedRowIndexes = computed(() => {
   const used = new Set<number>();
@@ -244,7 +240,7 @@ function updateFilter(id: string, value: string) {
 }
 
 function fieldValue(field: BgDatabaseField | undefined, rowIndex: number): BgDatabaseValue {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).value;
+  return tableIndex.value(field, rowIndex);
 }
 
 function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
@@ -252,7 +248,7 @@ function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
 }
 
 function initialFieldText(field: BgDatabaseField | undefined, rowIndex: number) {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).initialText;
+  return tableIndex.initialText(field, rowIndex);
 }
 
 function rowItem(rowIndex: number) {
@@ -308,7 +304,7 @@ function equipmentStyleOptions() {
 
 function rowFields(rowIndex: number) {
   return parsedFields.value.map((field) => ({
-    ...selectSaveEditFieldView(field, rowIndex, props.draft),
+    ...tableIndex.field(field, rowIndex),
     key: field.name,
     field,
     value: fieldText(field, rowIndex),
@@ -325,7 +321,7 @@ function rowDirty(rowIndex: number) {
   return dirtyRows.value.has(rowIndex);
 }
 
-const tableDirty = computed(() => tableView.value.dirty);
+const tableDirty = computed(() => tableIndex.dirty.value);
 
 function resetRow(rowIndex: number) {
   emit("resetDraft", props.table, { type: "row", rowIndex });

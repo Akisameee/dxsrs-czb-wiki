@@ -218,8 +218,8 @@ export function saveEditDraftDeletedRows(draft: SaveEditDraft | undefined, table
 
 export function resetSaveEditTableDraft(draft: SaveEditDraft | undefined, table: BgDatabaseTable) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  delete tables[tableDraftKey(table)];
+  const tables = { ...normalized.tables };
+  delete tables[saveEditTableDraftKey(table)];
   return { ...normalized, tables } satisfies SaveEditDraft;
 }
 
@@ -229,10 +229,11 @@ export function resetSaveEditRowDraft(
   rowIndex: number,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableKey = tableDraftKey(table);
-  const tableDraft = tables[tableKey];
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey);
   if (tableDraft) {
+    tableDraft.updated = { ...tableDraft.updated };
+    tableDraft.deleted = { ...tableDraft.deleted };
     delete tableDraft.updated[String(rowIndex)];
     delete tableDraft.deleted[String(rowIndex)];
     if (!tableDraftDirty(tableDraft)) delete tables[tableKey];
@@ -257,10 +258,15 @@ export function resetInsertedSaveEditRowDraft(
   tempId: string,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableDraft = tables[tableDraftKey(table)];
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey);
   const inserted = tableDraft?.inserted[tempId];
-  if (inserted) inserted.values = { ...inserted.initialValues };
+  if (tableDraft && inserted) {
+    tableDraft.inserted = {
+      ...tableDraft.inserted,
+      [tempId]: { ...inserted, values: { ...inserted.initialValues } },
+    };
+  }
   return { ...normalized, tables } satisfies SaveEditDraft;
 }
 
@@ -271,19 +277,34 @@ export function resetSaveEditFieldDraft(
   fieldName: string,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableKey = tableDraftKey(table);
-  const tableDraft = tables[tableKey];
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey);
   if (!tableDraft) return normalized;
 
   if (target.type === "row") {
-    delete tableDraft.updated[String(target.rowIndex)]?.[fieldName];
-    if (tableDraft.updated[String(target.rowIndex)] && !Object.keys(tableDraft.updated[String(target.rowIndex)]!).length) {
-      delete tableDraft.updated[String(target.rowIndex)];
+    const rowKey = String(target.rowIndex);
+    const rowDraft = tableDraft.updated[rowKey];
+    if (rowDraft) {
+      tableDraft.updated = { ...tableDraft.updated, [rowKey]: { ...rowDraft } };
+      delete tableDraft.updated[rowKey]?.[fieldName];
+      if (tableDraft.updated[rowKey] && !Object.keys(tableDraft.updated[rowKey]!).length) {
+        delete tableDraft.updated[rowKey];
+      }
     }
   } else {
     const inserted = tableDraft.inserted[target.tempId];
-    if (inserted) inserted.values[fieldName] = inserted.initialValues[fieldName] ?? "";
+    if (inserted) {
+      tableDraft.inserted = {
+        ...tableDraft.inserted,
+        [target.tempId]: {
+          ...inserted,
+          values: {
+            ...inserted.values,
+            [fieldName]: inserted.initialValues[fieldName] ?? "",
+          },
+        },
+      };
+    }
   }
 
   if (!tableDraftDirty(tableDraft)) delete tables[tableKey];
@@ -320,19 +341,24 @@ export function updateSaveEditCellDraft(
 ) {
   const normalized = normalizeSaveEditDraft(draft);
   const initialValue = formatSaveValue(field.values[rowIndex]);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableKey = tableDraftKey(fieldTableFromField(field));
-  const tableDraft = ensureTableDraft(tables, tableKey);
+  const tableKey = saveEditTableDraftKey(fieldTableFromField(field));
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey, true);
+  if (!tableDraft) return normalized;
   const key = String(rowIndex);
 
   if (value === initialValue) {
+    const rowDraft = tableDraft.updated[key];
+    if (rowDraft) tableDraft.updated = { ...tableDraft.updated, [key]: { ...rowDraft } };
     delete tableDraft.updated[key]?.[field.name];
     if (tableDraft.updated[key] && !Object.keys(tableDraft.updated[key]).length) delete tableDraft.updated[key];
     if (!tableDraftDirty(tableDraft)) delete tables[tableKey];
     return { ...normalized, tables };
   }
 
-  tableDraft.updated[key] = { ...(tableDraft.updated[key] || {}), [field.name]: value };
+  tableDraft.updated = {
+    ...tableDraft.updated,
+    [key]: { ...(tableDraft.updated[key] || {}), [field.name]: value },
+  };
   return { ...normalized, tables };
 }
 
@@ -344,11 +370,15 @@ export function insertSaveEditRowDraft(
   initialValues: Record<string, string> = values,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableDraft = ensureTableDraft(tables, tableDraftKey(table));
-  tableDraft.inserted[tempId] = {
-    initialValues: cleanValuesForTable(table, initialValues),
-    values: cleanValuesForTable(table, values),
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey, true);
+  if (!tableDraft) return normalized;
+  tableDraft.inserted = {
+    ...tableDraft.inserted,
+    [tempId]: {
+      initialValues: cleanValuesForTable(table, initialValues),
+      values: cleanValuesForTable(table, values),
+    },
   };
   return { ...normalized, tables } satisfies SaveEditDraft;
 }
@@ -359,10 +389,10 @@ export function removeInsertedSaveEditRowDraft(
   tempId: string,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableKey = tableDraftKey(table);
-  const tableDraft = tables[tableKey];
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey);
   if (tableDraft) {
+    tableDraft.inserted = { ...tableDraft.inserted };
     delete tableDraft.inserted[tempId];
     if (!tableDraftDirty(tableDraft)) delete tables[tableKey];
   }
@@ -376,13 +406,19 @@ export function updateInsertedSaveEditRowDraft(
   values: Record<string, string>,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableDraft = tables[tableDraftKey(table)];
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey);
   const inserted = tableDraft?.inserted[tempId];
   if (!inserted) return normalized;
-  inserted.values = {
-    ...inserted.values,
-    ...cleanValuesForTable(table, values),
+  tableDraft.inserted = {
+    ...tableDraft.inserted,
+    [tempId]: {
+      ...inserted,
+      values: {
+        ...inserted.values,
+        ...cleanValuesForTable(table, values),
+      },
+    },
   };
   return { ...normalized, tables } satisfies SaveEditDraft;
 }
@@ -408,8 +444,11 @@ export function deleteSaveEditRowDraft(
   rowIndex: number,
 ) {
   const normalized = normalizeSaveEditDraft(draft);
-  const tables = cloneDraftTables(normalized.tables);
-  const tableDraft = ensureTableDraft(tables, tableDraftKey(table));
+  const tableKey = saveEditTableDraftKey(table);
+  const { tables, tableDraft } = cloneDraftTable(normalized.tables, tableKey, true);
+  if (!tableDraft) return normalized;
+  tableDraft.updated = { ...tableDraft.updated };
+  tableDraft.deleted = { ...tableDraft.deleted };
   delete tableDraft.updated[String(rowIndex)];
   tableDraft.deleted[String(rowIndex)] = true;
   return { ...normalized, tables };
@@ -460,7 +499,7 @@ export function selectSaveEditInsertedTableRows(
   }).reverse();
 }
 
-function tableDraftKey(table: Pick<BgDatabaseTable, "tableIndex" | "name">) {
+export function saveEditTableDraftKey(table: Pick<BgDatabaseTable, "tableIndex" | "name">) {
   return `${table.tableIndex}:${table.name}`;
 }
 
@@ -481,11 +520,6 @@ function emptyTableDraft(): SaveEditTableDraft {
   return { updated: {}, inserted: {}, deleted: {} };
 }
 
-function ensureTableDraft(tables: Record<string, SaveEditTableDraft>, key: string) {
-  tables[key] ||= emptyTableDraft();
-  return tables[key];
-}
-
 function findSaveEditTableDraft(draft: SaveEditDraft | undefined, tableIndex: number, tableName: string) {
   return normalizeSaveEditDraft(draft).tables[`${tableIndex}:${tableName}`];
 }
@@ -495,21 +529,16 @@ function findSaveEditTableDraftByIndex(draft: SaveEditDraft | undefined, tableIn
     .find(([key]) => parseTableDraftKey(key)?.tableIndex === tableIndex)?.[1];
 }
 
-function cloneDraftTables(tables: Record<string, SaveEditTableDraft>) {
-  return Object.fromEntries(Object.entries(tables).map(([key, tableDraft]) => [
-    key,
-    {
-      updated: Object.fromEntries(Object.entries(tableDraft.updated || {}).map(([rowIndex, values]) => [rowIndex, { ...values }])),
-      inserted: Object.fromEntries(Object.entries(tableDraft.inserted || {}).map(([tempId, inserted]) => [
-        tempId,
-        {
-          initialValues: { ...inserted.initialValues },
-          values: { ...inserted.values },
-        },
-      ])),
-      deleted: { ...(tableDraft.deleted || {}) },
-    } satisfies SaveEditTableDraft,
-  ]));
+function cloneDraftTable(
+  tables: Record<string, SaveEditTableDraft>,
+  key: string,
+  create = false,
+) {
+  const nextTables = { ...tables };
+  const source = tables[key];
+  const tableDraft = source ? { ...source } : create ? emptyTableDraft() : undefined;
+  if (tableDraft) nextTables[key] = tableDraft;
+  return { tables: nextTables, tableDraft };
 }
 
 function tableDraftDirty(tableDraft: SaveEditTableDraft) {

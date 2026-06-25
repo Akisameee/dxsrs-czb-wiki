@@ -13,6 +13,7 @@ import {
   createEmptySaveEditDraft,
   applySaveEditRowDraftOperation,
   resetSaveEditDraftTarget,
+  saveEditCharacterName,
   selectSaveEditFieldView,
   updateSaveEditCellDraft,
   writeSaveEditFile,
@@ -43,9 +44,10 @@ const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findByFileName(editFileName.value));
 const pageView = computed(() => (item.value ? createSaveEditMainPageView(item.value, easyTableNames) : null));
 const draft = computed(() => pageView.value?.draft ?? createEmptySaveEditDraft());
+const viewStore = useSaveEditViewStore(draft);
 const save = computed(() => pageView.value?.save || null);
 const selectedTableIndex = computed(() => pageView.value?.selectedTableIndex || 0);
-const characterName = computed(() => pageView.value?.characterName || "未选择存档");
+const characterName = computed(() => save.value ? saveEditCharacterName(save.value, playerDraft.value) : "未选择存档");
 const headerFileName = computed(() => item.value?.fileName || editFileName.value);
 
 const { data: labelRows } = await useAsyncData(
@@ -78,6 +80,21 @@ const jsWugongTable = computed(() => pageView.value?.tables.jsWugongTable || nul
 const gWugongTable = computed(() => pageView.value?.tables.gWugongTable || null);
 const gWugongDetailTable = computed(() => pageView.value?.tables.gWugongDetailTable || null);
 const npcTable = computed(() => pageView.value?.tables.npcTable || null);
+const playerDraft = computed(() => viewStore.tableDraft(save.value?.zhuJue));
+const injuryDraft = computed(() => viewStore.tableDraft(injuryTable.value));
+const inventoryDraft = computed(() => viewStore.tableDraft(inventoryTable.value));
+const martialArtsDraft = computed(() => viewStore.tablesDraft([
+  jsWugongTable.value,
+  gWugongTable.value,
+  gWugongDetailTable.value,
+]));
+const characterTableDraft = computed(() => viewStore.tablesDraft([
+  npcTable.value,
+  jsWugongTable.value,
+  gWugongTable.value,
+  gWugongDetailTable.value,
+  inventoryTable.value,
+]));
 const activeCharacterRowIndex = computed(() => characterDialogRowIndex.value);
 const activeCharacterLabel = computed(() => {
   const rowIndex = activeCharacterRowIndex.value;
@@ -110,13 +127,13 @@ const equippedUids = computed(() => ({
 function zhuJueFieldText(fieldName: string) {
   const field = save.value?.zhuJue.fields[fieldName];
   if (!field) return "";
-  return selectSaveEditFieldView(field, 0, draft.value).text;
+  return selectSaveEditFieldView(field, 0, playerDraft.value).text;
 }
 
 function npcFieldText(fieldName: string, rowIndex: number) {
   const field = npcTable.value?.fields[fieldName];
   if (!field) return "";
-  return selectSaveEditFieldView(field, rowIndex, draft.value).text;
+  return selectSaveEditFieldView(field, rowIndex, characterTableDraft.value).text;
 }
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
@@ -185,6 +202,10 @@ function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
     ));
 }
 
+function tableScopedDraft(table: BgDatabaseTable) {
+  return viewStore.tableDraft(table);
+}
+
 function downloadSave() {
   const currentItem = item.value;
   if (!save.value || !currentItem || !import.meta.client) return;
@@ -238,7 +259,7 @@ function downloadSave() {
         <PlayerTableCard
           :save="save"
           :table="save.zhuJue"
-          :draft="draft"
+          :draft="playerDraft"
           :enums="enums"
           @update-field="updateField"
         />
@@ -246,7 +267,7 @@ function downloadSave() {
         <InjuriesTableCard
           v-if="injuryTable"
           :table="injuryTable"
-          :draft="draft"
+          :draft="injuryDraft"
           :enums="enums"
           @update-field="updateField"
         />
@@ -256,7 +277,7 @@ function downloadSave() {
           :js-table="jsWugongTable"
           :base-table="gWugongTable"
           :detail-table="gWugongDetailTable"
-          :draft="draft"
+          :draft="martialArtsDraft"
           :enums="enums"
           @update-field="updateField"
           @row-operation="applyTableRowOperation"
@@ -268,7 +289,7 @@ function downloadSave() {
           v-if="inventoryTable"
           :table="inventoryTable"
           :equipped-uids="equippedUids"
-          :draft="draft"
+          :draft="inventoryDraft"
           :enums="enums"
           @row-operation="applyInventoryRowOperation"
           @row-operations="applyInventoryRowOperations"
@@ -278,7 +299,7 @@ function downloadSave() {
         <CharacterTableCard
           v-if="npcTable"
           :table="npcTable"
-          :draft="draft"
+          :draft="characterTableDraft"
           :enums="enums"
           :js-wugong-table="jsWugongTable"
           :g-wugong-table="gWugongTable"
@@ -294,7 +315,7 @@ function downloadSave() {
             v-for="table in easyTables"
             :key="table.name"
             :table="table"
-            :draft="draft"
+            :draft="tableScopedDraft(table)"
             :enums="enums"
             @update-field="updateField"
           />
@@ -302,11 +323,11 @@ function downloadSave() {
       </template>
 
       <EditDialog
-        v-if="npcTable"
+        v-if="npcTable && activeCharacterRowIndex !== null"
         v-model:open="characterDialogOpen"
         :table="npcTable"
         :row-index="activeCharacterRowIndex"
-        :draft="draft"
+        :draft="characterTableDraft"
         :enums="enums"
         :owner-name="activeCharacterOwnerName"
         :owner-label="activeCharacterLabel"
