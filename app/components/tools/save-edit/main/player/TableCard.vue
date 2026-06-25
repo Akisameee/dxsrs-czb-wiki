@@ -4,10 +4,9 @@ import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitVa
 import LifeSkillFieldEditor from "./LifeSkillFieldEditor.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import {
+  selectSaveEditFieldView,
+  selectSaveEditTableView,
   formatSaveValue,
-  saveEditDraftFieldValue,
-  saveEditDraftHasField,
-  saveEditDraftTableDirty,
   saveEditEnumOptions,
   saveEditCharacterName,
   type SaveEditDraft,
@@ -61,22 +60,21 @@ const parsedFields = computed(() =>
     .map((fieldName) => props.table.fields[fieldName])
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed)),
 );
-const tableDirty = computed(() =>
-  saveEditDraftTableDirty(props.draft, props.table.tableIndex),
-);
+const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
+const tableDirty = computed(() => tableView.value.dirty);
 const portraitValues = computed(() => portraitFieldValues(false));
 const initialPortraitValues = computed(() => portraitFieldValues(true));
 
 function fieldValue(field: BgDatabaseField | undefined): BgDatabaseValue {
-  return saveEditDraftFieldValue(field, 0, props.draft);
+  return selectSaveEditFieldView(field, 0, props.draft).value;
 }
 
 function fieldCurrentText(fieldName: string) {
-  return formatSaveValue(fieldValue(props.table.fields[fieldName]));
+  return selectSaveEditFieldView(props.table.fields[fieldName], 0, props.draft).text;
 }
 
 function fieldInitialText(fieldName: string) {
-  return formatSaveValue(props.table.fields[fieldName]?.values[0]);
+  return selectSaveEditFieldView(props.table.fields[fieldName], 0, props.draft).initialText;
 }
 
 function field(fieldName: string) {
@@ -106,8 +104,8 @@ function updateField(field: BgDatabaseField | undefined, value: string, rowIndex
 
 function resetTable() {
   for (const field of parsedFields.value) {
-    const initialValue = fieldInitialText(field.name);
-    if (saveEditDraftHasField(field, 0, props.draft)) emitField(field, initialValue);
+    const fieldView = selectSaveEditFieldView(field, 0, props.draft);
+    if (fieldView.dirty) emitField(field, fieldView.initialText);
   }
 }
 

@@ -10,13 +10,13 @@ import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.v
 import SingleRowTableCard from "~/components/tools/save-edit/main/SingleRowTableCard.vue";
 import SaveTableEditor from "~/components/tools/save-edit/SaveTableEditor.vue";
 import {
-  applySaveEditRowDraftOperation,
   createEmptySaveEditDraft,
+  applySaveEditRowDraftOperation,
   resetSaveEditDraftTarget,
-  saveEditCharacterName,
-  saveEditDraftFieldValue,
+  selectSaveEditFieldView,
   updateSaveEditCellDraft,
   writeSaveEditFile,
+  createSaveEditMainPageView,
   type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
@@ -28,7 +28,7 @@ useHead({ title: "人物存档修改" });
 
 const route = useRoute();
 const { queryRows } = useWikiDb();
-const { findByFileName, updateItem } = useSaveEditWorkspace();
+const { findByFileName, updateItem, updateItemDraft } = useSaveEditWorkspace();
 const viewMode = ref<"normal" | "database">("normal");
 const characterDialogOpen = computed({
   get: () => characterDialogRowIndex.value !== null,
@@ -41,9 +41,11 @@ const easyTableNames = ["Option", "MenPaiInfo", "JiGou", "ZiChuangWuGong", "Shen
 
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findByFileName(editFileName.value));
-const save = computed(() => item.value?.save || null);
-const draft = computed(() => item.value?.draft || createEmptySaveEditDraft());
-const characterName = computed(() => (save.value ? saveEditCharacterName(save.value, draft.value) : "未选择存档"));
+const pageView = computed(() => (item.value ? createSaveEditMainPageView(item.value, easyTableNames) : null));
+const draft = computed(() => pageView.value?.draft ?? createEmptySaveEditDraft());
+const save = computed(() => pageView.value?.save || null);
+const selectedTableIndex = computed(() => pageView.value?.selectedTableIndex || 0);
+const characterName = computed(() => pageView.value?.characterName || "未选择存档");
 const headerFileName = computed(() => item.value?.fileName || editFileName.value);
 
 const { data: labelRows } = await useAsyncData(
@@ -69,18 +71,13 @@ const enums = computed(() => ({
   LianSuo_MP: Object.fromEntries((labelRows.value?.sectRows || []).map((row) => [String(row.id), row.name])),
 }));
 
-const easyTables = computed(() => {
-  if (!save.value) return [];
-  return easyTableNames
-    .map((name) => save.value?.tables.find((table) => table.name === name))
-    .filter((table): table is BgDatabaseTable => Boolean(table && table.rowCount <= 1));
-});
-const injuryTable = computed(() => save.value?.tables.find((table) => table.name === "ShangBing") || null);
-const inventoryTable = computed(() => save.value?.tables.find((table) => table.name === "XingNang") || null);
-const jsWugongTable = computed(() => save.value?.tables.find((table) => table.name === "JSWugong") || null);
-const gWugongTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGong") || null);
-const gWugongDetailTable = computed(() => save.value?.tables.find((table) => table.name === "GWuGongDetail") || null);
-const npcTable = computed(() => save.value?.tables.find((table) => table.name === "Npc") || null);
+const easyTables = computed(() => pageView.value?.tables.easyTables || []);
+const injuryTable = computed(() => pageView.value?.tables.injuryTable || null);
+const inventoryTable = computed(() => pageView.value?.tables.inventoryTable || null);
+const jsWugongTable = computed(() => pageView.value?.tables.jsWugongTable || null);
+const gWugongTable = computed(() => pageView.value?.tables.gWugongTable || null);
+const gWugongDetailTable = computed(() => pageView.value?.tables.gWugongDetailTable || null);
+const npcTable = computed(() => pageView.value?.tables.npcTable || null);
 const activeCharacterRowIndex = computed(() => characterDialogRowIndex.value);
 const activeCharacterLabel = computed(() => {
   const rowIndex = activeCharacterRowIndex.value;
@@ -94,7 +91,7 @@ const activeCharacterOwnerName = computed(() => {
 });
 const activeCharacterEquippedUids = computed(() => {
   const rowIndex = activeCharacterRowIndex.value;
-  if (rowIndex === null) return {};
+  if (rowIndex === null) return { weapon: "", armor: "" };
   return {
     weapon: npcFieldText("wq_uid", rowIndex),
     armor: npcFieldText("fj_uid", rowIndex),
@@ -113,13 +110,13 @@ const equippedUids = computed(() => ({
 function zhuJueFieldText(fieldName: string) {
   const field = save.value?.zhuJue.fields[fieldName];
   if (!field) return "";
-  return String(saveEditDraftFieldValue(field, 0, draft.value) ?? "");
+  return selectSaveEditFieldView(field, 0, draft.value).text;
 }
 
 function npcFieldText(fieldName: string, rowIndex: number) {
   const field = npcTable.value?.fields[fieldName];
   if (!field) return "";
-  return String(saveEditDraftFieldValue(field, rowIndex, draft.value) ?? "");
+  return selectSaveEditFieldView(field, rowIndex, draft.value).text;
 }
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
@@ -143,68 +140,63 @@ function updateDatabaseCell(field: BgDatabaseField, rowIndex: number, value: str
 
 function updateDraftValue(field: BgDatabaseField, rowIndex: number, value: string) {
   if (!item.value) return;
-  updateItem(item.value.id, { draft: updateSaveEditCellDraft(item.value.draft, field, rowIndex, value) });
+  updateItemDraft(item.value.id, (currentDraft) => updateSaveEditCellDraft(currentDraft, field, rowIndex, value));
 }
 
 function applyInventoryRowOperation(operation: SaveEditRowDraftOperation) {
   if (!item.value || !inventoryTable.value) return;
-  updateItem(item.value.id, {
-    draft: applySaveEditRowDraftOperation(item.value.draft, inventoryTable.value, operation),
-  });
+  updateItemDraft(item.value.id, (currentDraft) => applySaveEditRowDraftOperation(currentDraft, inventoryTable.value!, operation));
 }
 
 function applyTableRowOperation(table: BgDatabaseTable, operation: SaveEditRowDraftOperation) {
   if (!item.value) return;
-  updateItem(item.value.id, {
-    draft: applySaveEditRowDraftOperation(item.value.draft, table, operation),
-  });
+  updateItemDraft(item.value.id, (currentDraft) => applySaveEditRowDraftOperation(currentDraft, table, operation));
 }
 
 function applyInventoryRowOperations(operations: SaveEditRowDraftOperation[]) {
   if (!item.value || !inventoryTable.value || !operations.length) return;
-  const nextDraft = operations.reduce(
-    (currentDraft, operation) => applySaveEditRowDraftOperation(currentDraft, inventoryTable.value!, operation),
-    item.value.draft,
-  );
-  updateItem(item.value.id, { draft: nextDraft });
+  updateItemDraft(item.value.id, (currentDraft) =>
+    operations.reduce(
+      (nextDraft, operation) => applySaveEditRowDraftOperation(nextDraft, inventoryTable.value!, operation),
+      currentDraft,
+    ));
 }
 
 function applyTableRowOperations(table: BgDatabaseTable, operations: SaveEditRowDraftOperation[]) {
   if (!item.value || !operations.length) return;
-  const nextDraft = operations.reduce(
-    (currentDraft, operation) => applySaveEditRowDraftOperation(currentDraft, table, operation),
-    item.value.draft,
-  );
-  updateItem(item.value.id, { draft: nextDraft });
+  updateItemDraft(item.value.id, (currentDraft) =>
+    operations.reduce(
+      (nextDraft, operation) => applySaveEditRowDraftOperation(nextDraft, table, operation),
+      currentDraft,
+    ));
 }
 
 function resetTableDraft(table: BgDatabaseTable | null | undefined, target: SaveEditDraftResetTarget) {
   if (!item.value || !table) return;
-  updateItem(item.value.id, {
-    draft: resetSaveEditDraftTarget(item.value.draft, table, target),
-  });
+  updateItemDraft(item.value.id, (currentDraft) => resetSaveEditDraftTarget(currentDraft, table, target));
 }
 
 function resetTableDrafts(operations: SaveEditDraftResetOperation[]) {
   if (!item.value || !operations.length) return;
-  const nextDraft = operations.reduce(
-    (currentDraft, operation) => resetSaveEditDraftTarget(currentDraft, operation.table, operation.target),
-    item.value.draft,
-  );
-  updateItem(item.value.id, { draft: nextDraft });
+  updateItemDraft(item.value.id, (currentDraft) =>
+    operations.reduce(
+      (nextDraft, operation) => resetSaveEditDraftTarget(nextDraft, operation.table, operation.target),
+      currentDraft,
+    ));
 }
 
 function downloadSave() {
-  if (!item.value?.save || !import.meta.client) return;
+  const currentItem = item.value;
+  if (!save.value || !currentItem || !import.meta.client) return;
   try {
-    const output = writeSaveEditFile(item.value.save, item.value.draft);
+    const output = writeSaveEditFile(save.value, draft.value);
     const arrayBuffer = new ArrayBuffer(output.byteLength);
     new Uint8Array(arrayBuffer).set(output);
     const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = item.value.fileName;
+    link.download = currentItem.fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -236,7 +228,7 @@ function downloadSave() {
           :save="save"
           :draft="draft"
           :enums="enums"
-          :selected-table-index="item?.selectedTableIndex || 0"
+          :selected-table-index="selectedTableIndex"
           @update-table="updateActiveTable"
           @update-cell="updateDatabaseCell"
         />

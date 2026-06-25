@@ -3,9 +3,9 @@ import MeridianEditHeaderCard from "~/components/tools/save-edit/meridian/Meridi
 import MeridianEditorCard from "~/components/tools/save-edit/meridian/MeridianEditorCard.vue";
 import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.vue";
 import {
+  createSaveEditEs2PageView,
   SAVE_EDIT_MERIDIAN_GROUPS,
   SAVE_EDIT_MERIDIAN_POINTS,
-  applyEs2Draft,
   isSaveEditMeridianFile,
   saveEditMeridianValues,
   updateEs2StringListDraft,
@@ -15,24 +15,17 @@ import {
 useHead({ title: "经脉存档修改" });
 
 const route = useRoute();
-const { findAnyByFileName, updateItem } = useSaveEditWorkspace();
+const { findAnyByFileName, updateItem, updateItemDraft } = useSaveEditWorkspace();
 
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findAnyByFileName(editFileName.value));
-const save = computed(() => item.value?.save || null);
-const meridianSave = computed(() => {
-  if (!isSaveEditMeridianFile(save.value, editFileName.value) || save.value?.kind !== "es2") return null;
-  return save.value;
-});
-const currentMeridianSave = computed(() =>
-  meridianSave.value && item.value ? applyEs2Draft(meridianSave.value, item.value.draft) : null,
-);
-const selected = computed(() => saveEditMeridianValues(currentMeridianSave.value));
-const initialSelected = computed(() => saveEditMeridianValues(meridianSave.value));
+const pageView = computed(() => (item.value ? createSaveEditEs2PageView(item.value, isSaveEditMeridianFile) : null));
+const selected = computed(() => saveEditMeridianValues(pageView.value?.currentSave));
+const initialSelected = computed(() => saveEditMeridianValues(pageView.value?.save));
 
 function updateSelected(values: string[]) {
-  if (!item.value || !meridianSave.value) return;
-  updateItem(item.value.id, { draft: updateEs2StringListDraft(meridianSave.value, item.value.draft, values) });
+  if (!item.value || !pageView.value) return;
+  updateItemDraft(item.value.id, (draft) => updateEs2StringListDraft(pageView.value!.save, draft, values));
 }
 
 function resetSelected() {
@@ -66,11 +59,11 @@ function downloadSave() {
       :file-name="item?.fileName || editFileName"
       :selected-count="selected.length"
       :total-count="SAVE_EDIT_MERIDIAN_POINTS.length"
-      :has-save="Boolean(meridianSave)"
+      :has-save="Boolean(pageView)"
       @download="downloadSave"
     />
 
-    <MissingSaveCard v-if="!meridianSave" />
+    <MissingSaveCard v-if="!pageView" />
 
     <MeridianEditorCard
       v-else

@@ -6,18 +6,19 @@ import EditableNumberField from "~/components/tools/save-edit/fields/EditableNum
 import EditableStringListField from "~/components/tools/save-edit/fields/EditableStringListField.vue";
 import EditableTextField from "~/components/tools/save-edit/fields/EditableTextField.vue";
 import { Separator } from "~/components/ui/separator";
-import type { ImportedSaveItem } from "~/composables/useSaveEditWorkspace";
 import {
-  applyEs2Draft,
   decodeSaveEditEs2FileName,
+  hasSaveEditDraft,
   isSaveEditCharacterSlotsFile,
   isSaveEditNewestCharacterSlotFile,
   isSaveEditMeridianFile,
   isSaveEditStringListFile,
   isSaveEditTrackingFile,
+  saveEditCharacterSlotsValues,
   saveEditCharacterName,
   saveEditStringListValues,
   type AnySaveEditFile,
+  type SaveEditWorkspaceItemView,
 } from "~/lib/save-edit";
 import SaveFileCard from "./SaveFileCard.vue";
 
@@ -28,19 +29,19 @@ type EnumRow = {
 };
 
 const props = defineProps<{
-  files: ImportedSaveItem[];
+  files: SaveEditWorkspaceItemView[];
 }>();
 
 const emit = defineEmits<{
-  edit: [item: ImportedSaveItem];
-  editCharacterSlots: [item: ImportedSaveItem];
-  editMeridian: [item: ImportedSaveItem];
-  editTracking: [item: ImportedSaveItem];
-  download: [item: ImportedSaveItem];
+  edit: [item: SaveEditWorkspaceItemView];
+  editCharacterSlots: [item: SaveEditWorkspaceItemView];
+  editMeridian: [item: SaveEditWorkspaceItemView];
+  editTracking: [item: SaveEditWorkspaceItemView];
+  download: [item: SaveEditWorkspaceItemView];
   remove: [id: number];
-  reset: [item: ImportedSaveItem];
-  updateScalar: [item: ImportedSaveItem, value: string | number | boolean];
-  updateStringList: [item: ImportedSaveItem, value: string[]];
+  reset: [item: SaveEditWorkspaceItemView];
+  updateScalar: [item: SaveEditWorkspaceItemView, value: string | number | boolean];
+  updateStringList: [item: SaveEditWorkspaceItemView, value: string[]];
 }>();
 
 const categoryOrder: Array<{ id: SaveFileCategoryId; label: string }> = [
@@ -119,12 +120,11 @@ const difficultyOptions = computed<EditableEnumOption[]>(() =>
     label: row.label || String(row.id),
   })),
 );
-const { characterSlotsState, isItemDirty } = useSaveEditWorkspace();
 const characterSlotsItem = computed(() =>
   props.files.find((item) => isSaveEditCharacterSlotsFile(item.save, item.fileName)) || null,
 );
 const newestCharacterSlotOptions = computed<EditableEnumOption[]>(() => {
-  const slots = characterSlotsState(characterSlotsItem.value).slots;
+  const slots = characterSlotValues(characterSlotsItem.value);
   return slots
     .filter((slot) => slot.uid && (slot.player || slot.savepath))
     .map((slot) => ({
@@ -137,7 +137,7 @@ const newestCharacterSlotOptions = computed<EditableEnumOption[]>(() => {
     }));
 });
 
-function categoryOf(item: ImportedSaveItem): SaveFileCategoryId {
+function categoryOf(item: SaveEditWorkspaceItemView): SaveFileCategoryId {
   if (item.save?.kind === "bgdatabase") return "character";
 
   const key = decodeSaveEditEs2FileName(item.fileName)?.key || "";
@@ -149,12 +149,12 @@ function categoryOf(item: ImportedSaveItem): SaveFileCategoryId {
   return "other";
 }
 
-function saveFileIcon(item: ImportedSaveItem) {
+function saveFileIcon(item: SaveEditWorkspaceItemView) {
   if (item.save?.kind === "bgdatabase") return UserRound;
   return decodeSaveEditEs2FileName(item.fileName)?.icon;
 }
 
-function isInlineEditableSave(item: ImportedSaveItem) {
+function isInlineEditableSave(item: SaveEditWorkspaceItemView) {
   const save = item.save;
   if (save?.kind !== "es2") return false;
   const type = save.es2.value.type;
@@ -166,11 +166,11 @@ function isInlineEditableSave(item: ImportedSaveItem) {
   return type === "int" || type === "bool" || type === "string";
 }
 
-function isDifficultySave(item: ImportedSaveItem) {
+function isDifficultySave(item: SaveEditWorkspaceItemView) {
   return difficultyKeys.has(decodeSaveEditEs2FileName(item.fileName)?.key || "");
 }
 
-function isNewestCharacterSlotSave(item: ImportedSaveItem) {
+function isNewestCharacterSlotSave(item: SaveEditWorkspaceItemView) {
   return isSaveEditNewestCharacterSlotFile(item.save, item.fileName);
 }
 
@@ -182,30 +182,37 @@ function scalarValue(save: AnySaveEditFile | null) {
   return "";
 }
 
-function scalarModelValue(item: ImportedSaveItem) {
-  const value = scalarValue(currentSave(item));
+function scalarModelValue(item: SaveEditWorkspaceItemView) {
+  const value = scalarValue(item.currentSave);
   if (typeof value === "boolean") return value ? "true" : "false";
   return String(value);
 }
 
-function initialScalarModelValue(item: ImportedSaveItem) {
+function initialScalarModelValue(item: SaveEditWorkspaceItemView) {
   const value = scalarValue(item.save);
   if (typeof value === "boolean") return value ? "true" : "false";
   return String(value);
 }
 
-function stringListValue(item: ImportedSaveItem) {
-  const save = currentSave(item);
+function stringListValue(item: SaveEditWorkspaceItemView) {
+  const save = item.currentSave;
   return isSaveEditStringListFile(save) ? saveEditStringListValues(save) : [];
 }
 
-function initialStringListValue(item: ImportedSaveItem) {
+function initialStringListValue(item: SaveEditWorkspaceItemView) {
   return isSaveEditStringListFile(item.save) ? saveEditStringListValues(item.save) : [];
 }
 
-function currentSave(item: ImportedSaveItem): AnySaveEditFile | null {
-  return item.save?.kind === "es2" ? applyEs2Draft(item.save, item.draft) : item.save;
+function characterSlotValues(item: SaveEditWorkspaceItemView | null) {
+  return isSaveEditCharacterSlotsFile(item?.currentSave, item?.fileName)
+    ? saveEditCharacterSlotsValues(item.currentSave)
+    : [];
 }
+
+function isItemDirty(item: SaveEditWorkspaceItemView) {
+  return hasSaveEditDraft(item.draft);
+}
+
 </script>
 
 <template>
@@ -230,7 +237,7 @@ function currentSave(item: ImportedSaveItem): AnySaveEditFile | null {
           :file-size="item.fileSize"
           :file-type="item.fileType"
           :file-icon="saveFileIcon(item)"
-          :character-name="item.save?.kind === 'bgdatabase' ? saveEditCharacterName(item.save, item.draft) : undefined"
+          :character-name="item.currentSave?.kind === 'bgdatabase' ? saveEditCharacterName(item.currentSave, item.draft) : undefined"
           :can-edit="false"
           :dirty="isItemDirty(item)"
           :error-message="item.errorMessage"

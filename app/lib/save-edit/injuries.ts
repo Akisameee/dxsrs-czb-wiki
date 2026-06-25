@@ -1,4 +1,5 @@
-import { formatSaveValue, valueWithDraft, type SaveEditDraft } from "./model";
+import { saveEditDraftFieldValue, type SaveEditDraft } from "./draft";
+import { formatSaveValue } from "./format";
 import type { BgDatabaseTable, BgDatabaseValue } from "../bgdatabase";
 import type { WikiEnums } from "../wiki/text";
 
@@ -15,7 +16,7 @@ export function shangBingFieldValue(
   fieldName: string,
   rowIndex: number,
 ) {
-  return valueWithDraft(table.fields[fieldName], rowIndex, draft);
+  return saveEditDraftFieldValue(table.fields[fieldName], rowIndex, draft);
 }
 
 export function shangBingFieldText(

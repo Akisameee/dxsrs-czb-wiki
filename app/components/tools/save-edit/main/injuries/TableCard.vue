@@ -3,20 +3,17 @@ import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import { Badge } from "~/components/ui/badge";
 import {
-  formatSaveValue,
-  saveEditDraftDirtyRows,
-  saveEditDraftHasField,
+  selectSaveEditFieldView,
+  selectSaveEditTableView,
   saveEditEnumOptions,
-  type SaveEditDraft,
-} from "~/lib/save-edit";
-import {
   shangBingAttributeByPart,
   shangBingEffectText,
   shangBingEnumLabel,
   shangBingFieldText,
   shangBingFieldValue,
   shangBingTitle,
-} from "~/lib/save-edit/injuries";
+  type SaveEditDraft,
+} from "~/lib/save-edit";
 import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
@@ -31,10 +28,11 @@ const emit = defineEmits<{
 }>();
 
 const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
+const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
 const dirtyRows = computed(() => {
-  return saveEditDraftDirtyRows(props.draft, props.table.tableIndex);
+  return tableView.value.dirtyRows;
 });
-const tableDirty = computed(() => dirtyRows.value.size > 0);
+const tableDirty = computed(() => tableView.value.dirty);
 
 function field(fieldName: string) {
   return props.table.fields[fieldName];
@@ -45,7 +43,7 @@ function fieldText(fieldName: string, rowIndex: number) {
 }
 
 function initialFieldText(fieldName: string, rowIndex: number) {
-  return formatSaveValue(field(fieldName)?.values[rowIndex]);
+  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).initialText;
 }
 
 function enumOptions(fieldName: string) {
@@ -81,8 +79,9 @@ function resetRow(rowIndex: number) {
   for (const fieldName of props.table.fieldNames) {
     const candidate = field(fieldName);
     if (!candidate?.parsed) continue;
-    if (saveEditDraftHasField(candidate, rowIndex, props.draft)) {
-      emit("updateField", candidate, initialFieldText(fieldName, rowIndex), rowIndex);
+    const fieldView = selectSaveEditFieldView(candidate, rowIndex, props.draft);
+    if (fieldView.dirty) {
+      emit("updateField", candidate, fieldView.initialText, rowIndex);
     }
   }
 }

@@ -20,9 +20,8 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import {
-  formatSaveValue,
+  selectSaveEditFieldView,
   isEditableSaveValue,
-  saveEditDraftFieldValue,
   saveEditEnumOptions,
   saveEditCharacterName,
   type SaveEditDraft,
@@ -58,7 +57,7 @@ const filteredRowIndexes = computed(() => {
   const rows = Array.from({ length: table.value.rowCount }, (_, index) => index);
   if (!query) return rows;
   return rows.filter((rowIndex) =>
-    parsedFields.value.some((field) => formatSaveValue(cellValue(field, rowIndex)).toLowerCase().includes(query)),
+    parsedFields.value.some((field) => cellText(field, rowIndex).toLowerCase().includes(query)),
   );
 });
 const totalRows = computed(() => filteredRowIndexes.value.length);
@@ -98,7 +97,11 @@ function setTable(value: unknown) {
 }
 
 function cellValue(field: BgDatabaseField, rowIndex: number): BgDatabaseValue {
-  return saveEditDraftFieldValue(field, rowIndex, props.draft);
+  return selectSaveEditFieldView(field, rowIndex, props.draft).value;
+}
+
+function cellText(field: BgDatabaseField, rowIndex: number) {
+  return selectSaveEditFieldView(field, rowIndex, props.draft).text;
 }
 
 function updateCell(field: BgDatabaseField, rowIndex: number, value: string) {
@@ -191,7 +194,7 @@ function selectValue(event: Event) {
                   <select
                     v-if="enumOptions(field).length"
                     class="h-8 w-36 rounded-md border border-input bg-background px-2 text-sm"
-                    :value="formatSaveValue(cellValue(field, rowIndex))"
+                    :value="cellText(field, rowIndex)"
                     @change="updateCell(field, rowIndex, selectValue($event))"
                   >
                     <option
@@ -205,15 +208,15 @@ function selectValue(event: Event) {
                   <AppInput
                     v-else-if="isEditableSaveValue(cellValue(field, rowIndex))"
                     class="h-8 w-36"
-                    :model-value="formatSaveValue(cellValue(field, rowIndex))"
+                    :model-value="cellText(field, rowIndex)"
                     @update:model-value="updateCell(field, rowIndex, String($event))"
                   />
                   <div
                     v-else
                     class="h-8 w-36 truncate rounded-md border bg-muted px-2 py-1 text-sm text-muted-foreground"
-                    :title="formatSaveValue(cellValue(field, rowIndex))"
+                    :title="cellText(field, rowIndex)"
                   >
-                    {{ formatSaveValue(cellValue(field, rowIndex)) }}
+                    {{ cellText(field, rowIndex) }}
                   </div>
                 </TableCell>
               </TableRow>

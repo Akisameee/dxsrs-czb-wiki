@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import EditableTableCardHeader from "./EditableTableCardHeader.vue";
 import {
-  formatSaveValue,
+  selectSaveEditFieldView,
+  selectSaveEditTableView,
   isEditableSaveValue,
-  saveEditDraftFieldValue,
-  saveEditDraftHasField,
-  saveEditDraftTableDirty,
   saveEditEnumOptions,
   type SaveEditDraft,
 } from "~/lib/save-edit";
 import WikiEnumSelect from "~/components/wiki/WikiEnumSelect.vue";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 const props = defineProps<{
@@ -28,21 +26,18 @@ const fields = computed(() =>
     .map((fieldName) => props.table.fields[fieldName])
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed && isEditableSaveValue(field.values[0] ?? null))),
 );
+const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
 
-function fieldValue(field: BgDatabaseField): BgDatabaseValue {
-  return saveEditDraftFieldValue(field, 0, props.draft);
+function fieldText(field: BgDatabaseField) {
+  return selectSaveEditFieldView(field, 0, props.draft).text;
 }
 
-function initialFieldText(field: BgDatabaseField) {
-  return formatSaveValue(field.values[0]);
-}
-
-const dirty = computed(() => saveEditDraftTableDirty(props.draft, props.table.tableIndex));
+const dirty = computed(() => tableView.value.dirty);
 
 function resetTable() {
   for (const field of fields.value) {
-    const initialValue = initialFieldText(field);
-    if (saveEditDraftHasField(field, 0, props.draft)) emit("updateField", field, initialValue, 0);
+    const fieldView = selectSaveEditFieldView(field, 0, props.draft);
+    if (fieldView.dirty) emit("updateField", field, fieldView.initialText, 0);
   }
 }
 
@@ -67,13 +62,13 @@ function enumOptions(fieldName: string) {
       >
         <WikiEnumSelect
           v-if="enumOptions(field.name).length"
-          :model-value="formatSaveValue(fieldValue(field))"
+          :model-value="fieldText(field)"
           :options="enumOptions(field.name)"
           @update:model-value="emit('updateField', field, $event, 0)"
         />
         <AppInput
           v-else
-          :model-value="formatSaveValue(fieldValue(field))"
+          :model-value="fieldText(field)"
           @update:model-value="emit('updateField', field, String($event), 0)"
         />
       </AppFieldStack>

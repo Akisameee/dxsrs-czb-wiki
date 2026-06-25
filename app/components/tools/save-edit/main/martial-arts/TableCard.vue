@@ -8,12 +8,9 @@ import SaveEditDeleteButton from "~/components/tools/save-edit/SaveEditDeleteBut
 import SaveEditEditButton from "~/components/tools/save-edit/SaveEditEditButton.vue";
 import SaveEditResettableFrame from "~/components/tools/save-edit/SaveEditResettableFrame.vue";
 import {
-  formatSaveValue,
-  saveEditDraftDirtyRows,
-  saveEditDraftFieldValue,
-  saveEditDraftHasField,
+  selectSaveEditFieldView,
+  selectSaveEditTableView,
   saveEditEnumOptions,
-  selectSaveEditInsertedTableRows,
   selectSaveEditTableRow,
   type SaveEditDraft,
   type SaveEditDraftResetOperation,
@@ -25,7 +22,7 @@ import {
   martialArtRarityToneId,
 } from "~/lib/wiki/martial-art";
 import { enumLabel } from "~/lib/utils";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 import type { WikiEnums } from "~/lib/wiki/text";
 
 type MartialArtRow = {
@@ -118,7 +115,8 @@ const buffTargetsByEffect = computed(() => {
   return result;
 });
 
-const insertedRows = computed(() => selectSaveEditInsertedTableRows(props.jsTable, props.draft));
+const jsTableView = computed(() => selectSaveEditTableView(props.jsTable, props.draft));
+const insertedRows = computed(() => jsTableView.value.insertedRows);
 const allOwnerRows = computed<MartialDisplayRow[]>(() => [
   ...insertedRows.value.filter((row) => (row.values.juesename || row.initialValues.juesename || props.ownerName) === props.ownerName),
   ...Array.from({ length: props.jsTable.rowCount }, (_, rowIndex) => rowIndex)
@@ -166,7 +164,7 @@ const detailRowByNameAndLevel = computed(() => {
 const dirtyRowsByTableIndex = computed(() => {
   const result = new Map<number, Set<number>>();
   for (const table of [props.jsTable, props.baseTable, props.detailTable]) {
-    result.set(table.tableIndex, saveEditDraftDirtyRows(props.draft, table.tableIndex));
+    result.set(table.tableIndex, selectSaveEditTableView(table, props.draft).dirtyRows);
   }
   return result;
 });
@@ -184,16 +182,12 @@ function addName(map: Map<string, MartialArtRow>, value: string | null | undefin
   if (key && !map.has(key)) map.set(key, art);
 }
 
-function fieldValue(field: BgDatabaseField | undefined, rowIndex: number): BgDatabaseValue {
-  return saveEditDraftFieldValue(field, rowIndex, props.draft);
-}
-
 function fieldText(field: BgDatabaseField | undefined, rowIndex: number) {
-  return formatSaveValue(fieldValue(field, rowIndex));
+  return selectSaveEditFieldView(field, rowIndex, props.draft).text;
 }
 
 function initialFieldText(field: BgDatabaseField | undefined, rowIndex: number) {
-  return formatSaveValue(field?.values[rowIndex]);
+  return selectSaveEditFieldView(field, rowIndex, props.draft).initialText;
 }
 
 function fieldPayload(
@@ -207,6 +201,7 @@ function fieldPayload(
   if (!field?.parsed) return null;
   const initialValue = view ? view.initialValues[fieldName] ?? "" : initialFieldText(field, rowIndex ?? 0);
   const value = view ? view.values[fieldName] ?? "" : fieldText(field, rowIndex ?? 0);
+  const fieldView = selectSaveEditFieldView(field, rowIndex ?? 0, props.draft);
   return {
     key: fieldName,
     label: fieldName,
@@ -215,7 +210,7 @@ function fieldPayload(
     rowIndex,
     value,
     initialValue,
-    dirty: view ? view.dirtyFields.has(fieldName) : saveEditDraftHasField(field, rowIndex ?? 0, props.draft),
+    dirty: view ? view.dirtyFields.has(fieldName) : fieldView.dirty,
     enumOptions: saveEditEnumOptions(props.enums, table.name, fieldName).map((option) => ({
       value: option.id,
       label: option.label,

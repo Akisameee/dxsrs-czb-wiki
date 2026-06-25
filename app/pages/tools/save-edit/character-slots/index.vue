@@ -3,7 +3,11 @@ import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.v
 import CharacterSlotsEditHeaderCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditHeaderCard.vue";
 import CharacterSlotsEditorCard from "~/components/tools/save-edit/character-slots/CharacterSlotsEditorCard.vue";
 import {
+  createSaveEditEs2PageView,
+  hasSaveEditDraft,
   isSaveEditCharacterSlotsFile,
+  saveEditCharacterSlotsValues,
+  updateEs2CunDangsDraft,
   writeAnySaveEditFile,
 } from "~/lib/save-edit";
 import type { Es2CunDang } from "~/lib/es2";
@@ -14,32 +18,25 @@ const route = useRoute();
 const {
   findAnyByFileName,
   updateItem,
-  characterSlotsState,
-  updateCharacterSlots,
   resetItem,
-  isItemDirty,
+  updateItemDraft,
 } = useSaveEditWorkspace();
 
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findAnyByFileName(editFileName.value));
-const save = computed(() => item.value?.save || null);
-const slotsSave = computed(() => {
-  if (!isSaveEditCharacterSlotsFile(save.value, editFileName.value) || save.value?.kind !== "es2") return null;
-  return save.value;
-});
-const state = computed(() => characterSlotsState(item.value));
-const slots = computed(() => state.value.slots);
-const initialSlots = computed(() => state.value.initialSlots);
+const pageView = computed(() => (item.value ? createSaveEditEs2PageView(item.value, isSaveEditCharacterSlotsFile) : null));
+const slots = computed(() => saveEditCharacterSlotsValues(pageView.value?.currentSave));
+const initialSlots = computed(() => saveEditCharacterSlotsValues(pageView.value?.save));
 const activeSlots = computed(() => slots.value.filter((slot) => slot.player || slot.savepath));
-const dirty = computed(() => item.value ? isItemDirty(item.value) : false);
+const dirty = computed(() => hasSaveEditDraft(pageView.value?.draft));
 
 function updateSlots(values: Es2CunDang[]) {
-  if (!item.value || !slotsSave.value) return;
-  updateCharacterSlots(item.value.id, values);
+  if (!item.value || !pageView.value) return;
+  updateItemDraft(item.value.id, (draft) => updateEs2CunDangsDraft(pageView.value!.save, draft, values));
 }
 
 function resetSlots() {
-  if (!item.value || !slotsSave.value) return;
+  if (!item.value || !pageView.value) return;
   resetItem(item.value.id);
 }
 
@@ -70,11 +67,11 @@ function downloadSave() {
       :file-name="item?.fileName || editFileName"
       :slot-count="slots.length"
       :active-count="activeSlots.length"
-      :has-save="Boolean(slotsSave)"
+      :has-save="Boolean(pageView)"
       @download="downloadSave"
     />
 
-    <MissingSaveCard v-if="!slotsSave" />
+    <MissingSaveCard v-if="!pageView" />
 
     <CharacterSlotsEditorCard
       v-else

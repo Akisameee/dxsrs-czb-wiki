@@ -1,30 +1,20 @@
 import {
-  applyEs2Draft,
-  createEmptySaveEditDraft,
-  hasSaveEditDraft,
-  isSaveEditCharacterSlotsFile,
-  saveEditCharacterSlotsValues,
-  updateEs2CunDangsDraft,
-  type AnySaveEditFile,
   type SaveEditDraft,
-  type SaveEditFile,
+  keepSaveEditWorkspaceDrafts,
+  removeSaveEditWorkspaceDraft,
+  resetSaveEditWorkspaceDraft,
+  saveEditWorkspaceDraft,
+  updateSaveEditWorkspaceDraft,
+  withSaveEditWorkspaceDraft,
+  type SaveEditWorkspaceItem,
+  type SaveEditWorkspaceItemView,
 } from "~/lib/save-edit";
-import type { Es2CunDang } from "~/lib/es2";
-
-export type ImportedSaveItem = {
-  id: number;
-  fileName: string;
-  fileSize: string;
-  fileType: string;
-  save: AnySaveEditFile | null;
-  draft: SaveEditDraft;
-  selectedTableIndex: number;
-  errorMessage: string;
-};
 
 export function useSaveEditWorkspace() {
-  const files = useState<ImportedSaveItem[]>("save-edit-files", () => []);
+  const files = useState<SaveEditWorkspaceItem[]>("save-edit-files", () => []);
+  const drafts = useState<Record<number, SaveEditDraft>>("save-edit-drafts", () => ({}));
   const nextId = useState("save-edit-next-id", () => 1);
+  const fileViews = computed(() => files.value.map((item) => withItemDraft(item)));
 
   function allocateId() {
     const id = nextId.value;
@@ -32,71 +22,56 @@ export function useSaveEditWorkspace() {
     return id;
   }
 
-  function updateItem(id: number, patch: Partial<ImportedSaveItem>) {
+  function updateItem(id: number, patch: Partial<SaveEditWorkspaceItem>) {
     files.value = files.value.map((item) => (item.id === id ? { ...item, ...patch } : item));
+  }
+
+  function getItemDraft(id: number) {
+    return saveEditWorkspaceDraft(drafts.value, id);
+  }
+
+  function updateItemDraft(id: number, updater: (draft: SaveEditDraft) => SaveEditDraft) {
+    drafts.value = updateSaveEditWorkspaceDraft(drafts.value, id, updater);
+  }
+
+  function withItemDraft(item: SaveEditWorkspaceItem): SaveEditWorkspaceItemView {
+    return withSaveEditWorkspaceDraft(item, drafts.value);
   }
 
   function removeItem(id: number) {
     files.value = files.value.filter((item) => item.id !== id);
+    drafts.value = removeSaveEditWorkspaceDraft(drafts.value, id);
   }
 
-  function setFiles(items: ImportedSaveItem[]) {
+  function setFiles(items: SaveEditWorkspaceItem[]) {
     files.value = items;
+    drafts.value = keepSaveEditWorkspaceDrafts(drafts.value, items);
   }
 
   function resetItem(id: number) {
-    updateItem(id, { draft: createEmptySaveEditDraft() });
+    drafts.value = resetSaveEditWorkspaceDraft(drafts.value, id);
   }
 
-  function findByFileName(fileName: string) {
+  function findByFileName(fileName: string): SaveEditWorkspaceItemView | null {
     const item = files.value.find((candidate) => candidate.fileName === fileName && candidate.save?.kind === "bgdatabase");
-    return item ? { ...item, save: item.save as SaveEditFile } : null;
+    return item ? withItemDraft(item) : null;
   }
 
-  function findAnyByFileName(fileName: string) {
-    return files.value.find((item) => item.fileName === fileName && item.save) || null;
-  }
-
-  function characterSlotsState(item: ImportedSaveItem | null | undefined) {
-    const save = item?.save;
-    if (!item || !isSaveEditCharacterSlotsFile(save, item.fileName) || save.kind !== "es2") {
-      return {
-        slots: [] as Es2CunDang[],
-        initialSlots: [] as Es2CunDang[],
-      };
-    }
-
-    const slots = saveEditCharacterSlotsValues(applyEs2Draft(save, item.draft));
-    const initialSlots = saveEditCharacterSlotsValues(save);
-
-    return { slots, initialSlots };
-  }
-
-  function updateCharacterSlots(itemId: number, values: Es2CunDang[]) {
-    files.value = files.value.map((item) => {
-      if (item.id === itemId && isSaveEditCharacterSlotsFile(item.save, item.fileName) && item.save.kind === "es2") {
-        return { ...item, draft: updateEs2CunDangsDraft(item.save, item.draft, values) ?? createEmptySaveEditDraft() };
-      }
-
-      return item;
-    });
-  }
-
-  function isItemDirty(item: ImportedSaveItem) {
-    return hasSaveEditDraft(item.draft);
+  function findAnyByFileName(fileName: string): SaveEditWorkspaceItemView | null {
+    const item = files.value.find((candidate) => candidate.fileName === fileName && candidate.save);
+    return item ? withItemDraft(item) : null;
   }
 
   return {
     files,
+    fileViews,
     allocateId,
     updateItem,
+    updateItemDraft,
     removeItem,
     setFiles,
     resetItem,
     findByFileName,
     findAnyByFileName,
-    characterSlotsState,
-    updateCharacterSlots,
-    isItemDirty,
   };
 }

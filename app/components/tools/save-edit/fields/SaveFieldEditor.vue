@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import {
-  formatSaveValue,
-  saveEditDraftFieldValue,
-  saveEditDraftHasField,
+  selectSaveEditFieldView,
   type SaveEditDraft,
 } from "~/lib/save-edit";
-import type { BgDatabaseField, BgDatabaseValue } from "~/lib/save-edit";
+import type { BgDatabaseField } from "~/lib/save-edit";
 import EditableBooleanField from "./EditableBooleanField.vue";
 import EditableEnumField from "./EditableEnumField.vue";
 import EditableJsonField from "./EditableJsonField.vue";
@@ -41,12 +39,12 @@ const emit = defineEmits<{
   update: [field: BgDatabaseField, value: string, rowIndex: number];
 }>();
 
-const initialValue = computed(() => formatSaveValue(props.field?.values[props.rowIndex] as BgDatabaseValue | undefined));
+const fieldView = computed(() => selectSaveEditFieldView(props.field, props.rowIndex, props.draft));
+const initialValue = computed(() => fieldView.value.initialText);
 const modelValue = computed(() => {
-  if (!props.field) return "";
-  return formatSaveValue(saveEditDraftFieldValue(props.field, props.rowIndex, props.draft));
+  return props.field ? fieldView.value.text : "";
 });
-const dirty = computed(() => saveEditDraftHasField(props.field, props.rowIndex, props.draft));
+const dirty = computed(() => fieldView.value.dirty);
 const resetValue = computed(() => initialValue.value);
 const normalizedOptions = computed<EditableEnumOption[]>(() =>
   props.enumOptions.map((option) => ({

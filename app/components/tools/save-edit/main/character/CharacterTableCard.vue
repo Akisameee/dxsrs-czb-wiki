@@ -11,10 +11,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
+  selectSaveEditFieldView,
+  selectSaveEditTableView,
   formatSaveValue,
-  saveEditDraftFieldValue,
-  saveEditDraftRowDirty,
-  selectSaveEditInsertedTableRows,
+  selectSaveEditTableRow,
   type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
@@ -226,19 +226,19 @@ function rowCharacter(name: string, fullNameValue: string) {
 }
 
 function fieldValue(fieldName: string, rowIndex: number): BgDatabaseValue {
-  return saveEditDraftFieldValue(field(fieldName), rowIndex, props.draft);
+  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).value;
 }
 
 function fieldText(fieldName: string, rowIndex: number) {
-  return formatSaveValue(fieldValue(fieldName, rowIndex));
+  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).text;
 }
 
 function tableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
-  return formatSaveValue(saveEditDraftFieldValue(table?.fields[fieldName], rowIndex, props.draft));
+  return selectSaveEditFieldView(table?.fields[fieldName], rowIndex, props.draft).text;
 }
 
 function initialTableFieldText(table: BgDatabaseTable | null | undefined, fieldName: string, rowIndex: number) {
-  return formatSaveValue(table?.fields[fieldName]?.values[rowIndex]);
+  return selectSaveEditFieldView(table?.fields[fieldName], rowIndex, props.draft).initialText;
 }
 
 function fieldNumber(fieldName: string, rowIndex: number) {
@@ -297,7 +297,7 @@ function resetTable() {
 }
 
 function characterRowDirty(rowIndex: number, ownerName: string) {
-  return saveEditDraftRowDirty(props.draft, props.table.tableIndex, rowIndex) ||
+  return rowDirty(props.table, rowIndex) ||
     inventoryRowsDirty(ownerName) ||
     martialRowsDirty(ownerName);
 }
@@ -310,7 +310,7 @@ function relatedExistingRows(table: BgDatabaseTable | null | undefined, ownerFie
 
 function relatedInsertedRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
   if (!table) return [];
-  return selectSaveEditInsertedTableRows(table, props.draft)
+  return selectSaveEditTableView(table, props.draft).insertedRows
     .filter((row) => (row.values[ownerFieldName] || row.initialValues[ownerFieldName] || "") === ownerName);
 }
 
@@ -318,7 +318,7 @@ function inventoryRowsDirty(ownerName: string) {
   const table = props.inventoryTable;
   if (!table) return false;
   return relatedExistingRows(table, "juesename", ownerName)
-    .some((rowIndex) => saveEditDraftRowDirty(props.draft, table.tableIndex, rowIndex)) ||
+    .some((rowIndex) => rowDirty(table, rowIndex)) ||
     relatedInsertedRows(table, "juesename", ownerName).length > 0;
 }
 
@@ -334,7 +334,7 @@ function martialRowDirty(rowIndex: number) {
   const table = props.jsWugongTable;
   if (!table) return false;
   const name = tableFieldText(table, "wugongname", rowIndex);
-  return saveEditDraftRowDirty(props.draft, table.tableIndex, rowIndex) || martialDefinitionDirty(name);
+  return rowDirty(table, rowIndex) || martialDefinitionDirty(name);
 }
 
 function martialInsertedRowDirty(row: SaveEditTableRowView) {
@@ -344,9 +344,13 @@ function martialInsertedRowDirty(row: SaveEditTableRowView) {
 function martialDefinitionDirty(name: string) {
   const key = lookupName(name);
   const baseIndex = martialBaseRowByName.value.get(key);
-  return Boolean((props.gWugongTable && baseIndex !== undefined && saveEditDraftRowDirty(props.draft, props.gWugongTable.tableIndex, baseIndex)) ||
+  return Boolean((props.gWugongTable && baseIndex !== undefined && rowDirty(props.gWugongTable, baseIndex)) ||
     (props.gWugongDetailTable && (martialDetailRowsByName.value.get(key) || [])
-      .some((rowIndex) => saveEditDraftRowDirty(props.draft, props.gWugongDetailTable!.tableIndex, rowIndex))));
+      .some((rowIndex) => rowDirty(props.gWugongDetailTable!, rowIndex))));
+}
+
+function rowDirty(table: BgDatabaseTable, rowIndex: number) {
+  return selectSaveEditTableRow(table, props.draft, rowIndex).rowDirty;
 }
 
 function resetCharacterRows(targetRows: NpcDisplayRow[]) {

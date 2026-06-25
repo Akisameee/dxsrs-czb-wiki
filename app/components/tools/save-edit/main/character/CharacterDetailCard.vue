@@ -2,14 +2,13 @@
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import {
-  formatSaveValue,
-  saveEditDraftFieldValue,
-  saveEditDraftRowDirty,
+  selectSaveEditFieldView,
+  selectSaveEditTableRow,
   saveEditEnumOptions,
   type SaveEditDraft,
   type SaveEditDraftResetTarget,
 } from "~/lib/save-edit";
-import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "~/lib/save-edit";
+import type { BgDatabaseField, BgDatabaseTable } from "~/lib/save-edit";
 import { characterLocationText } from "~/lib/wiki/character";
 import type { WikiEnums } from "~/lib/wiki/text";
 
@@ -105,7 +104,8 @@ const activeGroups = computed(() =>
     }))
     .filter((group) => group.fields.length),
 );
-const dirty = computed(() => saveEditDraftRowDirty(props.draft, props.table.tableIndex, props.rowIndex));
+const rowView = computed(() => selectSaveEditTableRow(props.table, props.draft, props.rowIndex));
+const dirty = computed(() => rowView.value.rowDirty);
 const characterName = computed(() => fullName() || fieldText("name") || `Character ${props.rowIndex}`);
 const { queryRows } = useWikiDb();
 
@@ -151,12 +151,8 @@ function hasField(fieldName: string) {
   return Boolean(field(fieldName)?.parsed);
 }
 
-function fieldValue(fieldName: string): BgDatabaseValue | undefined {
-  return saveEditDraftFieldValue(field(fieldName), props.rowIndex, props.draft);
-}
-
 function fieldText(fieldName: string) {
-  return formatSaveValue(fieldValue(fieldName));
+  return selectSaveEditFieldView(field(fieldName), props.rowIndex, props.draft).text;
 }
 
 function fullName() {

@@ -1,5 +1,5 @@
 import type { BgDatabaseField, BgDatabaseTable, BgDatabaseValue } from "../bgdatabase";
-import { formatSaveValue } from "./model";
+import { formatSaveValue } from "./format";
 
 export type SaveEditRowDraftTarget =
   | { type: "row"; rowIndex: number }
@@ -45,6 +45,25 @@ export type SaveEditTableRowView = {
   values: Record<string, string>;
   dirtyFields: Set<string>;
   rowDirty: boolean;
+};
+
+export type SaveEditFieldView = {
+  field?: BgDatabaseField;
+  rowIndex: number;
+  initialValue: BgDatabaseValue;
+  value: BgDatabaseValue;
+  initialText: string;
+  text: string;
+  dirty: boolean;
+};
+
+export type SaveEditTableView = {
+  table: BgDatabaseTable;
+  draft: SaveEditDraft;
+  dirty: boolean;
+  dirtyRows: Set<number>;
+  deletedRows: Set<number>;
+  insertedRows: SaveEditTableRowView[];
 };
 
 export type SaveEditRowDraft =
@@ -137,6 +156,38 @@ export function saveEditDraftHasField(field: BgDatabaseField | undefined, rowInd
   if (!field) return false;
   const tableDraft = findSaveEditTableDraft(draft, field.tableIndex, field.table);
   return Boolean(tableDraft?.updated[String(rowIndex)] && field.name in tableDraft.updated[String(rowIndex)]!);
+}
+
+export function selectSaveEditFieldView(
+  field: BgDatabaseField | undefined,
+  rowIndex: number,
+  draft: SaveEditDraft | undefined,
+): SaveEditFieldView {
+  const initialValue = field?.values[rowIndex] ?? null;
+  const value = saveEditDraftFieldValue(field, rowIndex, draft);
+  return {
+    field,
+    rowIndex,
+    initialValue,
+    value,
+    initialText: formatSaveValue(initialValue),
+    text: formatSaveValue(value),
+    dirty: saveEditDraftHasField(field, rowIndex, draft),
+  };
+}
+
+export function selectSaveEditTableView(
+  table: BgDatabaseTable,
+  draft: SaveEditDraft,
+): SaveEditTableView {
+  return {
+    table,
+    draft,
+    dirty: saveEditDraftTableDirty(draft, table.tableIndex),
+    dirtyRows: saveEditDraftDirtyRows(draft, table.tableIndex),
+    deletedRows: saveEditDraftDeletedRows(draft, table.tableIndex),
+    insertedRows: selectSaveEditInsertedTableRows(table, draft),
+  };
 }
 
 export function saveEditDraftRowDirty(draft: SaveEditDraft | undefined, tableIndex: number, rowIndex: number) {

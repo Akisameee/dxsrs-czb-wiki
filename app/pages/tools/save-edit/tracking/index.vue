@@ -3,7 +3,7 @@ import MissingSaveCard from "~/components/tools/save-edit/main/MissingSaveCard.v
 import TrackingEditHeaderCard from "~/components/tools/save-edit/tracking/TrackingEditHeaderCard.vue";
 import TrackingEditorCard from "~/components/tools/save-edit/tracking/TrackingEditorCard.vue";
 import {
-  applyEs2Draft,
+  createSaveEditEs2PageView,
   isSaveEditTrackingFile,
   saveEditTrackingValues,
   updateEs2StringListDraft,
@@ -13,24 +13,17 @@ import {
 useHead({ title: "埋点记录修改" });
 
 const route = useRoute();
-const { findAnyByFileName, updateItem } = useSaveEditWorkspace();
+const { findAnyByFileName, updateItem, updateItemDraft } = useSaveEditWorkspace();
 
 const editFileName = computed(() => String(route.query.edit || ""));
 const item = computed(() => findAnyByFileName(editFileName.value));
-const save = computed(() => item.value?.save || null);
-const trackingSave = computed(() => {
-  if (!isSaveEditTrackingFile(save.value, editFileName.value) || save.value?.kind !== "es2") return null;
-  return save.value;
-});
-const currentTrackingSave = computed(() =>
-  trackingSave.value && item.value ? applyEs2Draft(trackingSave.value, item.value.draft) : null,
-);
-const events = computed(() => saveEditTrackingValues(currentTrackingSave.value));
-const initialEvents = computed(() => saveEditTrackingValues(trackingSave.value));
+const pageView = computed(() => (item.value ? createSaveEditEs2PageView(item.value, isSaveEditTrackingFile) : null));
+const events = computed(() => saveEditTrackingValues(pageView.value?.currentSave));
+const initialEvents = computed(() => saveEditTrackingValues(pageView.value?.save));
 
 function updateEvents(values: string[]) {
-  if (!item.value || !trackingSave.value) return;
-  updateItem(item.value.id, { draft: updateEs2StringListDraft(trackingSave.value, item.value.draft, values) });
+  if (!item.value || !pageView.value) return;
+  updateItemDraft(item.value.id, (draft) => updateEs2StringListDraft(pageView.value!.save, draft, values));
 }
 
 function resetEvents() {
@@ -63,11 +56,11 @@ function downloadSave() {
     <TrackingEditHeaderCard
       :file-name="item?.fileName || editFileName"
       :event-count="events.length"
-      :has-save="Boolean(trackingSave)"
+      :has-save="Boolean(pageView)"
       @download="downloadSave"
     />
 
-    <MissingSaveCard v-if="!trackingSave" />
+    <MissingSaveCard v-if="!pageView" />
 
     <TrackingEditorCard
       v-else

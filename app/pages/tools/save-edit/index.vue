@@ -2,7 +2,6 @@
 import SaveEditHeaderCard from "~/components/tools/save-edit/SaveEditHeaderCard.vue";
 import SaveFileCardGrid from "~/components/tools/save-edit/SaveFileCardGrid.vue";
 import {
-  createEmptySaveEditDraft,
   formatSaveFileSize,
   isSaveEditCharacterSlotsFile,
   isSaveEditMeridianFile,
@@ -13,17 +12,19 @@ import {
   updateEs2ScalarDraft,
   updateEs2StringListDraft,
   writeAnySaveEditFile,
+  type SaveEditWorkspaceItem,
+  type SaveEditWorkspaceItemView,
 } from "~/lib/save-edit";
 
 useHead({ title: "存档修改" });
 
 const router = useRouter();
-const { files, allocateId, updateItem, removeItem, setFiles, resetItem } = useSaveEditWorkspace();
+const { files, fileViews, allocateId, updateItem, removeItem, setFiles, resetItem, updateItemDraft } = useSaveEditWorkspace();
 
 async function uploadSaves(uploadedFiles: File[]) {
   const items = await Promise.all(uploadedFiles.map(readSaveFile));
   const remainingItems = [...items];
-  const replacedFiles: ImportedSaveItem[] = files.value.map((currentItem) => {
+  const replacedFiles: SaveEditWorkspaceItem[] = files.value.map((currentItem) => {
     const replacementIndex = remainingItems.findIndex((item) => item.fileName === currentItem.fileName);
     if (replacementIndex === -1) return currentItem;
 
@@ -35,14 +36,13 @@ async function uploadSaves(uploadedFiles: File[]) {
   setFiles([...remainingItems, ...replacedFiles]);
 }
 
-async function readSaveFile(file: File): Promise<ImportedSaveItem> {
+async function readSaveFile(file: File): Promise<SaveEditWorkspaceItem> {
   const id = allocateId();
   const base = {
     id,
     fileName: file.name,
     fileSize: formatSaveFileSize(file.size),
     fileType: "未知",
-    draft: createEmptySaveEditDraft(),
     selectedTableIndex: 0,
   };
 
@@ -59,22 +59,22 @@ async function readSaveFile(file: File): Promise<ImportedSaveItem> {
   }
 }
 
-function editSave(item: ImportedSaveItem) {
+function editSave(item: SaveEditWorkspaceItem) {
   if (item.save?.kind !== "bgdatabase") return;
   void router.push({ path: "/tools/save-edit/character", query: { edit: item.fileName } });
 }
 
-function editCharacterSlotsSave(item: ImportedSaveItem) {
+function editCharacterSlotsSave(item: SaveEditWorkspaceItem) {
   if (!isSaveEditCharacterSlotsFile(item.save, item.fileName)) return;
   void router.push({ path: "/tools/save-edit/character-slots", query: { edit: item.fileName } });
 }
 
-function editMeridianSave(item: ImportedSaveItem) {
+function editMeridianSave(item: SaveEditWorkspaceItem) {
   if (!isSaveEditMeridianFile(item.save, item.fileName)) return;
   void router.push({ path: "/tools/save-edit/meridian", query: { edit: item.fileName } });
 }
 
-function editTrackingSave(item: ImportedSaveItem) {
+function editTrackingSave(item: SaveEditWorkspaceItem) {
   if (!isSaveEditTrackingFile(item.save, item.fileName)) return;
   void router.push({ path: "/tools/save-edit/tracking", query: { edit: item.fileName } });
 }
@@ -87,7 +87,7 @@ function removeAllSaves() {
   setFiles([]);
 }
 
-function downloadSave(item: ImportedSaveItem) {
+function downloadSave(item: SaveEditWorkspaceItemView) {
   if (!item.save || !import.meta.client) return;
   try {
     const output = writeAnySaveEditFile(item.save, item.draft);
@@ -108,22 +108,24 @@ function downloadSave(item: ImportedSaveItem) {
 }
 
 function downloadAllSaves() {
-  for (const item of files.value) {
+  for (const item of fileViews.value) {
     if (item.save) downloadSave(item);
   }
 }
 
-function updateScalarSave(item: ImportedSaveItem, nextValue: string | number | boolean) {
-  if (item.save?.kind !== "es2") return;
-  updateItem(item.id, { draft: updateEs2ScalarDraft(item.save, item.draft, nextValue) });
+function updateScalarSave(item: SaveEditWorkspaceItemView, nextValue: string | number | boolean) {
+  const save = item.save;
+  if (save?.kind !== "es2") return;
+  updateItemDraft(item.id, (draft) => updateEs2ScalarDraft(save, draft, nextValue));
 }
 
-function updateStringListSave(item: ImportedSaveItem, values: string[]) {
-  if (!isSaveEditStringListFile(item.save)) return;
-  updateItem(item.id, { draft: updateEs2StringListDraft(item.save, item.draft, values) });
+function updateStringListSave(item: SaveEditWorkspaceItemView, values: string[]) {
+  const save = item.save;
+  if (!isSaveEditStringListFile(save)) return;
+  updateItemDraft(item.id, (draft) => updateEs2StringListDraft(save, draft, values));
 }
 
-function resetSave(item: ImportedSaveItem) {
+function resetSave(item: SaveEditWorkspaceItem) {
   resetItem(item.id);
 }
 
@@ -141,7 +143,7 @@ function resetSave(item: ImportedSaveItem) {
 
     <SaveFileCardGrid
       v-if="files.length"
-      :files="files"
+      :files="fileViews"
       @edit="editSave"
       @edit-character-slots="editCharacterSlotsSave"
       @edit-meridian="editMeridianSave"

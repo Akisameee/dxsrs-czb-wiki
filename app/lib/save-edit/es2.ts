@@ -1,10 +1,49 @@
 import { ES2_TYPE_HASHES, type Es2CunDang, type Es2ListValue, type Es2Value } from "../es2";
-import type { SaveEditDraft, SaveEditEs2File } from "./model";
+import { decodeSaveEditEs2FileName } from "./es2-file-name";
+import type { SaveEditWorkspaceItemView } from "./workspace";
+import type { AnySaveEditFile, SaveEditDraft, SaveEditEs2File } from "./model";
 
 export const ES2_DRAFT_PREFIX = "es2:";
 export const ES2_DRAFT_VALUE_KEY = `${ES2_DRAFT_PREFIX}value`;
 export const ES2_DRAFT_STRING_LIST_KEY = `${ES2_DRAFT_PREFIX}string-list`;
 export const ES2_DRAFT_CUN_DANGS_KEY = `${ES2_DRAFT_PREFIX}cundangs`;
+
+export type SaveEditEs2PageView = {
+  item: SaveEditWorkspaceItemView;
+  save: SaveEditEs2File;
+  currentSave: SaveEditEs2File;
+  draft: SaveEditDraft;
+  fileName: string;
+};
+
+export type SaveEditMeridianGroup = {
+  name: string;
+  points: string[];
+};
+
+export const SAVE_EDIT_MERIDIAN_GROUPS: SaveEditMeridianGroup[] = [
+  meridianGroup("任脉", 13),
+  meridianGroup("督脉", 13),
+  meridianGroup("冲脉", 11),
+  meridianGroup("带脉", 12),
+];
+
+export const SAVE_EDIT_MERIDIAN_POINTS = SAVE_EDIT_MERIDIAN_GROUPS.flatMap((group) => group.points);
+
+export function createSaveEditEs2PageView(
+  item: SaveEditWorkspaceItemView,
+  isTargetFile: (save: AnySaveEditFile | null | undefined, fileName?: string) => save is SaveEditEs2File,
+): SaveEditEs2PageView | null {
+  if (item.save?.kind !== "es2") return null;
+  if (!isTargetFile(item.currentSave, item.fileName)) return null;
+  return {
+    item,
+    save: item.save,
+    currentSave: item.currentSave as SaveEditEs2File,
+    draft: item.draft,
+    fileName: item.fileName,
+  };
+}
 
 export function applyEs2Draft(save: SaveEditEs2File, draft: SaveEditDraft | undefined): SaveEditEs2File {
   const value = save.es2.value;
@@ -56,7 +95,7 @@ export function updateEs2StringListDraft(save: SaveEditEs2File, draft: SaveEditD
     draft,
     ES2_DRAFT_STRING_LIST_KEY,
     JSON.stringify(values),
-    JSON.stringify(stringListValues(save)),
+    JSON.stringify(saveEditStringListValues(save)),
   );
 }
 
@@ -66,8 +105,52 @@ export function updateEs2CunDangsDraft(save: SaveEditEs2File, draft: SaveEditDra
     draft,
     ES2_DRAFT_CUN_DANGS_KEY,
     JSON.stringify(values),
-    JSON.stringify(cunDangValues(save)),
+    JSON.stringify(saveEditCharacterSlotsValues(save)),
   );
+}
+
+export function isSaveEditStringListFile(save: AnySaveEditFile | null | undefined): save is SaveEditEs2File {
+  return save?.kind === "es2" && isStringListValue(save.es2.value);
+}
+
+export function saveEditStringListValues(save: SaveEditEs2File | null | undefined) {
+  if (!save || !isStringListValue(save.es2.value)) return [];
+  return save.es2.value.values.map((value) => (value.type === "string" ? value.value : ""));
+}
+
+export function isSaveEditTrackingFile(save: AnySaveEditFile | null | undefined, fileName?: string): save is SaveEditEs2File {
+  return decodeSaveEditEs2FileName(fileName || "")?.key === "DS埋点" && isSaveEditStringListFile(save);
+}
+
+export function saveEditTrackingValues(save: SaveEditEs2File | null | undefined) {
+  return saveEditStringListValues(save);
+}
+
+export function isSaveEditMeridianFile(save: AnySaveEditFile | null | undefined, fileName?: string): save is SaveEditEs2File {
+  if (save?.kind !== "es2") return false;
+  return decodeSaveEditEs2FileName(fileName || "")?.key === "经脉" && isStringListValue(save.es2.value);
+}
+
+export function saveEditMeridianValues(save: SaveEditEs2File | null | undefined) {
+  return saveEditStringListValues(save).filter(Boolean);
+}
+
+export function isSaveEditCharacterSlotsFile(save: AnySaveEditFile | null | undefined, fileName?: string): save is SaveEditEs2File {
+  if (decodeSaveEditEs2FileName(fileName || "")?.key !== "CunDangs") return false;
+  const value = save?.kind === "es2" ? save.es2.value : null;
+  return value?.type === "list" && value.elementTypeHash.name === "CunDang";
+}
+
+export function isSaveEditNewestCharacterSlotFile(save: AnySaveEditFile | null | undefined, fileName?: string): save is SaveEditEs2File {
+  return decodeSaveEditEs2FileName(fileName || "")?.key === "NewestCunDang" &&
+    save?.kind === "es2" &&
+    save.es2.value.type === "string";
+}
+
+export function saveEditCharacterSlotsValues(save: SaveEditEs2File | null | undefined) {
+  const value = save?.es2.value;
+  if (!isCunDangListValue(value)) return [];
+  return value.values.map((item) => (item.type === "cunDang" ? item.value : null)).filter((item): item is Es2CunDang => Boolean(item));
 }
 
 function withDraftValue(draft: SaveEditDraft | undefined, key: string, value: string, initialValue: string) {
@@ -88,18 +171,6 @@ function withEs2Value(save: SaveEditEs2File, value: Es2Value): SaveEditEs2File {
       value,
     },
   };
-}
-
-function stringListValues(save: SaveEditEs2File) {
-  const value = save.es2.value;
-  if (!isStringListValue(value)) return [];
-  return value.values.map((item) => (item.type === "string" ? item.value : ""));
-}
-
-function cunDangValues(save: SaveEditEs2File) {
-  const value = save.es2.value;
-  if (!isCunDangListValue(value)) return [];
-  return value.values.map((item) => (item.type === "cunDang" ? item.value : null)).filter((item): item is Es2CunDang => Boolean(item));
 }
 
 function stringListValue(values: string[]): Es2Value {
@@ -144,10 +215,17 @@ function readCunDangArrayDraft(value: string) {
   }
 }
 
-function isStringListValue(value: Es2Value): value is Es2ListValue {
-  return value.type === "list" && value.elementTypeHash.name === "string";
+function meridianGroup(name: string, count: number): SaveEditMeridianGroup {
+  return {
+    name,
+    points: Array.from({ length: count }, (_, index) => `${name}${index + 1}`),
+  };
 }
 
-function isCunDangListValue(value: Es2Value): value is Es2ListValue {
-  return value.type === "list" && value.elementTypeHash.name === "CunDang";
+function isStringListValue(value: Es2Value | null | undefined): value is Es2ListValue {
+  return value?.type === "list" && value.elementTypeHash.name === "string";
+}
+
+function isCunDangListValue(value: Es2Value | null | undefined): value is Es2ListValue {
+  return value?.type === "list" && value.elementTypeHash.name === "CunDang";
 }
