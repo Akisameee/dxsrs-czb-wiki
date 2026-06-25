@@ -88,6 +88,13 @@ const martialArtsDraft = computed(() => viewStore.tablesDraft([
   gWugongTable.value,
   gWugongDetailTable.value,
 ]));
+const characterDraft = computed(() => viewStore.tableDraft(npcTable.value));
+const characterRelatedDraft = computed(() => viewStore.tablesDraft([
+  jsWugongTable.value,
+  gWugongTable.value,
+  gWugongDetailTable.value,
+  inventoryTable.value,
+]));
 const characterTableDraft = computed(() => viewStore.tablesDraft([
   npcTable.value,
   jsWugongTable.value,
@@ -133,7 +140,7 @@ function zhuJueFieldText(fieldName: string) {
 function npcFieldText(fieldName: string, rowIndex: number) {
   const field = npcTable.value?.fields[fieldName];
   if (!field) return "";
-  return selectSaveEditFieldView(field, rowIndex, characterTableDraft.value).text;
+  return selectSaveEditFieldView(field, rowIndex, characterDraft.value).text;
 }
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {
@@ -299,7 +306,8 @@ function downloadSave() {
         <CharacterTableCard
           v-if="npcTable"
           :table="npcTable"
-          :draft="characterTableDraft"
+          :draft="characterDraft"
+          :related-draft="characterRelatedDraft"
           :enums="enums"
           :js-wugong-table="jsWugongTable"
           :g-wugong-table="gWugongTable"

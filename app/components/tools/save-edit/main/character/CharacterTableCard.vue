@@ -15,7 +15,6 @@ import {
   type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
-  type SaveEditTableRowView,
   type BgDatabaseField,
   type BgDatabaseTable,
   type BgDatabaseValue,
@@ -41,7 +40,6 @@ type NpcDisplayRow = {
   rank: string;
   rarityId: number | null;
   teammate: boolean;
-  dirty: boolean;
 };
 
 type CharacterLookupRow = {
@@ -55,6 +53,7 @@ type CharacterLookupRow = {
 const props = defineProps<{
   table: BgDatabaseTable;
   draft: SaveEditDraft;
+  relatedDraft: SaveEditDraft;
   enums: WikiEnums;
   jsWugongTable?: BgDatabaseTable | null;
   gWugongTable?: BgDatabaseTable | null;
@@ -80,10 +79,10 @@ const inventoryTableRef = computed(() => props.inventoryTable || props.table);
 const jsTableRef = computed(() => props.jsWugongTable || props.table);
 const baseTableRef = computed(() => props.gWugongTable || props.table);
 const detailTableRef = computed(() => props.gWugongDetailTable || props.table);
-const inventoryIndex = useSaveEditTableViewIndex(inventoryTableRef, toRef(props, "draft"));
-const jsIndex = useSaveEditTableViewIndex(jsTableRef, toRef(props, "draft"));
-const baseIndex = useSaveEditTableViewIndex(baseTableRef, toRef(props, "draft"));
-const detailIndex = useSaveEditTableViewIndex(detailTableRef, toRef(props, "draft"));
+const inventoryIndex = useSaveEditTableViewIndex(inventoryTableRef, toRef(props, "relatedDraft"));
+const jsIndex = useSaveEditTableViewIndex(jsTableRef, toRef(props, "relatedDraft"));
+const baseIndex = useSaveEditTableViewIndex(baseTableRef, toRef(props, "relatedDraft"));
+const detailIndex = useSaveEditTableViewIndex(detailTableRef, toRef(props, "relatedDraft"));
 
 const { data: characterLookupRows } = await useAsyncData(
   "save-edit-npc-character-lookup",
@@ -108,7 +107,11 @@ const rows = computed<NpcDisplayRow[]>(() =>
   Array.from({ length: props.table.rowCount }, (_, rowIndex) => buildRow(rowIndex)),
 );
 const teammateRows = computed(() => rows.value.filter((row) => row.teammate));
-const tableDirty = computed(() => rows.value.some((row) => row.dirty));
+const characterOwnerNames = computed(() => new Set(rows.value.map((row) => row.name).filter(Boolean)));
+const tableDirty = computed(() =>
+  npcIndex.dirty.value ||
+  intersects(characterOwnerNames.value, inventoryDirtyOwnerNames.value) ||
+  intersects(characterOwnerNames.value, martialDirtyOwnerNames.value));
 const martialBaseRowByName = computed(() => {
   const result = new Map<string, number>();
   const table = props.gWugongTable;
@@ -129,6 +132,38 @@ const martialDetailRowsByName = computed(() => {
   }
   return result;
 });
+const martialOwnerNamesByName = computed(() => {
+  const result = new Map<string, Set<string>>();
+  const table = props.jsWugongTable;
+  if (!table) return result;
+  for (const [martialName, rowIndexes] of jsIndex.initialFieldRows("wugongname")) {
+    const key = lookupName(martialName);
+    if (!key) continue;
+    const owners = result.get(key) || new Set<string>();
+    for (const rowIndex of rowIndexes) {
+      const ownerName = tableFieldText(table, "juesename", rowIndex);
+      if (ownerName) owners.add(ownerName);
+    }
+    if (owners.size) result.set(key, owners);
+  }
+  return result;
+});
+const dirtyMartialDefinitionNames = computed(() => {
+  const result = new Set<string>();
+  if (props.gWugongTable) {
+    for (const rowIndex of baseIndex.dirtyRows.value) {
+      const name = tableFieldText(props.gWugongTable, "name", rowIndex);
+      if (name) result.add(lookupName(name));
+    }
+  }
+  if (props.gWugongDetailTable) {
+    for (const rowIndex of detailIndex.dirtyRows.value) {
+      const name = tableFieldText(props.gWugongDetailTable, "wugongname", rowIndex);
+      if (name) result.add(lookupName(name));
+    }
+  }
+  return result;
+});
 const inventoryDirtyOwnerNames = computed(() => {
   const result = new Set<string>();
   const table = props.inventoryTable;
@@ -146,13 +181,18 @@ const martialDirtyOwnerNames = computed(() => {
   const result = new Set<string>();
   const table = props.jsWugongTable;
   if (!table) return result;
-  for (const [ownerName, rowIndexes] of jsIndex.initialFieldRows("juesename")) {
-    if (!ownerName) continue;
-    if (rowIndexes.some((rowIndex) => martialRowDirty(rowIndex))) result.add(ownerName);
+  for (const rowIndex of jsIndex.dirtyRows.value) {
+    const ownerName = tableFieldText(table, "juesename", rowIndex);
+    if (ownerName) result.add(ownerName);
   }
   for (const row of jsIndex.insertedRows.value) {
     const ownerName = row.values.juesename || row.initialValues.juesename || "";
-    if (ownerName && martialInsertedRowDirty(row)) result.add(ownerName);
+    if (ownerName) result.add(ownerName);
+  }
+  for (const name of dirtyMartialDefinitionNames.value) {
+    for (const ownerName of martialOwnerNamesByName.value.get(name) || []) {
+      result.add(ownerName);
+    }
   }
   return result;
 });
@@ -306,7 +346,6 @@ function buildRow(rowIndex: number): NpcDisplayRow {
     rank: enumFieldLabel("Dengji", "dengji", rowIndex),
     rarityId: fieldNumber("rare", rowIndex),
     teammate: fieldBool("isteammate", rowIndex),
-    dirty: characterRowDirty(rowIndex, name),
   };
 }
 
@@ -328,6 +367,17 @@ function characterRowDirty(rowIndex: number, ownerName: string) {
     martialDirtyOwnerNames.value.has(ownerName);
 }
 
+function displayRowDirty(row: NpcDisplayRow) {
+  return characterRowDirty(row.rowIndex, row.name);
+}
+
+function intersects(left: Set<string>, right: Set<string>) {
+  for (const value of right) {
+    if (left.has(value)) return true;
+  }
+  return false;
+}
+
 function relatedExistingRows(table: BgDatabaseTable | null | undefined, ownerFieldName: string, ownerName: string) {
   if (!table) return [];
   return indexForTable(table).rowIndexesByInitialField(ownerFieldName, ownerName);
@@ -337,25 +387,6 @@ function relatedInsertedRows(table: BgDatabaseTable | null | undefined, ownerFie
   if (!table) return [];
   return indexForTable(table).insertedRows.value
     .filter((row) => (row.values[ownerFieldName] || row.initialValues[ownerFieldName] || "") === ownerName);
-}
-
-function martialRowDirty(rowIndex: number) {
-  const table = props.jsWugongTable;
-  if (!table) return false;
-  const name = tableFieldText(table, "wugongname", rowIndex);
-  return rowDirty(table, rowIndex) || martialDefinitionDirty(name);
-}
-
-function martialInsertedRowDirty(row: SaveEditTableRowView) {
-  return row.rowDirty || martialDefinitionDirty(row.values.wugongname || row.initialValues.wugongname || "");
-}
-
-function martialDefinitionDirty(name: string) {
-  const key = lookupName(name);
-  const baseIndex = martialBaseRowByName.value.get(key);
-  return Boolean((props.gWugongTable && baseIndex !== undefined && rowDirty(props.gWugongTable, baseIndex)) ||
-    (props.gWugongDetailTable && (martialDetailRowsByName.value.get(key) || [])
-      .some((rowIndex) => rowDirty(props.gWugongDetailTable!, rowIndex))));
 }
 
 function rowDirty(table: BgDatabaseTable, rowIndex: number) {
@@ -482,7 +513,7 @@ function pushRowOperation(
             v-for="row in teammateRows"
             :key="row.key"
             class="h-full"
-            :dirty="row.dirty"
+            :dirty="displayRowDirty(row)"
             :surface="false"
             reset-label="重置角色"
             reset-class="-right-2 -top-2"
@@ -558,7 +589,7 @@ function pushRowOperation(
             v-for="row in pagedRows"
             :key="row.key"
             class="h-full"
-            :dirty="row.dirty"
+            :dirty="displayRowDirty(row)"
             :surface="false"
             reset-label="重置角色"
             reset-class="-right-2 -top-2"
