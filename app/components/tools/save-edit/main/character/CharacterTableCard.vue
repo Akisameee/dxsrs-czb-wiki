@@ -358,7 +358,7 @@ function resetRow(row: NpcDisplayRow) {
 }
 
 function resetTable() {
-  resetCharacterRows(rows.value);
+  resetCharacterRows(rows.value.filter(displayRowDirty));
 }
 
 function characterRowDirty(rowIndex: number, ownerName: string) {
@@ -395,12 +395,13 @@ function rowDirty(table: BgDatabaseTable, rowIndex: number) {
 
 function resetCharacterRows(targetRows: NpcDisplayRow[]) {
   const resetOperations: SaveEditDraftResetOperation[] = [];
+  const seen = new Set<string>();
   const rowOperationsByTable = new Map<BgDatabaseTable, SaveEditRowDraftOperation[]>();
 
   for (const row of targetRows) {
-    pushReset(resetOperations, props.table, { type: "row", rowIndex: row.rowIndex });
-    pushInventoryReset(resetOperations, rowOperationsByTable, row.name);
-    pushMartialReset(resetOperations, rowOperationsByTable, row.name);
+    pushReset(resetOperations, seen, props.table, { type: "row", rowIndex: row.rowIndex });
+    pushInventoryReset(resetOperations, seen, rowOperationsByTable, row.name);
+    pushMartialReset(resetOperations, seen, rowOperationsByTable, row.name);
   }
 
   for (const [table, operations] of rowOperationsByTable) {
@@ -411,13 +412,14 @@ function resetCharacterRows(targetRows: NpcDisplayRow[]) {
 
 function pushInventoryReset(
   resetOperations: SaveEditDraftResetOperation[],
+  seen: Set<string>,
   rowOperationsByTable: Map<BgDatabaseTable, SaveEditRowDraftOperation[]>,
   ownerName: string,
 ) {
   const table = props.inventoryTable;
   if (!table) return;
   for (const rowIndex of relatedExistingRows(table, "juesename", ownerName)) {
-    pushReset(resetOperations, table, { type: "row", rowIndex });
+    pushReset(resetOperations, seen, table, { type: "row", rowIndex });
   }
   for (const row of relatedInsertedRows(table, "juesename", ownerName)) {
     pushRowOperation(rowOperationsByTable, table, { type: "delete", target: row.target });
@@ -426,30 +428,31 @@ function pushInventoryReset(
 
 function pushMartialReset(
   resetOperations: SaveEditDraftResetOperation[],
+  seen: Set<string>,
   rowOperationsByTable: Map<BgDatabaseTable, SaveEditRowDraftOperation[]>,
   ownerName: string,
 ) {
   const table = props.jsWugongTable;
   if (!table) return;
   for (const rowIndex of relatedExistingRows(table, "juesename", ownerName)) {
-    pushReset(resetOperations, table, { type: "row", rowIndex });
-    pushMartialDefinitionReset(resetOperations, tableFieldText(table, "wugongname", rowIndex));
+    pushReset(resetOperations, seen, table, { type: "row", rowIndex });
+    pushMartialDefinitionReset(resetOperations, seen, tableFieldText(table, "wugongname", rowIndex));
   }
   for (const row of relatedInsertedRows(table, "juesename", ownerName)) {
     pushRowOperation(rowOperationsByTable, table, { type: "delete", target: row.target });
-    pushMartialDefinitionReset(resetOperations, row.values.wugongname || row.initialValues.wugongname || "");
+    pushMartialDefinitionReset(resetOperations, seen, row.values.wugongname || row.initialValues.wugongname || "");
   }
 }
 
-function pushMartialDefinitionReset(resetOperations: SaveEditDraftResetOperation[], name: string) {
+function pushMartialDefinitionReset(resetOperations: SaveEditDraftResetOperation[], seen: Set<string>, name: string) {
   const key = lookupName(name);
-  const baseIndex = martialBaseRowByName.value.get(key);
-  if (props.gWugongTable && baseIndex !== undefined) {
-    pushReset(resetOperations, props.gWugongTable, { type: "row", rowIndex: baseIndex });
+  const baseRowIndex = martialBaseRowByName.value.get(key);
+  if (props.gWugongTable && baseRowIndex !== undefined) {
+    pushReset(resetOperations, seen, props.gWugongTable, { type: "row", rowIndex: baseRowIndex });
   }
   if (props.gWugongDetailTable) {
     for (const rowIndex of martialDetailRowsByName.value.get(key) || []) {
-      pushReset(resetOperations, props.gWugongDetailTable, { type: "row", rowIndex });
+      pushReset(resetOperations, seen, props.gWugongDetailTable, { type: "row", rowIndex });
     }
   }
 }
@@ -465,11 +468,13 @@ function indexForTable(table: BgDatabaseTable | null | undefined) {
 
 function pushReset(
   operations: SaveEditDraftResetOperation[],
+  seen: Set<string>,
   table: BgDatabaseTable,
   target: SaveEditDraftResetTarget,
 ) {
   const key = `${table.tableIndex}:${table.name}:${JSON.stringify(target)}`;
-  if (operations.some((operation) => `${operation.table.tableIndex}:${operation.table.name}:${JSON.stringify(operation.target)}` === key)) return;
+  if (seen.has(key)) return;
+  seen.add(key);
   operations.push({ table, target });
 }
 
