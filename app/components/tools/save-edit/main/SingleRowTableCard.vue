@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import EditableTableCardHeader from "./EditableTableCardHeader.vue";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   isEditableSaveValue,
   saveEditEnumOptions,
   type SaveEditDraft,
@@ -21,23 +19,19 @@ const emit = defineEmits<{
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
 }>();
 
+const index = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
+
 const fields = computed(() =>
   props.table.fieldNames
     .map((fieldName) => props.table.fields[fieldName])
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed && isEditableSaveValue(field.values[0] ?? null))),
 );
-const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
-
-function fieldText(field: BgDatabaseField) {
-  return selectSaveEditFieldView(field, 0, props.draft).text;
-}
-
-const dirty = computed(() => tableView.value.dirty);
+const dirty = computed(() => index.dirty.value);
 
 function resetTable() {
-  for (const field of fields.value) {
-    const fieldView = selectSaveEditFieldView(field, 0, props.draft);
-    if (fieldView.dirty) emit("updateField", field, fieldView.initialText, 0);
+  for (const f of fields.value) {
+    const fv = index.field(f, 0);
+    if (fv.dirty) emit("updateField", f, fv.initialText, 0);
   }
 }
 
@@ -56,20 +50,20 @@ function enumOptions(fieldName: string) {
     />
     <AppCardContent class="grid auto-rows-min gap-3 grid-cols-2">
       <AppFieldStack
-        v-for="field in fields"
-        :key="field.name"
-        :label="field.name"
+        v-for="f in fields"
+        :key="f.name"
+        :label="f.name"
       >
         <WikiEnumSelect
-          v-if="enumOptions(field.name).length"
-          :model-value="fieldText(field)"
-          :options="enumOptions(field.name)"
-          @update:model-value="emit('updateField', field, $event, 0)"
+          v-if="enumOptions(f.name).length"
+          :model-value="index.text(f, 0)"
+          :options="enumOptions(f.name)"
+          @update:model-value="emit('updateField', f, $event, 0)"
         />
         <AppInput
           v-else
-          :model-value="fieldText(field)"
-          @update:model-value="emit('updateField', field, String($event), 0)"
+          :model-value="index.text(f, 0)"
+          @update:model-value="emit('updateField', f, String($event), 0)"
         />
       </AppFieldStack>
     </AppCardContent>

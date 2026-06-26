@@ -20,7 +20,6 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import {
-  selectSaveEditFieldView,
   isEditableSaveValue,
   saveEditEnumOptions,
   saveEditCharacterName,
@@ -47,6 +46,9 @@ const search = ref("");
 const pageSize = 20;
 
 const table = computed(() => props.save.tables[props.selectedTableIndex] ?? props.save.zhuJue);
+const draftRef = toRef(props, "draft");
+const index = useSaveEditTableViewIndex(table, draftRef);
+
 const parsedFields = computed(() =>
   table.value.fieldNames
     .map((name) => table.value.fields[name])
@@ -54,10 +56,10 @@ const parsedFields = computed(() =>
 );
 const filteredRowIndexes = computed(() => {
   const query = search.value.trim().toLowerCase();
-  const rows = Array.from({ length: table.value.rowCount }, (_, index) => index);
+  const rows = Array.from({ length: table.value.rowCount }, (_, i) => i);
   if (!query) return rows;
   return rows.filter((rowIndex) =>
-    parsedFields.value.some((field) => cellText(field, rowIndex).toLowerCase().includes(query)),
+    parsedFields.value.some((field) => index.text(field, rowIndex).toLowerCase().includes(query)),
   );
 });
 const totalRows = computed(() => filteredRowIndexes.value.length);
@@ -97,11 +99,11 @@ function setTable(value: unknown) {
 }
 
 function cellValue(field: BgDatabaseField, rowIndex: number): BgDatabaseValue {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).value;
+  return index.value(field, rowIndex);
 }
 
 function cellText(field: BgDatabaseField, rowIndex: number) {
-  return selectSaveEditFieldView(field, rowIndex, props.draft).text;
+  return index.text(field, rowIndex);
 }
 
 function updateCell(field: BgDatabaseField, rowIndex: number, value: string) {

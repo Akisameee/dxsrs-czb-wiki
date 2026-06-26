@@ -14,10 +14,11 @@ import {
   applySaveEditRowDraftOperation,
   resetSaveEditDraftTarget,
   saveEditCharacterName,
-  selectSaveEditFieldView,
   updateSaveEditCellDraft,
   writeSaveEditFile,
   createSaveEditMainPageView,
+  deriveFieldView,
+  saveEditTableDraftKey,
   type SaveEditDraftResetOperation,
   type SaveEditDraftResetTarget,
   type SaveEditRowDraftOperation,
@@ -134,13 +135,15 @@ const equippedUids = computed(() => ({
 function zhuJueFieldText(fieldName: string) {
   const field = save.value?.zhuJue.fields[fieldName];
   if (!field) return "";
-  return selectSaveEditFieldView(field, 0, playerDraft.value).text;
+  const tableDraft = save.value ? playerDraft.value.tables[saveEditTableDraftKey(save.value.zhuJue)] : undefined;
+  return deriveFieldView(field, 0, tableDraft).text;
 }
 
 function npcFieldText(fieldName: string, rowIndex: number) {
   const field = npcTable.value?.fields[fieldName];
   if (!field) return "";
-  return selectSaveEditFieldView(field, rowIndex, characterDraft.value).text;
+  const tableDraft = npcTable.value ? characterDraft.value.tables[saveEditTableDraftKey(npcTable.value)] : undefined;
+  return deriveFieldView(field, rowIndex, tableDraft).text;
 }
 
 function updateField(field: BgDatabaseField, value: string, rowIndex = 0) {

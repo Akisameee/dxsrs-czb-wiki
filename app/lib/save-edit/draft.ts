@@ -158,38 +158,6 @@ export function saveEditDraftHasField(field: BgDatabaseField | undefined, rowInd
   return Boolean(tableDraft?.updated[String(rowIndex)] && field.name in tableDraft.updated[String(rowIndex)]!);
 }
 
-export function selectSaveEditFieldView(
-  field: BgDatabaseField | undefined,
-  rowIndex: number,
-  draft: SaveEditDraft | undefined,
-): SaveEditFieldView {
-  const initialValue = field?.values[rowIndex] ?? null;
-  const value = saveEditDraftFieldValue(field, rowIndex, draft);
-  return {
-    field,
-    rowIndex,
-    initialValue,
-    value,
-    initialText: formatSaveValue(initialValue),
-    text: formatSaveValue(value),
-    dirty: saveEditDraftHasField(field, rowIndex, draft),
-  };
-}
-
-export function selectSaveEditTableView(
-  table: BgDatabaseTable,
-  draft: SaveEditDraft,
-): SaveEditTableView {
-  return {
-    table,
-    draft,
-    dirty: saveEditDraftTableDirty(draft, table.tableIndex),
-    dirtyRows: saveEditDraftDirtyRows(draft, table.tableIndex),
-    deletedRows: saveEditDraftDeletedRows(draft, table.tableIndex),
-    insertedRows: selectSaveEditInsertedTableRows(table, draft),
-  };
-}
-
 export function saveEditDraftRowDirty(draft: SaveEditDraft | undefined, tableIndex: number, rowIndex: number) {
   const tableDraft = findSaveEditTableDraftByIndex(draft, tableIndex);
   const key = String(rowIndex);
@@ -452,51 +420,6 @@ export function deleteSaveEditRowDraft(
   delete tableDraft.updated[String(rowIndex)];
   tableDraft.deleted[String(rowIndex)] = true;
   return { ...normalized, tables };
-}
-
-export function selectSaveEditTableRow(
-  table: BgDatabaseTable,
-  draft: SaveEditDraft | undefined,
-  rowIndex: number,
-): SaveEditTableRowView {
-  const tableDraft = findSaveEditTableDraft(draft, table.tableIndex, table.name);
-  const initialValues = tableRowValues(table, rowIndex);
-  const updates = tableDraft?.updated[String(rowIndex)] || {};
-  const values = { ...initialValues, ...updates };
-  const deleted = Boolean(tableDraft?.deleted[String(rowIndex)]);
-  const dirtyFields = dirtyFieldSet(initialValues, values);
-  return {
-    key: `row-${rowIndex}`,
-    target: { type: "row", rowIndex },
-    status: deleted ? "deleted" : dirtyFields.size ? "updated" : "clean",
-    rowIndex,
-    initialValues,
-    values,
-    dirtyFields,
-    rowDirty: deleted || dirtyFields.size > 0,
-  };
-}
-
-export function selectSaveEditInsertedTableRows(
-  table: BgDatabaseTable,
-  draft: SaveEditDraft | undefined,
-): SaveEditTableRowView[] {
-  const tableDraft = findSaveEditTableDraft(draft, table.tableIndex, table.name);
-  return Object.entries(tableDraft?.inserted || {}).map(([tempId, inserted]) => {
-    const initialValues = cleanValuesForTable(table, inserted.initialValues);
-    const values = { ...initialValues, ...cleanValuesForTable(table, inserted.values) };
-    const dirtyFields = dirtyFieldSet(initialValues, values);
-    return {
-      key: `insert-${tempId}`,
-      target: { type: "insert" as const, tempId },
-      status: "inserted" as const,
-      rowIndex: null,
-      initialValues,
-      values,
-      dirtyFields,
-      rowDirty: true,
-    };
-  }).reverse();
 }
 
 export function saveEditTableDraftKey(table: Pick<BgDatabaseTable, "tableIndex" | "name">) {

@@ -2,8 +2,6 @@
 import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableRow,
   saveEditEnumOptions,
   type SaveEditDraft,
   type SaveEditDraftResetTarget,
@@ -104,8 +102,8 @@ const activeGroups = computed(() =>
     }))
     .filter((group) => group.fields.length),
 );
-const rowView = computed(() => selectSaveEditTableRow(props.table, props.draft, props.rowIndex));
-const dirty = computed(() => rowView.value.rowDirty);
+const index = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
+const dirty = computed(() => index.row(props.rowIndex).rowDirty);
 const characterName = computed(() => fullName() || fieldText("name") || `Character ${props.rowIndex}`);
 const { queryRows } = useWikiDb();
 
@@ -152,7 +150,7 @@ function hasField(fieldName: string) {
 }
 
 function fieldText(fieldName: string) {
-  return selectSaveEditFieldView(field(fieldName), props.rowIndex, props.draft).text;
+  return index.text(field(fieldName), props.rowIndex);
 }
 
 function fullName() {
@@ -201,9 +199,7 @@ function updateField(fieldName: string, value: string) {
             :label="item.label"
           >
             <SaveFieldEditor
-              :field="field(item.key)"
-              :row-index="rowIndex"
-              :draft="draft"
+              :field-view="index.field(field(item.key), rowIndex)"
               :enum-options="enumOptions(item.key)"
               compact
               @update="(_field, value) => updateField(item.key, value)"

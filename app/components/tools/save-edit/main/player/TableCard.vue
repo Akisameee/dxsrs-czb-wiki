@@ -4,8 +4,6 @@ import PlayerPortraitEditor, { type PlayerPortraitPartKey, type PlayerPortraitVa
 import LifeSkillFieldEditor from "./LifeSkillFieldEditor.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   formatSaveValue,
   saveEditEnumOptions,
   saveEditCharacterName,
@@ -26,21 +24,12 @@ const emit = defineEmits<{
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
 }>();
 
+const index = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
+
 const portraitFieldKeys: PlayerPortraitPartKey[] = ["qianfa", "houfa", "maozi", "meimao", "lianshi", "yifu", "houbei", "huzi"];
 const basicFieldKeys = [
-  "xing",
-  "ming",
-  "menpai",
-  "diwei",
-  "old",
-  "maxold",
-  "gold",
-  "mingsheng",
-  "xiayi",
-  "gongxian",
-  "xingdongli",
-  "maxxingdongli",
-  "chenghao",
+  "xing", "ming", "menpai", "diwei", "old", "maxold", "gold", "mingsheng",
+  "xiayi", "gongxian", "xingdongli", "maxxingdongli", "chenghao",
 ];
 const attributeFieldKeys = ["lvli", "gengu", "tipo", "shenfa", "lvli_plus", "genfu_plus", "tipo_plus", "shenfa_plus"];
 const martialFieldKeys = ["wuxuexiuwei", "quanzhang", "daojian", "qiangbang", "anqi", "neigong", "maxwugongqty"];
@@ -60,21 +49,24 @@ const parsedFields = computed(() =>
     .map((fieldName) => props.table.fields[fieldName])
     .filter((field): field is BgDatabaseField => Boolean(field?.parsed)),
 );
-const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
-const tableDirty = computed(() => tableView.value.dirty);
+const tableDirty = computed(() => index.dirty.value);
 const portraitValues = computed(() => portraitFieldValues(false));
 const initialPortraitValues = computed(() => portraitFieldValues(true));
 
 function fieldValue(field: BgDatabaseField | undefined): BgDatabaseValue {
-  return selectSaveEditFieldView(field, 0, props.draft).value;
+  return index.field(field, 0).value;
 }
 
 function fieldCurrentText(fieldName: string) {
-  return selectSaveEditFieldView(props.table.fields[fieldName], 0, props.draft).text;
+  return index.text(props.table.fields[fieldName], 0);
 }
 
 function fieldInitialText(fieldName: string) {
-  return selectSaveEditFieldView(props.table.fields[fieldName], 0, props.draft).initialText;
+  return index.initialText(props.table.fields[fieldName], 0);
+}
+
+function fieldView(fieldName: string) {
+  return index.field(props.table.fields[fieldName], 0);
 }
 
 function field(fieldName: string) {
@@ -98,14 +90,13 @@ function updateField(field: BgDatabaseField | undefined, value: string, rowIndex
     setSex(Number(value));
     return;
   }
-
   emitField(field, value, rowIndex);
 }
 
 function resetTable() {
-  for (const field of parsedFields.value) {
-    const fieldView = selectSaveEditFieldView(field, 0, props.draft);
-    if (fieldView.dirty) emitField(field, fieldView.initialText);
+  for (const f of parsedFields.value) {
+    const fv = index.field(f, 0);
+    if (fv.dirty) emitField(f, fv.initialText);
   }
 }
 
@@ -134,7 +125,6 @@ function portraitFieldValues(initial: boolean) {
     ]),
   ) as PlayerPortraitValues;
 }
-
 </script>
 
 <template>
@@ -161,130 +151,52 @@ function portraitFieldValues(initial: boolean) {
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <div v-if="hasField('xing')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="姓">
-                <SaveFieldEditor
-                  :field="field('xing')"
-                  :draft="draft"
-                  :enum-options="enumOptions('xing')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('xing')" :enum-options="enumOptions('xing')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="名">
-                <SaveFieldEditor
-                  :field="field('ming')"
-                  :draft="draft"
-                  :enum-options="enumOptions('ming')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('ming')" :enum-options="enumOptions('ming')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('old')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="年龄">
-                <SaveFieldEditor
-                  :field="field('old')"
-                  :draft="draft"
-                  :enum-options="enumOptions('old')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('old')" :enum-options="enumOptions('old')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="寿命">
-                <SaveFieldEditor
-                  :field="field('maxold')"
-                  :draft="draft"
-                  :enum-options="enumOptions('maxold')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('maxold')" :enum-options="enumOptions('maxold')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('menpai')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="门派">
-                <SaveFieldEditor
-                  :field="field('menpai')"
-                  :draft="draft"
-                  :enum-options="enumOptions('menpai')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('menpai')" :enum-options="enumOptions('menpai')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="地位">
-                <SaveFieldEditor
-                  :field="field('diwei')"
-                  :draft="draft"
-                  :enum-options="enumOptions('diwei')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('diwei')" :enum-options="enumOptions('diwei')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('mingsheng')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="名声">
-                <SaveFieldEditor
-                  :field="field('mingsheng')"
-                  :draft="draft"
-                  :enum-options="enumOptions('mingsheng')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('mingsheng')" :enum-options="enumOptions('mingsheng')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="侠义">
-                <SaveFieldEditor
-                  :field="field('xiayi')"
-                  :draft="draft"
-                  :enum-options="enumOptions('xiayi')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('xiayi')" :enum-options="enumOptions('xiayi')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('xingdongli')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="行动力">
-                <SaveFieldEditor
-                  :field="field('xingdongli')"
-                  :draft="draft"
-                  :enum-options="enumOptions('xingdongli')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('xingdongli')" :enum-options="enumOptions('xingdongli')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="最大行动力">
-                <SaveFieldEditor
-                  :field="field('maxxingdongli')"
-                  :draft="draft"
-                  :enum-options="enumOptions('maxxingdongli')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('maxxingdongli')" :enum-options="enumOptions('maxxingdongli')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <AppFieldStack v-if="hasField('gold')" label="银两">
-              <SaveFieldEditor
-                :field="field('gold')"
-                :draft="draft"
-                :enum-options="enumOptions('gold')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('gold')" :enum-options="enumOptions('gold')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('gongxian')" label="贡献">
-              <SaveFieldEditor
-                :field="field('gongxian')"
-                :draft="draft"
-                :enum-options="enumOptions('gongxian')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('gongxian')" :enum-options="enumOptions('gongxian')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('chenghao')" label="称号">
-              <SaveFieldEditor
-                :field="field('chenghao')"
-                :draft="draft"
-                :enum-options="enumOptions('chenghao')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('chenghao')" :enum-options="enumOptions('chenghao')" compact @update="updateField" />
             </AppFieldStack>
           </div>
         </div>
@@ -294,82 +206,34 @@ function portraitFieldValues(initial: boolean) {
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <div v-if="hasField('lvli')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="膂力">
-                <SaveFieldEditor
-                  :field="field('lvli')"
-                  :draft="draft"
-                  :enum-options="enumOptions('lvli')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('lvli')" :enum-options="enumOptions('lvli')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="额外膂力">
-                <SaveFieldEditor
-                  :field="field('lvli_plus')"
-                  :draft="draft"
-                  :enum-options="enumOptions('lvli_plus')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('lvli_plus')" :enum-options="enumOptions('lvli_plus')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('gengu')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="根骨">
-                <SaveFieldEditor
-                  :field="field('gengu')"
-                  :draft="draft"
-                  :enum-options="enumOptions('gengu')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('gengu')" :enum-options="enumOptions('gengu')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="额外根骨">
-                <SaveFieldEditor
-                  :field="field('genfu_plus')"
-                  :draft="draft"
-                  :enum-options="enumOptions('genfu_plus')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('genfu_plus')" :enum-options="enumOptions('genfu_plus')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('tipo')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="体魄">
-                <SaveFieldEditor
-                  :field="field('tipo')"
-                  :draft="draft"
-                  :enum-options="enumOptions('tipo')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('tipo')" :enum-options="enumOptions('tipo')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="额外体魄">
-                <SaveFieldEditor
-                  :field="field('tipo_plus')"
-                  :draft="draft"
-                  :enum-options="enumOptions('tipo_plus')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('tipo_plus')" :enum-options="enumOptions('tipo_plus')" compact @update="updateField" />
               </AppFieldStack>
             </div>
             <div v-if="hasField('shenfa')" class="flex items-center gap-2">
               <AppFieldStack class="flex-1" label="身法">
-                <SaveFieldEditor
-                  :field="field('shenfa')"
-                  :draft="draft"
-                  :enum-options="enumOptions('shenfa')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('shenfa')" :enum-options="enumOptions('shenfa')" compact @update="updateField" />
               </AppFieldStack>
               <AppFieldStack class="flex-1" label="额外身法">
-                <SaveFieldEditor
-                  :field="field('shenfa_plus')"
-                  :draft="draft"
-                  :enum-options="enumOptions('shenfa_plus')"
-                  compact
-                  @update="updateField"
-                />
+                <SaveFieldEditor :field-view="fieldView('shenfa_plus')" :enum-options="enumOptions('shenfa_plus')" compact @update="updateField" />
               </AppFieldStack>
             </div>
           </div>
@@ -379,76 +243,28 @@ function portraitFieldValues(initial: boolean) {
           <div class="text-sm font-medium">武艺</div>
           <div class="grid auto-rows-min gap-3 grid-cols-2 xl:grid-cols-4">
             <AppFieldStack v-if="hasField('wuxuexiuwei')" label="武学修为">
-              <SaveFieldEditor
-                :field="field('wuxuexiuwei')"
-                :draft="draft"
-                :enum-options="enumOptions('wuxuexiuwei')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('wuxuexiuwei')" :enum-options="enumOptions('wuxuexiuwei')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('quanzhang')" label="拳掌">
-              <SaveFieldEditor
-                :field="field('quanzhang')"
-                :draft="draft"
-                :enum-options="enumOptions('quanzhang')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('quanzhang')" :enum-options="enumOptions('quanzhang')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('daojian')" label="刀剑">
-              <SaveFieldEditor
-                :field="field('daojian')"
-                :draft="draft"
-                :enum-options="enumOptions('daojian')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('daojian')" :enum-options="enumOptions('daojian')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('qiangbang')" label="枪棒">
-              <SaveFieldEditor
-                :field="field('qiangbang')"
-                :draft="draft"
-                :enum-options="enumOptions('qiangbang')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('qiangbang')" :enum-options="enumOptions('qiangbang')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('anqi')" label="暗器">
-              <SaveFieldEditor
-                :field="field('anqi')"
-                :draft="draft"
-                :enum-options="enumOptions('anqi')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('anqi')" :enum-options="enumOptions('anqi')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('neigong')" label="内功">
-              <SaveFieldEditor
-                :field="field('neigong')"
-                :draft="draft"
-                :enum-options="enumOptions('neigong')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('neigong')" :enum-options="enumOptions('neigong')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('wxexp')" label="武学经验">
-              <SaveFieldEditor
-                :field="field('wxexp')"
-                :draft="draft"
-                :enum-options="enumOptions('wxexp')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('wxexp')" :enum-options="enumOptions('wxexp')" compact @update="updateField" />
             </AppFieldStack>
             <AppFieldStack v-if="hasField('maxwugongqty')" label="武功上限">
-              <SaveFieldEditor
-                :field="field('maxwugongqty')"
-                :draft="draft"
-                :enum-options="enumOptions('maxwugongqty')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('maxwugongqty')" :enum-options="enumOptions('maxwugongqty')" compact @update="updateField" />
             </AppFieldStack>
           </div>
         </div>

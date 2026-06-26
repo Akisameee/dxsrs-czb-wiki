@@ -3,8 +3,6 @@ import EditableTableCardHeader from "../EditableTableCardHeader.vue";
 import SaveFieldEditor from "~/components/tools/save-edit/fields/SaveFieldEditor.vue";
 import { Badge } from "~/components/ui/badge";
 import {
-  selectSaveEditFieldView,
-  selectSaveEditTableView,
   saveEditEnumOptions,
   shangBingAttributeByPart,
   shangBingEffectText,
@@ -27,15 +25,18 @@ const emit = defineEmits<{
   updateField: [field: BgDatabaseField, value: string, rowIndex: number];
 }>();
 
-const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, index) => index));
-const tableView = computed(() => selectSaveEditTableView(props.table, props.draft));
-const dirtyRows = computed(() => {
-  return tableView.value.dirtyRows;
-});
-const tableDirty = computed(() => tableView.value.dirty);
+const index = useSaveEditTableViewIndex(toRef(props, "table"), toRef(props, "draft"));
+
+const rowIndexes = computed(() => Array.from({ length: props.table.rowCount }, (_, i) => i));
+const tableDirty = computed(() => index.dirty.value);
+const dirtyRows = computed(() => index.dirtyRows.value);
 
 function field(fieldName: string) {
   return props.table.fields[fieldName];
+}
+
+function fieldView(fieldName: string, rowIndex: number) {
+  return index.field(field(fieldName), rowIndex);
 }
 
 function fieldText(fieldName: string, rowIndex: number) {
@@ -43,7 +44,7 @@ function fieldText(fieldName: string, rowIndex: number) {
 }
 
 function initialFieldText(fieldName: string, rowIndex: number) {
-  return selectSaveEditFieldView(field(fieldName), rowIndex, props.draft).initialText;
+  return index.field(field(fieldName), rowIndex).initialText;
 }
 
 function enumOptions(fieldName: string) {
@@ -79,10 +80,8 @@ function resetRow(rowIndex: number) {
   for (const fieldName of props.table.fieldNames) {
     const candidate = field(fieldName);
     if (!candidate?.parsed) continue;
-    const fieldView = selectSaveEditFieldView(candidate, rowIndex, props.draft);
-    if (fieldView.dirty) {
-      emit("updateField", candidate, fieldView.initialText, rowIndex);
-    }
+    const fv = index.field(candidate, rowIndex);
+    if (fv.dirty) emit("updateField", candidate, fv.initialText, rowIndex);
   }
 }
 
@@ -154,91 +153,28 @@ function updateField(field: BgDatabaseField, value: string, rowIndex: number) {
 
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <AppFieldStack v-if="field('mingcheng')" label="名称">
-              <SaveFieldEditor
-                :field="field('mingcheng')"
-                :row-index="rowIndex"
-                :draft="draft"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('mingcheng', rowIndex)" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('nianxian')" label="年限">
-              <SaveFieldEditor
-                :field="field('nianxian')"
-                :row-index="rowIndex"
-                :draft="draft"
-                input="number"
-                :min="0"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('nianxian', rowIndex)" input="number" :min="0" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('type')" label="类型">
-              <SaveFieldEditor
-                :field="field('type')"
-                :row-index="rowIndex"
-                :draft="draft"
-                :enum-options="enumOptions('type')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('type', rowIndex)" :enum-options="enumOptions('type')" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('iscure')" label="治愈">
-              <SaveFieldEditor
-                :field="field('iscure')"
-                :row-index="rowIndex"
-                :draft="draft"
-                input="boolean"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('iscure', rowIndex)" input="boolean" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('buwei')" label="部位">
-              <SaveFieldEditor
-                :field="field('buwei')"
-                :row-index="rowIndex"
-                :draft="draft"
-                :enum-options="enumOptions('buwei')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('buwei', rowIndex)" :enum-options="enumOptions('buwei')" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('chengdu')" label="程度">
-              <SaveFieldEditor
-                :field="field('chengdu')"
-                :row-index="rowIndex"
-                :draft="draft"
-                :enum-options="enumOptions('chengdu')"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('chengdu', rowIndex)" :enum-options="enumOptions('chengdu')" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('value1')" :label="`${rowAttributeLabel(rowIndex)}影响`">
-              <SaveFieldEditor
-                :field="field('value1')"
-                :row-index="rowIndex"
-                :draft="draft"
-                input="number"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('value1', rowIndex)" input="number" compact @update="updateField" />
             </AppFieldStack>
-
             <AppFieldStack v-if="field('value2')" label="附加影响">
-              <SaveFieldEditor
-                :field="field('value2')"
-                :row-index="rowIndex"
-                :draft="draft"
-                input="number"
-                compact
-                @update="updateField"
-              />
+              <SaveFieldEditor :field-view="fieldView('value2', rowIndex)" input="number" compact @update="updateField" />
             </AppFieldStack>
           </div>
         </div>
