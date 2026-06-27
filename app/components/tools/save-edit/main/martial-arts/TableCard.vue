@@ -510,7 +510,7 @@ function filterInsertValues(values: Record<string, string>) {
       @reset="resetTable"
     />
     <AppCardContent class="grid gap-4">
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-2 sm:ml-auto sm:w-[28rem]">
         <AppButton type="button" @click="addDialogOpen = true">
           <Plus class="size-4" />
           添加武学

@@ -57,16 +57,30 @@ const portraitControls: PortraitControl[] = [
   { key: "huzi", label: "胡子", typeId: 8 },
 ];
 
-const portraitLegacyPrefixes: Record<PlayerPortraitPartKey, string> = {
-  qianfa: "qa",
-  houfa: "ha",
-  maozi: "mza",
-  meimao: "mma",
-  lianshi: "lsa",
-  yifu: "yfa",
-  houbei: "bha",
-  huzi: "hz",
+const portraitPartTypeIds: Record<PlayerPortraitPartKey, number> = {
+  qianfa: 10,
+  houfa: 6,
+  maozi: 7,
+  meimao: 5,
+  lianshi: 1,
+  yifu: 9,
+  houbei: 0,
+  huzi: 8,
 };
+
+// 排序偏移：yifu 的序号从 100 起，其余从 0 起。减掉偏移后即“当前性别排序列表里的位置 N”。
+const portraitSortOffsets: Record<PlayerPortraitPartKey, number> = {
+  qianfa: 0,
+  houfa: 0,
+  maozi: 0,
+  meimao: 0,
+  lianshi: 0,
+  yifu: 100,
+  houbei: 0,
+  huzi: 0,
+};
+
+const portraitPartKeys = Object.keys(portraitPartTypeIds) as PlayerPortraitPartKey[];
 
 const { queryRows } = useWikiDb();
 const { data: portraitData } = await useAsyncData(
@@ -82,30 +96,19 @@ const { data: portraitData } = await useAsyncData(
 );
 
 const portraitOptions = computed(() => portraitData.value || []);
-const visiblePortraitControls = computed(() =>
-  portraitControls.filter((control) => props.sex !== 1 || control.key !== "huzi"),
-);
-const portraitPartIds = computed(() => ({
-  qianfa: portraitLegacyIndex("qianfa", 10),
-  houfa: portraitLegacyIndex("houfa", 6),
-  maozi: portraitLegacyIndex("maozi", 7),
-  meimao: portraitLegacyIndex("meimao", 5),
-  lianshi: portraitLegacyIndex("lianshi", 1),
-  yifu: portraitLegacyIndex("yifu", 9),
-  houbei: portraitLegacyIndex("houbei", 0),
-  huzi: portraitLegacyIndex("huzi", 8),
-}));
-const portraitControlOptions = computed(() => {
-  const result: Partial<Record<PlayerPortraitPartKey, PortraitOption[]>> = {};
-  for (const control of portraitControls) {
-    result[control.key] = portraitOptionsFor(control.key, control.typeId);
-  }
-  return result;
-});
+// 胡子在女性下没有选项 → 控件禁用（不隐藏，否则无法切回）。
+const visiblePortraitControls = computed(() => portraitControls);
 
-function portraitOptionsFor(fieldName: PlayerPortraitPartKey, typeId: number) {
+// 展示组件按“当前性别排序列表里的位置 N”取部件，stepper 的值也是这个 N（与性别解耦）。
+const portraitPartIds = computed(() =>
+  Object.fromEntries(portraitPartKeys.map((key) => [key, portraitCurrentIndex(key)])) as Record<PlayerPortraitPartKey, number>,
+);
+
+// 某性别下该部位排序后的选项列表（与 PlayerPortrait 的排序一致，保证位置 N 对得上）。
+function portraitOptionsFor(fieldName: PlayerPortraitPartKey, sex: number) {
+  const typeId = portraitPartTypeIds[fieldName];
   return portraitOptions.value
-    .filter((option) => option.type_id === typeId && option.sex_id === props.sex)
+    .filter((option) => option.type_id === typeId && option.sex_id === sex)
     .sort((left, right) =>
       portraitOptionSortNumber(fieldName, left) - portraitOptionSortNumber(fieldName, right) ||
       left.name.localeCompare(right.name),
@@ -113,52 +116,101 @@ function portraitOptionsFor(fieldName: PlayerPortraitPartKey, typeId: number) {
 }
 
 function portraitOptionSortNumber(fieldName: PlayerPortraitPartKey, option: PortraitOption) {
-  const prefix = portraitLegacyPrefixes[fieldName];
-  const number = Number(option.name.match(/(\d+)/)?.[1] ?? NaN);
+  const number = portraitFirstNumber(option.name);
   if (Number.isNaN(number)) return Number.MAX_SAFE_INTEGER;
-  return prefix === "yfa" ? number - 100 : number;
+  return number - portraitSortOffsets[fieldName];
 }
 
-function portraitLegacyIndex(fieldName: PlayerPortraitPartKey, typeId: number) {
-  return portraitValueLegacyIndex(props.values[fieldName] || "", fieldName, typeId);
+// 取字符串里第一段数字（部位名本身不含数字，所以这就是部件序号）。与性别解耦。
+function portraitFirstNumber(text: string) {
+  const match = text.match(/(\d+)/);
+  return match ? Number(match[1]) : NaN;
 }
 
-function portraitInitialLegacyIndex(fieldName: PlayerPortraitPartKey, typeId: number) {
-  return portraitValueLegacyIndex(props.initialValues[fieldName] || "", fieldName, typeId);
+// 从字段值解出“当前性别排序列表里的位置 N”：按序号在列表里 findIndex 定位，对编号有缺口的部位也正确。
+function portraitValueIndex(value: string, fieldName: PlayerPortraitPartKey, sex: number) {
+  const number = portraitFirstNumber(value);
+  if (Number.isNaN(number)) return -1;
+  return portraitOptionsFor(fieldName, sex).findIndex(
+    (option) => portraitFirstNumber(option.name) === number,
+  );
 }
 
-function portraitValueLegacyIndex(value: string, fieldName: PlayerPortraitPartKey, typeId: number) {
-  const legacyMatch = value.match(/_(\d+)$/);
-  if (legacyMatch) return Number(legacyMatch[1]);
-
-  const rows = portraitOptionsFor(fieldName, typeId);
-  return rows.findIndex((option) => option.name === value);
+function portraitCurrentIndex(fieldName: PlayerPortraitPartKey) {
+  return portraitValueIndex(props.values[fieldName] || "", fieldName, props.sex);
 }
 
+function portraitInitialIndex(fieldName: PlayerPortraitPartKey) {
+  return portraitValueIndex(props.initialValues[fieldName] || "", fieldName, props.sex);
+}
+
+// 把位置 N 在指定性别下编码回字段值，越界返回 null。
+// 关键：保持与原值相同的格式——原值是纯数字（裸索引）就写裸数字，否则写 option 完整 name，
+// 避免把名字串写进游戏期望整数索引的字段（或反之）导致存档字段不同步。
+function portraitEncode(fieldName: PlayerPortraitPartKey, index: number, sex: number) {
+  if (index < 0) return null;
+  const option = portraitOptionsFor(fieldName, sex)[index];
+  if (!option) return null;
+  const current = props.values[fieldName] || props.initialValues[fieldName] || "";
+  if (/^\d+$/.test(current)) return String(portraitFirstNumber(option.name));
+  return option.name;
+}
+
+// 当前性别下该部位可选数量（决定 stepper 的 max 和胡子的禁用）。
+function portraitOptionCount(control: PortraitControl) {
+  return portraitOptionsFor(control.key, props.sex).length;
+}
+
+function portraitControlDisabled(control: PortraitControl) {
+  return portraitOptionCount(control) === 0;
+}
+
+// stepper 如实显示字段里的位置 N（与性别解耦：不因切性别塌缩成 "-"）。
 function portraitOptionNumber(control: PortraitControl) {
-  const index = portraitLegacyIndex(control.key, control.typeId);
+  const index = portraitCurrentIndex(control.key);
   return index >= 0 ? String(index) : "-";
 }
 
 function portraitInitialOptionNumber(control: PortraitControl) {
-  const index = portraitInitialLegacyIndex(control.key, control.typeId);
+  const index = portraitInitialIndex(control.key);
   return index >= 0 ? String(index) : "-";
 }
 
-function portraitLegacyCode(fieldName: PlayerPortraitPartKey, index: number) {
-  const prefix = portraitLegacyPrefixes[fieldName] || fieldName;
-  return `${prefix}_${String(index).padStart(2, "0")}`;
+// dirty 以位置 N 为准，与字段字符串级 dirty 解耦：切性别只改后缀、N 不变 → stepper 不 dirty。
+function portraitControlDirty(control: PortraitControl) {
+  return portraitCurrentIndex(control.key) !== portraitInitialIndex(control.key);
+}
+
+// 当前 N 超出该性别可选范围时给出错误（不隐藏控件）；该部位本就无选项（女胡子）时只禁用不报错。
+function portraitOptionError(control: PortraitControl) {
+  if (portraitControlDisabled(control)) return "";
+  const count = portraitOptionCount(control);
+  const index = portraitCurrentIndex(control.key);
+  if (index < 0 || index >= count) return `超出当前性别范围（0-${count - 1}）`;
+  return "";
 }
 
 function setSex(value: number) {
   if (props.disabled || value === props.sex) return;
+  // 切性别时保持每个部位的位置 N 不变，按新性别重新编码字段值（toubu3nan → toubu3nv）。
+  // 新性别没有对应位置（如索引越界）则保留原值，由 stepper 的 error 提示。
+  for (const key of portraitPartKeys) {
+    const index = portraitCurrentIndex(key);
+    if (index < 0) continue;
+    const next = portraitEncode(key, index, value);
+    if (next != null && next !== (props.values[key] || "")) {
+      emit("updatePart", key, next);
+    }
+  }
   emit("updateSex", value);
 }
 
 function setPortraitOption(control: PortraitControl, value: string) {
   const next = Number(value);
   if (!Number.isFinite(next)) return;
-  emit("updatePart", control.key, portraitLegacyCode(control.key, next));
+  const name = portraitEncode(control.key, next, props.sex);
+  if (name == null) return;
+  emit("updatePart", control.key, name);
 }
 </script>
 
@@ -210,9 +262,11 @@ function setPortraitOption(control: PortraitControl, value: string) {
         <EditableStepperField
           :initial-value="portraitInitialOptionNumber(control)"
           :model-value="portraitOptionNumber(control)"
+          :dirty="portraitControlDirty(control)"
+          :error="portraitOptionError(control)"
           :min="0"
-          :max="Math.max(0, (portraitControlOptions[control.key] || []).length - 1)"
-          :disabled="disabled || !(portraitControlOptions[control.key] || []).length"
+          :max="Math.max(0, portraitOptionCount(control) - 1)"
+          :disabled="disabled || portraitControlDisabled(control)"
           compact
           @update="setPortraitOption(control, $event)"
         />

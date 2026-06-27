@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean;
   readonly?: boolean;
   hint?: string;
+  error?: string;
   compact?: boolean;
   dirty?: boolean;
   resetValue?: string;
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<{
   disabled: false,
   readonly: false,
   hint: "",
+  error: "",
   compact: false,
 });
 
@@ -53,6 +55,8 @@ function stepBy(offset: number) {
     :disabled="disabled"
     :readonly="readonly"
     :hint="hint"
+    :error="error"
+    :invalid="Boolean(error)"
     :compact="compact"
     @reset="emit('update', resetValue)"
   >
